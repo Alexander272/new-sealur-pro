@@ -1,14 +1,16 @@
-import { ChakraProvider } from '@chakra-ui/react'
+import { CssBaseline, ThemeProvider } from '@mui/material'
 import { Provider } from 'react-redux'
 import { AppRoutes } from '@/routes'
 import { store } from '@/store/store'
+import theme from './theme'
 
 function App() {
 	return (
 		<Provider store={store}>
-			<ChakraProvider>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
 				<AppRoutes />
-			</ChakraProvider>
+			</ThemeProvider>
 		</Provider>
 	)
 }

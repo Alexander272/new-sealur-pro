@@ -1,5 +1,13 @@
-import { Container } from './gasket.style'
+import { Outlet } from 'react-router-dom'
+import { Container, Content } from './gasket.style'
 
 export default function Gasket() {
-	return <Container>Gasket</Container>
+	return (
+		<Container>
+			{/* //TODO табы с переключением типа прокладки */}
+			{/* <Content> */}
+			<Outlet />
+			{/* </Content> */}
+		</Container>
+	)
 }

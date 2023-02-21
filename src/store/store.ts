@@ -1,7 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
+import snpReducer from './gaskets/snp'
+import listReducer from './list'
 
 export const store = configureStore({
-	reducer: {},
+	reducer: {
+		snp: snpReducer,
+		list: listReducer,
+	},
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
