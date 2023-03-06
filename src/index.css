@@ -87,8 +87,9 @@ select {
     --main-container-bg: #f0f0f7;
     --danger-color: rgb(207, 25, 25);
 
-    --primary-color: #042e60;
+    --primary-color: #05287f;
     --secondary-color: #eaeefc;
+    --light-blue: #0066ffa3;
     --border-color: #0737b180;
     --white: #fff;
     --gray: #616161;
@@ -99,4 +100,21 @@ select {
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: 'NunitoSans', sans-serif;
+}
+
+@font-face {
+    font-family: 'NunitoSans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/NunitoSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/Merriweather-Regular.ttf') format('truetype');
 }

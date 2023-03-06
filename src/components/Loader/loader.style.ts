@@ -58,7 +58,7 @@ export const Spinner = styled.div`
 
 	position: relative;
 	z-index: 25;
-	color: hsl(var(--secondary-hue) 92% 26%);
+	color: var(--primary-color);
 	width: var(--size);
 	height: var(--size);
 

@@ -3,3 +3,10 @@ export interface IJumper {
 	code: string
 	width: string
 }
+
+export interface IMainJumper {
+	id: string
+	code: string
+	hasDrawing: boolean
+	imageUrl: string
+}

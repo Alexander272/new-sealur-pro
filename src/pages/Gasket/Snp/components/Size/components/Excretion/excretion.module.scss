@@ -1,0 +1,66 @@
+.type_e {
+    &.irLeft,
+    &.irRight,
+    &.orLeft,
+    &.orRight,
+    &.frLeft,
+    &.frRight {
+        position: absolute;
+        top: 14%;
+        background: var(--button-color);
+        mix-blend-mode: color;
+        height: 23px;
+    }
+    &.irLeft {
+        left: 113px;
+        width: 31px;
+    }
+    &.irRight {
+        right: 108px;
+        width: 31px;
+    }
+    &.orLeft {
+        left: 0;
+        width: 40px;
+    }
+    &.orRight {
+        right: 0;
+        width: 36px;
+    }
+    &.frLeft {
+        left: 36px;
+        width: 80px;
+    }
+    &.frRight {
+        right: 36px;
+        width: 80px;
+    }
+}
+.type_a {
+    &.irLeft,
+    &.irRight,
+    &.frLeft,
+    &.frRight {
+        position: absolute;
+        top: 18%;
+        background: var(--button-color);
+        mix-blend-mode: color;
+        height: 24px;
+    }
+    &.irLeft {
+        left: 86px;
+        width: 43px;
+    }
+    &.irRight {
+        right: 88px;
+        width: 43px;
+    }
+    &.frLeft {
+        left: 0;
+        width: 94px;
+    }
+    &.frRight {
+        right: 0;
+        width: 94px;
+    }
+}

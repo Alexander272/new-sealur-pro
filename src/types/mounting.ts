@@ -5,5 +5,5 @@ export interface IMounting {
 
 export interface IHasMounting {
 	hasMounting: boolean
-	mounting: IMounting
+	code: string
 }

@@ -1,0 +1,126 @@
+.sizes {
+    position: absolute;
+}
+
+.d {
+    color: #8c8e91;
+}
+
+.d_active {
+    color: #062e93;
+}
+
+.type_d,
+.type_g,
+.type_v,
+.type_b,
+.type_a {
+    font-size: 0.85rem;
+}
+
+.type_d,
+.type_g {
+    &.h {
+        right: 17%;
+        top: -10%;
+    }
+
+    &.s2 {
+        top: -10%;
+        left: 7%;
+    }
+
+    &.s3 {
+        top: -10%;
+        left: 19%;
+    }
+
+    &.d1 {
+        top: 37%;
+    }
+
+    &.d2 {
+        top: 53%;
+    }
+
+    &.d3 {
+        top: 70%;
+    }
+
+    &.d4 {
+        top: 87%;
+    }
+}
+
+.type_v {
+    &.h {
+        left: 22%;
+        top: -10%;
+    }
+
+    &.s3 {
+        top: -10%;
+        left: 9%;
+    }
+
+    &.s2 {
+        top: -10%;
+        right: 17%;
+    }
+
+    &.d1 {
+        top: 46%;
+    }
+
+    &.d2 {
+        top: 66%;
+    }
+
+    &.d3 {
+        top: 85%;
+    }
+
+    &.d4 {
+        display: none;
+    }
+}
+
+.type_a,
+.type_b {
+    &.h {
+        right: 13%;
+        top: -10%;
+    }
+
+    &.s2 {
+        display: none;
+    }
+
+    &.s3 {
+        top: -10%;
+        left: 14%;
+    }
+
+    &.d1 {
+        display: none;
+    }
+
+    &.d2 {
+        top: 66%;
+    }
+
+    &.d3 {
+        top: 86%;
+    }
+
+    &.d4 {
+        display: none;
+    }
+}
+
+.type_g,
+.type_b {
+    &.d1 {
+        display: none;
+    }
+}
