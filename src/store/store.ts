@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import snpReducer from './gaskets/snp'
-import listReducer from './list'
+import cardReducer from './card'
 import { api } from './api'
 
 export const store = configureStore({
 	reducer: {
 		snp: snpReducer,
-		list: listReducer,
+		card: cardReducer,
 		[api.reducerPath]: api.reducer,
 	},
 	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware),

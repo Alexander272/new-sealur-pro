@@ -12,30 +12,37 @@ type Props = {
 
 export const StandardSize: FC<Props> = ({ sizes }) => {
 	const main = useAppSelector(state => state.snp.main)
+	const cardIndex = useAppSelector(state => state.snp.cardIndex)
 	const size = useAppSelector(state => state.snp.size)
+	const sizeErr = useAppSelector(state => state.snp.sizeError)
 
 	const dispatch = useAppDispatch()
 
 	const [curSize, setCurSize] = useState<ISnpSize | null>(null)
 
 	useEffect(() => {
-		const s = sizes[0]
+		if (cardIndex === undefined) {
+			const s = sizes[0]
 
-		const size: ISizeBlockSnp = {
-			dn: s.dn,
-			pn: s.sizes[0].pn[0],
-			d4: s.sizes[0].d4,
-			d3: s.sizes[0].d3,
-			d2: s.sizes[0].d2,
-			d1: s.sizes[0].d1,
-			h: s.sizes[0].h[0],
-			s2: s.sizes[0].s2[0],
-			s3: s.sizes[0].s3[0],
-			another: '',
+			const size: ISizeBlockSnp = {
+				dn: s.dn,
+				pn: s.sizes[0].pn[0],
+				d4: s.sizes[0].d4,
+				d3: s.sizes[0].d3,
+				d2: s.sizes[0].d2,
+				d1: s.sizes[0].d1,
+				h: s.sizes[0].h[0],
+				s2: s.sizes[0].s2[0],
+				s3: s.sizes[0].s3[0],
+				another: '',
+			}
+
+			dispatch(setSize(size))
+			setCurSize(s)
+		} else {
+			const s = sizes.find(s => s.dn === size.dn)
+			setCurSize(s || ({} as ISnpSize))
 		}
-
-		dispatch(setSize(size))
-		setCurSize(s)
 	}, [sizes])
 
 	const dnHandler = (name: 'dn' | 'd2') => (event: SelectChangeEvent<string>) => {
@@ -196,7 +203,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 			</Select>
 
 			<Typography fontWeight='bold'>Толщина каркаса прокладки</Typography>
-			<Stack direction='row' spacing={1}>
+			<Stack direction='row' spacing={1} alignItems='flex-start'>
 				<Select
 					value={size.h || 'another'}
 					onChange={thicknessHandler}
@@ -218,7 +225,13 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 				</Select>
 
 				{size.h == 'another' || size.h == '' ? (
-					<Input value={size.another} onChange={anotherThicknessHandler} size='small' />
+					<Input
+						value={size.another}
+						onChange={anotherThicknessHandler}
+						size='small'
+						error={sizeErr.thickness}
+						helperText={sizeErr.thickness && 'толщина должна быть больше 2,2 и меньше 10'}
+					/>
 				) : null}
 			</Stack>
 		</>

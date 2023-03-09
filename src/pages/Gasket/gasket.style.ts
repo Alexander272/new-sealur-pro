@@ -1,13 +1,15 @@
 import styled from 'styled-components'
 
 export const Container = styled.div`
-	width: 1580px;
+	max-width: 1580px;
 	/* padding: 50px 10px; */
 	align-self: center;
 	/* flex-grow: 1; */
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	margin: 0 auto;
+	width: 100%;
 `
 
 export const Content = styled.div`
@@ -40,15 +42,27 @@ const BaseContainer = styled.div`
 export const MainContainer = styled(BaseContainer)`
 	grid-column-start: 1;
 	grid-column-end: 8;
+	grid-row-start: 1;
+	grid-row-end: 2;
 	display: flex;
 	gap: 10px;
+
+	@media screen and (max-width: 1150px) {
+		grid-column-end: 12;
+	}
 `
 
 export const SizeContainer = styled(BaseContainer)`
 	grid-column-start: 1;
 	grid-column-end: 8;
+	grid-row-start: 2;
+	grid-row-end: 3;
 	display: flex;
 	gap: 10px;
+
+	@media screen and (max-width: 1150px) {
+		grid-column-end: 12;
+	}
 `
 
 export const ResultContainer = styled(BaseContainer)`
@@ -61,6 +75,10 @@ export const AsideContainer = styled(BaseContainer)`
 	grid-column-start: 8;
 	/* grid-row-end: 2;
 	grid-row-start: 1; */
+
+	@media screen and (max-width: 1150px) {
+		grid-column-start: 1;
+	}
 `
 
 type ColumnProps = {
@@ -83,6 +101,7 @@ export const PlugImage = styled.div`
 export const ImageContainer = styled.div`
 	position: relative;
 	margin: auto 0;
+	padding: 20px 0;
 `
 
 export const Image = styled.img`

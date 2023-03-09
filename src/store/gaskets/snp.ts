@@ -18,23 +18,22 @@ import { IMounting } from '@/types/mounting'
 import { IDrawing } from '@/types/drawing'
 
 export interface ISNPState {
-	// standardForSNP: IStandardForSNP[]
-	// flangeType: IFlangeType[]
-
 	fillers: IFiller[]
 	mountings: IMounting[]
 	materialsIr?: ISNPMaterial
 	materialsFr?: ISNPMaterial
 	materialsOr?: ISNPMaterial
 
-	snp?: ISNP
+	cardIndex?: number
 	main: IMainSnp
 	material: IMaterialBlockSnp
 	size: ISizeBlockSnp
 	design: IDesignBlockSnp
+	amount: string
 
 	hasError: boolean
 	hasSizeError: boolean
+	hasDesignError: boolean
 	sizeError: {
 		d4Err: boolean
 		d3Err: boolean
@@ -49,10 +48,6 @@ export interface ISNPState {
 }
 
 const initialState: ISNPState = {
-	// standardForSNP: [],
-	// flangeType: [],
-	snp: undefined,
-
 	fillers: [],
 	mountings: [],
 	materialsIr: undefined,
@@ -61,6 +56,7 @@ const initialState: ISNPState = {
 
 	hasError: false,
 	hasSizeError: false,
+	hasDesignError: false,
 	sizeError: {
 		d4Err: false,
 		d3Err: false,
@@ -110,15 +106,13 @@ const initialState: ISNPState = {
 			code: '',
 		},
 	},
+	amount: '',
 }
 
 export const snpSlice = createSlice({
 	name: 'snp',
 	initialState,
 	reducers: {
-		// setStandardForSNP: (state, action: PayloadAction<IStandardForSNP[]>) => {
-		// 	state.standardForSNP = action.payload
-		// },
 		setFiller: (state, action: PayloadAction<IFiller[]>) => {
 			state.fillers = action.payload
 			state.material.filler = action.payload[0]
@@ -135,15 +129,15 @@ export const snpSlice = createSlice({
 			action.payload.forEach(m => {
 				if (m.type == 'ir') {
 					state.materialsIr = m
-					state.material.ir = m.default
+					if (state.cardIndex === undefined) state.material.ir = m.default
 				}
 				if (m.type == 'fr') {
 					state.materialsFr = m
-					state.material.fr = m.default
+					if (state.cardIndex === undefined) state.material.fr = m.default
 				}
 				if (m.type == 'or') {
 					state.materialsOr = m
-					state.material.or = m.default
+					if (state.cardIndex === undefined) state.material.or = m.default
 				}
 			})
 		},
@@ -223,6 +217,9 @@ export const snpSlice = createSlice({
 			state.sizeError.d4Err = state.size.d4 != '' && action.payload.d3 != '' && +state.size.d4 <= +state.size.d3
 			state.sizeError.d3Err = state.size.d3 != '' && action.payload.d2 != '' && +state.size.d3 <= +state.size.d2
 			state.sizeError.d2Err = state.size.d2 != '' && action.payload.d1 != '' && +state.size.d2 <= +state.size.d1
+
+			state.hasSizeError =
+				state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
 		},
 		setSizeThickness: (
 			state,
@@ -231,18 +228,26 @@ export const snpSlice = createSlice({
 			if (action.payload.h != undefined) state.size.h = action.payload.h
 			if (action.payload.s2 != undefined) state.size.s2 = action.payload.s2
 			if (action.payload.s3 != undefined) state.size.s3 = action.payload.s3
-			if (action.payload.another != undefined) state.size.another = action.payload.another
+			if (action.payload.another != undefined) {
+				state.size.another = action.payload.another
+				state.sizeError.thickness =
+					+action.payload.another.replaceAll(',', '.') < 2.3 ||
+					+action.payload.another.replaceAll(',', '.') > 10
+
+				state.hasSizeError =
+					state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
+			}
 		},
 
 		clearMaterialAndDesign: (state, action: PayloadAction<ISnp>) => {
 			if (!action.payload.hasInnerRing) state.material.ir = undefined
-			else state.material.ir = state.materialsIr?.default
+			else if (state.cardIndex === undefined) state.material.ir = state.materialsIr?.default
 
 			if (!action.payload.hasFrame) state.material.fr = undefined
-			else state.material.fr = state.materialsFr?.default
+			else if (state.cardIndex === undefined) state.material.fr = state.materialsFr?.default
 
 			if (!action.payload.hasOuterRing) state.material.or = undefined
-			else state.material.or = state.materialsOr?.default
+			else if (state.cardIndex === undefined) state.material.or = state.materialsOr?.default
 
 			if (!action.payload.hasJumper) state.design.jumper.hasJumper = false
 			if (!action.payload.hasMounting) state.design.mounting.hasMounting = false
@@ -250,7 +255,9 @@ export const snpSlice = createSlice({
 
 		setHasHole: (state, action: PayloadAction<boolean>) => {
 			state.design.hasHole = action.payload
-			state.designError.emptyDrawing = !!state.drawing
+			state.designError.emptyDrawing = !state.drawing && action.payload
+
+			state.hasDesignError = state.designError.emptyDrawing
 		},
 		setDesignJumper: (
 			state,
@@ -260,17 +267,44 @@ export const snpSlice = createSlice({
 			if (action.payload.code != undefined) state.design.jumper.code = action.payload.code
 			if (action.payload.width != undefined) state.design.jumper.width = action.payload.width
 			if (action.payload.hasDrawing != undefined)
-				state.designError.emptyDrawing = !!state.drawing && action.payload.hasDrawing
+				state.designError.emptyDrawing = !state.drawing && action.payload.hasDrawing
+
+			state.hasDesignError = state.designError.emptyDrawing
 		},
 		setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
 			if (action.payload.hasMounting != undefined) state.design.mounting.hasMounting = action.payload.hasMounting
 			if (action.payload.code != undefined) state.design.mounting.code = action.payload.code
 		},
+
+		setAmount: (state, action: PayloadAction<string>) => {
+			state.amount = action.payload
+		},
+
+		setSnp: (
+			state,
+			action: PayloadAction<{
+				main: IMainSnp
+				sizes: ISizeBlockSnp
+				materials: IMaterialBlockSnp
+				design: IDesignBlockSnp
+				amount: string
+				cardIndex: number
+			}>
+		) => {
+			state.cardIndex = action.payload.cardIndex
+			state.main = action.payload.main
+			state.size = action.payload.sizes
+			state.material = action.payload.materials
+			state.design = action.payload.design
+			state.amount = action.payload.amount
+		},
+		clearSnp: state => {
+			state.cardIndex = undefined
+		},
 	},
 })
 
 export const {
-	// setStandardForSNP,
 	setFiller,
 	setMounting,
 	setMaterials,
@@ -289,6 +323,9 @@ export const {
 	setHasHole,
 	setDesignJumper,
 	setDesignMounting,
+	setAmount,
+	setSnp,
+	clearSnp,
 } = snpSlice.actions
 
 export default snpSlice.reducer

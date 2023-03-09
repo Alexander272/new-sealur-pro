@@ -27,6 +27,7 @@ const images = {
 
 export const Main: FC<Props> = () => {
 	const main = useAppSelector(state => state.snp.main)
+	const cardIndex = useAppSelector(state => state.snp.cardIndex)
 
 	const { data: standards } = useGetStandardForSNPQuery(null)
 	const { data } = useGetSnpDataQuery({
@@ -42,14 +43,16 @@ export const Main: FC<Props> = () => {
 
 	useEffect(() => {
 		if (data) {
-			const flange = data.data.flangeTypes[data.data.flangeTypes.length - 1]
-			dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
-			const type = {
-				id: flange.types[flange.types.length - 1].id,
-				title: flange.types[flange.types.length - 1].title,
-				code: flange.types[flange.types.length - 1].code,
+			if (cardIndex === undefined) {
+				const flange = data.data.flangeTypes[data.data.flangeTypes.length - 1]
+				dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
+				const type = {
+					id: flange.types[flange.types.length - 1].id,
+					title: flange.types[flange.types.length - 1].title,
+					code: flange.types[flange.types.length - 1].code,
+				}
+				dispatch(setMainSnpType(type))
 			}
-			dispatch(setMainSnpType(type))
 
 			dispatch(setMaterials(data.data.materials))
 			if (data.data.fillers?.length) {

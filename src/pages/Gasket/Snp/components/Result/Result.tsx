@@ -1,21 +1,72 @@
+import { ChangeEvent, FC, useState } from 'react'
+import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/material'
 import { Input } from '@/components/Input/input.style'
-import { useAppSelector } from '@/hooks/useStore'
+import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { ResultContainer } from '@/pages/Gasket/gasket.style'
-import { useGetSnpQuery } from '@/store/api'
-import { Stack, Typography } from '@mui/material'
-import { FC } from 'react'
+import { Position } from '@/types/card'
+import { addPosition, toggle, updatePosition } from '@/store/card'
+import { clearSnp, setAmount } from '@/store/gaskets/snp'
 
 type Props = {}
 
 export const Result: FC<Props> = () => {
+	const [open, setOpen] = useState(false)
+
 	const main = useAppSelector(state => state.snp.main)
 	const size = useAppSelector(state => state.snp.size)
 	const materials = useAppSelector(state => state.snp.material)
 	const design = useAppSelector(state => state.snp.design)
+	const amount = useAppSelector(state => state.snp.amount)
 
 	const materialIr = useAppSelector(state => state.snp.materialsIr)
 	const materialFr = useAppSelector(state => state.snp.materialsFr)
 	const materialOr = useAppSelector(state => state.snp.materialsOr)
+
+	const hasSizeError = useAppSelector(state => state.snp.hasSizeError)
+	const hasDesignError = useAppSelector(state => state.snp.hasDesignError)
+
+	const positions = useAppSelector(state => state.card.positions)
+	const cardIndex = useAppSelector(state => state.snp.cardIndex)
+
+	const dispatch = useAppDispatch()
+
+	const savePosition = () => {
+		const position: Position = {
+			id: Date.now().toString() + (positions.length + 1),
+			count: positions.length + 1,
+			title: renderDesignation(),
+			amount: amount,
+			type: 'Snp',
+			main: main,
+			sizes: size,
+			materials: materials,
+			design: design,
+		}
+
+		if (cardIndex !== undefined) {
+			position.count = cardIndex + 1
+			dispatch(updatePosition({ index: cardIndex, position: position }))
+			dispatch(clearSnp())
+		} else dispatch(addPosition(position))
+		setOpen(true)
+	}
+
+	const amountHandler = (event: ChangeEvent<HTMLInputElement>) => {
+		const regex = /^[0-9\b]+$/
+		if (event.target.value === '' || regex.test(event.target.value)) {
+			let value: number | string = +event.target.value
+			if (event.target.value === '') value = event.target.value
+			dispatch(setAmount(value.toString()))
+		}
+	}
+
+	const closeHandler = () => {
+		setOpen(false)
+	}
+	const openCardHandler = () => {
+		dispatch(toggle({ open: true }))
+		setOpen(false)
+	}
 
 	const renderDescription = () => {
 		let rings
@@ -28,9 +79,30 @@ export const Result: FC<Props> = () => {
 		if (main.snpTypeTitle == 'Б' || main.snpTypeTitle == 'А')
 			rings = `(без ограничительных колец), с металлическим каркасом из ленты ${materials.fr?.title}`
 
-		let res = `Спирально-навитая прокладка (СНП) по ${main.snpStandard?.standard.title} типа ${main.snpTypeTitle} ${rings} и наполнителем из ${materials.filler.designation}, для применения на фланце "${main.flangeTypeTitle}"`
+		let flange = main.snpStandard?.flangeStandard.code ? ` по ${main.snpStandard.flangeStandard.title}` : ''
 
-		// ${fl} с размерами ${sizes}, толщиной ${thick} мм${mount}${hole}${jum}
+		let sizes = ''
+		if (size?.d4) sizes += size.d4 + 'x'
+		sizes += `${size?.d3}x${size?.d2}`
+		if (size?.d1) sizes += 'x' + size.d1
+
+		let thickness = size.h != 'another' ? size.h : size.another
+
+		let mounting = ''
+		if (design.mounting.hasMounting) mounting = `, с фиксатором ${design.mounting.code}`
+
+		let hole = ''
+		if (design.hasHole) hole = `, с отверстиями (по чертежу)`
+
+		let jumper = ''
+		if (design.jumper.hasJumper) {
+			let width = ''
+			if (design.jumper.width !== '') width = ` шириной ${design.jumper.width} мм`
+			jumper = `, с перемычкой типа ${jumper}${width}`
+		}
+
+		let res = `Спирально-навитая прокладка (СНП) по ${main.snpStandard?.standard.title} типа ${main.snpTypeTitle} ${rings} и наполнителем из ${materials.filler.designation}, для применения на фланце "${main.flangeTypeTitle}"${flange} с размерами ${sizes}, толщиной ${thickness} мм${mounting}${hole}${jumper}`
+
 		return res
 	}
 
@@ -115,7 +187,9 @@ export const Result: FC<Props> = () => {
 				designationMaterials = `(${temp.join(', ')}) `
 			}
 
-			return `СНП-${main.snpTypeCode}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${size.h} ${designationDesign}${designationMaterials}${main.snpStandard.standard.title}`
+			let thickness = size.h != 'another' ? size.h : size.another
+
+			return `СНП-${main.snpTypeCode}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${designationMaterials}${main.snpStandard.standard.title}`
 		}
 		if (main.snpStandard?.standard.id === '4df3db32-401f-47d2-b5e7-c8e8d3cd00f1') {
 			let y = ''
@@ -203,7 +277,41 @@ export const Result: FC<Props> = () => {
 					{renderDesignation()}
 				</Typography>
 			</Stack>
-			<Input label={'Количество'} size='small' />
+			<Stack direction={'row'} spacing={2} alignItems='center' justifyContent='space-between'>
+				<Stack direction={'row'} spacing={2} alignItems='center'>
+					<Typography fontWeight='bold'>Количество:</Typography>
+					<Input value={amount} onChange={amountHandler} size='small' />
+				</Stack>
+
+				<Button
+					disabled={!amount || hasSizeError || hasDesignError}
+					onClick={savePosition}
+					variant='contained'
+					sx={{ borderRadius: '12px', padding: '6px 20px' }}
+				>
+					{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
+				</Button>
+			</Stack>
+
+			<Snackbar
+				open={open}
+				// autoHideDuration={3000}
+				onClose={closeHandler}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert
+					onClose={closeHandler}
+					severity='success'
+					action={
+						<IconButton color='inherit' size='small' sx={{ lineHeight: '18px' }} onClick={openCardHandler}>
+							➜
+						</IconButton>
+					}
+					sx={{ width: '100%' }}
+				>
+					Позиция {cardIndex !== undefined ? 'изменена' : 'добавлена'}
+				</Alert>
+			</Snackbar>
 		</ResultContainer>
 	)
 }
