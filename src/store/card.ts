@@ -7,12 +7,14 @@ const localKey = 'sealur_pro_card'
 export interface ICardState {
 	// count: number
 	open: boolean
+	orderId: string
 	positions: Position[]
 }
 
 const initialState: ICardState = {
 	// count: 0,
 	open: false,
+	orderId: '',
 	positions: JSON.parse(localStorage.getItem(localKey) || 'null') || [],
 }
 

@@ -47,6 +47,10 @@ export const Card: FC<Props> = () => {
 		}
 	}
 
+	const sendHandler = () => {
+		console.log(positions)
+	}
+
 	return (
 		<Container open={open}>
 			<CardContainer open={open}>
@@ -101,7 +105,11 @@ export const Card: FC<Props> = () => {
 						</CircleButton>
 
 						{positions.length && (
-							<Button variant='contained' sx={{ borderRadius: '12px', marginTop: 'auto' }}>
+							<Button
+								onClick={sendHandler}
+								variant='contained'
+								sx={{ borderRadius: '12px', marginTop: 'auto' }}
+							>
 								Отправить заявку
 							</Button>
 						)}

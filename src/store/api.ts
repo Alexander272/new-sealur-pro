@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ISnpDateResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
 
-const url = '/api/v1/sealur-pro/'
+export const baseUrl = '/api/v1/sealur-pro/'
 
 type SnpDataRequest = {
 	standardId?: string
@@ -15,7 +15,7 @@ type SnpRequest = {
 
 export const api = createApi({
 	reducerPath: 'api',
-	baseQuery: fetchBaseQuery({ baseUrl: url }),
+	baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
 	endpoints: builder => ({
 		getStandardForSNP: builder.query<ISnpStandardResponse, null>({
 			query: () => `snp-standards`,

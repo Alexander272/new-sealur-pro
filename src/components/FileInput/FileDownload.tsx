@@ -1,39 +1,35 @@
-import React, { FC } from "react"
-import classes from "./input.module.scss"
+import { FC, MouseEvent } from 'react'
+import { Danger, Field, Icon, IconImage, Link } from './input.style'
 
 type Props = {
-    text: string
-    name: string
-    rounded?: "round" | "rounded"
-    link?: string
-    onSave?: (event: React.MouseEvent<HTMLInputElement>) => void
-    onDelete?: (event: React.MouseEvent<HTMLInputElement>) => void
+	text: string
+	// name: string
+	link?: string
+	// onSave?: (event: MouseEvent<HTMLInputElement>) => void
+	onDelete?: (event: MouseEvent<HTMLInputElement>) => void
 }
 
-export const FileDownload: FC<Props> = ({ text, rounded = "rounded", link, onSave, onDelete }) => {
-    return (
-        <div className={classes.field}>
-            {/* <p className={`${classes.label} ${classes[rounded || "rounded"]}`} onClick={onSave}>
+export const FileDownload: FC<Props> = ({ text, link, onDelete }) => {
+	return (
+		<Field>
+			{/* <p className={`${classes.label} ${classes[rounded || "rounded"]}`} onClick={onSave}>
                 <span className={classes.icon}>
                     <img src='/image/download-file.svg' alt='upload' />
                 </span>
                 {text}
             </p> */}
-            <a href={link} download={text} className={`${classes.label} ${classes[rounded]}`}>
-                <span className={classes.icon}>
-                    <img src='/image/download-file.svg' alt='upload' />
-                </span>
-                {text}
-            </a>
-            <p
-                className={`${classes.label} ${classes.danger} ${classes[rounded]}`}
-                onClick={onDelete}
-            >
-                <span className={classes.icon}>
-                    <img src='/image/delete-file.svg' alt='delete' />
-                </span>
-                Удалить
-            </p>
-        </div>
-    )
+			<Link href={link} download={text}>
+				<Icon>
+					<IconImage src='/image/download-file.svg' alt='upload' />
+				</Icon>
+				{text}
+			</Link>
+			<Danger onClick={onDelete}>
+				<Icon>
+					<IconImage src='/image/delete-file.svg' alt='delete' />
+				</Icon>
+				Удалить
+			</Danger>
+		</Field>
+	)
 }
