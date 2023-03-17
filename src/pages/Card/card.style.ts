@@ -19,7 +19,7 @@ type ContainerProps = {
 	open?: boolean
 }
 export const CardContainer = styled.div<ContainerProps>`
-	/* flex-grow: 1; */
+	flex-grow: 1;
 	padding: ${props => (props.open ? '10px 20px' : '0')};
 	border-radius: 12px;
 	background-color: var(--theme-bg-color);

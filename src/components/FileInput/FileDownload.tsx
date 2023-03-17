@@ -24,12 +24,14 @@ export const FileDownload: FC<Props> = ({ text, link, onDelete }) => {
 				</Icon>
 				{text}
 			</Link>
-			<Danger onClick={onDelete}>
-				<Icon>
-					<IconImage src='/image/delete-file.svg' alt='delete' />
-				</Icon>
-				Удалить
-			</Danger>
+			{onDelete && (
+				<Danger onClick={onDelete}>
+					<Icon>
+						<IconImage src='/image/delete-file.svg' alt='delete' />
+					</Icon>
+					Удалить
+				</Danger>
+			)}
 		</Field>
 	)
 }

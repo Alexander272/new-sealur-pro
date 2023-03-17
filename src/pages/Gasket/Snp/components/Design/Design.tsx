@@ -10,13 +10,13 @@ import { JumperSelect } from '@/components/Jumper/Jumper'
 import { Input } from '@/components/Input/input.style'
 import { FileDownload } from '@/components/FileInput/FileDownload'
 import { FileInput } from '@/components/FileInput/FileInput'
-import { IDrawing } from '@/types/drawing'
 
 export const Design = () => {
 	const main = useAppSelector(state => state.snp.main)
 	const design = useAppSelector(state => state.snp.design)
 	const mountings = useAppSelector(state => state.snp.mountings)
 	const drawing = useAppSelector(state => state.snp.drawing)
+	const hasDesignError = useAppSelector(state => state.snp.hasDesignError)
 
 	const dispatch = useAppDispatch()
 
@@ -58,8 +58,8 @@ export const Design = () => {
 		const files = event.target.files
 		if (!files) return
 
-		// const formData = new FormData()
-		// formData.append('drawing', files[0])
+		const formData = new FormData()
+		formData.append('drawing', files[0])
 		// formData.append('group', orderId)
 
 		// try {
@@ -100,7 +100,12 @@ export const Design = () => {
 				{design.jumper.hasJumper && (
 					<>
 						<JumperSelect value={design.jumper.code} onSelect={jumperSelectHandler} />
-						<Input value={design.jumper.width} onChange={jumperWidthHandler} size='small' />
+						<Input
+							value={design.jumper.width}
+							onChange={jumperWidthHandler}
+							placeholder='Ширина перемычки'
+							size='small'
+						/>
 					</>
 				)}
 			</Stack>
@@ -149,6 +154,12 @@ export const Design = () => {
 				<FileDownload text={drawing.origName} link={drawing.link} onDelete={deleteFile} />
 			) : (
 				<FileInput name='drawing' id='file' label={'Прикрепить чертеж'} onChange={uploadFile} />
+			)}
+
+			{hasDesignError && (
+				<Typography sx={{ marginTop: 1, color: 'var(--danger-color)', fontSize: '1.4rem' }}>
+					К заявке приложите файл с чертежом.
+				</Typography>
 			)}
 
 			{/* <div className={classes.message}>

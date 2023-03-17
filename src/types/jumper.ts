@@ -1,7 +1,8 @@
 export interface IJumper {
-	hasJumper: boolean
+	hasJumper?: boolean
 	code: string
 	width: string
+	hasDrawing?: boolean
 }
 
 export interface IMainJumper {

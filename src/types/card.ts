@@ -4,22 +4,19 @@ export type SnpType = 'Snp'
 export type PutgType = 'Putg'
 export type PutgmType = 'Putgm'
 
-//TODO возможно тут все таки надо добавить id (например date.new + count)
 export type PositionBase<Type, ExtraProps> = {
 	id: string
+	orderId: string
 	count: number
 	title: string
 	amount: string
-	type: Type
+	type?: Type
 } & ExtraProps
 
 export type PositionSnp = PositionBase<
 	SnpType,
 	{
-		main: IMainSnp
-		sizes: ISizeBlockSnp
-		materials: IMaterialBlockSnp
-		design: IDesignBlockSnp
+		snpData: { main: IMainSnp; size: ISizeBlockSnp; material: IMaterialBlockSnp; design: IDesignBlockSnp }
 	}
 >
 

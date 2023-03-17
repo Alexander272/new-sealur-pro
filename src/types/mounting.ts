@@ -4,6 +4,6 @@ export interface IMounting {
 }
 
 export interface IHasMounting {
-	hasMounting: boolean
+	hasMounting?: boolean
 	code: string
 }

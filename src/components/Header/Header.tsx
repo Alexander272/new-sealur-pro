@@ -1,5 +1,8 @@
+import { useAppDispatch } from '@/hooks/useStore'
+import { toggle } from '@/store/card'
+import { Tooltip } from '@mui/material'
 import { FC } from 'react'
-import { Content, Container, LogoLink, Logo } from './header.style'
+import { Content, Container, LogoLink, Logo, Icon, Nav } from './header.style'
 
 type Props = {}
 
@@ -13,6 +16,12 @@ export const Header: FC<Props> = () => {
 	// 	} catch (error) {}
 	// }
 
+	const dispatch = useAppDispatch()
+
+	const basketHandler = () => {
+		dispatch(toggle())
+	}
+
 	return (
 		<Container>
 			<Content>
@@ -21,6 +30,14 @@ export const Header: FC<Props> = () => {
 					<Logo width={340} height={100} loading='lazy' src='/logo.webp' alt='logo' />
 					{/* <span>Силур</span> */}
 				</LogoLink>
+
+				<Nav>
+					<Tooltip title='Заявка'>
+						<Icon onClick={basketHandler}>
+							<img src='/image/basket.svg' alt='Заявка' width='30' height='30' />
+						</Icon>
+					</Tooltip>
+				</Nav>
 
 				{/* {user && (
 					<div className={classes.nav}>

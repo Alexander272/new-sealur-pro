@@ -160,7 +160,7 @@ export interface ISizeBlockSnp {
 
 export interface IDesignBlockSnp {
 	jumper: IJumper
-	hasHole: boolean
+	hasHole?: boolean
 	mounting: IHasMounting
 }
 

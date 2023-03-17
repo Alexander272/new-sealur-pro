@@ -1,9 +1,11 @@
 import { Button, IconButton, Typography } from '@mui/material'
-import { FC, MouseEvent, useState } from 'react'
+import { FC, MouseEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 import { setSnp } from '@/store/gaskets/snp'
-import { deletePosition, toggle } from '@/store/card'
+import { deletePosition, setOrder, toggle } from '@/store/card'
+import { useGetOrderQuery } from '@/store/api'
+import { FileDownload } from '@/components/FileInput/FileDownload'
 
 type Props = {}
 
@@ -13,7 +15,15 @@ export const Card: FC<Props> = () => {
 	const positions = useAppSelector(state => state.card.positions)
 	const snpCardIndex = useAppSelector(state => state.snp.cardIndex)
 
+	const { data } = useGetOrderQuery(null)
+
 	const dispatch = useAppDispatch()
+
+	useEffect(() => {
+		if (data) {
+			dispatch(setOrder({ id: data.data.id, positions: data.data.positions || [] }))
+		}
+	}, [data])
 
 	const toggleHandler = () => {
 		dispatch(toggle())
@@ -33,14 +43,14 @@ export const Card: FC<Props> = () => {
 
 	const saveHandler = (index: number) => {
 		const position = positions[index]
-		if (position.type === 'Snp') {
+		if (!position.type || position.type === 'Snp') {
 			const snp = {
 				cardIndex: index,
-				main: position.main,
-				sizes: position.sizes,
-				materials: position.materials,
-				design: position.design,
 				amount: position.amount,
+				main: position.snpData.main,
+				sizes: position.snpData.size,
+				materials: position.snpData.material,
+				design: position.snpData.design,
 			}
 
 			dispatch(setSnp(snp))
@@ -104,7 +114,7 @@ export const Card: FC<Props> = () => {
 							{/* ➔ */}➜
 						</CircleButton>
 
-						{positions.length && (
+						{positions.length ? (
 							<Button
 								onClick={sendHandler}
 								variant='contained'
@@ -112,7 +122,7 @@ export const Card: FC<Props> = () => {
 							>
 								Отправить заявку
 							</Button>
-						)}
+						) : null}
 					</>
 				)}
 			</CardContainer>

@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ISnpDateResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
+import { IOrderResponse } from '@/types/order'
+import { Position } from '@/types/card'
 
 export const baseUrl = '/api/v1/sealur-pro/'
 
@@ -16,6 +18,7 @@ type SnpRequest = {
 export const api = createApi({
 	reducerPath: 'api',
 	baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
+	tagTypes: ['Api'],
 	endpoints: builder => ({
 		getStandardForSNP: builder.query<ISnpStandardResponse, null>({
 			query: () => `snp-standards`,
@@ -40,7 +43,26 @@ export const api = createApi({
 				]),
 			}),
 		}),
+		getOrder: builder.query<IOrderResponse, null>({
+			query: () => 'orders/current',
+			providesTags: [{ type: 'Api', id: 'orders/current' }],
+		}),
+
+		createPosition: builder.mutation<string, Position>({
+			query: position => ({
+				url: 'positions',
+				method: 'POST',
+				body: position,
+			}),
+			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
+		}),
 	}),
 })
 
-export const { useGetSnpDataQuery, useGetStandardForSNPQuery, useGetSnpQuery } = api
+export const {
+	useGetSnpDataQuery,
+	useGetStandardForSNPQuery,
+	useGetSnpQuery,
+	useGetOrderQuery,
+	useCreatePositionMutation,
+} = api

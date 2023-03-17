@@ -27,17 +27,17 @@ export default function Auth() {
 		}
 	}, [isAuth, navigate, from])
 
-	const getRefresh = useCallback(async () => {
-		const res = await refresh()
-		if (!res.error) dispatch(setAuth({ id: res.data.id, roleCode: res.data.roleCode }))
-	}, [])
+	// const getRefresh = useCallback(async () => {
+	// 	const res = await refresh()
+	// 	if (!res.error) dispatch(setAuth({ id: res.data.id, roleCode: res.data.roleCode }))
+	// }, [])
 
 	//TODO убрать лишние переходы при refresh
-	useLayoutEffect(() => {
-		if (!isAuth) {
-			getRefresh()
-		}
-	}, [isAuth])
+	// useLayoutEffect(() => {
+	// 	if (!isAuth) {
+	// 		getRefresh()
+	// 	}
+	// }, [isAuth])
 
 	const changeTabHandler = (value: boolean) => () => {
 		setIsSignUp(value)

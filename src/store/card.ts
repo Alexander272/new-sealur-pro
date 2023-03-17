@@ -15,7 +15,8 @@ const initialState: ICardState = {
 	// count: 0,
 	open: false,
 	orderId: '',
-	positions: JSON.parse(localStorage.getItem(localKey) || 'null') || [],
+	// positions: JSON.parse(localStorage.getItem(localKey) || 'null') || [],
+	positions: [],
 }
 
 export const cardSlice = createSlice({
@@ -28,16 +29,21 @@ export const cardSlice = createSlice({
 			} else state.open = !state.open
 		},
 
+		setOrder: (state, action: PayloadAction<{ id: string; positions: Position[] }>) => {
+			state.orderId = action.payload.id
+			state.positions = action.payload.positions
+		},
+
 		addPosition: (state, action: PayloadAction<Position>) => {
 			// state.count += 1
 			state.positions.push(action.payload)
 
-			localStorage.setItem(localKey, JSON.stringify(state.positions))
+			// localStorage.setItem(localKey, JSON.stringify(state.positions))
 		},
 		updatePosition: (state, action: PayloadAction<{ index: number; position: Position }>) => {
 			state.positions[action.payload.index] = action.payload.position
 
-			localStorage.setItem(localKey, JSON.stringify(state.positions))
+			// localStorage.setItem(localKey, JSON.stringify(state.positions))
 		},
 		deletePosition: (state, action: PayloadAction<string>) => {
 			state.positions = state.positions.filter(p => p.id != action.payload)
@@ -46,11 +52,11 @@ export const cardSlice = createSlice({
 				return p
 			})
 
-			localStorage.setItem(localKey, JSON.stringify(state.positions))
+			// localStorage.setItem(localKey, JSON.stringify(state.positions))
 		},
 	},
 })
 
-export const { toggle, addPosition, updatePosition, deletePosition } = cardSlice.actions
+export const { toggle, setOrder, addPosition, updatePosition, deletePosition } = cardSlice.actions
 
 export default cardSlice.reducer

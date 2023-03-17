@@ -55,6 +55,17 @@ export const BarLink = styled(Link)`
 	width: 32px;
 `
 
+export const Icon = styled.div`
+	margin-left: 20px;
+	height: 100%;
+	width: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	position: relative;
+`
+
 // .profile {
 //     margin-left: 20px;
 //     height: 100%;

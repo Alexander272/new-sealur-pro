@@ -6,6 +6,7 @@ import { ResultContainer } from '@/pages/Gasket/gasket.style'
 import { Position } from '@/types/card'
 import { addPosition, toggle, updatePosition } from '@/store/card'
 import { clearSnp, setAmount } from '@/store/gaskets/snp'
+import { useCreatePositionMutation } from '@/store/api'
 
 type Props = {}
 
@@ -27,27 +28,36 @@ export const Result: FC<Props> = () => {
 
 	const positions = useAppSelector(state => state.card.positions)
 	const cardIndex = useAppSelector(state => state.snp.cardIndex)
+	const orderId = useAppSelector(state => state.card.orderId)
 
 	const dispatch = useAppDispatch()
+
+	const [create] = useCreatePositionMutation()
 
 	const savePosition = () => {
 		const position: Position = {
 			id: Date.now().toString() + (positions.length + 1),
+			orderId: orderId,
 			count: positions.length + 1,
 			title: renderDesignation(),
 			amount: amount,
 			type: 'Snp',
-			main: main,
-			sizes: size,
-			materials: materials,
-			design: design,
+			snpData: {
+				main: main,
+				size: size,
+				material: materials,
+				design: design,
+			},
 		}
 
 		if (cardIndex !== undefined) {
 			position.count = cardIndex + 1
 			dispatch(updatePosition({ index: cardIndex, position: position }))
 			dispatch(clearSnp())
-		} else dispatch(addPosition(position))
+		} else {
+			create(position)
+			// dispatch(addPosition(position))
+		}
 		setOpen(true)
 	}
 
@@ -188,12 +198,13 @@ export const Result: FC<Props> = () => {
 			}
 
 			let thickness = size.h != 'another' ? size.h : size.another
+			thickness = (+thickness.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')
 
 			return `СНП-${main.snpTypeCode}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${designationMaterials}${main.snpStandard.standard.title}`
 		}
 		if (main.snpStandard?.standard.id === '4df3db32-401f-47d2-b5e7-c8e8d3cd00f1') {
 			let y = ''
-			if (!!materials.or && materials.or?.shortEn === 'CRS') {
+			if (!!materials.or && materials.or?.shortEn === 'C.S.') {
 				y = '-У'
 			}
 			if (!(conditionIr || conditionFr) && y) {
@@ -202,6 +213,9 @@ export const Result: FC<Props> = () => {
 
 			let temp = []
 			if (materials.filler.title != 'F.G.') temp.push(`наполнитель - ${materials.filler.anotherTitle}`)
+
+			if (size.h === 'another')
+				temp.push(`толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}`)
 
 			if (notStandardMaterial) {
 				if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
@@ -221,26 +235,34 @@ export const Result: FC<Props> = () => {
 			let fr = ''
 			let or = ''
 
+			let thickness = ''
+			if (size.h === 'another')
+				thickness = `(толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}) `
+
 			if (notStandardMaterial) {
-				ir = `${materials.ir?.shortEn}-`
+				ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
 				if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-				or = `-${materials.or?.shortEn}`
+				or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
 			}
 
-			return `СНП-${main.snpTypeCode}-${size.dn}"-${size.pn.mpa}#-${ir}${fr}${materials.filler.title}${or} ${designationDesign}${main.snpStandard.standard.title}`
+			return `СНП-${main.snpTypeCode}-${size.dn}"-${size.pn.mpa}#-${ir}${fr}${materials.filler.title}${or} ${thickness}${designationDesign}${main.snpStandard.standard.title}`
 		}
 		if (main.snpStandard?.standard.id === 'cc69c6a8-c3b9-48fe-afe2-cca53fdcf96e') {
 			let ir = ''
 			let fr = ''
 			let or = ''
 
+			let thickness = ''
+			if (size.h === 'another')
+				thickness = `(толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}) `
+
 			if (notStandardMaterial) {
-				ir = `${materials.ir?.shortEn}-`
+				ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
 				if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-				or = `-${materials.or?.shortEn}`
+				or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
 			}
 
-			return `СНП-${main.snpTypeCode}-${size.dn}-${size.pn.mpa}-${ir}${fr}${materials.filler.title}${or} ${designationDesign}${main.snpStandard.standard.title}`
+			return `СНП-${main.snpTypeCode}-${size.dn}-${size.pn.mpa}-${ir}${fr}${materials.filler.title}${or} ${thickness}${designationDesign}${main.snpStandard.standard.title}`
 		}
 		if (main.snpStandard?.standard.id === '954f10c3-81d9-44a1-b790-b412b010c9cc') {
 			let sizes = ''
@@ -248,11 +270,14 @@ export const Result: FC<Props> = () => {
 			sizes += `${size?.d3}x${size?.d2}`
 			if (size?.d1) sizes += 'x' + size.d1
 
+			let thickness = size.h != 'another' ? size.h : size.another
+			thickness = (+thickness.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')
+
 			if (notStandardMaterial) {
 				designationMaterials = `-${materials.ir?.code || 0}${materials.fr?.code || 0}${materials.or?.code || 0}`
 			}
 
-			return `СНП-${main.snpTypeCode}-${materials.filler.code}-${sizes}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}`
+			return `СНП-${main.snpTypeCode}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}`
 		}
 
 		return ''

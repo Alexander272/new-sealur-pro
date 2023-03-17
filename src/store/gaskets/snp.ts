@@ -41,7 +41,8 @@ export interface ISNPState {
 		thickness: boolean
 	}
 	designError: {
-		emptyDrawing: boolean
+		emptyDrawingHole: boolean
+		emptyDrawingJumper: boolean
 	}
 
 	drawing?: IDrawing
@@ -64,7 +65,8 @@ const initialState: ISNPState = {
 		thickness: false,
 	},
 	designError: {
-		emptyDrawing: false,
+		emptyDrawingHole: false,
+		emptyDrawingJumper: false,
 	},
 
 	main: {
@@ -99,6 +101,7 @@ const initialState: ISNPState = {
 			hasJumper: false,
 			code: 'A',
 			width: '',
+			hasDrawing: false,
 		},
 		hasHole: false,
 		mounting: {
@@ -255,9 +258,9 @@ export const snpSlice = createSlice({
 
 		setHasHole: (state, action: PayloadAction<boolean>) => {
 			state.design.hasHole = action.payload
-			state.designError.emptyDrawing = !state.drawing && action.payload
+			state.designError.emptyDrawingHole = !state.drawing && action.payload
 
-			state.hasDesignError = state.designError.emptyDrawing
+			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
 		setDesignJumper: (
 			state,
@@ -266,10 +269,13 @@ export const snpSlice = createSlice({
 			if (action.payload.hasJumper != undefined) state.design.jumper.hasJumper = action.payload.hasJumper
 			if (action.payload.code != undefined) state.design.jumper.code = action.payload.code
 			if (action.payload.width != undefined) state.design.jumper.width = action.payload.width
-			if (action.payload.hasDrawing != undefined)
-				state.designError.emptyDrawing = !state.drawing && action.payload.hasDrawing
+			if (action.payload.hasDrawing != undefined) {
+				state.design.jumper.hasDrawing = action.payload.hasDrawing
+			}
+			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
 
-			state.hasDesignError = state.designError.emptyDrawing
+			if (!state.design.jumper.hasJumper) state.designError.emptyDrawingJumper = false
+			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
 		setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
 			if (action.payload.hasMounting != undefined) state.design.mounting.hasMounting = action.payload.hasMounting
@@ -294,8 +300,17 @@ export const snpSlice = createSlice({
 			state.cardIndex = action.payload.cardIndex
 			state.main = action.payload.main
 			state.size = action.payload.sizes
+
 			state.material = action.payload.materials
-			state.design = action.payload.design
+
+			state.design.hasHole = action.payload.design.hasHole || false
+			state.design.jumper.hasJumper = action.payload.design.jumper.hasJumper || false
+			state.design.jumper.code = action.payload.design.jumper.code
+			state.design.jumper.width = action.payload.design.jumper.width
+			state.design.mounting.hasMounting = action.payload.design.mounting.hasMounting || false
+			state.design.mounting.code = action.payload.design.mounting.code
+			// state.design.
+
 			state.amount = action.payload.amount
 		},
 		clearSnp: state => {

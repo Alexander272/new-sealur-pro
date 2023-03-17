@@ -116,6 +116,8 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 
 		const newThickness: any = {
 			h: event.target.value,
+			s2: '',
+			s3: '',
 		}
 
 		if (event.target.value !== 'another') {
