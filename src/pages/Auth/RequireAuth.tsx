@@ -20,5 +20,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
 
 	if (!isAuth) return <Navigate to='/auth' state={{ from: location }} />
 
+	// if (role == 'manager') return <Navigate to='/manager/orders' />
+
 	return children
 }

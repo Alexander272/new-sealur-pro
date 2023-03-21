@@ -281,6 +281,15 @@ export const snpSlice = createSlice({
 			if (action.payload.hasMounting != undefined) state.design.mounting.hasMounting = action.payload.hasMounting
 			if (action.payload.code != undefined) state.design.mounting.code = action.payload.code
 		},
+		setDesignDrawing: (state, action: PayloadAction<IDrawing | null>) => {
+			if (action.payload) {
+				state.drawing = action.payload
+				state.design.drawing = action.payload.link
+			} else {
+				state.drawing = undefined
+				state.design.drawing = undefined
+			}
+		},
 
 		setAmount: (state, action: PayloadAction<string>) => {
 			state.amount = action.payload
@@ -338,6 +347,7 @@ export const {
 	setHasHole,
 	setDesignJumper,
 	setDesignMounting,
+	setDesignDrawing,
 	setAmount,
 	setSnp,
 	clearSnp,

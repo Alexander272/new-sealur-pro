@@ -1,7 +1,13 @@
 import { MenuItem, Select, SelectChangeEvent, Stack, Typography } from '@mui/material'
 import { ChangeEvent, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { clearMaterialAndDesign, setHasHole, setDesignJumper, setDesignMounting } from '@/store/gaskets/snp'
+import {
+	clearMaterialAndDesign,
+	setHasHole,
+	setDesignJumper,
+	setDesignMounting,
+	setDesignDrawing,
+} from '@/store/gaskets/snp'
 import { useGetSnpQuery } from '@/store/api'
 import { IMainJumper } from '@/types/jumper'
 import { AsideContainer, Image } from '@/pages/Gasket/gasket.style'
@@ -10,6 +16,7 @@ import { JumperSelect } from '@/components/Jumper/Jumper'
 import { Input } from '@/components/Input/input.style'
 import { FileDownload } from '@/components/FileInput/FileDownload'
 import { FileInput } from '@/components/FileInput/FileInput'
+import { CreateFile, DeleteFile } from '@/services/file'
 
 export const Design = () => {
 	const main = useAppSelector(state => state.snp.main)
@@ -17,6 +24,7 @@ export const Design = () => {
 	const mountings = useAppSelector(state => state.snp.mountings)
 	const drawing = useAppSelector(state => state.snp.drawing)
 	const hasDesignError = useAppSelector(state => state.snp.hasDesignError)
+	const orderId = useAppSelector(state => state.card.orderId)
 
 	const dispatch = useAppDispatch()
 
@@ -60,7 +68,14 @@ export const Design = () => {
 
 		const formData = new FormData()
 		formData.append('drawing', files[0])
-		// formData.append('group', orderId)
+		formData.append('group', orderId)
+
+		const res = await CreateFile('files/drawings/pro/', formData)
+		console.log(res)
+		if (res.data) {
+			dispatch(setDesignDrawing(res.data))
+		}
+		//TODO обработать ошибку
 
 		// try {
 		// 	const res: IDrawing = await FileService.create(formData, '/files/drawings/pro/')
@@ -75,6 +90,12 @@ export const Design = () => {
 	}
 
 	const deleteFile = async () => {
+		const res = await DeleteFile(`files/drawings/pro/${drawing?.group}/${drawing?.id}/${drawing?.origName}`)
+		if (!res.error) {
+			dispatch(setDesignDrawing(null))
+		}
+		//TODO обработать ошибку
+
 		// try {
 		// 	await FileService.delete(`/files/drawings/pro/${drawing?.group}/${drawing?.id}/${drawing?.origName}`)
 		// 	snp.setDrawing(null)

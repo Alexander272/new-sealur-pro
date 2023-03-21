@@ -13,7 +13,7 @@ export function useRefresh() {
 	const refreshUser = useCallback(async () => {
 		setLoading(true)
 		const res = await refresh()
-		if (!res.error) dispatch(setAuth({ id: res.data.id, roleCode: res.data.roleCode }))
+		if (!res.error) dispatch(setAuth({ id: res.data.data.id, roleCode: res.data.data.roleCode }))
 		setReady(true)
 		console.log('ready')
 		setLoading(false)

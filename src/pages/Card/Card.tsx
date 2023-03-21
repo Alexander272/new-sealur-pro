@@ -3,19 +3,22 @@ import { FC, MouseEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 import { setSnp } from '@/store/gaskets/snp'
-import { deletePosition, setOrder, toggle } from '@/store/card'
-import { useGetOrderQuery } from '@/store/api'
-import { FileDownload } from '@/components/FileInput/FileDownload'
+import { setOrder, toggle } from '@/store/card'
+import { useDeletePositionMutation, useGetOrderQuery, useSaveOrderMutation } from '@/store/api'
 
 type Props = {}
 
 export const Card: FC<Props> = () => {
 	// const [open, setOpen] = useState(false)
 	const open = useAppSelector(state => state.card.open)
+	const orderId = useAppSelector(state => state.card.orderId)
 	const positions = useAppSelector(state => state.card.positions)
 	const snpCardIndex = useAppSelector(state => state.snp.cardIndex)
 
 	const { data } = useGetOrderQuery(null)
+
+	const [deletePosition] = useDeletePositionMutation()
+	const [save] = useSaveOrderMutation()
 
 	const dispatch = useAppDispatch()
 
@@ -38,7 +41,8 @@ export const Card: FC<Props> = () => {
 	}
 
 	const deleteHandler = (id: string) => {
-		dispatch(deletePosition(id))
+		// dispatch(deletePosition(id))
+		deletePosition(id)
 	}
 
 	const saveHandler = (index: number) => {
@@ -58,7 +62,8 @@ export const Card: FC<Props> = () => {
 	}
 
 	const sendHandler = () => {
-		console.log(positions)
+		// console.log(positions)
+		save({ id: orderId, count: positions.length })
 	}
 
 	return (

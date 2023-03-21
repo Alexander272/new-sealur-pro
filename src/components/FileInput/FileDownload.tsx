@@ -1,4 +1,5 @@
-import { FC, MouseEvent } from 'react'
+import { ForwardRefComponent } from 'framer-motion'
+import { FC, forwardRef, MouseEvent } from 'react'
 import { Danger, Field, Icon, IconImage, Link } from './input.style'
 
 type Props = {
@@ -9,29 +10,31 @@ type Props = {
 	onDelete?: (event: MouseEvent<HTMLInputElement>) => void
 }
 
-export const FileDownload: FC<Props> = ({ text, link, onDelete }) => {
-	return (
-		<Field>
-			{/* <p className={`${classes.label} ${classes[rounded || "rounded"]}`} onClick={onSave}>
+export const FileDownload: ForwardRefComponent<HTMLAnchorElement, Props> = forwardRef(
+	({ text, link, onDelete }, ref) => {
+		return (
+			<Field>
+				{/* <p className={`${classes.label} ${classes[rounded || "rounded"]}`} onClick={onSave}>
                 <span className={classes.icon}>
                     <img src='/image/download-file.svg' alt='upload' />
                 </span>
                 {text}
             </p> */}
-			<Link href={link} download={text}>
-				<Icon>
-					<IconImage src='/image/download-file.svg' alt='upload' />
-				</Icon>
-				{text}
-			</Link>
-			{onDelete && (
-				<Danger onClick={onDelete}>
+				<Link ref={ref} href={link} download={text}>
 					<Icon>
-						<IconImage src='/image/delete-file.svg' alt='delete' />
+						<IconImage src='/image/download-file.svg' alt='download' />
 					</Icon>
-					Удалить
-				</Danger>
-			)}
-		</Field>
-	)
-}
+					{text}
+				</Link>
+				{onDelete && (
+					<Danger onClick={onDelete}>
+						<Icon>
+							<IconImage src='/image/delete-file.svg' alt='delete' />
+						</Icon>
+						Удалить
+					</Danger>
+				)}
+			</Field>
+		)
+	}
+)

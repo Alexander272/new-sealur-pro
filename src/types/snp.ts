@@ -162,6 +162,7 @@ export interface IDesignBlockSnp {
 	jumper: IJumper
 	hasHole?: boolean
 	mounting: IHasMounting
+	drawing?: string
 }
 
 export interface ISNP {

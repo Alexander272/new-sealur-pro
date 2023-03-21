@@ -7,3 +7,27 @@ export interface IOrderResponse {
 		positions?: Position[]
 	}
 }
+
+export interface IFullOrder {
+	id: string
+	number?: number
+	date?: string
+	countPosition?: number
+	positions?: Position[]
+}
+
+export interface IOrder {
+	id: string
+	count: number
+}
+
+export interface IManagerOrder {
+	id: string
+	date: string
+	countPosition: number
+	number: number
+	status: 'new' | 'work' | 'finish'
+	userId: string
+	company: string
+	managerId?: string
+}

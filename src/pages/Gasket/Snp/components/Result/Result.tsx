@@ -6,7 +6,7 @@ import { ResultContainer } from '@/pages/Gasket/gasket.style'
 import { Position } from '@/types/card'
 import { addPosition, toggle, updatePosition } from '@/store/card'
 import { clearSnp, setAmount } from '@/store/gaskets/snp'
-import { useCreatePositionMutation } from '@/store/api'
+import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api'
 
 type Props = {}
 
@@ -33,6 +33,7 @@ export const Result: FC<Props> = () => {
 	const dispatch = useAppDispatch()
 
 	const [create] = useCreatePositionMutation()
+	const [update] = useUpdatePositionMutation()
 
 	const savePosition = () => {
 		const position: Position = {
@@ -51,8 +52,10 @@ export const Result: FC<Props> = () => {
 		}
 
 		if (cardIndex !== undefined) {
+			position.id = positions[cardIndex].id
 			position.count = cardIndex + 1
-			dispatch(updatePosition({ index: cardIndex, position: position }))
+			// dispatch(updatePosition({ index: cardIndex, position: position }))
+			update(position)
 			dispatch(clearSnp())
 		} else {
 			create(position)
@@ -181,6 +184,7 @@ export const Result: FC<Props> = () => {
 			designationDesignParts.push(design.mounting.code)
 		}
 		if (design.hasHole) {
+			//TODO чертеж так же должен указываться если он прикреплен
 			designationDesignParts.push('черт.')
 		}
 		if (designationDesignParts.length) {

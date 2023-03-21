@@ -36,6 +36,18 @@ export const signUp = async (value: ISignUp) => {
 	}
 }
 
+export const signOut = async () => {
+	try {
+		const response = await fetch(url + 'sign-out', options)
+		const data = await response.json()
+
+		if (response.ok) return { error: null }
+		else return { error: data.message }
+	} catch (error: any) {
+		return { error: error }
+	}
+}
+
 export const refresh = async () => {
 	// options.body = JSON.stringify(value)
 	try {
