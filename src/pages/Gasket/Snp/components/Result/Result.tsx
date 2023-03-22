@@ -183,8 +183,7 @@ export const Result: FC<Props> = () => {
 		if (design.mounting.hasMounting) {
 			designationDesignParts.push(design.mounting.code)
 		}
-		if (design.hasHole) {
-			//TODO чертеж так же должен указываться если он прикреплен
+		if (design.hasHole || design.drawing) {
 			designationDesignParts.push('черт.')
 		}
 		if (designationDesignParts.length) {

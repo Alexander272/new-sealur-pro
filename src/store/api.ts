@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ISnpDateResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
-import { IFullOrder, IManagerOrder, IOrder, IOrderResponse } from '@/types/order'
+import { ICopyOrder, IFullOrder, IManagerOrder, IOrder, IOrderResponse } from '@/types/order'
 import { Position } from '@/types/card'
 import { IUser } from '@/types/user'
+import { ICopyPosition } from '@/types/position'
 
 export const baseUrl = '/api/v1/sealur-pro/'
 
@@ -66,7 +67,10 @@ export const api = createApi({
 				method: 'POST',
 				body: order,
 			}),
-			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
+			invalidatesTags: [
+				{ type: 'Api', id: 'orders/current' },
+				{ type: 'Api', id: 'orders/all' },
+			],
 		}),
 
 		createPosition: builder.mutation<string, Position>({
@@ -92,6 +96,23 @@ export const api = createApi({
 			}),
 			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
 		}),
+
+		copyPosition: builder.mutation<string, ICopyPosition>({
+			query: position => ({
+				url: `positions/${position.id}`,
+				method: 'POST',
+				body: position,
+			}),
+			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
+		}),
+		copyOrder: builder.mutation<string, ICopyOrder>({
+			query: order => ({
+				url: 'orders/copy',
+				method: 'POST',
+				body: order,
+			}),
+			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
+		}),
 	}),
 })
 
@@ -105,6 +126,8 @@ export const {
 	useCreatePositionMutation,
 	useUpdatePositionMutation,
 	useDeletePositionMutation,
+	useCopyPositionMutation,
+	useCopyOrderMutation,
 
 	useGetOpenQuery,
 	useGetFullOrderQuery,

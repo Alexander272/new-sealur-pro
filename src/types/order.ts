@@ -31,3 +31,9 @@ export interface IManagerOrder {
 	company: string
 	managerId?: string
 }
+
+export interface ICopyOrder {
+	targetId: string
+	fromId: string
+	count: number
+}

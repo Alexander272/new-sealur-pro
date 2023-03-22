@@ -146,7 +146,7 @@ export const snpSlice = createSlice({
 		},
 
 		// setHasError: (state, action: PayloadAction<boolean>) => {
-		// 	// TODO возможно стоит тут прописать все поля в которых могут быть ошибки
+		// 	// возможно стоит тут прописать все поля в которых могут быть ошибки
 		// 	// и назвать функцию checkErrors
 		// 	state.hasError = action.payload
 		// },
@@ -318,7 +318,19 @@ export const snpSlice = createSlice({
 			state.design.jumper.width = action.payload.design.jumper.width
 			state.design.mounting.hasMounting = action.payload.design.mounting.hasMounting || false
 			state.design.mounting.code = action.payload.design.mounting.code
-			// state.design.
+			state.design.drawing = action.payload.design.drawing
+
+			if (action.payload.design.drawing) {
+				const parts = action.payload.design.drawing.split('/')
+				const drawing: IDrawing = {
+					id: parts[parts.length - 2],
+					name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
+					origName: parts[parts.length - 1],
+					link: action.payload.design.drawing,
+					group: parts[parts.length - 3],
+				}
+				state.drawing = drawing
+			}
 
 			state.amount = action.payload.amount
 		},

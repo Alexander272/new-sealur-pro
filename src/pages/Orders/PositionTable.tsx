@@ -4,12 +4,12 @@ import { IFullOrder } from '@/types/order'
 
 type Props = {
 	order: IFullOrder
-	onCopy: (id: string) => void
+	onCopy: (id: string, orderId: string) => void
 }
 
 export const PositionTable: FC<Props> = ({ order, onCopy }) => {
 	const copyHandler = (id: string) => () => {
-		onCopy(id)
+		onCopy(id, order.id)
 	}
 
 	return (

@@ -26,4 +26,11 @@ export const OrderItem = styled.div`
 	position: relative;
 	display: flex;
 	flex-direction: column;
+
+	@media screen and (max-width: 940px) {
+		flex-basis: 47%;
+	}
+	@media screen and (max-width: 600px) {
+		flex-basis: 100%;
+	}
 `

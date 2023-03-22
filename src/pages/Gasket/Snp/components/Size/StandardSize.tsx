@@ -204,29 +204,29 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 				)}
 			</Select>
 
-			<Typography fontWeight='bold'>Толщина каркаса прокладки</Typography>
-			<Stack direction='row' spacing={1} alignItems='flex-start'>
-				<Select
-					value={size.h || 'another'}
-					onChange={thicknessHandler}
-					size='small'
-					sx={{ borderRadius: '12px', width: '100%' }}
-				>
-					{curSize?.sizes.map(s => {
-						if (s.pn.some(pn => pn.mpa == size.pn.mpa)) {
-							return s.h.map(h => (
-								<MenuItem key={h} value={h}>
-									{h}
-								</MenuItem>
-							))
-						} else {
-							return null
-						}
-					})}
-					<MenuItem value='another'>другая</MenuItem>
-				</Select>
+			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
+			{/* <Stack direction='row' spacing={1} alignItems='flex-start'> */}
+			<Select
+				value={size.h || 'another'}
+				onChange={thicknessHandler}
+				size='small'
+				sx={{ borderRadius: '12px', width: '100%' }}
+			>
+				{curSize?.sizes.map(s => {
+					if (s.pn.some(pn => pn.mpa == size.pn.mpa)) {
+						return s.h.map(h => (
+							<MenuItem key={h} value={h}>
+								{h}
+							</MenuItem>
+						))
+					} else {
+						return null
+					}
+				})}
+				{/* <MenuItem value='another'>другая</MenuItem> */}
+			</Select>
 
-				{size.h == 'another' || size.h == '' ? (
+			{/* {size.h == 'another' || size.h == '' ? (
 					<Input
 						value={size.another}
 						onChange={anotherThicknessHandler}
@@ -235,7 +235,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 						helperText={sizeErr.thickness && 'толщина должна быть больше 2,2 и меньше 10'}
 					/>
 				) : null}
-			</Stack>
+			</Stack> */}
 		</>
 	)
 }

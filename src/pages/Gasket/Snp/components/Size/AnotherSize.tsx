@@ -142,7 +142,7 @@ export const AnotherSize: FC<Props> = () => {
 				</>
 			)}
 
-			<Typography fontWeight='bold'>Толщина каркаса прокладки</Typography>
+			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
 			{/* <Input
 				value={size.h}
 				onChange={thicknessHandler}

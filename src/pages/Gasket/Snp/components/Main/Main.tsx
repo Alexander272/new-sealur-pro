@@ -126,7 +126,7 @@ export const Main: FC<Props> = () => {
 					</MenuItem>
 					{[...(data?.data.flangeTypes || [])].reverse().map(f => (
 						<MenuItem key={f.id} value={f.code}>
-							{f.code} {f.title} {f.description}
+							{f.title}
 						</MenuItem>
 					))}
 				</Select>
