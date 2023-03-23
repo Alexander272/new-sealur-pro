@@ -36,6 +36,18 @@ export const signUp = async (value: ISignUp) => {
 	}
 }
 
+export const confirm = async (code: string) => {
+	try {
+		const response = await fetch(`/api/v1/users/confirm/${code}`, options)
+		const data = await response.json()
+
+		if (response.ok) return { data: data, error: null }
+		else return { data: null, error: data.message }
+	} catch (error: any) {
+		return { data: null, error: error }
+	}
+}
+
 export const signOut = async () => {
 	try {
 		const response = await fetch(url + 'sign-out', options)

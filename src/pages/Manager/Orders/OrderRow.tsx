@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { stampToDate } from '@/services/date'
 import { IManagerOrder } from '@/types/order'
 import { Icon } from './order.style'
+import { useFinishOrderMutation } from '@/store/api'
 
 type Props = {
 	data: IManagerOrder
@@ -13,12 +14,18 @@ export const OrderRow: FC<Props> = ({ data }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const navigate = useNavigate()
 
+	const [finish, { error }] = useFinishOrderMutation()
+
 	const open = Boolean(anchorEl)
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget)
 	}
 	const handleClose = () => {
 		setAnchorEl(null)
+	}
+	const finishHandler = () => {
+		handleClose()
+		finish(data.id)
 	}
 
 	const selectHandler = (event: MouseEvent<HTMLTableRowElement>) => {
@@ -55,7 +62,8 @@ export const OrderRow: FC<Props> = ({ data }) => {
 					open={open}
 					onClose={handleClose}
 				>
-					<MenuItem selected={false} onClick={handleClose}>
+					{/* //TODO добавить кнопку для передачи заказа или клиента */}
+					<MenuItem selected={false} onClick={finishHandler}>
 						Выполнена
 					</MenuItem>
 				</Menu>

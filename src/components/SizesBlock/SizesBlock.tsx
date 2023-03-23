@@ -1,7 +1,7 @@
 import { FC } from 'react'
+import { Tooltip } from '@mui/material'
 import { ISizeBlockSnp } from '@/types/snp'
 import { Description, SizesProps, Size, Container, Question } from './sizes.style'
-import { Tooltip } from '@mui/material'
 
 type Position = {
 	frame: SizesProps
@@ -24,14 +24,14 @@ export const SizesBlock: FC<Props> = ({ sizes, hasD2, positions }) => {
 		<Container>
 			<Size top={positions.frame?.top} left={positions.frame?.left}>
 				{sizes.h === 'another' ? sizes.another : sizes.h}{' '}
-				<Tooltip title='толщина каркаса'>
+				<Tooltip title='толщина каркаса' arrow>
 					<Question>?</Question>
 				</Tooltip>
 			</Size>
 			{sizes.s2 && positions.ring?.top ? (
 				<Size top={positions.ring?.top} left={positions.ring?.left}>
 					{sizes.s2}{' '}
-					<Tooltip title='толщина ограничительного кольца'>
+					<Tooltip title='толщина ограничительного кольца' arrow>
 						<Question>?</Question>
 					</Tooltip>
 				</Size>
@@ -39,7 +39,7 @@ export const SizesBlock: FC<Props> = ({ sizes, hasD2, positions }) => {
 			{sizes.s3 && positions.twisted?.top ? (
 				<Size top={positions.twisted?.top} left={positions.twisted?.left}>
 					{sizes.s3}{' '}
-					<Tooltip title='толщина спирально-навитой части'>
+					<Tooltip title='толщина спирально-навитой части' arrow>
 						<Question>?</Question>
 					</Tooltip>
 				</Size>

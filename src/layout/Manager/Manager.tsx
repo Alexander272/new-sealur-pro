@@ -1,5 +1,7 @@
+import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Header } from '@/components/Header/Header'
+import { Loader } from '@/components/Loader/Loader'
 import { Wrapper } from './manager.style'
 
 export default function Main() {
@@ -7,7 +9,9 @@ export default function Main() {
 		<>
 			<Header />
 			<Wrapper>
-				<Outlet />
+				<Suspense fallback={<Loader />}>
+					<Outlet />
+				</Suspense>
 			</Wrapper>
 		</>
 	)

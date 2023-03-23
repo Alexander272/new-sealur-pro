@@ -1,5 +1,5 @@
-import { MenuItem, Select, SelectChangeEvent, Stack, Typography } from '@mui/material'
-import { ChangeEvent, useEffect } from 'react'
+import { Alert, MenuItem, Select, SelectChangeEvent, Snackbar, Stack, Typography } from '@mui/material'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import {
 	clearMaterialAndDesign,
@@ -19,6 +19,8 @@ import { FileInput } from '@/components/FileInput/FileInput'
 import { CreateFile, DeleteFile } from '@/services/file'
 
 export const Design = () => {
+	const [alert, setAlert] = useState<{ type: 'create' | 'delete'; open: boolean }>({ type: 'create', open: false })
+
 	const main = useAppSelector(state => state.snp.main)
 	const design = useAppSelector(state => state.snp.design)
 	const mountings = useAppSelector(state => state.snp.mountings)
@@ -71,22 +73,12 @@ export const Design = () => {
 		formData.append('group', orderId)
 
 		const res = await CreateFile('files/drawings/pro/', formData)
-		console.log(res)
 		if (res.data) {
 			dispatch(setDesignDrawing(res.data))
 		}
-		//TODO обработать ошибку
-
-		// try {
-		// 	const res: IDrawing = await FileService.create(formData, '/files/drawings/pro/')
-		// 	snp.setDrawing(res)
-		// 	if (orderId === '') {
-		// 		list.setOrderId(res.group)
-		// 	}
-		// } catch (error) {
-		// 	console.log(error)
-		// 	toast.error('Не удалось загрузить файл')
-		// }
+		if (res.error) {
+			setAlert({ type: 'create', open: true })
+		}
 	}
 
 	const deleteFile = async () => {
@@ -94,19 +86,32 @@ export const Design = () => {
 		if (!res.error) {
 			dispatch(setDesignDrawing(null))
 		}
-		//TODO обработать ошибку
+		if (res.error) {
+			setAlert({ type: 'create', open: true })
+		}
+	}
 
-		// try {
-		// 	await FileService.delete(`/files/drawings/pro/${drawing?.group}/${drawing?.id}/${drawing?.origName}`)
-		// 	snp.setDrawing(null)
-		// } catch (error) {
-		// 	console.log(error)
-		// 	toast.error('Не удалось удалить файл')
-		// }
+	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+		if (reason === 'clickaway') {
+			return
+		}
+		setAlert({ type: 'create', open: false })
 	}
 
 	return (
 		<AsideContainer>
+			<Snackbar
+				open={alert.open}
+				autoHideDuration={6000}
+				onClose={handleClose}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert onClose={handleClose} severity={'error'} sx={{ width: '100%' }}>
+					{alert.type == 'create' && 'Не удалось добавить чертеж'}
+					{alert.type == 'delete' && 'Не удалось удалить чертеж'}
+				</Alert>
+			</Snackbar>
+
 			<Typography fontWeight='bold'>Конструктивные элементы</Typography>
 			<Stack direction='row' spacing={2} marginBottom={1}>
 				<Checkbox
@@ -182,12 +187,6 @@ export const Design = () => {
 					К заявке приложите файл с чертежом.
 				</Typography>
 			)}
-
-			{/* <div className={classes.message}>
-				{!drawing && ((isJumper && !['A', 'M', 'J'].includes(jumper)) || isHole) ? (
-					<p className={classes.warn}>К заявке приложите файл с чертежом.</p>
-				) : null}
-			</div> */}
 		</AsideContainer>
 	)
 }

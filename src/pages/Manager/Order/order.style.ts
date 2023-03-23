@@ -7,6 +7,7 @@ export const Container = styled.div`
 	flex-grow: 1;
 	justify-content: center;
 	align-items: center;
+	flex-wrap: wrap;
 `
 
 export const Hidden = styled.div`
@@ -14,8 +15,21 @@ export const Hidden = styled.div`
 	height: 0;
 `
 
+export const Row = styled.div`
+	display: flex;
+	gap: 16px;
+	width: 100%;
+	max-width: 1720px;
+
+	@media screen and (max-width: 980px) {
+		flex-wrap: wrap;
+	}
+`
+
 export const OrderList = styled.div`
-	width: 800px;
+	/* max-width: 800px; */
+	width: 100%;
+	flex-shrink: 2;
 	padding: 20px 30px;
 	border-radius: 12px;
 	background-color: var(--theme-bg-color);
@@ -23,9 +37,15 @@ export const OrderList = styled.div`
 `
 
 export const UserContainer = styled.div`
-	width: 400px;
+	/* max-width: 400px; */
+	width: 100%;
+	flex-shrink: 3;
 	padding: 20px 30px;
 	border-radius: 12px;
 	background-color: var(--theme-bg-color);
 	box-shadow: 0px 0px 4px 0px #2626262b;
+
+	@media screen and (max-width: 980px) {
+		order: -1;
+	}
 `

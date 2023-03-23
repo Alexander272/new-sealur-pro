@@ -1,5 +1,16 @@
-import { Button, Dialog, DialogContent, DialogTitle, IconButton, Slide, Tooltip, Typography } from '@mui/material'
-import { forwardRef, ReactElement, useState } from 'react'
+import {
+	Alert,
+	Button,
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	IconButton,
+	Slide,
+	Snackbar,
+	Tooltip,
+	Typography,
+} from '@mui/material'
+import { forwardRef, ReactElement, useEffect, useState } from 'react'
 import { useCopyOrderMutation, useCopyPositionMutation, useGetAllOrdersQuery } from '@/store/api'
 import { stampToDate } from '@/services/date'
 import { PositionTable } from './PositionTable'
@@ -20,6 +31,11 @@ export default function Orders() {
 
 	// const [open, setOpen] = useState(false)
 	const [order, setOrder] = useState<IFullOrder | null>(null)
+	const [openAlert, setOpen] = useState(false)
+
+	useEffect(() => {
+		if (error || errorOrder) setOpen(true)
+	}, [error, errorOrder])
 
 	const handleClickOpen = (order: IFullOrder) => () => {
 		// setOpen(true)
@@ -38,7 +54,6 @@ export default function Orders() {
 		})
 	}
 
-	//TODO обработать ошибки
 	//TODO добавить окно для ввода количества
 	const copyHandler = (id: string, fromOrderId: string) => {
 		copyPosition({
@@ -50,8 +65,27 @@ export default function Orders() {
 		})
 	}
 
+	const alertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+		if (reason === 'clickaway') {
+			return
+		}
+		setOpen(false)
+	}
+
 	return (
 		<Container>
+			<Snackbar
+				open={openAlert}
+				autoHideDuration={6000}
+				onClose={alertClose}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert onClose={alertClose} severity={'error'} sx={{ width: '100%' }}>
+					{error && 'Не удалось добавить позицию'}
+					{errorOrder && 'Во время добавления позиций произошла ошибка'}
+				</Alert>
+			</Snackbar>
+
 			{data?.data.map(o => (
 				<OrderItem key={o.id}>
 					<Typography variant='h5' align='center'>

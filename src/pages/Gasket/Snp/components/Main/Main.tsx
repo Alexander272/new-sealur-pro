@@ -82,15 +82,49 @@ export const Main: FC<Props> = () => {
 		dispatch(setMainSnpType(type))
 		dispatch(setMainFlangeType({ code: event.target.value, title: flangeType.title }))
 	}
-	const typeHandler = (typeId: string) => {
-		const flangeType = data?.data.flangeTypes.find(f => f.types.some(t => t.id === typeId))
+	// const typeHandler = (typeId: string) => {
+	// 	const flangeType = data?.data.flangeTypes.find(f => f.types.some(t => t.id === typeId))
+	// 	if (!flangeType) return
+
+	// 	if (flangeType.code != main.flangeTypeCode)
+	// 		dispatch(setMainFlangeType({ code: flangeType.code, title: flangeType.title }))
+	// 	const type = flangeType.types.find(t => t.id === typeId)
+	// 	dispatch(setMainSnpType({ id: typeId, title: type!.title, code: type!.code }))
+	// }
+
+	const typeHandlerNew = (type: string) => {
+		let flangeType = data?.data.flangeTypes.find(
+			f => f.code == main.flangeTypeCode && f.types.some(t => t.title === type)
+		)
+		if (!flangeType) {
+			flangeType = data?.data.flangeTypes.find(f => f.types.some(t => t.title === type))
+		}
+
 		if (!flangeType) return
 
 		if (flangeType.code != main.flangeTypeCode)
 			dispatch(setMainFlangeType({ code: flangeType.code, title: flangeType.title }))
-		const type = flangeType.types.find(t => t.id === typeId)
-		dispatch(setMainSnpType({ id: typeId, title: type!.title, code: type!.code }))
+
+		const newType = flangeType.types.find(t => t.title === type)
+		dispatch(setMainSnpType({ id: newType!.id, title: type, code: newType!.code }))
 	}
+
+	const renderTypes = () => {
+		const set = new Set<string>()
+		data?.data.flangeTypes.forEach(f => {
+			f.types.forEach(t => set.add(t.title))
+		})
+
+		const types: string[] = []
+		set.forEach(t => types.push(t))
+
+		return types.map(t => (
+			<RadioItem key={t} value={t} active={t === main.snpTypeTitle}>
+				{t}
+			</RadioItem>
+		))
+	}
+	renderTypes()
 
 	return (
 		<MainContainer>
@@ -132,7 +166,7 @@ export const Main: FC<Props> = () => {
 				</Select>
 
 				<Typography fontWeight='bold'>Тип СНП</Typography>
-				<RadioGroup onChange={typeHandler}>
+				{/* <RadioGroup onChange={typeHandler}>
 					{data?.data.flangeTypes.map(f =>
 						f.types.map(t => (
 							<RadioItem key={t.id} value={t.id} active={t.id === main.snpTypeId}>
@@ -140,7 +174,8 @@ export const Main: FC<Props> = () => {
 							</RadioItem>
 						))
 					)}
-				</RadioGroup>
+				</RadioGroup> */}
+				<RadioGroup onChange={typeHandlerNew}>{renderTypes()}</RadioGroup>
 			</Column>
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>

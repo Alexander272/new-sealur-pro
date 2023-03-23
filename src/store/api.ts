@@ -54,13 +54,6 @@ export const api = createApi({
 			providesTags: [{ type: 'Api', id: 'orders/all' }],
 		}),
 
-		getOpen: builder.query<{ data: IManagerOrder[] }, null>({
-			query: () => `orders/open`,
-		}),
-		getFullOrder: builder.query<{ data: { user: IUser; order: IFullOrder } }, string>({
-			query: id => `orders/${id}`,
-		}),
-
 		saveOrder: builder.mutation<string, IOrder>({
 			query: order => ({
 				url: 'orders/save',
@@ -113,6 +106,24 @@ export const api = createApi({
 			}),
 			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
 		}),
+
+		// managers functions
+		getOpen: builder.query<{ data: IManagerOrder[] }, null>({
+			query: () => `orders/open`,
+			providesTags: [{ type: 'Api', id: 'orders/open' }],
+		}),
+		getFullOrder: builder.query<{ data: { user: IUser; order: IFullOrder } }, string>({
+			query: id => `orders/${id}`,
+		}),
+
+		finishOrder: builder.mutation<string, string>({
+			query: id => ({
+				url: 'orders/finish',
+				method: 'POST',
+				body: { orderId: id },
+			}),
+			invalidatesTags: [{ type: 'Api', id: 'orders/open' }],
+		}),
 	}),
 })
 
@@ -131,4 +142,5 @@ export const {
 
 	useGetOpenQuery,
 	useGetFullOrderQuery,
+	useFinishOrderMutation,
 } = api

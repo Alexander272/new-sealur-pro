@@ -6,6 +6,7 @@ import { useRefresh } from './hooks/refresh'
 import Main from '@/layout/Main/Main'
 import RequireAuth from './pages/Auth/RequireAuth'
 const Auth = lazy(() => import('@/pages/Auth/Auth'))
+const Confirm = lazy(() => import('@/pages/Auth/Confirm'))
 const ProGasket = lazy(() => import('@/pages/Gasket/Gasket'))
 const ProSnp = lazy(() => import('@/pages/Gasket/Snp/Snp'))
 const Orders = lazy(() => import('@/pages/Orders/Orders'))
@@ -24,6 +25,7 @@ export const AppRoutes = () => {
 			<Suspense fallback={<Loader />}>
 				<Routes>
 					<Route path='/auth' element={<Auth />} />
+					<Route path='/auth/confirm' element={<Confirm />} />
 					<Route
 						path='/'
 						element={

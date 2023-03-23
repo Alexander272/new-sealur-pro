@@ -17,6 +17,19 @@ const theme = createTheme({
 	typography: {
 		fontFamily: ['NunitoSans', 'Merriweather', 'sans-serif'].join(','),
 	},
+	components: {
+		MuiTooltip: {
+			styleOverrides: {
+				tooltip: {
+					fontSize: '1rem',
+					backgroundColor: '#000000de',
+				},
+				arrow: {
+					color: '#000000de',
+				},
+			},
+		},
+	},
 })
 
 export default theme

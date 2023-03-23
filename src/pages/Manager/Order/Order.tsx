@@ -1,9 +1,9 @@
 import { FileDownload } from '@/components/FileInput/FileDownload'
 import { useGetFullOrderQuery } from '@/store/api'
-import { Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { useEffect, useRef } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { Container, Hidden, OrderList, UserContainer } from './order.style'
+import { Container, OrderList, Row, UserContainer } from './order.style'
 
 export default function Order() {
 	const ref = useRef<HTMLAnchorElement | null>(null)
@@ -22,13 +22,8 @@ export default function Order() {
 
 	return (
 		<Container>
-			{/* {location.search == '?action=save' && (
-				<Hidden>
-					<a ref={ref} href={`/api/v1/sealur-pro/orders/${params.id}/заявка.zip`} download />
-				</Hidden>
-			)} */}
 			<Typography variant='h5'>Заявка №{order?.number}</Typography>
-			<Stack direction={'row'} spacing={2}>
+			<Row>
 				<OrderList>
 					<TableContainer sx={{ maxHeight: 470 }}>
 						<Table stickyHeader>
@@ -89,40 +84,8 @@ export default function Order() {
 							</TableRow>
 						</TableBody>
 					</Table>
-					{/* <Stack direction='row' marginBottom={1}>
-						<Typography>Компания</Typography>
-						<Typography>{user?.company}</Typography>
-					</Stack>
-					<Stack direction='row' marginBottom={1}>
-						<Typography>Юр. адрес</Typography>
-						<Typography>{user?.address}</Typography>
-					</Stack>
-					<Stack direction='row' marginBottom={1}>
-						<Typography>ИНН</Typography>
-						<Typography>{user?.inn}</Typography>
-					</Stack>
-					<Stack direction='row' marginBottom={1}>
-						<Typography>КПП</Typography>
-						<Typography>{user?.kpp}</Typography>
-					</Stack>
-					<Stack direction='row' marginBottom={1}>
-						<Typography>ФИО</Typography>
-						<Typography>{user?.name}</Typography>
-					</Stack>
-					<Stack direction='row' marginBottom={1}>
-						<Typography>Должность</Typography>
-						<Typography>{user?.position}</Typography>
-					</Stack>
-					<Stack direction='row' marginBottom={1}>
-						<Typography>Email</Typography>
-						<Typography>{user?.email}</Typography>
-					</Stack>
-					<Stack direction='row'>
-						<Typography>Телефон</Typography>
-						<Typography>{user?.phone}</Typography>
-					</Stack> */}
 				</UserContainer>
-			</Stack>
+			</Row>
 			<FileDownload ref={ref} text='Скачать' link={`/api/v1/sealur-pro/orders/${params.id}/заявка.zip`} />
 			{/* //TODO Order */}
 		</Container>

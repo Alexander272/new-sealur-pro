@@ -9,6 +9,10 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
 	// const roles = state.roles
 	const location = useLocation()
 
+	if (location.search) {
+		localStorage.setItem('managerId', location.search.split('=')[1])
+	}
+
 	// if (location.pathname.includes("pro") && isAuth) {
 	//     const isAccess = roles.some(r => r.service === "pro")
 	//     if (!isAccess) return <Navigate to='/' state={{ from: location }} />

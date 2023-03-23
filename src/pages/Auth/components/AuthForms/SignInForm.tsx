@@ -1,5 +1,5 @@
-import { FC, FormEvent } from 'react'
-import { Button, FormControl, InputBase } from '@mui/material'
+import { FC, FormEvent, useState } from 'react'
+import { Alert, Button, FormControl, InputBase, Snackbar } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -29,6 +29,8 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 	// const signInHandler: SubmitHandler<ISignIn> = data => {
 	// 	user.signIn(data)
 	// }
+	const [open, setOpen] = useState(false)
+	const [error, setError] = useState<string>('')
 
 	const dispatch = useAppDispatch()
 
@@ -48,11 +50,24 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 		const res = await signIn(value)
 		if (res.error) {
 			console.log(res.error)
-			//TODO показать ошибку
-			// handleClick('error', res.error)
+			// показать ошибку
+			handleClick(res.error)
 		} else {
 			dispatch(setUser(res.data.data))
 		}
+	}
+
+	const handleClick = (message: string) => {
+		setOpen(true)
+		setError(message)
+	}
+
+	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+		if (reason === 'clickaway') {
+			return
+		}
+
+		setOpen(false)
 	}
 
 	return (
@@ -62,6 +77,16 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 			// onSubmit={handleSubmit(signInHandler)}
 			onSubmit={signInHandler}
 		>
+			<Snackbar
+				open={open}
+				autoHideDuration={6000}
+				onClose={handleClose}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert onClose={handleClose} severity='error' sx={{ width: '100%' }}>
+					{error}
+				</Alert>
+			</Snackbar>
 			<Title open={isOpen}>Вход</Title>
 			<FormContent>
 				<FormControl sx={{ marginTop: 1, marginBottom: 2 }}>

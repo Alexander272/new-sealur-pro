@@ -15,4 +15,5 @@ export interface ISignUp {
 	phone: string
 	email: string
 	password: string
+	managerId: string
 }

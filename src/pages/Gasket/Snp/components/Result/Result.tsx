@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState } from 'react'
+import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/material'
 import { Input } from '@/components/Input/input.style'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
@@ -11,7 +11,7 @@ import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/ap
 type Props = {}
 
 export const Result: FC<Props> = () => {
-	const [open, setOpen] = useState(false)
+	const [alert, setAlert] = useState<{ type: 'error' | 'success'; open: boolean }>({ type: 'success', open: false })
 
 	const main = useAppSelector(state => state.snp.main)
 	const size = useAppSelector(state => state.snp.size)
@@ -30,10 +30,16 @@ export const Result: FC<Props> = () => {
 	const cardIndex = useAppSelector(state => state.snp.cardIndex)
 	const orderId = useAppSelector(state => state.card.orderId)
 
+	const role = useAppSelector(state => state.user.roleCode)
+
 	const dispatch = useAppDispatch()
 
-	const [create] = useCreatePositionMutation()
-	const [update] = useUpdatePositionMutation()
+	const [create, { error: createError }] = useCreatePositionMutation()
+	const [update, { error: updateError }] = useUpdatePositionMutation()
+
+	useEffect(() => {
+		if (updateError || createError) setAlert({ type: 'error', open: true })
+	}, [createError, updateError])
 
 	const savePosition = () => {
 		const position: Position = {
@@ -61,7 +67,7 @@ export const Result: FC<Props> = () => {
 			create(position)
 			// dispatch(addPosition(position))
 		}
-		setOpen(true)
+		setAlert({ type: 'success', open: true })
 	}
 
 	const amountHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -74,11 +80,11 @@ export const Result: FC<Props> = () => {
 	}
 
 	const closeHandler = () => {
-		setOpen(false)
+		setAlert({ type: 'success', open: false })
 	}
 	const openCardHandler = () => {
 		dispatch(toggle({ open: true }))
-		setOpen(false)
+		setAlert({ type: 'success', open: false })
 	}
 
 	const renderDescription = () => {
@@ -311,33 +317,48 @@ export const Result: FC<Props> = () => {
 					<Input value={amount} onChange={amountHandler} size='small' />
 				</Stack>
 
-				<Button
-					disabled={!amount || hasSizeError || hasDesignError}
-					onClick={savePosition}
-					variant='contained'
-					sx={{ borderRadius: '12px', padding: '6px 20px' }}
-				>
-					{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
-				</Button>
+				{role != 'manager' && (
+					<Button
+						disabled={!amount || hasSizeError || hasDesignError}
+						onClick={savePosition}
+						variant='contained'
+						sx={{ borderRadius: '12px', padding: '6px 20px' }}
+					>
+						{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
+					</Button>
+				)}
 			</Stack>
 
 			<Snackbar
-				open={open}
-				// autoHideDuration={3000}
+				open={alert.open}
+				// autoHideDuration={6000}
 				onClose={closeHandler}
 				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
 			>
 				<Alert
 					onClose={closeHandler}
-					severity='success'
+					severity={alert.type}
 					action={
-						<IconButton color='inherit' size='small' sx={{ lineHeight: '18px' }} onClick={openCardHandler}>
-							➜
-						</IconButton>
+						alert.type == 'success' ? (
+							<IconButton
+								color='inherit'
+								size='small'
+								sx={{ lineHeight: '18px' }}
+								onClick={openCardHandler}
+							>
+								➜
+							</IconButton>
+						) : (
+							<IconButton color='inherit' size='small' sx={{ lineHeight: '18px' }} onClick={closeHandler}>
+								&times;
+							</IconButton>
+						)
 					}
 					sx={{ width: '100%' }}
 				>
-					Позиция {cardIndex !== undefined ? 'изменена' : 'добавлена'}
+					{createError && 'Не удалось добавить позицию'}
+					{updateError && 'Не удалось обновить позицию'}
+					{alert.type == 'success' && <>Позиция {cardIndex !== undefined ? 'изменена' : 'добавлена'}</>}
 				</Alert>
 			</Snackbar>
 		</ResultContainer>

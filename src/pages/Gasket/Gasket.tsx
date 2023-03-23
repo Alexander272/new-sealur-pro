@@ -1,6 +1,8 @@
 // import { useAppSelector } from '@/hooks/useStore'
 // import { useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Suspense } from 'react'
+import { Outlet } from 'react-router-dom'
+import { Loader } from '@/components/Loader/Loader'
 import { Container, Content } from './gasket.style'
 
 export default function Gasket() {
@@ -15,7 +17,9 @@ export default function Gasket() {
 		<Container>
 			{/* //TODO табы с переключением типа прокладки */}
 			{/* <Content> */}
-			<Outlet />
+			<Suspense fallback={<Loader />}>
+				<Outlet />
+			</Suspense>
 			{/* </Content> */}
 		</Container>
 	)

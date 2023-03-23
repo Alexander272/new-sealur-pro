@@ -1,4 +1,4 @@
-import { Button, IconButton, Typography } from '@mui/material'
+import { Alert, Button, IconButton, Snackbar, Typography } from '@mui/material'
 import { FC, MouseEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
@@ -9,16 +9,19 @@ import { useDeletePositionMutation, useGetOrderQuery, useSaveOrderMutation } fro
 type Props = {}
 
 export const Card: FC<Props> = () => {
-	// const [open, setOpen] = useState(false)
+	const [alert, setAlert] = useState<{ type: 'success' | 'error'; open: boolean }>({ type: 'success', open: false })
+
 	const open = useAppSelector(state => state.card.open)
 	const orderId = useAppSelector(state => state.card.orderId)
 	const positions = useAppSelector(state => state.card.positions)
 	const snpCardIndex = useAppSelector(state => state.snp.cardIndex)
 
-	const { data } = useGetOrderQuery(null)
+	const role = useAppSelector(state => state.user.roleCode)
 
-	const [deletePosition] = useDeletePositionMutation()
-	const [save] = useSaveOrderMutation()
+	const { data } = useGetOrderQuery(null, { skip: role == 'manager' })
+
+	const [deletePosition, { error: delError }] = useDeletePositionMutation()
+	const [save, { error }] = useSaveOrderMutation()
 
 	const dispatch = useAppDispatch()
 
@@ -27,6 +30,10 @@ export const Card: FC<Props> = () => {
 			dispatch(setOrder({ id: data.data.id, positions: data.data.positions || [] }))
 		}
 	}, [data])
+
+	useEffect(() => {
+		if (error || delError) setAlert({ type: 'error', open: true })
+	}, [error, delError])
 
 	const toggleHandler = () => {
 		dispatch(toggle())
@@ -41,7 +48,6 @@ export const Card: FC<Props> = () => {
 	}
 
 	const deleteHandler = (id: string) => {
-		// dispatch(deletePosition(id))
 		deletePosition(id)
 	}
 
@@ -62,12 +68,32 @@ export const Card: FC<Props> = () => {
 	}
 
 	const sendHandler = () => {
-		// console.log(positions)
 		save({ id: orderId, count: positions.length })
+		setAlert({ type: 'success', open: true })
+	}
+
+	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+		if (reason === 'clickaway') {
+			return
+		}
+		setAlert({ type: 'success', open: false })
 	}
 
 	return (
 		<Container open={open}>
+			<Snackbar
+				open={alert.open}
+				autoHideDuration={6000}
+				onClose={handleClose}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert onClose={handleClose} severity={alert.type} sx={{ width: '100%' }}>
+					{error && 'Не удалось отправить заявку'}
+					{delError && 'Не удалось удалить позицию'}
+					{alert.type == 'success' && 'Заявка отправлена. Ожидайте ответа менеджера'}
+				</Alert>
+			</Snackbar>
+
 			<CardContainer open={open}>
 				{open && (
 					<>

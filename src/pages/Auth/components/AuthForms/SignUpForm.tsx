@@ -74,20 +74,15 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			email: email.value,
 			phone: phone.value,
 			password: password.value,
+			managerId: localStorage.getItem('managerId') || '',
 		}
 
 		const res = await signUp(user)
 		if (res.error) {
 			console.log(res.error)
-			//TODO показать ошибку
 			handleClick('error', res.error)
 		} else {
-			console.log('sended')
-			//TODO
-			handleClick('success', 'TODO')
-			//TODO вывести сообщение о необходимости подтверждения почты
-			// для подтверждения генерировать код и записывать его в редис на 30 минут
-			// при подтверждении забирать код и id пользователя из редиса
+			handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
 		}
 	}
 
@@ -134,7 +129,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 					/>
 				</FormControl>
 
-				{/* //TODO похоже это лишнее
+				{/* // похоже это лишнее
 				<FormControl sx={{ marginBottom: 2 }}>
 					<Input
 						name='city'
@@ -221,7 +216,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						name='phone'
 						value={phone.value}
 						onChange={phone.onChange}
-						placeholder='Контактный телефон'
+						placeholder='Телефон (+7 (123) 123-45-67 (доб.123))'
 						size='small'
 						error={!phone.valid}
 					/>

@@ -1,7 +1,5 @@
-import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { refresh } from '@/services/auth'
-import { setAuth } from '@/store/user'
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useAppSelector } from '@/hooks/useStore'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Container, Wrapper } from './auth.style'
 import { SignIn } from './components/AuthForms/SignInForm'
@@ -19,7 +17,7 @@ export default function Auth() {
 	const from: string = (location.state as any)?.from?.pathname || '/'
 
 	// const { user } = useDispatch<Dispatch>()
-	const dispatch = useAppDispatch()
+	// const dispatch = useAppDispatch()
 
 	useEffect(() => {
 		if (isAuth) {
@@ -32,7 +30,6 @@ export default function Auth() {
 	// 	if (!res.error) dispatch(setAuth({ id: res.data.id, roleCode: res.data.roleCode }))
 	// }, [])
 
-	//TODO убрать лишние переходы при refresh
 	// useLayoutEffect(() => {
 	// 	if (!isAuth) {
 	// 		getRefresh()
