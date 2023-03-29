@@ -3,12 +3,14 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import {
 	IDesignBlockSnp,
 	IFiller,
+	IFillerNew,
 	IMainSnp,
 	IMaterialBlockSnp,
 	ISizeBlockSnp,
 	ISnp,
 	ISNP,
 	ISNPMaterial,
+	ISNPType,
 	IStandardForSNP,
 	OpenMaterial,
 } from '@/types/snp'
@@ -18,7 +20,7 @@ import { IMounting } from '@/types/mounting'
 import { IDrawing } from '@/types/drawing'
 
 export interface ISNPState {
-	fillers: IFiller[]
+	fillers: IFillerNew[]
 	mountings: IMounting[]
 	materialsIr?: ISNPMaterial
 	materialsFr?: ISNPMaterial
@@ -39,6 +41,11 @@ export interface ISNPState {
 		d3Err: boolean
 		d2Err: boolean
 		thickness: boolean
+		emptySize: boolean
+		emptyD4: boolean
+		emptyD3: boolean
+		emptyD2: boolean
+		emptyD1: boolean
 	}
 	designError: {
 		emptyDrawingHole: boolean
@@ -63,6 +70,11 @@ const initialState: ISNPState = {
 		d3Err: false,
 		d2Err: false,
 		thickness: false,
+		emptySize: false,
+		emptyD4: false,
+		emptyD3: false,
+		emptyD2: false,
+		emptyD1: false,
 	},
 	designError: {
 		emptyDrawingHole: false,
@@ -74,18 +86,19 @@ const initialState: ISNPState = {
 		snpTypeId: 'not_selected',
 		flangeTypeCode: 'not_selected',
 		flangeTypeTitle: '',
-		snpTypeTitle: 'Д',
-		snpTypeCode: '',
+		// snpTypeTitle: 'Д',
+		// snpTypeCode: '',
 	},
 	material: {
 		openFiller: false,
 		openIr: false,
 		openFr: false,
 		openOr: false,
-		filler: {} as IFiller,
+		filler: {} as IFillerNew,
 	},
 	size: {
 		dn: '',
+		dnMm: '',
 		d4: '',
 		d3: '',
 		d2: '',
@@ -116,7 +129,7 @@ export const snpSlice = createSlice({
 	name: 'snp',
 	initialState,
 	reducers: {
-		setFiller: (state, action: PayloadAction<IFiller[]>) => {
+		setFiller: (state, action: PayloadAction<IFillerNew[]>) => {
 			state.fillers = action.payload
 			state.material.filler = action.payload[0]
 		},
@@ -165,10 +178,34 @@ export const snpSlice = createSlice({
 			state.main.flangeTypeCode = action.payload.code
 			state.main.flangeTypeTitle = action.payload.title
 		},
-		setMainSnpType: (state, action: PayloadAction<{ id: string; title: string; code: string }>) => {
+		setMainSnpType: (state, action: PayloadAction<{ id: string; type: ISNPType }>) => {
 			state.main.snpTypeId = action.payload.id
-			state.main.snpTypeTitle = action.payload.title
-			state.main.snpTypeCode = action.payload.code
+			state.main.snpType = action.payload.type
+			// state.main.snpTypeTitle = action.payload.title
+			// state.main.snpTypeCode = action.payload.code
+
+			if (state.material.filler.disabledTypes?.includes(action.payload.id)) {
+				const filler = state.fillers.find(f => !f.disabledTypes?.includes(action.payload.id))
+				state.material.filler = filler!
+			}
+
+			// state.sizeError.emptyD4 = !state.size.d4
+			// state.sizeError.emptyD3 = !state.size.d3
+			// state.sizeError.emptyD2 = !state.size.d2
+			// state.sizeError.emptyD1 = !state.size.d1
+
+			const emptyD4 = (state.main.snpType?.hasD4 || false) && !state.size.d4
+			const emptyD3 = (state.main.snpType?.hasD3 || false) && !state.size.d3
+			const emptyD2 = (state.main.snpType?.hasD2 || false) && !state.size.d2
+			const emptyD1 = (state.main.snpType?.hasD1 || false) && !state.size.d1
+			state.sizeError.emptySize = emptyD4 || emptyD3 || emptyD2 || emptyD1
+
+			state.hasSizeError =
+				state.sizeError.thickness ||
+				state.sizeError.d4Err ||
+				state.sizeError.d3Err ||
+				state.sizeError.d2Err ||
+				state.sizeError.emptySize
 		},
 
 		setMaterialToggle: (state, action: PayloadAction<{ type: OpenMaterial; isOpen: boolean }>) => {
@@ -177,7 +214,7 @@ export const snpSlice = createSlice({
 			if (action.payload.type == 'fr') state.material.openFr = action.payload.isOpen
 			if (action.payload.type == 'or') state.material.openOr = action.payload.isOpen
 		},
-		setMaterialFiller: (state, action: PayloadAction<IFiller>) => {
+		setMaterialFiller: (state, action: PayloadAction<IFillerNew>) => {
 			state.material.filler = action.payload
 		},
 		setMaterial: (state, action: PayloadAction<{ type: OpenMaterial; material: IMaterial }>) => {
@@ -221,8 +258,23 @@ export const snpSlice = createSlice({
 			state.sizeError.d3Err = state.size.d3 != '' && action.payload.d2 != '' && +state.size.d3 <= +state.size.d2
 			state.sizeError.d2Err = state.size.d2 != '' && action.payload.d1 != '' && +state.size.d2 <= +state.size.d1
 
+			state.sizeError.emptyD4 = !state.size.d4
+			state.sizeError.emptyD3 = !state.size.d3
+			state.sizeError.emptyD2 = !state.size.d2
+			state.sizeError.emptyD1 = !state.size.d1
+
+			const emptyD4 = (state.main.snpType?.hasD4 || false) && state.sizeError.emptyD4
+			const emptyD3 = (state.main.snpType?.hasD3 || false) && state.sizeError.emptyD3
+			const emptyD2 = (state.main.snpType?.hasD2 || false) && state.sizeError.emptyD2
+			const emptyD1 = (state.main.snpType?.hasD1 || false) && state.sizeError.emptyD1
+			state.sizeError.emptySize = emptyD4 || emptyD3 || emptyD2 || emptyD1
+
 			state.hasSizeError =
-				state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
+				state.sizeError.thickness ||
+				state.sizeError.d4Err ||
+				state.sizeError.d3Err ||
+				state.sizeError.d2Err ||
+				state.sizeError.emptySize
 		},
 		setSizeThickness: (
 			state,

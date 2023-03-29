@@ -1,10 +1,9 @@
-import { ChangeEvent, FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { ISnpSize, PN } from '@/types/sizes'
+import { ISNPMainSize, ISnpSize, PN } from '@/types/sizes'
 import { setSize, setSizePn, setSizeThickness } from '@/store/gaskets/snp'
 import { ISizeBlockSnp } from '@/types/snp'
-import { Input } from '@/components/Input/input.style'
 
 type Props = {
 	sizes: ISnpSize[]
@@ -26,6 +25,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 
 			const size: ISizeBlockSnp = {
 				dn: s.dn,
+				dnMm: s.dnMm || '',
 				pn: s.sizes[0].pn[0],
 				d4: s.sizes[0].d4,
 				d3: s.sizes[0].d3,
@@ -51,6 +51,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 
 		const size: ISizeBlockSnp = {
 			dn: s.dn,
+			dnMm: s.dnMm || '',
 			pn: s.sizes[0].pn[0],
 			d4: s.sizes[0].d4,
 			d3: s.sizes[0].d3,
@@ -63,6 +64,33 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 		}
 
 		dispatch(setSize(size))
+		setCurSize(s)
+	}
+
+	const d2Handler = (event: SelectChangeEvent<string>) => {
+		const s = sizes.find(s =>
+			s.sizes.some(s => s.d2 === event.target.value && s.pn.some(pn => pn.mpa === size.pn.mpa))
+		)
+		if (!s) return
+
+		const ss = s.sizes.find(s => s.d2 === event.target.value && s.pn.some(pn => pn.mpa === size.pn.mpa))
+		if (!ss) return
+
+		const newSize: ISizeBlockSnp = {
+			dn: s.dn,
+			dnMm: s.dnMm || '',
+			pn: ss.pn[0],
+			d4: ss.d4,
+			d3: ss.d3,
+			d2: ss.d2,
+			d1: ss.d1,
+			h: ss.h[0],
+			s2: ss.s2[0],
+			s3: ss.s3[0],
+			another: '',
+		}
+
+		dispatch(setSize(newSize))
 		setCurSize(s)
 	}
 
@@ -130,19 +158,33 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 		dispatch(setSizeThickness(newThickness))
 	}
 
-	const anotherThicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		const regex = /^[0-9.,\b]+$/
-		const temp = event.target.value.replaceAll(',', '.')
+	// const anotherThicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
+	// 	const regex = /^[0-9.,\b]+$/
+	// 	const temp = event.target.value.replaceAll(',', '.')
 
-		if (isNaN(+temp)) return
+	// 	if (isNaN(+temp)) return
 
-		if (event.target.value === '' || regex.test(event.target.value)) {
-			let value: number | string = Math.round(+temp * 10) / 10
-			if (temp[temp.length - 1] == '.') value = temp
-			if (event.target.value === '') value = event.target.value
+	// 	if (event.target.value === '' || regex.test(event.target.value)) {
+	// 		let value: number | string = Math.round(+temp * 10) / 10
+	// 		if (temp[temp.length - 1] == '.') value = temp
+	// 		if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeThickness({ another: value.toString().replaceAll('.', ',') }))
-		}
+	// 		dispatch(setSizeThickness({ another: value.toString().replaceAll('.', ',') }))
+	// 	}
+	// }
+
+	const renderD2 = () => {
+		const d2: ISNPMainSize[] = []
+		sizes.forEach(s => {
+			const curSize = s.sizes.find(s => s.pn.some(pn => pn.mpa == size.pn.mpa))
+			if (curSize) d2.push(curSize)
+		})
+
+		return d2.map(f => (
+			<MenuItem key={f.d2} value={f.d2}>
+				{f.d2}
+			</MenuItem>
+		))
 	}
 
 	return (
@@ -159,12 +201,13 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 				</MenuItem>
 				{sizes.map(f => (
 					<MenuItem key={f.id} value={f.dn}>
-						{f.dn}
+						{f.dn} {f.dnMm && `(${f.dnMm})`}
 					</MenuItem>
 				))}
 			</Select>
 
-			{main.snpStandard?.hasD2 && (
+			{/* // тут косяк */}
+			{/* {main.snpStandard?.hasD2 && (
 				<>
 					<Typography fontWeight='bold'>D2</Typography>
 					<Select
@@ -181,6 +224,22 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 								{f.d2}
 							</MenuItem>
 						))}
+					</Select>
+				</>
+			)} */}
+			{main.snpStandard?.hasD2 && (
+				<>
+					<Typography fontWeight='bold'>D2</Typography>
+					<Select
+						value={size.d2 || 'not_selected'}
+						onChange={d2Handler}
+						size='small'
+						sx={{ borderRadius: '12px' }}
+					>
+						<MenuItem disabled value='not_selected'>
+							Выберите значение
+						</MenuItem>
+						{renderD2()}
 					</Select>
 				</>
 			)}

@@ -87,15 +87,16 @@ export const Result: FC<Props> = () => {
 		setAlert({ type: 'success', open: false })
 	}
 
+	//TODO костыль
 	const renderDescription = () => {
 		let rings
-		if (main.snpTypeTitle == 'Д')
+		if (main.snpType?.title == 'Д')
 			rings = `(с наружным ${materials.or?.title} и внутренним ${materials.ir?.title} ограничительными кольцами), с металлическим каркасом из ленты ${materials.fr?.title}`
-		if (main.snpTypeTitle == 'Г')
+		if (main.snpType?.title == 'Г')
 			rings = `(с наружным ограничительным кольцом ${materials.or?.title}), с металлическим каркасом из ленты ${materials.fr?.title}`
-		if (main.snpTypeTitle == 'В')
+		if (main.snpType?.title == 'В')
 			rings = `(с внутренним ограничительным кольцом ${materials.ir?.title}), с металлическим каркасом из ленты ${materials.fr?.title}`
-		if (main.snpTypeTitle == 'Б' || main.snpTypeTitle == 'А')
+		if (main.snpType?.title == 'Б' || main.snpType?.title == 'А')
 			rings = `(без ограничительных колец), с металлическим каркасом из ленты ${materials.fr?.title}`
 
 		let flange = main.snpStandard?.flangeStandard.code ? ` по ${main.snpStandard.flangeStandard.title}` : ''
@@ -120,11 +121,12 @@ export const Result: FC<Props> = () => {
 			jumper = `, с перемычкой типа ${jumper}${width}`
 		}
 
-		let res = `Спирально-навитая прокладка (СНП) по ${main.snpStandard?.standard.title} типа ${main.snpTypeTitle} ${rings} и наполнителем из ${materials.filler.designation}, для применения на фланце "${main.flangeTypeTitle}"${flange} с размерами ${sizes}, толщиной ${thickness} мм${mounting}${hole}${jumper}`
+		let res = `Спирально-навитая прокладка (СНП) по ${main.snpStandard?.standard.title} типа ${main.snpType?.title} ${rings} и наполнителем из ${materials.filler.designation}, для применения на фланце "${main.flangeTypeTitle}"${flange} с размерами ${sizes}, толщиной ${thickness} мм${mounting}${hole}${jumper}`
 
 		return res
 	}
 
+	//TODO костыль
 	const renderDesignation = () => {
 		// const data: any = {
 		// 	main,
@@ -203,17 +205,17 @@ export const Result: FC<Props> = () => {
 				if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
 				if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
 
-				designationMaterials = `(${temp.join(', ')}) `
+				designationMaterials = ` (${temp.join(', ')}) `
 			}
 
 			let thickness = size.h != 'another' ? size.h : size.another
 			thickness = (+thickness.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')
 
-			return `СНП-${main.snpTypeCode}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${designationMaterials}${main.snpStandard.standard.title}`
+			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.id === '4df3db32-401f-47d2-b5e7-c8e8d3cd00f1') {
 			let y = ''
-			if (!!materials.or && materials.or?.shortEn === 'C.S.') {
+			if (!!materials.or && materials.or?.code === '5') {
 				y = '-У'
 			}
 			if (!(conditionIr || conditionFr) && y) {
@@ -221,7 +223,8 @@ export const Result: FC<Props> = () => {
 			}
 
 			let temp = []
-			if (materials.filler.title != 'F.G.') temp.push(`наполнитель - ${materials.filler.anotherTitle}`)
+			if (materials.filler.baseCode != '3' && materials.filler.baseCode != '4')
+				temp.push(`наполнитель - ${materials.filler.code}`)
 
 			if (size.h === 'another')
 				temp.push(`толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}`)
@@ -232,46 +235,88 @@ export const Result: FC<Props> = () => {
 				if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
 			}
 
-			if (temp.length) designationMaterials = `(${temp.join(', ')}) `
+			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
 
-			return `СНП-${main.snpTypeCode}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${designationMaterials}${main.snpStandard.standard.title}`
+			return `СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
-		if (
-			main.snpStandard?.standard.id === '9153785c-2fc5-4b33-a31d-254f42ed20b7' ||
-			main.snpStandard?.standard.id === '83eee092-833b-456f-8e8e-735a7a09b357'
-		) {
-			let ir = ''
-			let fr = ''
-			let or = ''
+		if (main.snpStandard?.standard.id === '9153785c-2fc5-4b33-a31d-254f42ed20b7') {
+			let ir = materials.ir?.shortEn ? `-IR ${materials.ir.shortEn}` : ''
+			let fr = `-${materials.fr?.shortEn}/`
+			let or = materials.or?.shortEn ? `-OR ${materials.or.shortEn}` : ''
 
-			let thickness = ''
-			if (size.h === 'another')
-				thickness = `(толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}) `
+			return `SWG-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or}`
+		}
+		// if (
+		// 	main.snpStandard?.standard.id === '9153785c-2fc5-4b33-a31d-254f42ed20b7'
+		// 	// ||
+		// 	// main.snpStandard?.standard.id === '83eee092-833b-456f-8e8e-735a7a09b357'
+		// ) {
+		// 	let ir = ''
+		// 	let fr = ''
+		// 	let or = ''
+
+		// 	let thickness = ''
+		// 	if (size.h === 'another')
+		// 		thickness = `(толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}) `
+
+		// 	if (notStandardMaterial) {
+		// 		ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
+		// 		if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
+		// 		or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
+		// 	}
+
+		// 	return `СНП-${main.snpType?.code}-${size.dn}"-${size.pn.mpa}#-${ir}${fr}${materials.filler.code}${or} ${thickness}${designationDesign}${main.snpStandard.standard.title}`
+		// }
+		if (main.snpStandard?.standard.id === '83eee092-833b-456f-8e8e-735a7a09b357') {
+			// let ir = ''
+			let fr = ''
+			// let or = ''
+
+			let ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
+			if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
+			let or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
+
+			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dnMm}-Class ${size.pn.mpa}-${ir}${fr}${materials.filler.code}${or}`
+		}
+		if (main.snpStandard?.standard.id === '0feb705e-6722-4fe8-acae-877587011136') {
+			let temp = []
 
 			if (notStandardMaterial) {
-				ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
-				if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-				or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
+				if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
+				if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
+				if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
 			}
 
-			return `СНП-${main.snpTypeCode}-${size.dn}"-${size.pn.mpa}#-${ir}${fr}${materials.filler.title}${or} ${thickness}${designationDesign}${main.snpStandard.standard.title}`
+			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
+
+			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn.mpa} ${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.id === 'cc69c6a8-c3b9-48fe-afe2-cca53fdcf96e') {
-			let ir = ''
+			// let ir = ''
+			// let fr = ''
+			// let or = ''
+
+			// let thickness = ''
+			// if (size.h === 'another')
+			// 	thickness = `(толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}) `
+
+			// if (notStandardMaterial) {
+			// 	ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
+			// 	if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
+			// 	or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
+			// }
+
+			// return `СНП-${main.snpType?.code}-${size.dn}-${size.pn.mpa}-${ir}${fr}${materials.filler.code}${or} ${thickness}${designationDesign}${main.snpStandard.standard.title}`
+
+			// let ir = ''
 			let fr = ''
-			let or = ''
+			// let or = ''
 
-			let thickness = ''
-			if (size.h === 'another')
-				thickness = `(толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}) `
+			let ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
+			if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
+			let or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
 
-			if (notStandardMaterial) {
-				ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
-				if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-				or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
-			}
-
-			return `СНП-${main.snpTypeCode}-${size.dn}-${size.pn.mpa}-${ir}${fr}${materials.filler.title}${or} ${thickness}${designationDesign}${main.snpStandard.standard.title}`
+			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dn}-PN ${size.pn.kg}-${ir}${fr}${materials.filler.code}${or}`
 		}
 		if (main.snpStandard?.standard.id === '954f10c3-81d9-44a1-b790-b412b010c9cc') {
 			let sizes = ''
@@ -286,7 +331,7 @@ export const Result: FC<Props> = () => {
 				designationMaterials = `-${materials.ir?.code || 0}${materials.fr?.code || 0}${materials.or?.code || 0}`
 			}
 
-			return `СНП-${main.snpTypeCode}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}`
+			return `СНП-${main.snpType?.code}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}`
 		}
 
 		return ''

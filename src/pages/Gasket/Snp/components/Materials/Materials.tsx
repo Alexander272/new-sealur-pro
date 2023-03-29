@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
-import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import React, { FC, useState } from 'react'
+import { Alert, MenuItem, Select, SelectChangeEvent, Snackbar, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { AsideContainer } from '@/pages/Gasket/gasket.style'
 import { OpenMaterial } from '@/types/snp'
@@ -9,6 +9,8 @@ import { useGetSnpQuery } from '@/store/api'
 type Props = {}
 
 export const Materials: FC<Props> = () => {
+	const [alert, setAlert] = useState<{ type: 'error' | 'success'; open: boolean }>({ type: 'success', open: false })
+
 	const fillers = useAppSelector(state => state.snp.fillers)
 	const materialIr = useAppSelector(state => state.snp.materialsIr)
 	const materialFr = useAppSelector(state => state.snp.materialsFr)
@@ -35,6 +37,13 @@ export const Materials: FC<Props> = () => {
 	const fillerHandler = (event: SelectChangeEvent<string>) => {
 		const filler = fillers.find(f => f.id === event.target.value)
 		if (!filler) return
+
+		if (filler.disabledTypes?.includes(main.snpTypeId)) {
+			console.log('disabled')
+			setAlert({ type: 'error', open: true })
+			return
+		}
+
 		dispatch(setMaterialFiller(filler))
 	}
 	const materialIrHandler = (event: SelectChangeEvent<string>) => {
@@ -54,21 +63,37 @@ export const Materials: FC<Props> = () => {
 		dispatch(setMaterial({ type: 'or', material }))
 	}
 
+	const closeAlertHandler = () => {
+		setAlert({ type: 'error', open: false })
+	}
+
 	return (
 		<AsideContainer>
+			<Snackbar
+				open={alert.open}
+				autoHideDuration={6000}
+				onClose={closeAlertHandler}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert onClose={closeAlertHandler} severity={alert.type} sx={{ width: '100%' }}>
+					Данный наполнитель не возможно выбрать с текущей конструкцией
+				</Alert>
+			</Snackbar>
+
 			<Typography fontWeight='bold'>Тип наполнителя</Typography>
 			<Select
 				value={material.filler?.id || 'not_selected'}
 				onChange={fillerHandler}
 				onOpen={openHandler('filler')}
 				onClose={closeHandler('filler')}
+				disabled={fillers.length == 1}
 				size='small'
 				sx={{ borderColor: 'var(--border-color)', borderWidth: '2px', borderRadius: '12px', width: '100%' }}
 			>
 				<MenuItem value='not_selected'>Выберите тип наполнителя</MenuItem>
 				{fillers?.map(f => (
-					<MenuItem key={f.id} value={f.id}>
-						{f.title} - {f.anotherTitle} ({f.description} {f.description && ', '} {f.temperature})
+					<MenuItem key={f.id} value={f.id} sx={{ color: 'black' }}>
+						{f.title} ({f.description} {f.description && ', '} {f.temperature})
 					</MenuItem>
 				))}
 			</Select>

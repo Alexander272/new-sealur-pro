@@ -10,14 +10,12 @@ import {
 	setMaterials,
 	setMounting,
 } from '@/store/gaskets/snp'
-import { useGetSnpDataQuery, useGetStandardForSNPQuery } from '@/store/api'
+import { useGetSnpDataNewQuery, useGetStandardForSNPQuery } from '@/store/api'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
+
 import FlangeA from '@/assets/snp/A.webp'
 import FlangeB from '@/assets/snp/B.webp'
 import FlangeV from '@/assets/snp/V.webp'
-import { Input } from '@/components/Input/input.style'
-
-type Props = {}
 
 const images = {
 	А: FlangeA,
@@ -25,12 +23,18 @@ const images = {
 	В: FlangeV,
 }
 
+type Props = {}
+
 export const Main: FC<Props> = () => {
 	const main = useAppSelector(state => state.snp.main)
 	const cardIndex = useAppSelector(state => state.snp.cardIndex)
 
 	const { data: standards } = useGetStandardForSNPQuery(null)
-	const { data } = useGetSnpDataQuery({
+	// const { data } = useGetSnpDataQuery({
+	// 	standardId: main.snpStandard?.standard.id || '',
+	// 	snpStandardId: main.snpStandardId,
+	// })
+	const { data } = useGetSnpDataNewQuery({
 		standardId: main.snpStandard?.standard.id || '',
 		snpStandardId: main.snpStandardId,
 	})
@@ -48,8 +52,9 @@ export const Main: FC<Props> = () => {
 				dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
 				const type = {
 					id: flange.types[flange.types.length - 1].id,
-					title: flange.types[flange.types.length - 1].title,
-					code: flange.types[flange.types.length - 1].code,
+					// title: flange.types[flange.types.length - 1].title,
+					// code: flange.types[flange.types.length - 1].code,
+					type: flange.types[flange.types.length - 1],
 				}
 				dispatch(setMainSnpType(type))
 			}
@@ -76,8 +81,9 @@ export const Main: FC<Props> = () => {
 		// flangeType.title
 		const type = {
 			id: flangeType.types[flangeType.types.length - 1].id,
-			title: flangeType.types[flangeType.types.length - 1].title,
-			code: flangeType.types[flangeType.types.length - 1].code,
+			// title: flangeType.types[flangeType.types.length - 1].title,
+			// code: flangeType.types[flangeType.types.length - 1].code,
+			type: flangeType.types[flangeType.types.length - 1],
 		}
 		dispatch(setMainSnpType(type))
 		dispatch(setMainFlangeType({ code: event.target.value, title: flangeType.title }))
@@ -106,7 +112,7 @@ export const Main: FC<Props> = () => {
 			dispatch(setMainFlangeType({ code: flangeType.code, title: flangeType.title }))
 
 		const newType = flangeType.types.find(t => t.title === type)
-		dispatch(setMainSnpType({ id: newType!.id, title: type, code: newType!.code }))
+		dispatch(setMainSnpType({ id: newType!.id, type: newType! }))
 	}
 
 	const renderTypes = () => {
@@ -119,7 +125,7 @@ export const Main: FC<Props> = () => {
 		set.forEach(t => types.push(t))
 
 		return types.map(t => (
-			<RadioItem key={t} value={t} active={t === main.snpTypeTitle}>
+			<RadioItem key={t} value={t} active={t === main.snpType?.title}>
 				{t}
 			</RadioItem>
 		))
@@ -160,7 +166,7 @@ export const Main: FC<Props> = () => {
 					</MenuItem>
 					{[...(data?.data.flangeTypes || [])].reverse().map(f => (
 						<MenuItem key={f.id} value={f.code}>
-							{f.title}
+							{f.title} {f.description && `(${f.description})`}
 						</MenuItem>
 					))}
 				</Select>

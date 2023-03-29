@@ -35,7 +35,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const name = useInput({ validation: 'empty' })
 	const position = useInput({ validation: 'empty' })
 	const email = useInput({ validation: 'email' })
-	const phone = useInput()
+	const phone = useInput({ replace: 'phone' })
 	const password = useInput()
 
 	const companyValue = useDebounce(company, 500)
@@ -152,7 +152,13 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						noOptionsText=''
 						onInputChange={companyHandler}
 						renderInput={params => (
-							<Input {...params} name='company' placeholder='ИНН или название организации' size='small' />
+							<Input
+								{...params}
+								name='company'
+								placeholder='ИНН или название организации'
+								size='small'
+								autoComplete='off'
+							/>
 						)}
 						renderOption={(props, option) => {
 							return (

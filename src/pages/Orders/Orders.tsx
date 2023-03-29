@@ -86,37 +86,43 @@ export default function Orders() {
 				</Alert>
 			</Snackbar>
 
-			{data?.data.map(o => (
-				<OrderItem key={o.id}>
-					<Typography variant='h5' align='center'>
-						Заявка №{o.number}
-					</Typography>
-					<Typography align='center' color={'GrayText'}>
-						от {stampToDate(+(o.date || 0))}
-					</Typography>
+			{data?.data ? (
+				data?.data.map(o => (
+					<OrderItem key={o.id}>
+						<Typography variant='h5' align='center'>
+							Заявка №{o.number}
+						</Typography>
+						<Typography align='center' color={'GrayText'}>
+							от {stampToDate(+(o.date || 0))}
+						</Typography>
 
-					<Tooltip title='Добавить все позиции в текущую заявку'>
-						<IconButton
-							onClick={allCopyHandler(o.id)}
-							color='primary'
-							sx={{ position: 'absolute', height: '36px', top: '6px', right: '29px' }}
+						<Tooltip title='Добавить все позиции в текущую заявку'>
+							<IconButton
+								onClick={allCopyHandler(o.id)}
+								color='primary'
+								sx={{ position: 'absolute', height: '36px', top: '6px', right: '29px' }}
+							>
+								»
+							</IconButton>
+						</Tooltip>
+
+						<PositionTable order={o} onCopy={copyHandler} />
+
+						<Button
+							onClick={handleClickOpen(o)}
+							fullWidth
+							endIcon={<>»</>}
+							sx={{ marginTop: 'auto', borderRadius: '16px' }}
 						>
-							»
-						</IconButton>
-					</Tooltip>
-
-					<PositionTable order={o} onCopy={copyHandler} />
-
-					<Button
-						onClick={handleClickOpen(o)}
-						fullWidth
-						endIcon={<>»</>}
-						sx={{ marginTop: 'auto', borderRadius: '16px' }}
-					>
-						Подробнее
-					</Button>
-				</OrderItem>
-			))}
+							Подробнее
+						</Button>
+					</OrderItem>
+				))
+			) : (
+				<Typography align='center' variant='h5'>
+					Ни одной заявки еще не создано
+				</Typography>
+			)}
 			<Dialog
 				open={Boolean(order)}
 				TransitionComponent={Transition}

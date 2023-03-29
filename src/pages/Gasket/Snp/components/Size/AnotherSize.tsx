@@ -28,21 +28,37 @@ export const AnotherSize: FC<Props> = () => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		if (!['Г', 'Д'].includes(main.snpTypeTitle)) dispatch(setSizeMain({ d4: '' }))
-		if (!['В', 'Д'].includes(main.snpTypeTitle)) dispatch(setSizeMain({ d1: '' }))
-	}, [main.snpTypeTitle])
+		// if (!['Г', 'Д'].includes(main.snpType?.title || '')) dispatch(setSizeMain({ d4: '' }))
+		// if (!['В', 'Д'].includes(main.snpType?.title || '')) dispatch(setSizeMain({ d1: '' }))
+		if (main.snpType) {
+			if (!main.snpType?.hasD4) dispatch(setSizeMain({ d4: '' }))
+			if (!main.snpType?.hasD1) dispatch(setSizeMain({ d1: '' }))
+		}
+	}, [main.snpType])
 
 	useEffect(() => {
 		dispatch(setSizeThickness({ h: '3,2', s2: '2,5', s3: '3,5' }))
 	}, [])
 
 	const sizeHandler = (name: 'd4' | 'd3' | 'd2' | 'd1') => (event: React.ChangeEvent<HTMLInputElement>) => {
-		const regex = /^[0-9\b]+$/
+		const regex = /^[0-9.,\b]+$/
+		const temp = event.target.value.replaceAll(',', '.')
+
+		if (isNaN(+temp)) return
+
 		if (event.target.value === '' || regex.test(event.target.value)) {
-			let value: number | string = +event.target.value
+			let value: number | string = Math.round(+temp * 10) / 10
+			if (temp[temp.length - 1] == '.') value = temp
 			if (event.target.value === '') value = event.target.value
-			dispatch(setSizeMain({ [name]: value.toString() }))
+
+			dispatch(setSizeMain({ [name]: value.toString().replaceAll('.', ',') }))
 		}
+
+		// if (event.target.value === '' || regex.test(event.target.value)) {
+		// 	let value: number | string = +event.target.value
+		// 	if (event.target.value === '') value = event.target.value
+		// 	dispatch(setSizeMain({ [name]: value.toString() }))
+		// }
 	}
 
 	const thicknessHandler = (event: SelectChangeEvent<string>) => {
@@ -92,7 +108,9 @@ export const AnotherSize: FC<Props> = () => {
 
 	return (
 		<>
-			{['Г', 'Д'].includes(main.snpTypeTitle) && (
+			{/* //TODO добавить возможность писать дробную часть */}
+			{/* //TODO возможно будет лучше сделать тут отдельный state для каждого поля и через debounce заносить в store */}
+			{/* {['Г', 'Д'].includes(main.snpType?.title || '') && (
 				<>
 					<Typography fontWeight='bold'>D4, мм</Typography>
 					<Input
@@ -105,31 +123,74 @@ export const AnotherSize: FC<Props> = () => {
 						// inputProps={{ min: 1 }}
 					/>
 				</>
+			)} */}
+			{main.snpType?.hasD4 && (
+				<>
+					<Typography fontWeight='bold'>D4, мм</Typography>
+					<Input
+						value={size.d4}
+						onChange={sizeHandler('d4')}
+						error={sizeErr.d4Err || sizeErr.emptyD4}
+						helperText={
+							(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
+						}
+						size='small'
+						// type='number'
+						// inputProps={{ min: 1 }}
+					/>
+				</>
 			)}
 
-			<Typography fontWeight='bold'>D3, мм</Typography>
-			<Input
-				value={size.d3}
-				onChange={sizeHandler('d3')}
-				error={sizeErr.d3Err}
-				helperText={sizeErr.d3Err && 'D3 должен быть больше, чем D2'}
-				size='small'
-				// type='number'
-				// inputProps={{ min: 1 }}
-			/>
+			{main.snpType?.hasD3 && (
+				<>
+					<Typography fontWeight='bold'>D3, мм</Typography>
+					<Input
+						value={size.d3}
+						onChange={sizeHandler('d3')}
+						error={sizeErr.d3Err || sizeErr.emptyD3}
+						helperText={
+							(sizeErr.d3Err && 'D3 должен быть больше, чем D2') || (sizeErr.emptyD3 && 'размер не задан')
+						}
+						size='small'
+						// type='number'
+						// inputProps={{ min: 1 }}
+					/>
+				</>
+			)}
 
-			<Typography fontWeight='bold'>D2, мм</Typography>
-			<Input
-				value={size.d2}
-				onChange={sizeHandler('d2')}
-				error={sizeErr.d2Err}
-				helperText={sizeErr.d2Err && 'D2 должен быть больше, чем D1'}
-				size='small'
-				// type='number'
-				// inputProps={{ min: 1 }}
-			/>
+			{main.snpType?.hasD2 && (
+				<>
+					<Typography fontWeight='bold'>D2, мм</Typography>
+					<Input
+						value={size.d2}
+						onChange={sizeHandler('d2')}
+						error={sizeErr.d2Err || sizeErr.emptyD2}
+						helperText={
+							(sizeErr.d2Err && 'D2 должен быть больше, чем D1') || (sizeErr.emptyD2 && 'размер не задан')
+						}
+						size='small'
+						// type='number'
+						// inputProps={{ min: 1 }}
+					/>
+				</>
+			)}
 
-			{['В', 'Д'].includes(main.snpTypeTitle) && (
+			{main.snpType?.hasD1 && (
+				<>
+					<Typography fontWeight='bold'>D1, мм</Typography>
+					<Input
+						value={size.d1}
+						onChange={sizeHandler('d1')}
+						error={sizeErr.emptyD1}
+						helperText={sizeErr.emptyD1 && 'размер не задан'}
+						size='small'
+						// type='number'
+						// inputProps={{ min: 1 }}
+					/>
+				</>
+			)}
+
+			{/* {['В', 'Д'].includes(main.snpType?.title || '') && (
 				<>
 					<Typography fontWeight='bold'>D1, мм</Typography>
 					<Input
@@ -140,7 +201,7 @@ export const AnotherSize: FC<Props> = () => {
 						// inputProps={{ min: 1 }}
 					/>
 				</>
-			)}
+			)} */}
 
 			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
 			{/* <Input

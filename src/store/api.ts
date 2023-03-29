@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ISnpDateResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
+import { ISnpDataNewResponse, ISnpDateResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
 import { ICopyOrder, IFullOrder, IManagerOrder, IOrder, IOrderResponse } from '@/types/order'
 import { Position } from '@/types/card'
 import { IUser } from '@/types/user'
@@ -28,6 +28,17 @@ export const api = createApi({
 		getSnpData: builder.query<ISnpDateResponse, SnpDataRequest>({
 			query: ({ standardId = '', snpStandardId = '' }) => ({
 				url: 'snp-new/data',
+				method: 'GET',
+				params: new URLSearchParams([
+					['standardId', standardId],
+					['snpStandardId', snpStandardId],
+				]),
+			}),
+		}),
+		//TODO удалить одну из версий
+		getSnpDataNew: builder.query<ISnpDataNewResponse, SnpDataRequest>({
+			query: ({ standardId = '', snpStandardId = '' }) => ({
+				url: 'snp-new/data-new',
 				method: 'GET',
 				params: new URLSearchParams([
 					['standardId', standardId],
@@ -129,6 +140,7 @@ export const api = createApi({
 
 export const {
 	useGetSnpDataQuery,
+	useGetSnpDataNewQuery,
 	useGetStandardForSNPQuery,
 	useGetSnpQuery,
 	useGetOrderQuery,

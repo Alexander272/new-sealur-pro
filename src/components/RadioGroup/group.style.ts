@@ -13,11 +13,12 @@ export const Group = styled.div`
 
 type ItemProps = {
 	active?: boolean
+	disabled?: boolean
 }
 
 export const Item = styled.div<ItemProps>`
 	border-radius: 40px;
-	color: ${props => (props.active ? '#fff' : 'var(--primary-color)')};
+	color: ${props => (props.active ? '#fff' : props.disabled ? 'GrayText' : 'var(--primary-color)')};
 	cursor: pointer;
 	font-weight: 500;
 	padding: 5px 14px;

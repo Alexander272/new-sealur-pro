@@ -11,6 +11,7 @@
 export interface ISnpSize {
 	id: string
 	dn: string
+	dnMm?: string
 	d2?: string
 	sizes: ISNPMainSize[]
 }

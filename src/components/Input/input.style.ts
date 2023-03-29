@@ -7,7 +7,7 @@ export const Input = styled(TextField)(({ theme }) => ({
 			borderRadius: '12px',
 		},
 		'&:hover fieldset': {
-			borderColor: 'var(--light-blue)',
+			// borderColor: 'var(--light-blue)',
 		},
 		'&.Mui-focused fieldset': {
 			borderColor: 'var(--primary-color)',

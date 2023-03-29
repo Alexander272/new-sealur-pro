@@ -11,7 +11,8 @@ import SnpB from '@/assets/snp/SNP-P-AB.webp'
 import SnpA from '@/assets/snp/SNP-P-AB.webp'
 import { useGetSnpQuery } from '@/store/api'
 import { SizesBlock } from '@/components/SizesBlock/SizesBlock'
-import { Backlight } from '@/components/Backlight/Backlight'
+import { BacklightSnp } from './components/Backlight/BacklightSnp'
+import { SizesBlockSnp } from './components/SizesBlock/SizesBlock'
 
 const images = {
 	Д: SnpD,
@@ -19,46 +20,6 @@ const images = {
 	В: SnpV,
 	Б: SnpB,
 	А: SnpA,
-}
-
-const positions = {
-	Д: {
-		frame: { top: '2%', left: '79%' },
-		ring: { top: '2%', left: '7%' },
-		twisted: { top: '2%', left: '19%' },
-		d4: { top: '78%' },
-		d3: { top: '65%' },
-		d2: { top: '52%' },
-		d1: { top: '39%' },
-	},
-	Г: {
-		frame: { top: '2%', left: '79%' },
-		ring: { top: '2%', left: '7%' },
-		twisted: { top: '2%', left: '19%' },
-		d4: { top: '78%' },
-		d3: { top: '65%' },
-		d2: { top: '52%' },
-	},
-	В: {
-		ring: { top: '2%', left: '79%' },
-		twisted: { top: '2%', left: '9%' },
-		frame: { top: '2%', left: '22%' },
-		d3: { top: '77%' },
-		d2: { top: '61%' },
-		d1: { top: '46%' },
-	},
-	Б: {
-		frame: { top: '2%', left: '83%' },
-		twisted: { top: '2%', left: '14%' },
-		d3: { top: '77%' },
-		d2: { top: '61%' },
-	},
-	А: {
-		frame: { top: '2%', left: '83%' },
-		twisted: { top: '2%', left: '14%' },
-		d3: { top: '77%' },
-		d2: { top: '61%' },
-	},
 }
 
 type Props = {}
@@ -84,14 +45,9 @@ export const Size: FC<Props> = () => {
 			<Column width={55}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
 				<ImageContainer>
-					<Image src={images[main.snpTypeTitle as 'Д']} alt='gasket drawing' />
-					<SizesBlock
-						sizes={sizes}
-						hasD2={main.snpStandard?.hasD2}
-						positions={positions[main.snpTypeTitle as 'Д']}
-					/>
-					{/* //TODO блок зависит от того какой материал открыт и от того какой тип прокладки выбран */}
-					{/* <Backlight /> */}
+					<Image src={images[main.snpType?.title as 'Д']} alt='gasket drawing' />
+					<SizesBlockSnp />
+					<BacklightSnp />
 				</ImageContainer>
 			</Column>
 		</SizeContainer>

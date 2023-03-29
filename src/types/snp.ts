@@ -23,6 +23,17 @@ export interface IFiller {
 	temperature: string
 }
 
+export interface IFillerNew {
+	id: string
+	temperature: string
+	baseCode: string
+	code: string
+	title: string
+	description: string
+	designation: string
+	disabledTypes?: string[]
+}
+
 // export interface ITemperatureSNP extends ITemperature {
 // 	fillers: IFiller[]
 // }
@@ -46,6 +57,14 @@ export interface ISnpDateResponse {
 		materials: ISNPMaterial[]
 		mounting?: IMounting[]
 		fillers?: IFiller[]
+	}
+}
+export interface ISnpDataNewResponse {
+	data: {
+		flangeTypes: IFlangeType[]
+		materials: ISNPMaterial[]
+		fillers: IFillerNew[]
+		mounting?: IMounting[]
 	}
 }
 export interface ISnpStandardResponse {
@@ -103,6 +122,10 @@ export interface ISNPType {
 	id: string
 	title: string
 	code: string
+	hasD4?: boolean
+	hasD3?: boolean
+	hasD2?: boolean
+	hasD1?: boolean
 }
 
 export interface ITypeGasket {
@@ -124,18 +147,20 @@ export interface IStandardForSNP {
 	flangeStandard: IFlangeStandard
 }
 
+//TODO наверное стоит вместо snpTypeCode и snpTypeTitle использовать snpType
 export interface IMainSnp {
 	snpStandardId: string
 	flangeTypeCode: string
 	snpTypeId: string
 	snpStandard?: IStandardForSNP
-	snpTypeTitle: string
+	// snpTypeTitle: string
 	flangeTypeTitle: string
-	snpTypeCode: string
+	// snpTypeCode: string
+	snpType?: ISNPType
 }
 
 export interface IMaterialBlockSnp {
-	filler: IFiller
+	filler: IFillerNew
 	ir?: IMaterial
 	fr?: IMaterial
 	or?: IMaterial
@@ -147,6 +172,7 @@ export interface IMaterialBlockSnp {
 
 export interface ISizeBlockSnp {
 	dn: string
+	dnMm: string
 	d4: string
 	d3: string
 	d2: string

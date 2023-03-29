@@ -13,13 +13,23 @@ type Position = {
 	d1: SizesProps
 }
 
+type HasSizes = {
+	hasD4?: boolean
+	hasD3?: boolean
+	hasD2?: boolean
+	hasD1?: boolean
+}
+
 type Props = {
 	sizes: ISizeBlockSnp
+	hasSizes: HasSizes
 	hasD2?: boolean
 	positions: Position
 }
 
-export const SizesBlock: FC<Props> = ({ sizes, hasD2, positions }) => {
+export const SizesBlock: FC<Props> = ({ sizes, hasSizes, hasD2, positions }) => {
+	if (!positions) return null
+
 	return (
 		<Container>
 			<Size top={positions.frame?.top} left={positions.frame?.left}>
@@ -45,18 +55,22 @@ export const SizesBlock: FC<Props> = ({ sizes, hasD2, positions }) => {
 				</Size>
 			) : null}
 
-			{sizes.d4 && (
+			{hasSizes.hasD4 && (
 				<Size top={positions.d4?.top} left={positions.d4?.left}>
 					{sizes.d4} <Description>(D4)</Description>
 				</Size>
 			)}
-			<Size top={positions.d3?.top} left={positions.d3?.left}>
-				{sizes.d3} <Description>(D3)</Description>
-			</Size>
-			<Size top={positions.d2?.top} left={positions.d2?.left}>
-				{sizes.d2} <Description select={hasD2}>(D2)</Description>
-			</Size>
-			{sizes.d1 && (
+			{hasSizes.hasD3 && (
+				<Size top={positions.d3?.top} left={positions.d3?.left}>
+					{sizes.d3} <Description>(D3)</Description>
+				</Size>
+			)}
+			{hasSizes.hasD2 && (
+				<Size top={positions.d2?.top} left={positions.d2?.left}>
+					{sizes.d2} <Description select={hasD2}>(D2)</Description>
+				</Size>
+			)}
+			{hasSizes.hasD1 && (
 				<Size top={positions.d1?.top} left={positions.d1?.left}>
 					{sizes.d1} <Description>(D1)</Description>
 				</Size>

@@ -44,12 +44,13 @@ export const RadioGroup: FC<PropsWithChildren<Props>> = ({ children, onChange })
 
 type ItemProps = {
 	active?: boolean
+	disabled?: boolean
 	value: string
 }
 
-export const RadioItem: FC<PropsWithChildren<ItemProps>> = ({ children, active, value }) => {
+export const RadioItem: FC<PropsWithChildren<ItemProps>> = ({ children, active, value, disabled }) => {
 	return (
-		<Item data-active={active} data-value={value} active={active}>
+		<Item data-active={active} data-value={value} active={active} disabled={disabled}>
 			{children}
 		</Item>
 	)

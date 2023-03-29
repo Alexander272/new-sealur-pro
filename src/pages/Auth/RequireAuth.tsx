@@ -5,7 +5,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
 	// const state = store.getState().user
 	// const isAuth = state.isAuth
 	const isAuth = useAppSelector(state => state.user.isAuth)
-	const role = useAppSelector(state => state.user.roleCode)
+	// const role = useAppSelector(state => state.user.roleCode)
 	// const roles = state.roles
 	const location = useLocation()
 
