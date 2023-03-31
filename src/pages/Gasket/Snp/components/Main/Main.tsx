@@ -10,7 +10,7 @@ import {
 	setMaterials,
 	setMounting,
 } from '@/store/gaskets/snp'
-import { useGetSnpDataNewQuery, useGetStandardForSNPQuery } from '@/store/api'
+import { useGetSnpDataQuery, useGetStandardForSNPQuery } from '@/store/api/snp'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 
 import FlangeA from '@/assets/snp/A.webp'
@@ -34,7 +34,7 @@ export const Main: FC<Props> = () => {
 	// 	standardId: main.snpStandard?.standard.id || '',
 	// 	snpStandardId: main.snpStandardId,
 	// })
-	const { data } = useGetSnpDataNewQuery({
+	const { data } = useGetSnpDataQuery({
 		standardId: main.snpStandard?.standard.id || '',
 		snpStandardId: main.snpStandardId,
 	})

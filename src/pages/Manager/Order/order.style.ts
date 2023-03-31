@@ -8,6 +8,7 @@ export const Container = styled.div`
 	justify-content: center;
 	align-items: center;
 	flex-wrap: wrap;
+	margin-bottom: 40px;
 `
 
 export const Hidden = styled.div`
@@ -48,4 +49,8 @@ export const UserContainer = styled.div`
 	@media screen and (max-width: 980px) {
 		order: -1;
 	}
+`
+
+export const Icon = styled.img`
+	pointer-events: none;
 `

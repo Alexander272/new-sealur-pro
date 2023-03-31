@@ -6,7 +6,7 @@ import { ResultContainer } from '@/pages/Gasket/gasket.style'
 import { Position } from '@/types/card'
 import { addPosition, toggle, updatePosition } from '@/store/card'
 import { clearSnp, setAmount } from '@/store/gaskets/snp'
-import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api'
+import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
 
 type Props = {}
 
@@ -240,9 +240,9 @@ export const Result: FC<Props> = () => {
 			return `СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.id === '9153785c-2fc5-4b33-a31d-254f42ed20b7') {
-			let ir = materials.ir?.shortEn ? `-IR ${materials.ir.shortEn}` : ''
+			let ir = materials.ir?.shortEn ? `-I.R. ${materials.ir.shortEn}` : ''
 			let fr = `-${materials.fr?.shortEn}/`
-			let or = materials.or?.shortEn ? `-OR ${materials.or.shortEn}` : ''
+			let or = materials.or?.shortEn ? `-O.R. ${materials.or.shortEn}` : ''
 
 			return `SWG-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or}`
 		}

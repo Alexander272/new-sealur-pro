@@ -4,16 +4,18 @@ import { useNavigate } from 'react-router-dom'
 import { stampToDate } from '@/services/date'
 import { IManagerOrder } from '@/types/order'
 import { Icon } from './order.style'
-import { useFinishOrderMutation } from '@/store/api'
+import { useFinishOrderMutation } from '@/store/api/manager'
 
 type Props = {
 	data: IManagerOrder
+	onOpen: (order: IManagerOrder, type: 'order' | 'manager') => void
 }
 
-export const OrderRow: FC<Props> = ({ data }) => {
+export const OrderRow: FC<Props> = ({ data, onOpen }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const navigate = useNavigate()
 
+	//TODO обработать ошибку
 	const [finish, { error }] = useFinishOrderMutation()
 
 	const open = Boolean(anchorEl)
@@ -26,6 +28,16 @@ export const OrderRow: FC<Props> = ({ data }) => {
 	const finishHandler = () => {
 		handleClose()
 		finish(data.id)
+	}
+
+	const orderHandler = () => {
+		handleClose()
+		onOpen(data, 'order')
+	}
+
+	const clientHandler = () => {
+		handleClose()
+		onOpen(data, 'manager')
 	}
 
 	const selectHandler = (event: MouseEvent<HTMLTableRowElement>) => {
@@ -62,9 +74,14 @@ export const OrderRow: FC<Props> = ({ data }) => {
 					open={open}
 					onClose={handleClose}
 				>
-					{/* //TODO добавить кнопку для передачи заказа или клиента */}
 					<MenuItem selected={false} onClick={finishHandler}>
-						Выполнена
+						Заявка выполнена
+					</MenuItem>
+					<MenuItem selected={false} onClick={orderHandler}>
+						Передать заявку
+					</MenuItem>
+					<MenuItem selected={false} onClick={clientHandler}>
+						Передать клиента
 					</MenuItem>
 				</Menu>
 			</TableCell>

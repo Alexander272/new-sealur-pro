@@ -1,13 +1,26 @@
-import { Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
-import { useGetOpenQuery } from '@/store/api'
-import { stampToDate } from '@/services/date'
-import { Container, ItemBlock } from './order.style'
+import { useState } from 'react'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { useGetOpenQuery } from '@/store/api/manager'
+import { IManagerOrder } from '@/types/order'
 import { OrderRow } from './OrderRow'
-import { MouseEvent } from 'react'
+import { Container } from './order.style'
+import Managers from './Managers'
 
 export default function Orders() {
 	const { data } = useGetOpenQuery(null)
+
+	const [manager, setManager] = useState<{ order: IManagerOrder | null; type: 'order' | 'manager'; open: boolean }>({
+		order: null,
+		type: 'order',
+		open: false,
+	})
+
+	const openHandler = (order: IManagerOrder, type: 'order' | 'manager') => {
+		setManager({ order, type, open: true })
+	}
+	const closeHandler = () => {
+		setManager({ order: null, type: 'order', open: false })
+	}
 
 	// может все-таки сделать тут таблицу
 	return (
@@ -32,6 +45,7 @@ export default function Orders() {
 					</Stack> 
 				</ItemBlock>
 			))} */}
+			<Managers manager={manager} onClose={closeHandler} />
 			<TableContainer sx={{ maxHeight: 740 }}>
 				<Table stickyHeader>
 					<TableHead>
@@ -43,17 +57,8 @@ export default function Orders() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{/* {data?.data?.map(d => (
-							<TableRow key={d.id}>
-								<TableCell>№{d.number}</TableCell>
-								<TableCell>{d.company}</TableCell>
-								<TableCell>{stampToDate(+d.date)}</TableCell>
-								<TableCell>{d.countPosition}</TableCell>
-								<TableCell></TableCell>
-							</TableRow>
-						))} */}
 						{data?.data?.map(d => (
-							<OrderRow key={d.id} data={d} />
+							<OrderRow key={d.id} data={d} onOpen={openHandler} />
 						))}
 					</TableBody>
 				</Table>

@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import snpReducer from './gaskets/snp'
 import cardReducer from './card'
 import userReducer from './user'
-import { api } from './api'
+import { api } from './api/base'
 
 export const store = configureStore({
 	reducer: {

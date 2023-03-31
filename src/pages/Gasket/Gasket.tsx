@@ -15,7 +15,7 @@ export default function Gasket() {
 
 	return (
 		<Container>
-			{/* //TODO табы с переключением типа прокладки */}
+			{/* //TODO tabs с переключением типа прокладки */}
 			{/* <Content> */}
 			<Suspense fallback={<Loader />}>
 				<Outlet />

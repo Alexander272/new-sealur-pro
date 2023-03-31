@@ -8,7 +8,7 @@ import {
 	setDesignMounting,
 	setDesignDrawing,
 } from '@/store/gaskets/snp'
-import { useGetSnpQuery } from '@/store/api'
+import { useGetSnpQuery } from '@/store/api/snp'
 import { IMainJumper } from '@/types/jumper'
 import { AsideContainer, Image } from '@/pages/Gasket/gasket.style'
 import { Checkbox } from '@/components/Checkbox/Checkbox'

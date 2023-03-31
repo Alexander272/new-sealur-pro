@@ -11,7 +11,7 @@ import {
 	Typography,
 } from '@mui/material'
 import { forwardRef, ReactElement, useEffect, useState } from 'react'
-import { useCopyOrderMutation, useCopyPositionMutation, useGetAllOrdersQuery } from '@/store/api'
+import { useCopyOrderMutation, useCopyPositionMutation, useGetAllOrdersQuery } from '@/store/api/order'
 import { stampToDate } from '@/services/date'
 import { PositionTable } from './PositionTable'
 import { Container, OrderItem } from './order.style'

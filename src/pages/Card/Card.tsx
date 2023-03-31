@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 import { setSnp } from '@/store/gaskets/snp'
 import { setOrder, toggle } from '@/store/card'
-import { useDeletePositionMutation, useGetOrderQuery, useSaveOrderMutation } from '@/store/api'
+import { useDeletePositionMutation, useGetOrderQuery, useSaveOrderMutation } from '@/store/api/order'
 
 type Props = {}
 

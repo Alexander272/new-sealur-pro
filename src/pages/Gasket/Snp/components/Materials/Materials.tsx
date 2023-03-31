@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { AsideContainer } from '@/pages/Gasket/gasket.style'
 import { OpenMaterial } from '@/types/snp'
 import { setMaterial, setMaterialFiller, setMaterialToggle } from '@/store/gaskets/snp'
-import { useGetSnpQuery } from '@/store/api'
+import { useGetSnpQuery } from '@/store/api/snp'
 
 type Props = {}
 
@@ -50,12 +50,12 @@ export const Materials: FC<Props> = () => {
 		const material = materialIr?.materials.find(f => f.id === event.target.value)
 		if (!material) return
 		dispatch(setMaterial({ type: 'ir', material }))
-		dispatch(setMaterial({ type: 'fr', material }))
 	}
 	const materialFrHandler = (event: SelectChangeEvent<string>) => {
 		const material = materialFr?.materials.find(f => f.id === event.target.value)
 		if (!material) return
 		dispatch(setMaterial({ type: 'fr', material }))
+		dispatch(setMaterial({ type: 'ir', material }))
 	}
 	const materialOrHandler = (event: SelectChangeEvent<string>) => {
 		const material = materialOr?.materials.find(f => f.id === event.target.value)
@@ -98,35 +98,6 @@ export const Materials: FC<Props> = () => {
 				))}
 			</Select>
 
-			{materialIr ? (
-				<>
-					<Typography fontWeight='bold' mt={1}>
-						Материал внутреннего кольца
-					</Typography>
-					<Select
-						value={material.ir?.id || 'not_selected'}
-						onChange={materialIrHandler}
-						onOpen={openHandler('ir')}
-						onClose={closeHandler('ir')}
-						size='small'
-						sx={{
-							borderColor: 'var(--border-color)',
-							borderWidth: '2px',
-							borderRadius: '12px',
-							width: '100%',
-						}}
-						disabled={!data?.data.snp.hasInnerRing}
-					>
-						<MenuItem value='not_selected'>Выберите материал</MenuItem>
-						{materialIr.materials.map(m => (
-							<MenuItem key={m.id} value={m.id}>
-								{m.title}
-							</MenuItem>
-						))}
-					</Select>
-				</>
-			) : null}
-
 			{materialFr ? (
 				<>
 					<Typography fontWeight='bold' mt={1}>
@@ -148,6 +119,35 @@ export const Materials: FC<Props> = () => {
 					>
 						<MenuItem value='not_selected'>Выберите материал</MenuItem>
 						{materialFr.materials.map(m => (
+							<MenuItem key={m.id} value={m.id}>
+								{m.title}
+							</MenuItem>
+						))}
+					</Select>
+				</>
+			) : null}
+
+			{materialIr ? (
+				<>
+					<Typography fontWeight='bold' mt={1}>
+						Материал внутреннего кольца
+					</Typography>
+					<Select
+						value={material.ir?.id || 'not_selected'}
+						onChange={materialIrHandler}
+						onOpen={openHandler('ir')}
+						onClose={closeHandler('ir')}
+						size='small'
+						sx={{
+							borderColor: 'var(--border-color)',
+							borderWidth: '2px',
+							borderRadius: '12px',
+							width: '100%',
+						}}
+						disabled={!data?.data.snp.hasInnerRing}
+					>
+						<MenuItem value='not_selected'>Выберите материал</MenuItem>
+						{materialIr.materials.map(m => (
 							<MenuItem key={m.id} value={m.id}>
 								{m.title}
 							</MenuItem>
