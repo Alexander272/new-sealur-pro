@@ -1,9 +1,9 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { Alert, MenuItem, Select, SelectChangeEvent, Snackbar, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { AsideContainer } from '@/pages/Gasket/gasket.style'
-import { OpenMaterial } from '@/types/snp'
-import { setMaterial, setMaterialFiller, setMaterialToggle } from '@/store/gaskets/snp'
+import { OpenMaterial, TypeMaterial } from '@/types/snp'
+import { setMaterialFiller, setMaterial, setMaterialToggle } from '@/store/gaskets/snp'
 import { useGetSnpQuery } from '@/store/api/snp'
 
 type Props = {}
@@ -12,9 +12,10 @@ export const Materials: FC<Props> = () => {
 	const [alert, setAlert] = useState<{ type: 'error' | 'success'; open: boolean }>({ type: 'success', open: false })
 
 	const fillers = useAppSelector(state => state.snp.fillers)
-	const materialIr = useAppSelector(state => state.snp.materialsIr)
-	const materialFr = useAppSelector(state => state.snp.materialsFr)
-	const materialOr = useAppSelector(state => state.snp.materialsOr)
+	const materials = useAppSelector(state => state.snp.materials)
+	// const materialIr = useAppSelector(state => state.snp.materialsIr)
+	// const materialFr = useAppSelector(state => state.snp.materialsFr)
+	// const materialOr = useAppSelector(state => state.snp.materialsOr)
 
 	const material = useAppSelector(state => state.snp.material)
 
@@ -46,21 +47,29 @@ export const Materials: FC<Props> = () => {
 
 		dispatch(setMaterialFiller(filler))
 	}
-	const materialIrHandler = (event: SelectChangeEvent<string>) => {
-		const material = materialIr?.materials.find(f => f.id === event.target.value)
+
+	// const materialIrHandler = (event: SelectChangeEvent<string>) => {
+	// 	const material = materialIr?.materials.find(f => f.id === event.target.value)
+	// 	if (!material) return
+	// 	dispatch(setMaterial({ type: 'ir', material }))
+	// }
+	// const materialFrHandler = (event: SelectChangeEvent<string>) => {
+	// 	const material = materialFr?.materials.find(f => f.id === event.target.value)
+	// 	if (!material) return
+	// 	dispatch(setMaterial({ type: 'fr', material }))
+	// 	dispatch(setMaterial({ type: 'ir', material }))
+	// }
+	// const materialOrHandler = (event: SelectChangeEvent<string>) => {
+	// 	const material = materialOr?.materials.find(f => f.id === event.target.value)
+	// 	if (!material) return
+	// 	dispatch(setMaterial({ type: 'or', material }))
+	// }
+
+	const materialHandler = (type: TypeMaterial) => (event: SelectChangeEvent<string>) => {
+		const material = materials?.[type].find(m => m.materialId === event.target.value)
 		if (!material) return
-		dispatch(setMaterial({ type: 'ir', material }))
-	}
-	const materialFrHandler = (event: SelectChangeEvent<string>) => {
-		const material = materialFr?.materials.find(f => f.id === event.target.value)
-		if (!material) return
-		dispatch(setMaterial({ type: 'fr', material }))
-		dispatch(setMaterial({ type: 'ir', material }))
-	}
-	const materialOrHandler = (event: SelectChangeEvent<string>) => {
-		const material = materialOr?.materials.find(f => f.id === event.target.value)
-		if (!material) return
-		dispatch(setMaterial({ type: 'or', material }))
+		dispatch(setMaterial({ type, material }))
+		if (type == 'frame' && data?.data.snp.hasInnerRing) dispatch(setMaterial({ type: 'innerRing', material }))
 	}
 
 	const closeAlertHandler = () => {
@@ -98,7 +107,7 @@ export const Materials: FC<Props> = () => {
 				))}
 			</Select>
 
-			{materialFr ? (
+			{/* {materialFr ? (
 				<>
 					<Typography fontWeight='bold' mt={1}>
 						Материал каркаса
@@ -178,6 +187,85 @@ export const Materials: FC<Props> = () => {
 						<MenuItem value='not_selected'>Выберите материал</MenuItem>
 						{materialOr.materials.map(m => (
 							<MenuItem key={m.id} value={m.id}>
+								{m.title}
+							</MenuItem>
+						))}
+					</Select>
+				</>
+			) : null} */}
+
+			{materials ? (
+				<>
+					<Typography fontWeight='bold' mt={1}>
+						Материал каркаса
+					</Typography>
+					<Select
+						value={material.frame?.materialId || 'not_selected'}
+						onChange={materialHandler('frame')}
+						onOpen={openHandler('fr')}
+						onClose={closeHandler('fr')}
+						size='small'
+						sx={{
+							borderColor: 'var(--border-color)',
+							borderWidth: '2px',
+							borderRadius: '12px',
+							width: '100%',
+						}}
+						disabled={!data?.data.snp.hasFrame}
+					>
+						<MenuItem value='not_selected'>Выберите материал</MenuItem>
+						{materials.frame.map(m => (
+							<MenuItem key={m.id} value={m.materialId}>
+								{m.title}
+							</MenuItem>
+						))}
+					</Select>
+
+					<Typography fontWeight='bold' mt={1}>
+						Материал внутреннего кольца
+					</Typography>
+					<Select
+						value={material.innerRing?.materialId || 'not_selected'}
+						onChange={materialHandler('innerRing')}
+						onOpen={openHandler('ir')}
+						onClose={closeHandler('ir')}
+						size='small'
+						sx={{
+							borderColor: 'var(--border-color)',
+							borderWidth: '2px',
+							borderRadius: '12px',
+							width: '100%',
+						}}
+						disabled={!data?.data.snp.hasInnerRing}
+					>
+						<MenuItem value='not_selected'>Выберите материал</MenuItem>
+						{materials.innerRing.map(m => (
+							<MenuItem key={m.id} value={m.materialId}>
+								{m.title}
+							</MenuItem>
+						))}
+					</Select>
+
+					<Typography fontWeight='bold' mt={1}>
+						Материал наружного кольца
+					</Typography>
+					<Select
+						value={material.outerRing?.materialId || 'not_selected'}
+						onChange={materialHandler('outerRing')}
+						onOpen={openHandler('or')}
+						onClose={closeHandler('or')}
+						size='small'
+						sx={{
+							borderColor: 'var(--border-color)',
+							borderWidth: '2px',
+							borderRadius: '12px',
+							width: '100%',
+						}}
+						disabled={!data?.data.snp.hasOuterRing}
+					>
+						<MenuItem value='not_selected'>Выберите материал</MenuItem>
+						{materials.outerRing.map(m => (
+							<MenuItem key={m.id} value={m.materialId}>
 								{m.title}
 							</MenuItem>
 						))}

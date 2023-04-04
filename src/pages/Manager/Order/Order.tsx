@@ -172,7 +172,7 @@ export default function Order() {
 					</Table>
 				</UserContainer>
 			</Row>
-			{/* //TODO добавить кнопку для передачи заказа или клиента */}
+
 			<Stack direction={'row'} spacing={2} alignItems='center'>
 				<FileDownload ref={ref} text='Скачать' link={`/api/v1/sealur-pro/orders/${params.id}/заявка.zip`} />
 

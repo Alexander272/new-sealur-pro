@@ -2,9 +2,9 @@ import { IJumper } from './jumper'
 import { IHasMounting, IMounting } from './mounting'
 import { IMaterial } from './material'
 import { ISnpSize, PN } from './sizes'
-import { ITemperature } from './temperature'
 
 export type OpenMaterial = 'filler' | 'ir' | 'fr' | 'or'
+export type TypeMaterial = 'innerRing' | 'frame' | 'outerRing'
 
 export interface ISNPMaterial {
 	id: string
@@ -12,18 +12,16 @@ export interface ISNPMaterial {
 	materials: IMaterial[]
 	type: 'fr' | 'ir' | 'or'
 }
-
-export interface IFiller {
-	id: string
-	title: string
-	anotherTitle: string
-	code: string
-	description: string
-	designation: string
-	temperature: string
+export interface ISnpMaterial {
+	frame: IMaterial[]
+	innerRing: IMaterial[]
+	outerRing: IMaterial[]
+	frameDefaultIndex?: number
+	innerRingDefaultIndex?: number
+	outerRingDefaultIndex?: number
 }
 
-export interface IFillerNew {
+export interface IFiller {
 	id: string
 	temperature: string
 	baseCode: string
@@ -51,20 +49,12 @@ export interface IFillerNew {
 // 	temperature: ITemperatureSNP[]
 // }
 
-export interface ISnpDateResponse {
+export interface ISnpDataResponse {
 	data: {
 		flangeTypes: IFlangeType[]
-		materials: ISNPMaterial[]
+		fillers: IFiller[]
 		mounting?: IMounting[]
-		fillers?: IFiller[]
-	}
-}
-export interface ISnpDataNewResponse {
-	data: {
-		flangeTypes: IFlangeType[]
-		materials: ISNPMaterial[]
-		fillers: IFillerNew[]
-		mounting?: IMounting[]
+		materials: ISnpMaterial
 	}
 }
 export interface ISnpStandardResponse {
@@ -147,7 +137,6 @@ export interface IStandardForSNP {
 	flangeStandard: IFlangeStandard
 }
 
-//TODO наверное стоит вместо snpTypeCode и snpTypeTitle использовать snpType
 export interface IMainSnp {
 	snpStandardId: string
 	flangeTypeCode: string
@@ -160,10 +149,13 @@ export interface IMainSnp {
 }
 
 export interface IMaterialBlockSnp {
-	filler: IFillerNew
-	ir?: IMaterial
-	fr?: IMaterial
-	or?: IMaterial
+	filler: IFiller
+	// ir?: IMaterial
+	// fr?: IMaterial
+	// or?: IMaterial
+	frame?: IMaterial
+	innerRing?: IMaterial
+	outerRing?: IMaterial
 	openFiller: boolean
 	openIr: boolean
 	openFr: boolean

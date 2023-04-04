@@ -4,10 +4,10 @@ export const Container = styled.div`
 	max-width: 1580px;
 	/* padding: 50px 10px; */
 	flex-grow: 1;
-	display: flex;
+	/* display: flex; */
 	/* flex-direction: column; */
-	justify-content: center;
-	align-items: flex-start;
+	/* justify-content: center; */
+	/* align-items: flex-start; */
 	flex-wrap: wrap;
 	gap: 14px;
 	margin: 10px auto;

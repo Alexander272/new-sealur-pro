@@ -1,5 +1,5 @@
 import { Alert, Autocomplete, Button, FormControl, Snackbar, Stack, Typography } from '@mui/material'
-import { FC, FormEvent, useCallback, useEffect, useState } from 'react'
+import { FC, FormEvent, SyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { useInput } from '@/hooks/useInput'
 import { useDebounce } from '@/hooks/debounce'
 import { FormContent, Input, SignUpForm, Title } from './forms.style'
@@ -31,12 +31,13 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const [companyList, setCompanyList] = useState<CompanyInfo[]>([])
 	const [open, setOpen] = useState(false)
 	const [res, setRes] = useState<{ type: 'success' | 'error'; message: string }>({ type: 'success', message: '' })
+	const [companyError, setCompanyError] = useState(false)
 
 	const name = useInput({ validation: 'empty' })
 	const position = useInput({ validation: 'empty' })
 	const email = useInput({ validation: 'email' })
 	const phone = useInput({ replace: 'phone' })
-	const password = useInput()
+	const password = useInput({ validation: 'empty' })
 
 	const companyValue = useDebounce(company, 500)
 
@@ -59,8 +60,21 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 
 	const signUpHandler = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		//TODO проверить валидность полей
-		if (!companyData) return
+
+		name.validate()
+		position.validate()
+		email.validate()
+		password.validate()
+
+		if (!name.valid || !position.valid || !email.valid || !password.valid) {
+			return
+		}
+
+		if (!companyData) {
+			setCompanyError(true)
+			return
+		}
+		setCompanyError(false)
 
 		const user: ISignUp = {
 			company: companyData.value,
@@ -91,7 +105,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 		setRes({ type, message })
 	}
 
-	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+	const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {
 		if (reason === 'clickaway') {
 			return
 		}
@@ -100,12 +114,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	}
 
 	return (
-		<SignUpForm
-			onClick={!isOpen ? onChangeTab : undefined}
-			// onSubmit={handleSubmit(signUpHandler)}
-			onSubmit={signUpHandler}
-			open={isOpen}
-		>
+		<SignUpForm onClick={!isOpen ? onChangeTab : undefined} onSubmit={signUpHandler} open={isOpen}>
 			<Snackbar
 				open={open}
 				autoHideDuration={6000}
@@ -158,6 +167,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 								placeholder='ИНН или название организации'
 								size='small'
 								autoComplete='off'
+								error={companyError}
 							/>
 						)}
 						renderOption={(props, option) => {
@@ -173,15 +183,6 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 							)
 						}}
 					/>
-
-					{/* <Input
-						name='company'
-						value={company.value}
-						onChange={company.onChange}
-						placeholder='Предприятие.'
-						size='small'
-						error={!name.valid}
-					/> */}
 				</FormControl>
 
 				<FormControl sx={{ marginBottom: 2 }}>
@@ -239,57 +240,12 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						error={!password.valid}
 					/>
 				</FormControl>
-				{/* <Input
-					name='organization'
-					rounded='round'
-					placeholder='Предприятие'
-					register={register}
-					rule={{ required: true }}
-					error={errors.organization}
-					errorText='Поле предприятие не может быть пустым'
-				/>
-				<Input
-					name='name'
-					rounded='round'
-					placeholder='Ф.И.О.'
-					register={register}
-					rule={{ required: true }}
-					error={errors.name}
-					errorText='Поле Ф.И.О. не может быть пустым'
-				/>
-				<Input
-					name='email'
-					rounded='round'
-					type='email'
-					placeholder='Email'
-					register={register}
-					rule={{
-						required: true,
-						pattern:
-							/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-					}}
-					error={errors.email}
-					errorText='Email задан некорректно'
-				/>
-				<Input
-					name='city'
-					rounded='round'
-					placeholder='Город'
-					register={register}
-					rule={{ required: true }}
-					error={errors.city}
-					errorText='Поле город не может быть пустым'
-				/>
-				<Input
-					name='position'
-					rounded='round'
-					placeholder='Должность'
-					register={register}
-					rule={{ required: true }}
-					error={errors.position}
-					errorText='Поле должность не может быть пустым'
-				/>
-				<Input name='phone' rounded='round' placeholder='Контактный телефон' register={register} /> */}
+
+				<Typography color={'GrayText'} align='center' marginBottom={1} sx={{ fontSize: '0.75rem' }}>
+					Нажимая кнопку "Зарегистрироваться" вы соглашаетесь на обработку персональных данных
+					{/* и условиями	использования */}
+				</Typography>
+
 				<Button
 					type='submit'
 					variant='contained'

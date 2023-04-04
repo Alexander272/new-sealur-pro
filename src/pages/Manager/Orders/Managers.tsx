@@ -22,8 +22,9 @@ export default function Managers({ manager, onClose }: Props) {
 	const userId = useAppSelector(state => state.user.userId)
 	const { data } = useGetManagersQuery(null, { skip: !manager.open })
 
-	const [setOrder] = useSetOrderManagerMutation()
-	const [setManager] = useSetUserManagerMutation()
+	//TODO обработать ошибки
+	const [setOrder, { error: errorOrder }] = useSetOrderManagerMutation()
+	const [setManager, { error: errorManager }] = useSetUserManagerMutation()
 
 	const changeHandler = (user: IUser) => () => {
 		if (!manager.order) return

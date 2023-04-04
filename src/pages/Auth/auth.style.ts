@@ -1,8 +1,17 @@
 import styled from 'styled-components'
 
+export const Base = styled.div`
+	min-height: 100vh;
+	min-width: 320px;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--body-bg-color);
+`
+
 type ContainerProps = {
 	signUp?: boolean
 }
+
 export const Container = styled.div<ContainerProps>`
 	position: relative;
 	z-index: 5;
@@ -12,7 +21,7 @@ export const Container = styled.div<ContainerProps>`
 	box-shadow: 2px 2px 8px 0px #3636362b;
 	width: 400px;
 	overflow: hidden;
-	height: ${props => (props.signUp ? '526px' : '340px')};
+	height: ${props => (props.signUp ? '570px' : '340px')};
 	transition: all 0.5s ease-in-out;
 
 	@media (max-width: 420px) {
@@ -21,13 +30,11 @@ export const Container = styled.div<ContainerProps>`
 `
 
 export const Wrapper = styled.div`
-	min-height: 100vh;
-	min-width: 320px;
+	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: var(--body-bg-color);
 	overflow: hidden;
 	position: relative;
 

@@ -11,13 +11,13 @@ export const orderApi = api.injectEndpoints({
 			providesTags: [{ type: 'Api', id: 'orders/current' }],
 		}),
 		getAllOrders: builder.query<{ data: IFullOrder[] }, null>({
-			query: () => proUrl + 'orders/all',
+			query: () => proUrl + '/orders/all',
 			providesTags: [{ type: 'Api', id: 'orders/all' }],
 		}),
 
 		saveOrder: builder.mutation<string, IOrder>({
 			query: order => ({
-				url: proUrl + 'orders/save',
+				url: proUrl + '/orders/save',
 				method: 'POST',
 				body: order,
 			}),
@@ -29,7 +29,7 @@ export const orderApi = api.injectEndpoints({
 
 		createPosition: builder.mutation<string, Position>({
 			query: position => ({
-				url: proUrl + 'positions',
+				url: proUrl + '/positions',
 				method: 'POST',
 				body: position,
 			}),
@@ -61,7 +61,7 @@ export const orderApi = api.injectEndpoints({
 		}),
 		copyOrder: builder.mutation<string, ICopyOrder>({
 			query: order => ({
-				url: proUrl + 'orders/copy',
+				url: proUrl + '/orders/copy',
 				method: 'POST',
 				body: order,
 			}),

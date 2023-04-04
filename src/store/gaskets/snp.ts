@@ -3,16 +3,16 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import {
 	IDesignBlockSnp,
 	IFiller,
-	IFillerNew,
 	IMainSnp,
 	IMaterialBlockSnp,
 	ISizeBlockSnp,
 	ISnp,
-	ISNP,
 	ISNPMaterial,
+	ISnpMaterial,
 	ISNPType,
 	IStandardForSNP,
 	OpenMaterial,
+	TypeMaterial,
 } from '@/types/snp'
 import { IMaterial } from '@/types/material'
 import { PN } from '@/types/sizes'
@@ -20,11 +20,12 @@ import { IMounting } from '@/types/mounting'
 import { IDrawing } from '@/types/drawing'
 
 export interface ISNPState {
-	fillers: IFillerNew[]
+	fillers: IFiller[]
 	mountings: IMounting[]
 	materialsIr?: ISNPMaterial
 	materialsFr?: ISNPMaterial
 	materialsOr?: ISNPMaterial
+	materials?: ISnpMaterial
 
 	cardIndex?: number
 	main: IMainSnp
@@ -94,7 +95,7 @@ const initialState: ISNPState = {
 		openIr: false,
 		openFr: false,
 		openOr: false,
-		filler: {} as IFillerNew,
+		filler: {} as IFiller,
 	},
 	size: {
 		dn: '',
@@ -129,7 +130,7 @@ export const snpSlice = createSlice({
 	name: 'snp',
 	initialState,
 	reducers: {
-		setFiller: (state, action: PayloadAction<IFillerNew[]>) => {
+		setFiller: (state, action: PayloadAction<IFiller[]>) => {
 			state.fillers = action.payload
 			state.material.filler = action.payload[0]
 		},
@@ -137,25 +138,13 @@ export const snpSlice = createSlice({
 			state.mountings = action.payload
 			state.design.mounting.code = action.payload[0].title
 		},
-		setMaterials: (state, action: PayloadAction<ISNPMaterial[]>) => {
-			state.materialsIr = undefined
-			state.materialsFr = undefined
-			state.materialsOr = undefined
-
-			action.payload.forEach(m => {
-				if (m.type == 'ir') {
-					state.materialsIr = m
-					if (state.cardIndex === undefined) state.material.ir = m.default
-				}
-				if (m.type == 'fr') {
-					state.materialsFr = m
-					if (state.cardIndex === undefined) state.material.fr = m.default
-				}
-				if (m.type == 'or') {
-					state.materialsOr = m
-					if (state.cardIndex === undefined) state.material.or = m.default
-				}
-			})
+		setMaterials: (state, action: PayloadAction<ISnpMaterial>) => {
+			state.materials = action.payload
+			if (state.cardIndex === undefined) {
+				state.material.frame = action.payload.frame[action.payload.frameDefaultIndex || 0]
+				state.material.innerRing = action.payload.innerRing[action.payload.innerRingDefaultIndex || 0]
+				state.material.outerRing = action.payload.outerRing[action.payload.outerRingDefaultIndex || 0]
+			}
 		},
 
 		// setHasError: (state, action: PayloadAction<boolean>) => {
@@ -198,6 +187,7 @@ export const snpSlice = createSlice({
 			const emptyD3 = (state.main.snpType?.hasD3 || false) && !state.size.d3
 			const emptyD2 = (state.main.snpType?.hasD2 || false) && !state.size.d2
 			const emptyD1 = (state.main.snpType?.hasD1 || false) && !state.size.d1
+
 			state.sizeError.emptySize = emptyD4 || emptyD3 || emptyD2 || emptyD1
 
 			state.hasSizeError =
@@ -214,17 +204,17 @@ export const snpSlice = createSlice({
 			if (action.payload.type == 'fr') state.material.openFr = action.payload.isOpen
 			if (action.payload.type == 'or') state.material.openOr = action.payload.isOpen
 		},
-		setMaterialFiller: (state, action: PayloadAction<IFillerNew>) => {
+		setMaterialFiller: (state, action: PayloadAction<IFiller>) => {
 			state.material.filler = action.payload
 		},
-		setMaterial: (state, action: PayloadAction<{ type: OpenMaterial; material: IMaterial }>) => {
-			if (action.payload.type == 'ir') state.material.ir = action.payload.material
-			if (action.payload.type == 'fr') state.material.fr = action.payload.material
-			if (action.payload.type == 'or') state.material.or = action.payload.material
+		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material: IMaterial }>) => {
+			state.material[action.payload.type] = action.payload.material
 		},
 
 		setSize: (state, action: PayloadAction<ISizeBlockSnp>) => {
 			state.size = action.payload
+			state.sizeError.emptySize = false
+			state.hasSizeError = false
 		},
 		setSizePn: (
 			state,
@@ -295,14 +285,17 @@ export const snpSlice = createSlice({
 		},
 
 		clearMaterialAndDesign: (state, action: PayloadAction<ISnp>) => {
-			if (!action.payload.hasInnerRing) state.material.ir = undefined
-			else if (state.cardIndex === undefined) state.material.ir = state.materialsIr?.default
+			if (!action.payload.hasInnerRing) state.material.innerRing = undefined
+			else if (state.cardIndex === undefined)
+				state.material.innerRing = state.materials?.innerRing[state.materials.innerRingDefaultIndex || 0]
 
-			if (!action.payload.hasFrame) state.material.fr = undefined
-			else if (state.cardIndex === undefined) state.material.fr = state.materialsFr?.default
+			if (!action.payload.hasFrame) state.material.frame = undefined
+			else if (state.cardIndex === undefined)
+				state.material.frame = state.materials?.frame[state.materials.frameDefaultIndex || 0]
 
-			if (!action.payload.hasOuterRing) state.material.or = undefined
-			else if (state.cardIndex === undefined) state.material.or = state.materialsOr?.default
+			if (!action.payload.hasOuterRing) state.material.outerRing = undefined
+			else if (state.cardIndex === undefined)
+				state.material.outerRing = state.materials?.outerRing[state.materials.outerRingDefaultIndex || 0]
 
 			if (!action.payload.hasJumper) state.design.jumper.hasJumper = false
 			if (!action.payload.hasMounting) state.design.mounting.hasMounting = false

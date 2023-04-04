@@ -1,21 +1,20 @@
 import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
 	Alert,
-	Button,
-	Dialog,
-	DialogContent,
-	DialogTitle,
 	IconButton,
 	Slide,
 	Snackbar,
+	Stack,
 	Tooltip,
 	Typography,
 } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { forwardRef, ReactElement, useEffect, useState } from 'react'
 import { useCopyOrderMutation, useCopyPositionMutation, useGetAllOrdersQuery } from '@/store/api/order'
 import { stampToDate } from '@/services/date'
-import { PositionTable } from './PositionTable'
-import { Container, OrderItem } from './order.style'
-import { IFullOrder } from '@/types/order'
+import { Container } from './order.style'
 import { TransitionProps } from '@mui/material/transitions'
 import { FullPositionTable } from './FullPositionTable'
 import { useAppSelector } from '@/hooks/useStore'
@@ -30,21 +29,21 @@ export default function Orders() {
 	const [copyOrder, { error: errorOrder }] = useCopyOrderMutation()
 
 	// const [open, setOpen] = useState(false)
-	const [order, setOrder] = useState<IFullOrder | null>(null)
+	// const [order, setOrder] = useState<IFullOrder | null>(null)
 	const [openAlert, setOpen] = useState(false)
 
 	useEffect(() => {
 		if (error || errorOrder) setOpen(true)
 	}, [error, errorOrder])
 
-	const handleClickOpen = (order: IFullOrder) => () => {
-		// setOpen(true)
-		setOrder(order)
-	}
-	const handleClose = () => {
-		// setOpen(false)
-		setOrder(null)
-	}
+	// const handleClickOpen = (order: IFullOrder) => () => {
+	// 	// setOpen(true)
+	// 	setOrder(order)
+	// }
+	// const handleClose = () => {
+	// 	// setOpen(false)
+	// 	setOrder(null)
+	// }
 
 	const allCopyHandler = (id: string) => () => {
 		copyOrder({
@@ -53,6 +52,8 @@ export default function Orders() {
 			count: positions.length + 1,
 		})
 	}
+
+	//TODO добавить индикаторы загрузки
 
 	//TODO добавить окно для ввода количества
 	const copyHandler = (id: string, fromOrderId: string) => {
@@ -81,12 +82,48 @@ export default function Orders() {
 				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
 			>
 				<Alert onClose={alertClose} severity={'error'} sx={{ width: '100%' }}>
-					{error && 'Не удалось добавить позицию'}
+					{error && 'Не удалось добавить позицию. ' + (error as any).data.message}
 					{errorOrder && 'Во время добавления позиций произошла ошибка'}
 				</Alert>
 			</Snackbar>
 
 			{data?.data ? (
+				data?.data.map(o => (
+					<Accordion key={o.id}>
+						<AccordionSummary
+							expandIcon={<ExpandMoreIcon />}
+							aria-controls='panel2a-content'
+							id='panel2a-header'
+						>
+							<Stack direction={'row'} spacing={2} alignItems={'center'}>
+								<Typography variant='h5' align='center'>
+									Заявка №{o.number}
+								</Typography>
+								<Typography align='center' color={'GrayText'}>
+									от {stampToDate(+(o.date || 0))}
+								</Typography>
+
+								<Tooltip title='Добавить все позиции в текущую заявку'>
+									<IconButton onClick={allCopyHandler(o.id)} color='primary'>
+										»
+									</IconButton>
+								</Tooltip>
+							</Stack>
+						</AccordionSummary>
+
+						<AccordionDetails>
+							<FullPositionTable order={o} onCopy={copyHandler} />
+						</AccordionDetails>
+						{/* <PositionTable order={o} onCopy={copyHandler} /> */}
+					</Accordion>
+				))
+			) : (
+				<Typography align='center' variant='h5'>
+					Ни одной заявки еще не создано
+				</Typography>
+			)}
+
+			{/* {data?.data ? (
 				data?.data.map(o => (
 					<OrderItem key={o.id}>
 						<Typography variant='h5' align='center'>
@@ -122,8 +159,9 @@ export default function Orders() {
 				<Typography align='center' variant='h5'>
 					Ни одной заявки еще не создано
 				</Typography>
-			)}
-			<Dialog
+			)} */}
+
+			{/* <Dialog
 				open={Boolean(order)}
 				TransitionComponent={Transition}
 				keepMounted
@@ -150,7 +188,7 @@ export default function Orders() {
 				<DialogContent>
 					<FullPositionTable order={order} onCopy={copyHandler} />
 				</DialogContent>
-			</Dialog>
+			</Dialog> */}
 		</Container>
 	)
 }

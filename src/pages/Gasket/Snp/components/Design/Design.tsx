@@ -2,11 +2,11 @@ import { Alert, MenuItem, Select, SelectChangeEvent, Snackbar, Stack, Typography
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import {
-	clearMaterialAndDesign,
 	setHasHole,
 	setDesignJumper,
 	setDesignMounting,
 	setDesignDrawing,
+	clearMaterialAndDesign,
 } from '@/store/gaskets/snp'
 import { useGetSnpQuery } from '@/store/api/snp'
 import { IMainJumper } from '@/types/jumper'
@@ -27,6 +27,8 @@ export const Design = () => {
 	const drawing = useAppSelector(state => state.snp.drawing)
 	const hasDesignError = useAppSelector(state => state.snp.hasDesignError)
 	const orderId = useAppSelector(state => state.card.orderId)
+
+	const role = useAppSelector(state => state.user.roleCode)
 
 	const dispatch = useAppDispatch()
 
@@ -176,11 +178,13 @@ export const Design = () => {
 				)}
 			</Stack>
 
-			{drawing ? (
-				<FileDownload text={drawing.origName} link={drawing.link} onDelete={deleteFile} />
-			) : (
-				<FileInput name='drawing' id='file' label={'Прикрепить чертеж'} onChange={uploadFile} />
-			)}
+			{role != 'manager' ? (
+				drawing ? (
+					<FileDownload text={drawing.origName} link={drawing.link} onDelete={deleteFile} />
+				) : (
+					<FileInput name='drawing' id='file' label={'Прикрепить чертеж'} onChange={uploadFile} />
+				)
+			) : null}
 
 			{hasDesignError && (
 				<Typography sx={{ marginTop: 1, color: 'var(--danger-color)', fontSize: '1.4rem' }}>

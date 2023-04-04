@@ -2,11 +2,11 @@ import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/material'
 import { Input } from '@/components/Input/input.style'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { ResultContainer } from '@/pages/Gasket/gasket.style'
 import { Position } from '@/types/card'
 import { addPosition, toggle, updatePosition } from '@/store/card'
 import { clearSnp, setAmount } from '@/store/gaskets/snp'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
+import { ResultContainer } from '@/pages/Gasket/gasket.style'
 
 type Props = {}
 
@@ -19,9 +19,9 @@ export const Result: FC<Props> = () => {
 	const design = useAppSelector(state => state.snp.design)
 	const amount = useAppSelector(state => state.snp.amount)
 
-	const materialIr = useAppSelector(state => state.snp.materialsIr)
-	const materialFr = useAppSelector(state => state.snp.materialsFr)
-	const materialOr = useAppSelector(state => state.snp.materialsOr)
+	// const materialIr = useAppSelector(state => state.snp.materialsIr)
+	// const materialFr = useAppSelector(state => state.snp.materialsFr)
+	// const materialOr = useAppSelector(state => state.snp.materialsOr)
 
 	const hasSizeError = useAppSelector(state => state.snp.hasSizeError)
 	const hasDesignError = useAppSelector(state => state.snp.hasDesignError)
@@ -91,13 +91,13 @@ export const Result: FC<Props> = () => {
 	const renderDescription = () => {
 		let rings
 		if (main.snpType?.title == 'Д')
-			rings = `(с наружным ${materials.or?.title} и внутренним ${materials.ir?.title} ограничительными кольцами), с металлическим каркасом из ленты ${materials.fr?.title}`
+			rings = `(с наружным ${materials.outerRing?.title} и внутренним ${materials.innerRing?.title} ограничительными кольцами), с металлическим каркасом из ленты ${materials.frame?.title}`
 		if (main.snpType?.title == 'Г')
-			rings = `(с наружным ограничительным кольцом ${materials.or?.title}), с металлическим каркасом из ленты ${materials.fr?.title}`
+			rings = `(с наружным ограничительным кольцом ${materials.outerRing?.title}), с металлическим каркасом из ленты ${materials.frame?.title}`
 		if (main.snpType?.title == 'В')
-			rings = `(с внутренним ограничительным кольцом ${materials.ir?.title}), с металлическим каркасом из ленты ${materials.fr?.title}`
+			rings = `(с внутренним ограничительным кольцом ${materials.innerRing?.title}), с металлическим каркасом из ленты ${materials.frame?.title}`
 		if (main.snpType?.title == 'Б' || main.snpType?.title == 'А')
-			rings = `(без ограничительных колец), с металлическим каркасом из ленты ${materials.fr?.title}`
+			rings = `(без ограничительных колец), с металлическим каркасом из ленты ${materials.frame?.title}`
 
 		let flange = main.snpStandard?.flangeStandard.code ? ` по ${main.snpStandard.flangeStandard.title}` : ''
 
@@ -177,9 +177,13 @@ export const Result: FC<Props> = () => {
 
 		let notStandardMaterial = false
 
-		const conditionIr = !!materials.ir && materialIr?.default.id != materials.ir?.id
-		const conditionFr = !!materials.fr && materialFr?.default.id != materials.fr?.id
-		const conditionOr = !!materials.or && materialOr?.default.id != materials.or?.id
+		// const conditionIr = !!materials.ir && materialIr?.default.id != materials.ir?.id
+		// const conditionFr = !!materials.fr && materialFr?.default.id != materials.fr?.id
+		// const conditionOr = !!materials.or && materialOr?.default.id != materials.or?.id
+
+		const conditionIr = Boolean(materials.innerRing) && !materials.innerRing?.isDefault
+		const conditionFr = Boolean(materials.frame) && !materials.frame?.isDefault
+		const conditionOr = Boolean(materials.outerRing) && !materials.outerRing?.isDefault
 
 		if (conditionIr || conditionFr || conditionOr) {
 			notStandardMaterial = true
@@ -201,9 +205,12 @@ export const Result: FC<Props> = () => {
 		if (main.snpStandard?.standard.id === 'b412a73b-13b7-4aea-99c9-10dce3ea43a4') {
 			if (notStandardMaterial) {
 				let temp = []
-				if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
-				if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
-				if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
+				// if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
+				// if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
+				// if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
+				if (materials.innerRing) temp.push(`вн. кольцо - ${materials.innerRing.code}`)
+				if (materials.frame) temp.push(`каркас - ${materials.frame.code}`)
+				if (materials.outerRing) temp.push(`нар. кольцо - ${materials.outerRing.code}`)
 
 				designationMaterials = ` (${temp.join(', ')}) `
 			}
@@ -215,24 +222,32 @@ export const Result: FC<Props> = () => {
 		}
 		if (main.snpStandard?.standard.id === '4df3db32-401f-47d2-b5e7-c8e8d3cd00f1') {
 			let y = ''
-			if (!!materials.or && materials.or?.code === '5') {
-				y = '-У'
-			}
+			// if (!!materials.or && materials.or?.code === '5') {
+			// 	y = '-У'
+			// }
+
+			if (Boolean(materials.outerRing) && materials.outerRing?.baseCode === '5') y = '-У'
 			if (!(conditionIr || conditionFr) && y) {
 				notStandardMaterial = false
 			}
 
 			let temp = []
-			if (materials.filler.baseCode != '3' && materials.filler.baseCode != '4')
-				temp.push(`наполнитель - ${materials.filler.code}`)
+			// if (materials.filler.baseCode != '3' && materials.filler.baseCode != '4')
+			// 	temp.push(`наполнитель - ${materials.filler.code}`)
 
-			if (size.h === 'another')
-				temp.push(`толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}`)
+			// if (size.h === 'another')
+			// 	temp.push(`толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}`)
+
+			// if (notStandardMaterial) {
+			// 	if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
+			// 	if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
+			// 	if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
+			// }
 
 			if (notStandardMaterial) {
-				if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
-				if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
-				if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
+				if (materials.innerRing) temp.push(`вн. кольцо - ${materials.innerRing.code}`)
+				if (materials.frame) temp.push(`каркас - ${materials.frame.code}`)
+				if (materials.outerRing) temp.push(`нар. кольцо - ${materials.outerRing.code}`)
 			}
 
 			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
@@ -240,11 +255,14 @@ export const Result: FC<Props> = () => {
 			return `СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.id === '9153785c-2fc5-4b33-a31d-254f42ed20b7') {
-			let ir = materials.ir?.shortEn ? `-I.R. ${materials.ir.shortEn}` : ''
-			let fr = `-${materials.fr?.shortEn}/`
-			let or = materials.or?.shortEn ? `-O.R. ${materials.or.shortEn}` : ''
+			// let ir = materials.ir?.shortEn ? `-I.R. ${materials.ir.shortEn}` : ''
+			// let fr = `-${materials.fr?.shortEn}/`
+			// let or = materials.or?.shortEn ? `-O.R. ${materials.or.shortEn}` : ''
+			let ir = materials.innerRing?.code ? `-I.R. ${materials.innerRing?.code}` : ''
+			let fr = `-${materials.frame?.code}/`
+			let or = materials.outerRing?.code ? `-O.R. ${materials.outerRing?.code}` : ''
 
-			return `SWG-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or}`
+			return `SWG-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${main.snpStandard.standard.title}`
 		}
 		// if (
 		// 	main.snpStandard?.standard.id === '9153785c-2fc5-4b33-a31d-254f42ed20b7'
@@ -272,9 +290,13 @@ export const Result: FC<Props> = () => {
 			let fr = ''
 			// let or = ''
 
-			let ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
-			if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-			let or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
+			// let ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
+			// if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
+			// let or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
+
+			let ir = materials.innerRing?.code ? `${materials.innerRing?.code}-` : ''
+			if (materials.innerRing?.code != materials.frame?.code) fr = `${materials.frame?.code}-`
+			let or = materials.outerRing?.code ? `-${materials.outerRing?.code}` : ''
 
 			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dnMm}-Class ${size.pn.mpa}-${ir}${fr}${materials.filler.code}${or}`
 		}
@@ -282,9 +304,12 @@ export const Result: FC<Props> = () => {
 			let temp = []
 
 			if (notStandardMaterial) {
-				if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
-				if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
-				if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
+				// if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
+				// if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
+				// if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
+				if (materials.innerRing) temp.push(`вн. кольцо - ${materials.innerRing.code}`)
+				if (materials.frame) temp.push(`каркас - ${materials.frame.code}`)
+				if (materials.outerRing) temp.push(`нар. кольцо - ${materials.outerRing.code}`)
 			}
 
 			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
@@ -312,9 +337,13 @@ export const Result: FC<Props> = () => {
 			let fr = ''
 			// let or = ''
 
-			let ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
-			if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-			let or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
+			// let ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
+			// if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
+			// let or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
+
+			let ir = materials.innerRing?.code ? `${materials.innerRing?.code}-` : ''
+			if (materials.innerRing?.code != materials.frame?.code) fr = `${materials.frame?.code}-`
+			let or = materials.outerRing?.code ? `-${materials.outerRing?.code}` : ''
 
 			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dn}-PN ${size.pn.kg}-${ir}${fr}${materials.filler.code}${or}`
 		}
@@ -327,8 +356,13 @@ export const Result: FC<Props> = () => {
 			let thickness = size.h != 'another' ? size.h : size.another
 			thickness = (+thickness.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')
 
+			//TODO выводить словами материалы, по типу Incoloy 825
+
 			if (notStandardMaterial) {
-				designationMaterials = `-${materials.ir?.code || 0}${materials.fr?.code || 0}${materials.or?.code || 0}`
+				// designationMaterials = `-${materials.ir?.code || 0}${materials.fr?.code || 0}${materials.or?.code || 0}`
+				designationMaterials = `-${materials.innerRing?.code || 0}${materials.frame?.code || 0}${
+					materials.outerRing?.code || 0
+				}`
 			}
 
 			return `СНП-${main.snpType?.code}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}`

@@ -108,7 +108,6 @@ export const AnotherSize: FC<Props> = () => {
 
 	return (
 		<>
-			{/* //TODO добавить возможность писать дробную часть */}
 			{/* //TODO возможно будет лучше сделать тут отдельный state для каждого поля и через debounce заносить в store */}
 			{/* {['Г', 'Д'].includes(main.snpType?.title || '') && (
 				<>

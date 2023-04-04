@@ -1,4 +1,4 @@
-import { ISnpDataNewResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
+import { ISnpDataResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
 import { api } from './base'
 
 type SnpDataRequest = {
@@ -18,7 +18,7 @@ export const snpApi = api.injectEndpoints({
 		getStandardForSNP: builder.query<ISnpStandardResponse, null>({
 			query: () => `${proUrl}/snp-standards`,
 		}),
-		getSnpData: builder.query<ISnpDataNewResponse, SnpDataRequest>({
+		getSnpData: builder.query<ISnpDataResponse, SnpDataRequest>({
 			query: ({ standardId = '', snpStandardId = '' }) => ({
 				url: `${proUrl}/snp-new/data`,
 				method: 'GET',
