@@ -14,6 +14,7 @@ export const Container = styled.div<LoaderProps>`
 	bottom: 0;
 	right: 0;
 	z-index: 80;
+	background-color: ${props => (props.background == 'none' ? 'transparent' : '#eaeefc40')};
 
 	//     &.none {
 	//         background-color: transparent;

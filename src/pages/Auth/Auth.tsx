@@ -1,4 +1,3 @@
-import { AuthFooter } from '@/components/Footer/AuthFooter'
 import { useAppSelector } from '@/hooks/useStore'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -30,7 +29,6 @@ export default function Auth() {
 		<Base>
 			<Wrapper>
 				<Container signUp={isSignUp}>
-					{/* {loading && <Loader background='fill' />} */}
 					<SignIn onChangeTab={changeTabHandler(false)} isOpen={!isSignUp} />
 					<SignUp onChangeTab={changeTabHandler(true)} isOpen={isSignUp} />
 				</Container>

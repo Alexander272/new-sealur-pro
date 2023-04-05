@@ -1,17 +1,18 @@
 import { FC } from 'react'
 import { Typography } from '@mui/material'
 import { useAppSelector } from '@/hooks/useStore'
-import { Column, ImageContainer, SizeContainer, Image } from '@/pages/Gasket/gasket.style'
+import { useGetSnpQuery } from '@/store/api/snp'
+import { Column, ImageContainer, SizeContainer, Image, PlugImage } from '@/pages/Gasket/gasket.style'
+import { BacklightSnp } from './components/Backlight/BacklightSnp'
+import { SizesBlockSnp } from './components/SizesBlock/SizesBlock'
 import { StandardSize } from './StandardSize'
 import { AnotherSize } from './AnotherSize'
+
 import SnpD from '@/assets/snp/SNP-P-E.webp'
 import SnpG from '@/assets/snp/SNP-P-D.webp'
 import SnpV from '@/assets/snp/SNP-P-C.webp'
 import SnpB from '@/assets/snp/SNP-P-AB.webp'
 import SnpA from '@/assets/snp/SNP-P-AB.webp'
-import { useGetSnpQuery } from '@/store/api/snp'
-import { BacklightSnp } from './components/Backlight/BacklightSnp'
-import { SizesBlockSnp } from './components/SizesBlock/SizesBlock'
 
 const images = {
 	Д: SnpD,
@@ -43,17 +44,22 @@ export const Size: FC<Props> = () => {
 			</Column>
 			<Column width={55}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
-				<ImageContainer>
-					<Image
-						src={images[main.snpType?.title as 'Д']}
-						alt='gasket drawing'
-						maxWidth={'500px'}
-						width={600}
-						height={255}
-					/>
-					<SizesBlockSnp />
-					<BacklightSnp />
-				</ImageContainer>
+				{!main.snpType ? (
+					<PlugImage />
+				) : (
+					<ImageContainer>
+						<Image
+							src={images[main.snpType.title as 'Д']}
+							alt='gasket drawing'
+							maxWidth={'500px'}
+							width={600}
+							height={255}
+						/>
+
+						<SizesBlockSnp />
+						<BacklightSnp />
+					</ImageContainer>
+				)}
 			</Column>
 		</SizeContainer>
 	)

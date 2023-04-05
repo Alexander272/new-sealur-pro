@@ -10,13 +10,13 @@ import {
 } from '@/store/gaskets/snp'
 import { useGetSnpQuery } from '@/store/api/snp'
 import { IMainJumper } from '@/types/jumper'
+import { CreateFile, DeleteFile } from '@/services/file'
 import { AsideContainer, Image } from '@/pages/Gasket/gasket.style'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { JumperSelect } from '@/components/Jumper/Jumper'
 import { Input } from '@/components/Input/input.style'
 import { FileDownload } from '@/components/FileInput/FileDownload'
 import { FileInput } from '@/components/FileInput/FileInput'
-import { CreateFile, DeleteFile } from '@/services/file'
 
 export const Design = () => {
 	const [alert, setAlert] = useState<{ type: 'create' | 'delete'; open: boolean }>({ type: 'create', open: false })

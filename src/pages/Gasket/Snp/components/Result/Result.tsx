@@ -1,11 +1,12 @@
 import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/material'
-import { Input } from '@/components/Input/input.style'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { Position } from '@/types/card'
 import { toggle } from '@/store/card'
 import { clearSnp, setAmount } from '@/store/gaskets/snp'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
+import { Input } from '@/components/Input/input.style'
+import { Loader } from '@/components/Loader/Loader'
 import { ResultContainer } from '@/pages/Gasket/gasket.style'
 
 type Props = {}
@@ -34,8 +35,8 @@ export const Result: FC<Props> = () => {
 
 	const dispatch = useAppDispatch()
 
-	const [create, { error: createError }] = useCreatePositionMutation()
-	const [update, { error: updateError }] = useUpdatePositionMutation()
+	const [create, { error: createError, isLoading }] = useCreatePositionMutation()
+	const [update, { error: updateError, isLoading: isLoadingUpdate }] = useUpdatePositionMutation()
 
 	useEffect(() => {
 		if (updateError || createError) setAlert({ type: 'error', open: true })
@@ -68,6 +69,10 @@ export const Result: FC<Props> = () => {
 			// dispatch(addPosition(position))
 		}
 		setAlert({ type: 'success', open: true })
+	}
+
+	const cancelHandler = () => {
+		dispatch(clearSnp())
 	}
 
 	const amountHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -370,20 +375,35 @@ export const Result: FC<Props> = () => {
 				</Typography>
 			</Stack>
 			<Stack direction={'row'} spacing={2} alignItems='center' justifyContent='space-between'>
+				{isLoading || isLoadingUpdate ? <Loader background='fill' /> : null}
+
 				<Stack direction={'row'} spacing={2} alignItems='center'>
 					<Typography fontWeight='bold'>Количество:</Typography>
 					<Input value={amount} onChange={amountHandler} size='small' />
 				</Stack>
 
 				{role != 'manager' && (
-					<Button
-						disabled={!amount || hasSizeError || hasDesignError}
-						onClick={savePosition}
-						variant='contained'
-						sx={{ borderRadius: '12px', padding: '6px 20px' }}
-					>
-						{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
-					</Button>
+					<Stack direction={'row'} spacing={2} alignItems='center'>
+						{cardIndex !== undefined && (
+							<Button
+								onClick={cancelHandler}
+								variant='outlined'
+								color='secondary'
+								sx={{ borderRadius: '12px', padding: '6px 20px' }}
+							>
+								Отменить
+							</Button>
+						)}
+
+						<Button
+							disabled={!amount || hasSizeError || hasDesignError}
+							onClick={savePosition}
+							variant='contained'
+							sx={{ borderRadius: '12px', padding: '6px 20px' }}
+						>
+							{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
+						</Button>
+					</Stack>
 				)}
 			</Stack>
 

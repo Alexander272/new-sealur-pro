@@ -1,14 +1,15 @@
 import { Alert, Button, IconButton, Snackbar, Typography } from '@mui/material'
 import { FC, MouseEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 import { setSnp } from '@/store/gaskets/snp'
 import { setOrder, toggle } from '@/store/card'
 import { useDeletePositionMutation, useGetOrderQuery, useSaveOrderMutation } from '@/store/api/order'
+import { Loader } from '@/components/Loader/Loader'
+import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 
 type Props = {}
 
-export const Card: FC<Props> = () => {
+const Card: FC<Props> = () => {
 	const [alert, setAlert] = useState<{ type: 'success' | 'error'; open: boolean }>({ type: 'success', open: false })
 
 	const open = useAppSelector(state => state.card.open)
@@ -20,8 +21,8 @@ export const Card: FC<Props> = () => {
 
 	const { data } = useGetOrderQuery(null, { skip: role == 'manager' })
 
-	const [deletePosition, { error: delError }] = useDeletePositionMutation()
-	const [save, { error }] = useSaveOrderMutation()
+	const [deletePosition, { error: delError, isLoading: isLoadingDelete }] = useDeletePositionMutation()
+	const [save, { error, isLoading }] = useSaveOrderMutation()
 
 	const dispatch = useAppDispatch()
 
@@ -93,6 +94,8 @@ export const Card: FC<Props> = () => {
 					{alert.type == 'success' && 'Заявка отправлена. Ожидайте ответа менеджера'}
 				</Alert>
 			</Snackbar>
+
+			{isLoading || isLoadingDelete ? <Loader background='fill' /> : null}
 
 			<CardContainer open={open}>
 				{open && (
@@ -166,3 +169,5 @@ export const Card: FC<Props> = () => {
 		</Container>
 	)
 }
+
+export default Card

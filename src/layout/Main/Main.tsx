@@ -1,20 +1,22 @@
-import { Suspense } from 'react'
+import { Suspense, lazy } from 'react'
 import { Outlet } from 'react-router-dom'
-import { Header } from '@/components/Header/Header'
-import { Card } from '@/pages/Card/Card'
+// import { Header } from '@/components/Header/Header'
 import { Loader } from '@/components/Loader/Loader'
 import { Base, Wrapper } from './main.style'
+
+const Header = lazy(() => import('@/components/Header/Header'))
+const Card = lazy(() => import('@/pages/Card/Card'))
 
 export default function Main() {
 	return (
 		<Base>
-			<Header />
-			<Wrapper>
-				<Suspense fallback={<Loader />}>
+			<Suspense fallback={<Loader />}>
+				<Header />
+				<Wrapper>
 					<Outlet />
-				</Suspense>
-				<Card />
-			</Wrapper>
+					<Card />
+				</Wrapper>
+			</Suspense>
 		</Base>
 	)
 }

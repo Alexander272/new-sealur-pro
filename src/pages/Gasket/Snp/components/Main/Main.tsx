@@ -187,7 +187,6 @@ export const Main: FC<Props> = () => {
 			</Column>
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
-				{/* <PlugImage /> */}
 				{main.flangeTypeCode == 'not_selected' ? (
 					<PlugImage />
 				) : (

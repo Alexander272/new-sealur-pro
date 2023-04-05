@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 type Props = {}
 
-export const Header: FC<Props> = () => {
+const Header: FC<Props> = () => {
 	// const { user, setUser } = useContext(AuthContext)
 
 	// const logoutHandler = async () => {
@@ -140,3 +140,5 @@ export const Header: FC<Props> = () => {
 		</Container>
 	)
 }
+
+export default Header

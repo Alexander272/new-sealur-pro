@@ -4,20 +4,19 @@ import {
 	AccordionSummary,
 	Alert,
 	IconButton,
-	Slide,
 	Snackbar,
 	Stack,
 	Tooltip,
 	Typography,
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { forwardRef, MouseEvent, ReactElement, useEffect, useState } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 import { useCopyOrderMutation, useCopyPositionMutation, useGetAllOrdersQuery } from '@/store/api/order'
-import { stampToDate } from '@/services/date'
-import { Container } from './order.style'
-import { TransitionProps } from '@mui/material/transitions'
-import { FullPositionTable } from './FullPositionTable'
 import { useAppSelector } from '@/hooks/useStore'
+import { stampToDate } from '@/services/date'
+import { Loader } from '@/components/Loader/Loader'
+import { Container } from './order.style'
+import { FullPositionTable } from './FullPositionTable'
 
 export default function Orders() {
 	const orderId = useAppSelector(state => state.card.orderId)
@@ -25,8 +24,9 @@ export default function Orders() {
 
 	const { data } = useGetAllOrdersQuery(null)
 
-	const [copyPosition, { error, isSuccess }] = useCopyPositionMutation()
-	const [copyOrder, { error: errorOrder, isSuccess: isSuccessOrder }] = useCopyOrderMutation()
+	const [copyPosition, { error, isSuccess, isLoading }] = useCopyPositionMutation()
+	const [copyOrder, { error: errorOrder, isSuccess: isSuccessOrder, isLoading: isLoadingOrder }] =
+		useCopyOrderMutation()
 
 	// const [open, setOpen] = useState(false)
 	// const [order, setOrder] = useState<IFullOrder | null>(null)
@@ -59,8 +59,6 @@ export default function Orders() {
 			count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
 		})
 	}
-
-	//TODO добавить индикаторы загрузки
 
 	//TODO добавить окно для ввода количества
 	const copyHandler = (id: string, fromOrderId: string) => {
@@ -97,6 +95,8 @@ export default function Orders() {
 								'Во время добавления позиций произошла ошибка. ' + (errorOrder as any).data.message)}
 				</Alert>
 			</Snackbar>
+
+			{isLoading || isLoadingOrder ? <Loader background='fill' /> : null}
 
 			{data?.data ? (
 				data?.data.map((o, i) => (
@@ -204,11 +204,11 @@ export default function Orders() {
 	)
 }
 
-const Transition = forwardRef(function Transition(
-	props: TransitionProps & {
-		children: ReactElement<any, any>
-	},
-	ref: React.Ref<unknown>
-) {
-	return <Slide direction='up' ref={ref} {...props} />
-})
+// const Transition = forwardRef(function Transition(
+// 	props: TransitionProps & {
+// 		children: ReactElement<any, any>
+// 	},
+// 	ref: React.Ref<unknown>
+// ) {
+// 	return <Slide direction='up' ref={ref} {...props} />
+// })

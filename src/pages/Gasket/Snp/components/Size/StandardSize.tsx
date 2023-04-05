@@ -13,7 +13,6 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 	const main = useAppSelector(state => state.snp.main)
 	const cardIndex = useAppSelector(state => state.snp.cardIndex)
 	const size = useAppSelector(state => state.snp.size)
-	const sizeErr = useAppSelector(state => state.snp.sizeError)
 
 	const dispatch = useAppDispatch()
 

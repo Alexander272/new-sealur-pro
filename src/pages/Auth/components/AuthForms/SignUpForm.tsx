@@ -2,11 +2,11 @@ import { Alert, Autocomplete, Button, FormControl, Snackbar, Stack, Typography }
 import { FC, FormEvent, SyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { useInput } from '@/hooks/useInput'
 import { useDebounce } from '@/hooks/debounce'
-import { FormContent, Input, SignUpForm, Title } from './forms.style'
 import { CompanyInfo, findCompany } from '@/services/dadata'
-import { ISignUp } from '@/types/auth'
 import { signUp } from '@/services/auth'
-// import { ISignUp } from '../../../types/user'
+import { ISignUp } from '@/types/auth'
+import { Loader } from '@/components/Loader/Loader'
+import { FormContent, Input, SignUpForm, Title } from './forms.style'
 
 type Props = {
 	isOpen: boolean
@@ -26,6 +26,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	// 	user.singUp(data)
 	// }
 
+	const [loading, setLoading] = useState(false)
 	const [company, setCompany] = useState('')
 	const [companyData, setCompanyData] = useState<CompanyInfo | null>(null)
 	const [companyList, setCompanyList] = useState<CompanyInfo[]>([])
@@ -75,6 +76,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			return
 		}
 		setCompanyError(false)
+		setLoading(true)
 
 		const user: ISignUp = {
 			company: companyData.value,
@@ -98,6 +100,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 		} else {
 			handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
 		}
+		setLoading(false)
 	}
 
 	const handleClick = (type: 'success' | 'error', message: string) => {
@@ -125,7 +128,11 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 					{res.message}
 				</Alert>
 			</Snackbar>
+
+			{loading ? <Loader background='fill' /> : null}
+
 			<Title open={isOpen}>Регистрация</Title>
+
 			<FormContent>
 				{/* <FormControl sx={{ marginTop: 1, marginBottom: 2 }}>
 					<Input

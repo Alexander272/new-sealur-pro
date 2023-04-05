@@ -1,16 +1,12 @@
 import { FC, FormEvent, useState } from 'react'
-import { Alert, Button, FormControl, InputBase, Snackbar } from '@mui/material'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
-// import { ISignIn } from '../../../types/user'
-import { Input, FormContent, SignInForm, Title } from './forms.style'
+import { Alert, Button, FormControl, Snackbar } from '@mui/material'
 import { useInput } from '@/hooks/useInput'
-import { signIn } from '@/services/auth'
-import { ISignIn } from '@/types/auth'
 import { useAppDispatch } from '@/hooks/useStore'
 import { setUser } from '@/store/user'
-// import { Input } from '@/components/Input/input.style'
+import { signIn } from '@/services/auth'
+import { ISignIn } from '@/types/auth'
+import { Loader } from '@/components/Loader/Loader'
+import { Input, FormContent, SignInForm, Title } from './forms.style'
 
 type Props = {
 	isOpen: boolean
@@ -29,6 +25,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 	// const signInHandler: SubmitHandler<ISignIn> = data => {
 	// 	user.signIn(data)
 	// }
+	const [loading, setLoading] = useState(false)
 	const [open, setOpen] = useState(false)
 	const [error, setError] = useState<string>('')
 
@@ -40,8 +37,12 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const signInHandler = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
+		email.validate()
+		password.validate()
+
 		if (!email.valid || !password.valid) return
 
+		setLoading(true)
 		const value: ISignIn = {
 			email: email.value,
 			password: password.value,
@@ -55,6 +56,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 		} else {
 			dispatch(setUser(res.data.data))
 		}
+		setLoading(false)
 	}
 
 	const handleClick = (message: string) => {
@@ -87,7 +89,11 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 					{error}
 				</Alert>
 			</Snackbar>
+
+			{loading ? <Loader background='fill' /> : null}
+
 			<Title open={isOpen}>Вход</Title>
+
 			<FormContent>
 				<FormControl sx={{ marginTop: 1, marginBottom: 2 }}>
 					<Input
@@ -109,25 +115,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 						size='small'
 					/>
 				</FormControl>
-				{/* <Input
-					name='login'
-					rounded='round'
-					placeholder='Логин'
-					register={register}
-					rule={{ required: true }}
-					error={errors.login}
-					errorText='Поле логин не может быть пустым'
-				/>
-				<Input
-					name='password'
-					type='password'
-					rounded='round'
-					placeholder='Пароль'
-					register={register}
-					rule={{ required: true }}
-					error={errors.password}
-					errorText='Поле пароль не может быть пустым'
-				/> */}
+
 				<Button
 					type='submit'
 					variant='contained'
