@@ -21,6 +21,8 @@ const images = {
 	А: FlangeA,
 	Б: FlangeB,
 	В: FlangeV,
+	'В (STG)': FlangeV,
+	'В (LTG)': FlangeV,
 }
 
 type Props = {}
@@ -189,7 +191,13 @@ export const Main: FC<Props> = () => {
 				{main.flangeTypeCode == 'not_selected' ? (
 					<PlugImage />
 				) : (
-					<Image src={images[main.flangeTypeCode as 'А']} alt='flange drawing' />
+					<Image
+						src={images[main.flangeTypeCode as 'А']}
+						alt='flange drawing'
+						maxWidth={'450px'}
+						width={450}
+						height={239}
+					/>
 				)}
 			</Column>
 		</MainContainer>

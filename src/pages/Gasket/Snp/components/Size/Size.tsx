@@ -25,7 +25,7 @@ type Props = {}
 
 export const Size: FC<Props> = () => {
 	const main = useAppSelector(state => state.snp.main)
-	const sizes = useAppSelector(state => state.snp.size)
+	// const sizes = useAppSelector(state => state.snp.size)
 
 	const { data } = useGetSnpQuery(
 		{ typeId: main.snpTypeId, hasD2: main.snpStandard?.hasD2 },
@@ -44,7 +44,13 @@ export const Size: FC<Props> = () => {
 			<Column width={55}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
 				<ImageContainer>
-					<Image src={images[main.snpType?.title as 'Д']} alt='gasket drawing' />
+					<Image
+						src={images[main.snpType?.title as 'Д']}
+						alt='gasket drawing'
+						maxWidth={'500px'}
+						width={600}
+						height={255}
+					/>
 					<SizesBlockSnp />
 					<BacklightSnp />
 				</ImageContainer>

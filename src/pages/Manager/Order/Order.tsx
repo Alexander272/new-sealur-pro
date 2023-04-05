@@ -121,9 +121,9 @@ export default function Order() {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{order?.positions?.map(p => (
+								{order?.positions?.map((p, idx) => (
 									<TableRow key={p.id}>
-										<TableCell>{p.count}</TableCell>
+										<TableCell>{idx + 1}</TableCell>
 										<TableCell>{p.title}</TableCell>
 										<TableCell align='center'>{p.amount}</TableCell>
 									</TableRow>

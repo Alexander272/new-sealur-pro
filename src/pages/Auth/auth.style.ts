@@ -21,7 +21,7 @@ export const Container = styled.div<ContainerProps>`
 	box-shadow: 2px 2px 8px 0px #3636362b;
 	width: 400px;
 	overflow: hidden;
-	height: ${props => (props.signUp ? '570px' : '340px')};
+	height: ${props => (props.signUp ? '580px' : '340px')};
 	transition: all 0.5s ease-in-out;
 
 	@media (max-width: 420px) {

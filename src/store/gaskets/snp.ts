@@ -334,6 +334,9 @@ export const snpSlice = createSlice({
 				state.drawing = undefined
 				state.design.drawing = undefined
 			}
+			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
+			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
+			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
 
 		setAmount: (state, action: PayloadAction<string>) => {

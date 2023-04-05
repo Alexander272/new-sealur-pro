@@ -3,7 +3,7 @@
 import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Loader } from '@/components/Loader/Loader'
-import { Container, Content } from './gasket.style'
+import { Container } from './gasket.style'
 
 export default function Gasket() {
 	// const navigate = useNavigate()

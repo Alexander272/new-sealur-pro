@@ -35,7 +35,7 @@ export default function Auth() {
 					<SignUp onChangeTab={changeTabHandler(true)} isOpen={isSignUp} />
 				</Container>
 			</Wrapper>
-			<AuthFooter />
+			{/* <AuthFooter /> */}
 		</Base>
 	)
 }

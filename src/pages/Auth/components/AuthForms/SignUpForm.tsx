@@ -242,8 +242,16 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 				</FormControl>
 
 				<Typography color={'GrayText'} align='center' marginBottom={1} sx={{ fontSize: '0.75rem' }}>
-					Нажимая кнопку "Зарегистрироваться" вы соглашаетесь на обработку персональных данных
-					{/* и условиями	использования */}
+					{/* Нажимая кнопку "Зарегистрироваться" вы соглашаетесь на обработку персональных данных
+					и условиями	использования */}
+					Нажимая кнопку "Зарегистрироваться" вы соглашаетесь с{' '}
+					<a
+						href='https://sealur.ru/wp-content/uploads/2020/03/politika-silur-v-otnoshenii-personalnyh-dannyh.pdf'
+						target='blank'
+					>
+						Политикой организации в отношении обработки персональных данных
+					</a>
+					.
 				</Typography>
 
 				<Button

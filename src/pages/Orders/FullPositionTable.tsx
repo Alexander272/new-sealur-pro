@@ -19,8 +19,8 @@ export const FullPositionTable: FC<Props> = ({ order, onCopy }) => {
 			<TableBody>
 				{order.positions?.map((p, i) => (
 					<TableRow key={p.id}>
-						<TableCell>{p.count}</TableCell>
-						<TableCell>{p.title}</TableCell>
+						<TableCell width={70}>{p.count}</TableCell>
+						<TableCell width={'75%'}>{p.title}</TableCell>
 						<TableCell>{p.amount} шт.</TableCell>
 						<TableCell width={32}>
 							<Tooltip title='Добавить в текущую заявку'>

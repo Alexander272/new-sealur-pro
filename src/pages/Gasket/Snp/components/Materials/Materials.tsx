@@ -40,7 +40,6 @@ export const Materials: FC<Props> = () => {
 		if (!filler) return
 
 		if (filler.disabledTypes?.includes(main.snpTypeId)) {
-			console.log('disabled')
 			setAlert({ type: 'error', open: true })
 			return
 		}

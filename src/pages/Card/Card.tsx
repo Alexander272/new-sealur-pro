@@ -109,7 +109,7 @@ export const Card: FC<Props> = () => {
 											component='span'
 											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
 										>
-											{p.count}.
+											{idx + 1}.
 										</Typography>{' '}
 										<Typography
 											component='span'

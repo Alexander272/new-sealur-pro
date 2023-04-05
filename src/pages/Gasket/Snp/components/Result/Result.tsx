@@ -3,7 +3,7 @@ import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/mat
 import { Input } from '@/components/Input/input.style'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { Position } from '@/types/card'
-import { addPosition, toggle, updatePosition } from '@/store/card'
+import { toggle } from '@/store/card'
 import { clearSnp, setAmount } from '@/store/gaskets/snp'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
 import { ResultContainer } from '@/pages/Gasket/gasket.style'
@@ -45,7 +45,7 @@ export const Result: FC<Props> = () => {
 		const position: Position = {
 			id: Date.now().toString() + (positions.length + 1),
 			orderId: orderId,
-			count: positions.length + 1,
+			count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
 			title: renderDesignation(),
 			amount: amount,
 			type: 'Snp',
@@ -59,7 +59,7 @@ export const Result: FC<Props> = () => {
 
 		if (cardIndex !== undefined) {
 			position.id = positions[cardIndex].id
-			position.count = cardIndex + 1
+			position.count = positions[cardIndex].count
 			// dispatch(updatePosition({ index: cardIndex, position: position }))
 			update(position)
 			dispatch(clearSnp())
@@ -202,7 +202,7 @@ export const Result: FC<Props> = () => {
 			designationDesign = `(${designationDesignParts.join(', ')}) `
 		}
 
-		if (main.snpStandard?.standard.id === 'b412a73b-13b7-4aea-99c9-10dce3ea43a4') {
+		if (main.snpStandard?.standard.title === 'ОСТ 26.260.454') {
 			if (notStandardMaterial) {
 				let temp = []
 				// if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
@@ -220,7 +220,7 @@ export const Result: FC<Props> = () => {
 
 			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
-		if (main.snpStandard?.standard.id === '4df3db32-401f-47d2-b5e7-c8e8d3cd00f1') {
+		if (main.snpStandard?.standard.title === 'ГОСТ Р 52376-2005') {
 			let y = ''
 			// if (!!materials.or && materials.or?.code === '5') {
 			// 	y = '-У'
@@ -254,7 +254,7 @@ export const Result: FC<Props> = () => {
 
 			return `СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
-		if (main.snpStandard?.standard.id === '9153785c-2fc5-4b33-a31d-254f42ed20b7') {
+		if (main.snpStandard?.standard.title === 'ASME B 16.20') {
 			// let ir = materials.ir?.shortEn ? `-I.R. ${materials.ir.shortEn}` : ''
 			// let fr = `-${materials.fr?.shortEn}/`
 			// let or = materials.or?.shortEn ? `-O.R. ${materials.or.shortEn}` : ''
@@ -264,28 +264,7 @@ export const Result: FC<Props> = () => {
 
 			return `SWG-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${main.snpStandard.standard.title}`
 		}
-		// if (
-		// 	main.snpStandard?.standard.id === '9153785c-2fc5-4b33-a31d-254f42ed20b7'
-		// 	// ||
-		// 	// main.snpStandard?.standard.id === '83eee092-833b-456f-8e8e-735a7a09b357'
-		// ) {
-		// 	let ir = ''
-		// 	let fr = ''
-		// 	let or = ''
-
-		// 	let thickness = ''
-		// 	if (size.h === 'another')
-		// 		thickness = `(толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}) `
-
-		// 	if (notStandardMaterial) {
-		// 		ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
-		// 		if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-		// 		or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
-		// 	}
-
-		// 	return `СНП-${main.snpType?.code}-${size.dn}"-${size.pn.mpa}#-${ir}${fr}${materials.filler.code}${or} ${thickness}${designationDesign}${main.snpStandard.standard.title}`
-		// }
-		if (main.snpStandard?.standard.id === '83eee092-833b-456f-8e8e-735a7a09b357') {
+		if (main.snpStandard?.standard.title === 'EN 12560-2') {
 			// let ir = ''
 			let fr = ''
 			// let or = ''
@@ -300,7 +279,7 @@ export const Result: FC<Props> = () => {
 
 			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dnMm}-Class ${size.pn.mpa}-${ir}${fr}${materials.filler.code}${or}`
 		}
-		if (main.snpStandard?.standard.id === '0feb705e-6722-4fe8-acae-877587011136') {
+		if (main.snpStandard?.standard.title === 'ГОСТ 28759.9') {
 			let temp = []
 
 			if (notStandardMaterial) {
@@ -316,7 +295,7 @@ export const Result: FC<Props> = () => {
 
 			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn.mpa} ${main.snpStandard.standard.title}${designationMaterials}`
 		}
-		if (main.snpStandard?.standard.id === 'cc69c6a8-c3b9-48fe-afe2-cca53fdcf96e') {
+		if (main.snpStandard?.standard.title === 'EN 1514-2') {
 			// let ir = ''
 			// let fr = ''
 			// let or = ''
@@ -347,7 +326,7 @@ export const Result: FC<Props> = () => {
 
 			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dn}-PN ${size.pn.kg}-${ir}${fr}${materials.filler.code}${or}`
 		}
-		if (main.snpStandard?.standard.id === '954f10c3-81d9-44a1-b790-b412b010c9cc') {
+		if (main.snpStandard?.standard.title === 'ТУ 3689-010-93978201-2008') {
 			let sizes = ''
 			if (size?.d4) sizes += size.d4 + 'x'
 			sizes += `${size?.d3}x${size?.d2}`

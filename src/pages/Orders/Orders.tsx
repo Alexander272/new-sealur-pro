@@ -11,7 +11,7 @@ import {
 	Typography,
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { forwardRef, ReactElement, useEffect, useState } from 'react'
+import { forwardRef, MouseEvent, ReactElement, useEffect, useState } from 'react'
 import { useCopyOrderMutation, useCopyPositionMutation, useGetAllOrdersQuery } from '@/store/api/order'
 import { stampToDate } from '@/services/date'
 import { Container } from './order.style'
@@ -25,16 +25,20 @@ export default function Orders() {
 
 	const { data } = useGetAllOrdersQuery(null)
 
-	const [copyPosition, { error }] = useCopyPositionMutation()
-	const [copyOrder, { error: errorOrder }] = useCopyOrderMutation()
+	const [copyPosition, { error, isSuccess }] = useCopyPositionMutation()
+	const [copyOrder, { error: errorOrder, isSuccess: isSuccessOrder }] = useCopyOrderMutation()
 
 	// const [open, setOpen] = useState(false)
 	// const [order, setOrder] = useState<IFullOrder | null>(null)
-	const [openAlert, setOpen] = useState(false)
+	// const [openAlert, setOpen] = useState(false)
+	const [alert, setAlert] = useState<{ type: 'error' | 'success'; open: boolean }>({ type: 'success', open: false })
 
 	useEffect(() => {
-		if (error || errorOrder) setOpen(true)
+		if (error || errorOrder) setAlert({ type: 'error', open: true })
 	}, [error, errorOrder])
+	useEffect(() => {
+		if (isSuccess || isSuccessOrder) setAlert({ type: 'success', open: true })
+	}, [isSuccess, isSuccessOrder])
 
 	// const handleClickOpen = (order: IFullOrder) => () => {
 	// 	// setOpen(true)
@@ -45,11 +49,14 @@ export default function Orders() {
 	// 	setOrder(null)
 	// }
 
-	const allCopyHandler = (id: string) => () => {
+	const allCopyHandler = (id: string) => (event: MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault()
+		event.stopPropagation()
+
 		copyOrder({
 			fromId: id,
 			targetId: orderId,
-			count: positions.length + 1,
+			count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
 		})
 	}
 
@@ -61,7 +68,7 @@ export default function Orders() {
 			id,
 			orderId,
 			fromOrderId,
-			count: positions.length + 1,
+			count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
 			amount: '',
 		})
 	}
@@ -70,26 +77,30 @@ export default function Orders() {
 		if (reason === 'clickaway') {
 			return
 		}
-		setOpen(false)
+		setAlert({ type: 'success', open: false })
 	}
 
 	return (
 		<Container>
 			<Snackbar
-				open={openAlert}
-				autoHideDuration={6000}
+				open={alert.open}
+				// autoHideDuration={6000}
 				onClose={alertClose}
 				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
 			>
-				<Alert onClose={alertClose} severity={'error'} sx={{ width: '100%' }}>
-					{error && 'Не удалось добавить позицию. ' + (error as any).data.message}
-					{errorOrder && 'Во время добавления позиций произошла ошибка'}
+				<Alert onClose={alertClose} severity={alert.type} sx={{ width: '100%' }}>
+					{alert.type === 'success'
+						? (isSuccess && 'Позиция добавлена в заявку') ||
+						  (isSuccessOrder && 'Все позиции добавлены в текущую заявку')
+						: (error && 'Не удалось добавить позицию. ' + (error as any).data.message) ||
+						  (errorOrder &&
+								'Во время добавления позиций произошла ошибка. ' + (errorOrder as any).data.message)}
 				</Alert>
 			</Snackbar>
 
 			{data?.data ? (
-				data?.data.map(o => (
-					<Accordion key={o.id}>
+				data?.data.map((o, i) => (
+					<Accordion key={o.id} defaultExpanded={i == 0}>
 						<AccordionSummary
 							expandIcon={<ExpandMoreIcon />}
 							aria-controls='panel2a-content'

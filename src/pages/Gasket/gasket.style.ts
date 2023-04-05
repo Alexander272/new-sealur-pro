@@ -48,7 +48,10 @@ export const MainContainer = styled(BaseContainer)`
 	gap: 10px;
 
 	@media screen and (max-width: 1150px) {
-		grid-column-end: 12;
+		grid-column-end: 13;
+	}
+	@media screen and (max-width: 700px) {
+		flex-wrap: wrap;
 	}
 `
 
@@ -61,7 +64,10 @@ export const SizeContainer = styled(BaseContainer)`
 	gap: 10px;
 
 	@media screen and (max-width: 1150px) {
-		grid-column-end: 12;
+		grid-column-end: 13;
+	}
+	@media screen and (max-width: 700px) {
+		flex-wrap: wrap;
 	}
 `
 
@@ -89,6 +95,10 @@ export const Column = styled.div<ColumnProps>`
 	width: ${props => (props.width ? props.width + '%' : '50%')};
 	flex-direction: column;
 	gap: 6px;
+
+	@media screen and (max-width: 700px) {
+		width: 100%;
+	}
 `
 
 export const PlugImage = styled.div`
@@ -100,12 +110,19 @@ export const PlugImage = styled.div`
 
 export const ImageContainer = styled.div`
 	position: relative;
-	margin: auto 0;
+	margin: auto;
 	padding: 20px 0;
+	width: fit-content;
 `
 
-export const Image = styled.img`
+type ImageProps = {
+	maxWidth?: string
+}
+export const Image = styled.img<ImageProps>`
 	width: 100%;
+	height: auto;
+	margin: auto;
+	max-width: ${props => (props.maxWidth ? props.maxWidth : '100%')};
 `
 
 // export const Description = styled.p`

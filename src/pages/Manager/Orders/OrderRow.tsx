@@ -1,5 +1,5 @@
 import { IconButton, Menu, MenuItem, TableCell, TableRow } from '@mui/material'
-import React, { FC, MouseEvent, useState } from 'react'
+import { FC, MouseEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { stampToDate } from '@/services/date'
 import { IManagerOrder } from '@/types/order'
@@ -19,7 +19,7 @@ export const OrderRow: FC<Props> = ({ data, onOpen }) => {
 	const [finish, { error }] = useFinishOrderMutation()
 
 	const open = Boolean(anchorEl)
-	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+	const handleClick = (event: MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget)
 	}
 	const handleClose = () => {
