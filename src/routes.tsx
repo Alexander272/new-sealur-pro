@@ -6,6 +6,7 @@ import { useRefresh } from './hooks/refresh'
 import Main from '@/layout/Main/Main'
 import RequireAuth from './pages/Auth/RequireAuth'
 const Auth = lazy(() => import('@/pages/Auth/Auth'))
+const Reset = lazy(() => import('@/pages/Auth/Reset/Reset'))
 const Confirm = lazy(() => import('@/pages/Auth/Confirm'))
 const ProGasket = lazy(() => import('@/pages/Gasket/Gasket'))
 const ProSnp = lazy(() => import('@/pages/Gasket/Snp/Snp'))
@@ -15,6 +16,8 @@ const OnlyManager = lazy(() => import('@/pages/Auth/OnlyManager'))
 const Manager = lazy(() => import('@/layout/Manager/Manager'))
 const ManagerOrders = lazy(() => import('@/pages/Manager/Orders/Orders'))
 const ManagerOrder = lazy(() => import('@/pages/Manager/Order/Order'))
+
+const Connect = lazy(() => import('@/pages/ConnectWithUs/ConnectWithUs'))
 
 export const AppRoutes = () => {
 	const { ready } = useRefresh()
@@ -26,6 +29,7 @@ export const AppRoutes = () => {
 				<Routes>
 					<Route path='/auth' element={<Auth />} />
 					<Route path='/auth/confirm' element={<Confirm />} />
+					<Route path='/auth/reset' element={<Reset />} />
 					<Route
 						path='/'
 						element={
@@ -38,6 +42,8 @@ export const AppRoutes = () => {
 							<Route index element={<ProSnp />} />
 						</Route>
 						<Route path='/orders' element={<Orders />} />
+
+						<Route path='/connect' element={<Connect />} />
 					</Route>
 
 					{/* <Route

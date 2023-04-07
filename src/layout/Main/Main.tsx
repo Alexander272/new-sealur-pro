@@ -13,16 +13,16 @@ export default function Main() {
 		<Base>
 			<Suspense fallback={<Loader />}>
 				<Header />
-			</Suspense>
-			<Wrapper>
-				<Suspense fallback={<Loader />}>
-					<Outlet />
-				</Suspense>
-				<Suspense fallback={<Loader />}>
-					<Card />
-				</Suspense>
-			</Wrapper>
-			<Suspense fallback={<Loader />}>
+				{/* </Suspense> */}
+				<Wrapper>
+					<Suspense fallback={<Loader />}>
+						<Outlet />
+					</Suspense>
+					<Suspense fallback={<Loader />}>
+						<Card />
+					</Suspense>
+				</Wrapper>
+				{/* <Suspense fallback={<Loader />}> */}
 				<Footer />
 			</Suspense>
 		</Base>

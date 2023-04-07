@@ -24,6 +24,8 @@ export const Content = styled.div`
 	padding: 5px 10px;
 	max-width: 1580px;
 	margin: 0 auto;
+	flex-wrap: wrap;
+	gap: 10px;
 `
 
 export const Logo = styled.img`
@@ -57,10 +59,10 @@ export const BarLink = styled.a`
 	height: 28px;
 `
 
-// export const BarLink = styled(Link)`
-// 	height: 100%;
-// 	width: 32px;
-// `
+export const NavLink = styled(Link)`
+	height: 20px;
+	width: 32px;
+`
 
 export const Icon = styled.div`
 	margin-left: 20px;

@@ -1,6 +1,7 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 
 type Props = {
+	value?: string
 	validation?: 'email' | 'uint' | 'inn' | 'empty' | 'phone' | 'password'
 	replace?: 'phone'
 }
@@ -8,9 +9,13 @@ type Props = {
 const maskPhone = '+7 (###) ###-##-## (доб. ###)'
 
 export const useInput = (props?: Props) => {
-	const [value, setValue] = useState('')
+	const [value, setValue] = useState(props?.value || '')
 	// надо подумать как сделать нормальную валидацию
 	const [valid, setValid] = useState(true)
+
+	useEffect(() => {
+		if (props?.value) setValue(props.value)
+	}, [props?.value])
 
 	const onChange = (event: ChangeEvent<HTMLInputElement>) => {
 		let newValue = event.target.value

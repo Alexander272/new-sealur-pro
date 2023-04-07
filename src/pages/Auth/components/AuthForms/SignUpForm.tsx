@@ -3,6 +3,7 @@ import { FC, FormEvent, SyntheticEvent, useCallback, useEffect, useState } from 
 import { useInput } from '@/hooks/useInput'
 import { useDebounce } from '@/hooks/debounce'
 import { CompanyInfo, findCompany } from '@/services/dadata'
+import { signUp } from '@/services/auth'
 import { ISignUp } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
 import { FormContent, Input, SignUpForm, Title } from './forms.style'
@@ -14,18 +15,6 @@ type Props = {
 }
 
 export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
-	// const {
-	// 	register,
-	// 	handleSubmit,
-	// 	formState: { errors },
-	// } = useForm<ISignUp>()
-
-	// const { user } = useDispatch<Dispatch>()
-
-	// const signUpHandler: SubmitHandler<ISignUp> = data => {
-	// 	user.singUp(data)
-	// }
-
 	const [loading, setLoading] = useState(false)
 	const [company, setCompany] = useState('')
 	const [companyData, setCompanyData] = useState<CompanyInfo | null>(null)
@@ -94,15 +83,13 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			managerId: localStorage.getItem('managerId') || '',
 		}
 
-		console.log('signUp')
-
-		// const res = await signUp(user)
-		// if (res.error) {
-		// 	console.log(res.error)
-		// 	handleClick('error', res.error)
-		// } else {
-		// 	handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
-		// }
+		const res = await signUp(user)
+		if (res.error) {
+			console.log(res.error)
+			handleClick('error', res.error)
+		} else {
+			handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
+		}
 		setLoading(false)
 	}
 
@@ -115,7 +102,6 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 		if (reason === 'clickaway') {
 			return
 		}
-
 		setOpen(false)
 	}
 
@@ -137,29 +123,6 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			<Title open={isOpen}>Регистрация</Title>
 
 			<FormContent>
-				{/* <FormControl sx={{ marginTop: 1, marginBottom: 2 }}>
-					<Input
-						name='inn'
-						value={inn.value}
-						onChange={inn.onChange}
-						placeholder='ИНН организации'
-						size='small'
-						error={!inn.valid}
-					/>
-				</FormControl>
-
-				{/* // похоже это лишнее
-				<FormControl sx={{ marginBottom: 2 }}>
-					<Input
-						name='city'
-						value={city.value}
-						onChange={city.onChange}
-						placeholder='Город'
-						size='small'
-						error={!city.valid}
-					/>
-				</FormControl> */}
-
 				<FormControl sx={{ marginBottom: 2, paddingTop: 0.5 }}>
 					<Autocomplete
 						value={companyData}

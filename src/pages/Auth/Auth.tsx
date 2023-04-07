@@ -1,6 +1,6 @@
-import { useAppSelector } from '@/hooks/useStore'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAppSelector } from '@/hooks/useStore'
 import { Container, Wrapper, Base } from './auth.style'
 import { SignIn } from './components/AuthForms/SignInForm'
 import { SignUp } from './components/AuthForms/SignUpForm'

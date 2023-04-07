@@ -3,7 +3,7 @@ import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { toggle } from '@/store/card'
-import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
+import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink, NavLink } from './header.style'
 import { clearUser } from '@/store/user'
 import { signOut } from '@/services/auth'
 
@@ -61,10 +61,18 @@ const Header: FC<Props> = () => {
 				</LogoLink>
 
 				<Nav>
+					<Tooltip title='Связаться с нами'>
+						<Icon>
+							<NavLink to='/connect'>
+								<img src='/image/email.svg' alt='Связаться с нами' />
+							</NavLink>
+						</Icon>
+					</Tooltip>
+
 					<Tooltip title='Инструкция'>
 						<Icon>
 							<BarLink href='/files/instruction.pdf' target='_blank'>
-								<img src='/image/question-icon.svg' alt='Главная' width='30' height='30' />
+								<img src='/image/question-icon.svg' alt='Инструкция' width='30' height='30' />
 							</BarLink>
 						</Icon>
 					</Tooltip>

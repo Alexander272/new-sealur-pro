@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { TextField } from '@mui/material'
 import { styled as UIStyled } from '@mui/material/styles'
+import { Link } from 'react-router-dom'
 
 type FormProps = {
 	open?: boolean
@@ -60,3 +61,9 @@ export const Input = UIStyled(TextField)(({ theme }) => ({
 		},
 	},
 }))
+
+export const NavLink = styled(Link)`
+	text-decoration: none;
+	font-size: 14px;
+	text-align: center;
+`

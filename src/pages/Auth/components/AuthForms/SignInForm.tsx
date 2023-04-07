@@ -6,7 +6,7 @@ import { setUser } from '@/store/user'
 import { signIn } from '@/services/auth'
 import { ISignIn } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
-import { Input, FormContent, SignInForm, Title } from './forms.style'
+import { Input, FormContent, SignInForm, Title, NavLink } from './forms.style'
 
 type Props = {
 	isOpen: boolean
@@ -14,17 +14,6 @@ type Props = {
 }
 
 export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
-	// const {
-	// 	register,
-	// 	handleSubmit,
-	// 	formState: { errors },
-	// } = useForm<ISignIn>()
-
-	// const { user } = useDispatch<Dispatch>()
-
-	// const signInHandler: SubmitHandler<ISignIn> = data => {
-	// 	user.signIn(data)
-	// }
 	const [loading, setLoading] = useState(false)
 	const [open, setOpen] = useState(false)
 	const [error, setError] = useState<string>('')
@@ -37,10 +26,10 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const signInHandler = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
-		email.validate()
-		password.validate()
+		let emailValid = email.validate()
+		let passwordValid = password.validate()
 
-		if (!email.valid || !password.valid) return
+		if (!emailValid || !passwordValid) return
 
 		setLoading(true)
 		const value: ISignIn = {
@@ -73,12 +62,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 	}
 
 	return (
-		<SignInForm
-			onClick={!isOpen ? onChangeTab : undefined}
-			open={isOpen}
-			// onSubmit={handleSubmit(signInHandler)}
-			onSubmit={signInHandler}
-		>
+		<SignInForm onClick={!isOpen ? onChangeTab : undefined} open={isOpen} onSubmit={signInHandler}>
 			<Snackbar
 				open={open}
 				autoHideDuration={6000}
@@ -102,10 +86,11 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 						name='email'
 						placeholder='Email'
 						size='small'
+						error={!email.valid}
 					/>
 				</FormControl>
 
-				<FormControl sx={{ marginBottom: 5 }}>
+				<FormControl sx={{ marginBottom: 1 }}>
 					<Input
 						value={password.value}
 						onChange={password.onChange}
@@ -113,15 +98,17 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 						type='password'
 						placeholder='Пароль'
 						size='small'
+						error={!password.valid}
 					/>
 				</FormControl>
 
 				{/* //TODO добавить кнопку для восстановления пароля */}
+				<NavLink to='reset'>Забыли пароль?</NavLink>
 
 				<Button
 					type='submit'
 					variant='contained'
-					sx={{ borderRadius: '20px', fontSize: '1rem', fontWeight: 600 }}
+					sx={{ borderRadius: '20px', fontSize: '1rem', fontWeight: 600, marginTop: 4 }}
 				>
 					Войти
 				</Button>
