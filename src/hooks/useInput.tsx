@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from 'react'
 
 type Props = {
-	validation?: 'email' | 'uint' | 'inn' | 'empty' | 'phone'
+	validation?: 'email' | 'uint' | 'inn' | 'empty' | 'phone' | 'password'
 	replace?: 'phone'
 }
 
@@ -59,6 +59,12 @@ export const useInput = (props?: Props) => {
 		if (props?.validation === 'email') {
 			const regex =
 				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+			if (regex.test(value)) {
+				isValid = true
+			} else isValid = false
+		}
+		if (props?.validation === 'password') {
+			const regex = /(?=.*[0-9])(?=.*[a-zа-я])(?=.*[A-ZА-Я])[0-9a-zA-Zа-яА-Я]{6,20}/g
 			if (regex.test(value)) {
 				isValid = true
 			} else isValid = false

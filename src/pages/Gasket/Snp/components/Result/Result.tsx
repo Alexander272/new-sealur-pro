@@ -5,8 +5,8 @@ import { Position } from '@/types/card'
 import { toggle } from '@/store/card'
 import { clearSnp, setAmount } from '@/store/gaskets/snp'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
-import { Input } from '@/components/Input/input.style'
 import { Loader } from '@/components/Loader/Loader'
+import { Input } from '@/components/Input/input.style'
 import { ResultContainer } from '@/pages/Gasket/gasket.style'
 
 type Props = {}
@@ -19,10 +19,6 @@ export const Result: FC<Props> = () => {
 	const materials = useAppSelector(state => state.snp.material)
 	const design = useAppSelector(state => state.snp.design)
 	const amount = useAppSelector(state => state.snp.amount)
-
-	// const materialIr = useAppSelector(state => state.snp.materialsIr)
-	// const materialFr = useAppSelector(state => state.snp.materialsFr)
-	// const materialOr = useAppSelector(state => state.snp.materialsOr)
 
 	const hasSizeError = useAppSelector(state => state.snp.hasSizeError)
 	const hasDesignError = useAppSelector(state => state.snp.hasDesignError)
@@ -340,7 +336,18 @@ export const Result: FC<Props> = () => {
 			let thickness = size.h != 'another' ? size.h : size.another
 			thickness = (+thickness.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')
 
-			//TODO выводить словами материалы, по типу Incoloy 825
+			//TODO выводить словами материалы (с 09Г2С не очень получается)
+
+			let temp = []
+
+			if (materials.innerRing && !materials.innerRing.isStandard)
+				temp.push(`вн. кольцо - ${materials.innerRing.title}`)
+			if (materials.frame && !materials.frame.isStandard) temp.push(`каркас - ${materials.frame.title}`)
+			if (materials.outerRing && !materials.outerRing.isStandard)
+				temp.push(`нар. кольцо - ${materials.outerRing.title}`)
+
+			let notStandardMaterials = ''
+			if (temp.length) notStandardMaterials = ` (${temp.join(', ')}) `
 
 			if (notStandardMaterial) {
 				// designationMaterials = `-${materials.ir?.code || 0}${materials.fr?.code || 0}${materials.or?.code || 0}`
@@ -349,7 +356,7 @@ export const Result: FC<Props> = () => {
 				}`
 			}
 
-			return `СНП-${main.snpType?.code}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}`
+			return `СНП-${main.snpType?.code}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}${notStandardMaterials}`
 		}
 
 		return ''
@@ -358,21 +365,15 @@ export const Result: FC<Props> = () => {
 	return (
 		<ResultContainer>
 			<Stack direction={'row'} spacing={1} marginBottom={1}>
-				<Typography fontWeight='bold' marginRight={1} sx={{ userSelect: 'none' }}>
+				<Typography fontWeight='bold' marginRight={1}>
 					Описание:
 				</Typography>
-				<Typography textAlign='justify' sx={{ userSelect: 'none' }}>
-					{renderDescription()}
-				</Typography>
+				<Typography textAlign='justify'>{renderDescription()}</Typography>
 			</Stack>
 
 			<Stack direction={'row'} spacing={2} alignItems='center' marginBottom={1}>
-				<Typography fontWeight='bold' sx={{ userSelect: 'none' }}>
-					Обозначение:
-				</Typography>
-				<Typography sx={{ userSelect: 'none' }} fontSize={'1.12rem'}>
-					{renderDesignation()}
-				</Typography>
+				<Typography fontWeight='bold'>Обозначение:</Typography>
+				<Typography fontSize={'1.12rem'}>{renderDesignation()}</Typography>
 			</Stack>
 			<Stack direction={'row'} spacing={2} alignItems='center' justifyContent='space-between'>
 				{isLoading || isLoadingUpdate ? <Loader background='fill' /> : null}

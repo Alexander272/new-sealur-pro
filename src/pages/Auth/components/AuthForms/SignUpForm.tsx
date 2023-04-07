@@ -3,10 +3,10 @@ import { FC, FormEvent, SyntheticEvent, useCallback, useEffect, useState } from 
 import { useInput } from '@/hooks/useInput'
 import { useDebounce } from '@/hooks/debounce'
 import { CompanyInfo, findCompany } from '@/services/dadata'
-import { signUp } from '@/services/auth'
 import { ISignUp } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
 import { FormContent, Input, SignUpForm, Title } from './forms.style'
+import { ValidMessage } from '../ValidMessage/ValidMessage'
 
 type Props = {
 	isOpen: boolean
@@ -37,8 +37,8 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const name = useInput({ validation: 'empty' })
 	const position = useInput({ validation: 'empty' })
 	const email = useInput({ validation: 'email' })
-	const phone = useInput({ replace: 'phone' })
-	const password = useInput({ validation: 'empty' })
+	const phone = useInput({ validation: 'empty', replace: 'phone' })
+	const password = useInput({ validation: 'password' })
 
 	const companyValue = useDebounce(company, 500)
 
@@ -62,12 +62,13 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const signUpHandler = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
-		name.validate()
-		position.validate()
-		email.validate()
-		password.validate()
+		let nameValid = name.validate()
+		let positionValid = position.validate()
+		let phoneValid = phone.validate()
+		let emailValid = email.validate()
+		let passwordValid = password.validate()
 
-		if (!name.valid || !position.valid || !email.valid || !password.valid) {
+		if (!nameValid || !positionValid || !emailValid || !phoneValid || !passwordValid) {
 			return
 		}
 
@@ -93,13 +94,15 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			managerId: localStorage.getItem('managerId') || '',
 		}
 
-		const res = await signUp(user)
-		if (res.error) {
-			console.log(res.error)
-			handleClick('error', res.error)
-		} else {
-			handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
-		}
+		console.log('signUp')
+
+		// const res = await signUp(user)
+		// if (res.error) {
+		// 	console.log(res.error)
+		// 	handleClick('error', res.error)
+		// } else {
+		// 	handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
+		// }
 		setLoading(false)
 	}
 
@@ -190,9 +193,10 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 							)
 						}}
 					/>
+					{/* {companyError && <ValidMessage messages={['Поле обязательно для заполнения.']} />} */}
 				</FormControl>
 
-				<FormControl sx={{ marginBottom: 2 }}>
+				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
 					<Input
 						name='name'
 						value={name.value}
@@ -201,9 +205,10 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						size='small'
 						error={!name.valid}
 					/>
+					{!name.valid && <ValidMessage messages={['Поле обязательно для заполнения.']} />}
 				</FormControl>
 
-				<FormControl sx={{ marginBottom: 2 }}>
+				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
 					<Input
 						name='position'
 						value={position.value}
@@ -212,9 +217,10 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						size='small'
 						error={!position.valid}
 					/>
+					{!position.valid && <ValidMessage messages={['Поле обязательно для заполнения.']} />}
 				</FormControl>
 
-				<FormControl sx={{ marginBottom: 2 }}>
+				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
 					<Input
 						name='email'
 						value={email.value}
@@ -223,9 +229,10 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						size='small'
 						error={!email.valid}
 					/>
+					{!email.valid && <ValidMessage messages={['Email не корректен']} />}
 				</FormControl>
 
-				<FormControl sx={{ marginBottom: 2 }}>
+				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
 					<Input
 						name='phone'
 						value={phone.value}
@@ -234,9 +241,10 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						size='small'
 						error={!phone.valid}
 					/>
+					{!phone.valid && <ValidMessage messages={['Поле обязательно для заполнения.']} />}
 				</FormControl>
 
-				<FormControl sx={{ marginBottom: 2 }}>
+				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
 					<Input
 						name='password'
 						value={password.value}
@@ -246,6 +254,14 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						size='small'
 						error={!password.valid}
 					/>
+					{!password.valid && (
+						<ValidMessage
+							messages={[
+								'Минимальная длина пароля 6 символов',
+								'Пароль должен содержать заглавные, строчные буквы и цифры',
+							]}
+						/>
+					)}
 				</FormControl>
 
 				<Typography color={'GrayText'} align='center' marginBottom={1} sx={{ fontSize: '0.75rem' }}>

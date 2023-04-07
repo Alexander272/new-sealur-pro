@@ -81,7 +81,6 @@ export default function Order() {
 			company: data.data.user.company,
 		}
 		openHandler(order, 'order')
-		// onOpen(data, 'order')
 	}
 
 	const clientHandler = () => {
@@ -98,7 +97,6 @@ export default function Order() {
 			company: data.data.user.company,
 		}
 		openHandler(order, 'manager')
-		// onOpen(data, 'manager')
 	}
 
 	const user = data?.data.user

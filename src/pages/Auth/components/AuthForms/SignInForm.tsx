@@ -116,6 +116,8 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 					/>
 				</FormControl>
 
+				{/* //TODO добавить кнопку для восстановления пароля */}
+
 				<Button
 					type='submit'
 					variant='contained'

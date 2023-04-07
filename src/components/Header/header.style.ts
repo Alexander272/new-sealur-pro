@@ -50,10 +50,17 @@ export const Nav = styled.nav`
 	justify-content: center;
 `
 
-export const BarLink = styled(Link)`
-	height: 100%;
-	width: 32px;
+export const BarLink = styled.a`
+	/* font-size: 30px;
+	color: var(--primary-color);
+	text-decoration: none; */
+	height: 28px;
 `
+
+// export const BarLink = styled(Link)`
+// 	height: 100%;
+// 	width: 32px;
+// `
 
 export const Icon = styled.div`
 	margin-left: 20px;

@@ -56,7 +56,7 @@ export const BacklightSnp = () => {
 
 	return (
 		<>
-			{/* //TODO блок зависит от того какой материал открыт и от того какой тип прокладки выбран */}
+			{/* // блок зависит от того какой материал открыт и от того какой тип прокладки выбран */}
 			{material.openIr && (
 				<Backlight blocks={backlightPositionSnp[main.snpType?.title as 'Д']?.innerRing || []} />
 			)}

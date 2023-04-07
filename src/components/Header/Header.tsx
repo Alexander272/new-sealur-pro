@@ -1,24 +1,15 @@
 import { FC, useState } from 'react'
 import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { toggle } from '@/store/card'
-import { Content, Container, LogoLink, Logo, Icon, Nav } from './header.style'
+import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
 import { clearUser } from '@/store/user'
 import { signOut } from '@/services/auth'
-import { useNavigate } from 'react-router-dom'
 
 type Props = {}
 
 const Header: FC<Props> = () => {
-	// const { user, setUser } = useContext(AuthContext)
-
-	// const logoutHandler = async () => {
-	// 	try {
-	// 		await signOut()
-	// 		setUser(null)
-	// 	} catch (error) {}
-	// }
-
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
 	const userId = useAppSelector(state => state.user.userId)
@@ -70,6 +61,14 @@ const Header: FC<Props> = () => {
 				</LogoLink>
 
 				<Nav>
+					<Tooltip title='Инструкция'>
+						<Icon>
+							<BarLink href='/files/instruction.pdf' target='_blank'>
+								<img src='/image/question-icon.svg' alt='Главная' width='30' height='30' />
+							</BarLink>
+						</Icon>
+					</Tooltip>
+
 					{userId && (
 						<>
 							<Tooltip title='Главная страница'>
@@ -99,26 +98,26 @@ const Header: FC<Props> = () => {
 					open={open}
 					onClose={handleClose}
 					onClick={handleClose}
-					// PaperProps={{
-					// 	elevation: 0,
-					// 	sx: {
-					// 		overflow: 'visible',
-					// 		filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-					// 		mt: 1.5,
-					// 		'&:before': {
-					// 			content: '""',
-					// 			display: 'block',
-					// 			position: 'absolute',
-					// 			top: 0,
-					// 			right: 14,
-					// 			width: 10,
-					// 			height: 10,
-					// 			bgcolor: 'background.paper',
-					// 			transform: 'translateY(-50%) rotate(45deg)',
-					// 			zIndex: 0,
-					// 		},
-					// 	},
-					// }}
+					PaperProps={{
+						elevation: 0,
+						sx: {
+							overflow: 'visible',
+							filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+							mt: 1.5,
+							'&:before': {
+								content: '""',
+								display: 'block',
+								position: 'absolute',
+								top: 0,
+								right: 14,
+								width: 10,
+								height: 10,
+								bgcolor: 'background.paper',
+								transform: 'translateY(-50%) rotate(45deg)',
+								zIndex: 0,
+							},
+						},
+					}}
 					transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 					anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 				>

@@ -5,6 +5,7 @@ import { Loader } from '@/components/Loader/Loader'
 import { Base, Wrapper } from './main.style'
 
 const Header = lazy(() => import('@/components/Header/Header'))
+const Footer = lazy(() => import('@/components/Footer/Footer'))
 const Card = lazy(() => import('@/pages/Card/Card'))
 
 export default function Main() {
@@ -12,10 +13,17 @@ export default function Main() {
 		<Base>
 			<Suspense fallback={<Loader />}>
 				<Header />
-				<Wrapper>
+			</Suspense>
+			<Wrapper>
+				<Suspense fallback={<Loader />}>
 					<Outlet />
+				</Suspense>
+				<Suspense fallback={<Loader />}>
 					<Card />
-				</Wrapper>
+				</Suspense>
+			</Wrapper>
+			<Suspense fallback={<Loader />}>
+				<Footer />
 			</Suspense>
 		</Base>
 	)

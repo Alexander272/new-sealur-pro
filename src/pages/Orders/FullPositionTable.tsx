@@ -19,7 +19,7 @@ export const FullPositionTable: FC<Props> = ({ order, onCopy }) => {
 			<TableBody>
 				{order.positions?.map((p, i) => (
 					<TableRow key={p.id}>
-						<TableCell width={70}>{p.count}</TableCell>
+						<TableCell width={70}>{i + 1}</TableCell>
 						<TableCell width={'75%'}>{p.title}</TableCell>
 						<TableCell>{p.amount} шт.</TableCell>
 						<TableCell width={32}>
