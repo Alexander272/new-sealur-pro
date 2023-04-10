@@ -191,7 +191,7 @@ export const Result: FC<Props> = () => {
 		}
 
 		if (design.jumper.hasJumper) {
-			designationDesignParts.push(`${design.jumper.code}${design.jumper.width && '/'}${design.jumper.width}`)
+			designationDesignParts.push(`${design.jumper.code}${design.jumper?.width ? `/${design.jumper.width}` : ''}`)
 		}
 		if (design.mounting.hasMounting) {
 			designationDesignParts.push(design.mounting.code)
@@ -278,7 +278,7 @@ export const Result: FC<Props> = () => {
 			if (materials.innerRing?.code != materials.frame?.code) fr = `${materials.frame?.code}-`
 			let or = materials.outerRing?.code ? `-${materials.outerRing?.code}` : ''
 
-			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dnMm}-Class ${size.pn.mpa}-${ir}${fr}${materials.filler.code}${or}`
+			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dnMm}-Class ${size.pn.mpa}-${ir}${fr}${materials.filler.code}${or} ${designationDesign}`
 		}
 		if (main.snpStandard?.standard.title === 'ГОСТ 28759.9') {
 			let temp = []
@@ -294,7 +294,7 @@ export const Result: FC<Props> = () => {
 
 			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
 
-			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn.mpa} ${main.snpStandard.standard.title}${designationMaterials}`
+			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn.mpa} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.title === 'EN 1514-2') {
 			// let ir = ''
@@ -325,7 +325,7 @@ export const Result: FC<Props> = () => {
 			if (materials.innerRing?.code != materials.frame?.code) fr = `${materials.frame?.code}-`
 			let or = materials.outerRing?.code ? `-${materials.outerRing?.code}` : ''
 
-			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dn}-PN ${size.pn.kg}-${ir}${fr}${materials.filler.code}${or}`
+			return `Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dn}-PN ${size.pn.kg}-${ir}${fr}${materials.filler.code}${or} ${designationDesign}`
 		}
 		if (main.snpStandard?.standard.title === 'ТУ 3689-010-93978201-2008') {
 			let sizes = ''

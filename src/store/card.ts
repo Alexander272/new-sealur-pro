@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { Position } from '@/types/card'
 
-const localKey = 'sealur_pro_card'
+// const localKey = 'sealur_pro_card'
 
 export interface ICardState {
 	// count: number

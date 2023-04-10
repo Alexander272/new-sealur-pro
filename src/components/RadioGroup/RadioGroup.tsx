@@ -3,13 +3,16 @@ import { ActiveItem, Group, Item } from './group.style'
 
 type Props = {
 	onChange: (value: string) => void
+	disabled?: boolean
 }
 
-export const RadioGroup: FC<PropsWithChildren<Props>> = ({ children, onChange }) => {
+export const RadioGroup: FC<PropsWithChildren<Props>> = ({ children, onChange, disabled }) => {
 	const [substrate, setSubstrate] = useState({ width: 0, position: 0 })
 	const groupRef = useRef<HTMLDivElement | null>(null)
 
 	const selectHandler = (event: MouseEvent<HTMLDivElement>) => {
+		if (disabled) return
+
 		const element = event.target as HTMLDivElement
 
 		const value = element.dataset.value

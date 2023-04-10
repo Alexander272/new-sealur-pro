@@ -39,7 +39,7 @@ export const SignUpForm = styled(Form)`
 	background-color: var(--button-bg-color);
 	border-radius: 60%/10%;
 	padding-bottom: 70px;
-	transform: ${props => (props.open ? 'translateY(-220px)' : 'translateY(5px)')};
+	transform: ${props => (props.open ? 'translateY(-245px)' : 'translateY(5px)')};
 `
 
 export const Input = UIStyled(TextField)(({ theme }) => ({

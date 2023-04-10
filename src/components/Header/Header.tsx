@@ -7,6 +7,8 @@ import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink, NavLink } from 
 import { clearUser } from '@/store/user'
 import { signOut } from '@/services/auth'
 
+import Instruction from '@/assets/files/instruction.pdf'
+
 type Props = {}
 
 const Header: FC<Props> = () => {
@@ -71,7 +73,7 @@ const Header: FC<Props> = () => {
 
 					<Tooltip title='Инструкция'>
 						<Icon>
-							<BarLink href='/files/instruction.pdf' target='_blank'>
+							<BarLink href={Instruction} target='_blank'>
 								<img src='/image/question-icon.svg' alt='Инструкция' width='30' height='30' />
 							</BarLink>
 						</Icon>

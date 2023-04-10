@@ -7,6 +7,7 @@ export const Container = styled.footer`
 	justify-content: center;
 	padding-top: 20px;
 	padding-bottom: 10px;
+	user-select: none;
 `
 export const FileLink = styled.a`
 	text-decoration: none;

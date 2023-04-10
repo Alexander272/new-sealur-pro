@@ -28,6 +28,7 @@ export interface ISNPState {
 	materials?: ISnpMaterial
 
 	cardIndex?: number
+	positionId?: string
 	main: IMainSnp
 	material: IMaterialBlockSnp
 	size: ISizeBlockSnp
@@ -132,15 +133,19 @@ export const snpSlice = createSlice({
 	reducers: {
 		setFiller: (state, action: PayloadAction<IFiller[]>) => {
 			state.fillers = action.payload
-			state.material.filler = action.payload[0]
+			if (state.positionId === undefined) {
+				state.material.filler = action.payload[0]
+			}
 		},
 		setMounting: (state, action: PayloadAction<IMounting[]>) => {
 			state.mountings = action.payload
-			state.design.mounting.code = action.payload[0].title
+			if (state.positionId === undefined) {
+				state.design.mounting.code = action.payload[0].title
+			}
 		},
 		setMaterials: (state, action: PayloadAction<ISnpMaterial>) => {
 			state.materials = action.payload
-			if (state.cardIndex === undefined) {
+			if (state.positionId === undefined) {
 				state.material.frame = action.payload.frame[action.payload.frameDefaultIndex || 0]
 				state.material.innerRing = action.payload.innerRing[action.payload.innerRingDefaultIndex || 0]
 				state.material.outerRing = action.payload.outerRing[action.payload.outerRingDefaultIndex || 0]
@@ -286,15 +291,15 @@ export const snpSlice = createSlice({
 
 		clearMaterialAndDesign: (state, action: PayloadAction<ISnp>) => {
 			if (!action.payload.hasInnerRing) state.material.innerRing = undefined
-			else if (state.cardIndex === undefined)
+			else if (state.positionId === undefined)
 				state.material.innerRing = state.materials?.innerRing[state.materials.innerRingDefaultIndex || 0]
 
 			if (!action.payload.hasFrame) state.material.frame = undefined
-			else if (state.cardIndex === undefined)
+			else if (state.positionId === undefined)
 				state.material.frame = state.materials?.frame[state.materials.frameDefaultIndex || 0]
 
 			if (!action.payload.hasOuterRing) state.material.outerRing = undefined
-			else if (state.cardIndex === undefined)
+			else if (state.positionId === undefined)
 				state.material.outerRing = state.materials?.outerRing[state.materials.outerRingDefaultIndex || 0]
 
 			if (!action.payload.hasJumper) state.design.jumper.hasJumper = false
@@ -352,9 +357,11 @@ export const snpSlice = createSlice({
 				design: IDesignBlockSnp
 				amount: string
 				cardIndex: number
+				positionId: string
 			}>
 		) => {
 			state.cardIndex = action.payload.cardIndex
+			state.positionId = action.payload.positionId
 			state.main = action.payload.main
 			state.size = action.payload.sizes
 
@@ -384,6 +391,7 @@ export const snpSlice = createSlice({
 		},
 		clearSnp: state => {
 			state.cardIndex = undefined
+			state.positionId = undefined
 		},
 	},
 })

@@ -17,6 +17,7 @@ export const Container = styled.header`
 	background: #fff;
 	box-shadow: 0 0 3px #0000004f;
 	margin-bottom: 20px;
+	user-select: none;
 `
 
 export const Content = styled.div`

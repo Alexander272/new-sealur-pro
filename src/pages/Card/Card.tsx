@@ -1,7 +1,7 @@
 import { Alert, Button, IconButton, Snackbar, Typography } from '@mui/material'
 import { FC, MouseEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { setSnp } from '@/store/gaskets/snp'
+import { clearSnp, setSnp } from '@/store/gaskets/snp'
 import { setOrder, toggle } from '@/store/card'
 import { useDeletePositionMutation, useGetOrderQuery, useSaveOrderMutation } from '@/store/api/order'
 import { Loader } from '@/components/Loader/Loader'
@@ -15,7 +15,8 @@ const Card: FC<Props> = () => {
 	const open = useAppSelector(state => state.card.open)
 	const orderId = useAppSelector(state => state.card.orderId)
 	const positions = useAppSelector(state => state.card.positions)
-	const snpCardIndex = useAppSelector(state => state.snp.cardIndex)
+	// const snpCardIndex = useAppSelector(state => state.snp.cardIndex)
+	const positionId = useAppSelector(state => state.snp.positionId)
 
 	const role = useAppSelector(state => state.user.roleCode)
 
@@ -50,6 +51,10 @@ const Card: FC<Props> = () => {
 
 	const deleteHandler = (id: string) => {
 		deletePosition(id)
+		//TODO
+		// if (positionId && positionId === id) {
+		dispatch(clearSnp())
+		// }
 	}
 
 	const saveHandler = (index: number) => {
@@ -57,6 +62,7 @@ const Card: FC<Props> = () => {
 		if (!position.type || position.type === 'Snp') {
 			const snp = {
 				cardIndex: index,
+				positionId: position.id,
 				amount: position.amount,
 				main: position.snpData.main,
 				sizes: position.snpData.size,
@@ -107,7 +113,7 @@ const Card: FC<Props> = () => {
 						<Positions onClick={selectHandler}>
 							{positions.map((p, idx) => (
 								<Item key={p.id}>
-									<Position data-index={idx} active={snpCardIndex == idx}>
+									<Position data-index={idx} active={positionId == p.id}>
 										<Typography
 											component='span'
 											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}

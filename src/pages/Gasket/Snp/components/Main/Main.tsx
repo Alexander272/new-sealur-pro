@@ -29,7 +29,8 @@ type Props = {}
 
 export const Main: FC<Props> = () => {
 	const main = useAppSelector(state => state.snp.main)
-	const cardIndex = useAppSelector(state => state.snp.cardIndex)
+	// const cardIndex = useAppSelector(state => state.snp.cardIndex)
+	const positionId = useAppSelector(state => state.snp.positionId)
 
 	const { data: standards } = useGetStandardForSNPQuery(null)
 	// const { data } = useGetSnpDataQuery({
@@ -49,7 +50,7 @@ export const Main: FC<Props> = () => {
 
 	useEffect(() => {
 		if (data) {
-			if (cardIndex === undefined) {
+			if (positionId === undefined) {
 				const flange = data.data.flangeTypes[data.data.flangeTypes.length - 1]
 				dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
 				const type = {
@@ -132,7 +133,6 @@ export const Main: FC<Props> = () => {
 			</RadioItem>
 		))
 	}
-	renderTypes()
 
 	return (
 		<MainContainer>
@@ -144,6 +144,7 @@ export const Main: FC<Props> = () => {
 						onChange={snpStandardHandler}
 						// input={<Input />}
 						sx={{ borderRadius: '12px' }}
+						disabled={Boolean(positionId)}
 					>
 						<MenuItem disabled value='not_selected'>
 							Выберите стандарт
@@ -162,6 +163,7 @@ export const Main: FC<Props> = () => {
 					onChange={flangeTypeHandler}
 					size='small'
 					sx={{ borderRadius: '12px' }}
+					disabled={Boolean(positionId)}
 				>
 					<MenuItem disabled value='not_selected'>
 						Выберите тип фланца
@@ -183,7 +185,9 @@ export const Main: FC<Props> = () => {
 						))
 					)}
 				</RadioGroup> */}
-				<RadioGroup onChange={typeHandlerNew}>{renderTypes()}</RadioGroup>
+				<RadioGroup onChange={typeHandlerNew} disabled={Boolean(positionId)}>
+					{renderTypes()}
+				</RadioGroup>
 			</Column>
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
