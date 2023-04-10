@@ -1,6 +1,6 @@
 import { Loader } from '@/components/Loader/Loader'
 import { useAppDispatch } from '@/hooks/useStore'
-import { confirm } from '@/services/auth'
+import { confirm } from '@/services/user'
 import { setUser } from '@/store/user'
 import { Typography } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'

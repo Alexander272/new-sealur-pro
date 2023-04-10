@@ -90,7 +90,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 					/>
 				</FormControl>
 
-				<FormControl sx={{ marginBottom: 1 }}>
+				<FormControl sx={{ marginBottom: 2 }}>
 					<Input
 						value={password.value}
 						onChange={password.onChange}
@@ -102,13 +102,12 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 					/>
 				</FormControl>
 
-				{/* //TODO добавить кнопку для восстановления пароля */}
-				<NavLink to='reset'>Забыли пароль?</NavLink>
+				<NavLink to='recovery'>Забыли пароль?</NavLink>
 
 				<Button
 					type='submit'
 					variant='contained'
-					sx={{ borderRadius: '20px', fontSize: '1rem', fontWeight: 600, marginTop: 4 }}
+					sx={{ borderRadius: '20px', fontSize: '1rem', fontWeight: 600, marginTop: 3 }}
 				>
 					Войти
 				</Button>
