@@ -9,6 +9,7 @@ type Props = {
 	sizes: ISnpSize[]
 }
 
+// размеры по стандарту
 export const StandardSize: FC<Props> = ({ sizes }) => {
 	const main = useAppSelector(state => state.snp.main)
 	const cardIndex = useAppSelector(state => state.snp.cardIndex)

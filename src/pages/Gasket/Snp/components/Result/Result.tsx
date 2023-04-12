@@ -11,6 +11,7 @@ import { ResultContainer } from '@/pages/Gasket/gasket.style'
 
 type Props = {}
 
+// блок с выводом результата
 export const Result: FC<Props> = () => {
 	const [alert, setAlert] = useState<{ type: 'error' | 'success'; open: boolean }>({ type: 'success', open: false })
 
@@ -88,7 +89,7 @@ export const Result: FC<Props> = () => {
 		setAlert({ type: 'success', open: false })
 	}
 
-	//TODO костыль
+	// костыль
 	const renderDescription = () => {
 		let rings
 		if (main.snpType?.title == 'Д')
@@ -119,7 +120,7 @@ export const Result: FC<Props> = () => {
 		if (design.jumper.hasJumper) {
 			let width = ''
 			if (design.jumper.width !== '') width = ` шириной ${design.jumper.width} мм`
-			jumper = `, с перемычкой типа ${jumper}${width}`
+			jumper = `, с перемычкой типа ${design.jumper.code}${width}`
 		}
 
 		let res = `Спирально-навитая прокладка (СНП) по ${main.snpStandard?.standard.title} типа ${main.snpType?.title} ${rings} и наполнителем из ${materials.filler.designation}, для применения на фланце "${main.flangeTypeTitle}"${flange} с размерами ${sizes}, толщиной ${thickness} мм${mounting}${hole}${jumper}`
@@ -127,60 +128,232 @@ export const Result: FC<Props> = () => {
 		return res
 	}
 
-	//TODO костыль
+	// const getDesignation = (template: string, params: any[]) => {
+	// 	const data: any = {
+	// 		main,
+	// 		size,
+	// 		materials,
+	// 	}
+
+	// 	params.forEach(param => {
+	// 		if (param.type == 'param') {
+	// 			let temp: any = data
+
+	// 			const parts = param.value.split('.')
+	// 			for (let i = 0; i < parts.length; i++) {
+	// 				const element = parts[i]
+	// 				temp = temp[element]
+	// 				if (!temp) {
+	// 					break
+	// 				}
+	// 			}
+
+	// 			template = template.replace(param.name, temp)
+	// 		}
+	// 		if (param.type == 'condition') {
+	// 			switch (param.condition) {
+	// 				case 'isDefaultMaterial':
+	// 					break
+
+	// 				default:
+	// 					break
+	// 			}
+	// 			// дописать
+	// 			const value = getDesignation(param.template, param.params)
+	// 			template = template.replace(param.name, value)
+	// 		}
+	// 	})
+	// 	return template
+	// }
+
+	// const testRenderDesignation = () => {
+	// 	const data: any = {
+	// 		main,
+	// 		size,
+	// 		materials,
+	// 	}
+	// 	const format = [
+	// 		'СНП-',
+	// 		'main.snpType.code',
+	// 		'-',
+	// 		'materials.filler.code',
+	// 		'-',
+	// 		'size.d2',
+	// 		'-',
+	// 		'size.pn.mpa',
+	// 		'-',
+	// 		'size.h',
+	// 		' ',
+	// 		'main.snpStandard.standard.title',
+	// 	]
+	// 	const res = format.map(f => {
+	// 		if (f.includes('.')) {
+	// 			let temp: any = data
+	// 			let ok = true
+	// 			const parts = f.split('.')
+	// 			for (let i = 0; i < parts.length; i++) {
+	// 				const element = parts[i]
+	// 				temp = temp[element]
+	// 				if (!temp) {
+	// 					ok = false
+	// 					break
+	// 				}
+	// 			}
+	// 			if (ok) return temp
+	// 			else return ''
+	// 		} else return f
+	// 	})
+	// 	return res.join('')
+	// 	const resultTemplate = [
+	// 		{ value: 'СНП-' },
+	// 		{ value: '${main.snpType?.code}' },
+	// 		{ value: '-' },
+	// 		{ value: '${materials.filler.code}' },
+	// 		{ value: '-' },
+	// 		{ value: '${size.d2}' },
+	// 		{ value: '-' },
+	// 		{ value: '${size.pn.mpa}' },
+	// 		{ value: '-' },
+	// 		{ value: '${size.h}' },
+	// 		{ value: ' ' },
+	// 		{ value: '${main.snpStandard?.standard.title}' },
+	// 		{ type: 'condition', condition: ['isDefaultMaterial'], value: '(' },
+	// 		{
+	// 			type: 'condition',
+	// 			condition: ['isDefaultMaterial', 'hasInnerRing'],
+	// 			value: 'вн. кольцо - ${materials.innerRing.code}',
+	// 		},
+	// 		{
+	// 			type: 'condition',
+	// 			condition: ['isDefaultMaterial', 'hasFrame'],
+	// 			value: 'каркас - ${materials.frame.code}',
+	// 		},
+	// 		{
+	// 			type: 'condition',
+	// 			condition: ['isDefaultMaterial', 'hasOuterRing'],
+	// 			value: 'нар. кольцо - ${materials.outerRing.code}',
+	// 		},
+	// 		{ type: 'condition', condition: ['isDefaultMaterial'], value: ')' },
+	// 		// {
+	// 		// 	type: 'condition',
+	// 		// 	condition: ["isDefaultMaterial"],
+	// 		// 	values: [
+	// 		// 		'(',
+	// 		// 		'вн. кольцо - ${materials.innerRing.code}',
+	// 		// 		'каркас - ${materials.frame.code}',
+	// 		// 		'нар. кольцо - ${materials.outerRing.code}',
+	// 		// 		')',
+	// 		// 	],
+	// 		// },
+	// 	]
+	// const resultTemplate = {
+	// 	template: 'СНП-@X1-@X2-@X3-@X4-@X5 @X7@X8',
+	// 	params: [
+	// 		{ name: '@X1', type: 'param', value: 'main.snpType.code' },
+	// 		{ name: '@X2', type: 'param', value: 'materials.filler.code' },
+	// 		//
+	// 		{ name: '@X8', type: 'materials', value: ' (@X1)' },
+	// 		// {
+	// 		// 	name: '@X8',
+	// 		// 	type: 'condition',
+	// 		// 	value: '',
+	// 		// 	condition: 'isDefaultMaterial',
+	// 		// 	template: '(@X1)',
+	// 		// 	params: [
+	// 		// 		{
+	// 		// 			name: '@X1',
+	// 		// 			type: 'condition',
+	// 		// 			value: '',
+	// 		// 			condition: 'hasInnerRing',
+	// 		// 			template: 'вн. кольцо - @X1',
+	// 		// 			params: [{ name: '@X1', type: 'param', value: 'materials.innerRing.code' }],
+	// 		// 		},
+	// 		// 		{
+	// 		// 			name: '@X1',
+	// 		// 			type: 'condition',
+	// 		// 			value: '',
+	// 		// 			condition: 'hasFrame',
+	// 		// 			template: 'каркас - @X1',
+	// 		// 			params: [{ name: '@X1', type: 'param', value: 'materials.frame.code' }],
+	// 		// 		},
+	// 		// 		{
+	// 		// 			name: '@X1',
+	// 		// 			type: 'condition',
+	// 		// 			value: '',
+	// 		// 			condition: 'hasOuterRing',
+	// 		// 			template: 'нар. кольцо - @X1',
+	// 		// 			params: [{ name: '@X1', type: 'param', value: 'materials.outerRing.code' }],
+	// 		// 		},
+	// 		// 	],
+	// 		// },
+	// 	],
+	// 	materials: {
+	// 		separator: ', ',
+	// 		params: [
+	// 			{ default: null, type: 'innerRing', value: 'code', template: 'вн. кольцо - @X1' },
+	// 			{ default: null, type: 'frame', value: 'code', template: 'каркас - @X1' },
+	// 			{ default: null, type: 'outerRing', value: 'code', template: 'нар. кольцо - @X1' },
+	// 		],
+	// 	},
+	// }
+	// const data: any = {
+	// 	main,
+	// 	size,
+	// 	materials,
+	// }
+	// let notStandardMaterial_test = false
+	// let template = resultTemplate.template
+	// resultTemplate.params.forEach(param => {
+	// 	if (param.type == 'param') {
+	// 		let temp: any = data
+	// 		const parts = param.value.split('.')
+	// 		for (let i = 0; i < parts.length; i++) {
+	// 			const element = parts[i]
+	// 			temp = temp[element]
+	// 			if (!temp) {
+	// 				break
+	// 			}
+	// 		}
+	// 		template = template.replace(param.name, temp)
+	// 	}
+	// 	if (param.type == 'materials') {
+	// 		const conditionIr = Boolean(materials.innerRing) && !materials.innerRing?.isDefault
+	// 		const conditionFr = Boolean(materials.frame) && !materials.frame?.isDefault
+	// 		const conditionOr = Boolean(materials.outerRing) && !materials.outerRing?.isDefault
+	// 		if (conditionIr || conditionFr || conditionOr) {
+	// 			notStandardMaterial_test = true
+	// 		}
+
+	// 		let value = ''
+	// 		if (notStandardMaterial_test) {
+	// 			let temp = resultTemplate.materials.params.map(param => {
+	// 				if (materials[param.type as 'frame'])
+	// 					return param.template.replace(
+	// 						'@X1',
+	// 						materials[param.type as 'frame']![param.value as 'code']
+	// 					)
+	// 				else {
+	// 					if (param.default) return param.default
+	// 				}
+	// 			})
+	// 			value = param.value.replace('@X1', temp.join(resultTemplate.materials.separator))
+	// 		}
+	// 		template = template.replace(param.name, value)
+	// 	}
+	// })
+	// let test = getDesignation(resultTemplate.template, resultTemplate.params)
+	// console.log(template)
+	// }
+	// testRenderDesignation()
+
+	// костыль
+	// ? сделать не костылем как-то не выходит
 	const renderDesignation = () => {
-		// const data: any = {
-		// 	main,
-		// 	size,
-		// 	materials,
-		// }
-		// const format = [
-		// 	'СНП-',
-		// 	'main.snpTypeCode',
-		// 	'-',
-		// 	'materials.filler.code',
-		// 	'-',
-		// 	'size.d2',
-		// 	'-',
-		// 	'size.pn.mpa',
-		// 	'-',
-		// 	'size.h',
-		// 	' ',
-		//     '',
-		// 	'main.snpStandard.standard.title',
-		// ]
-
-		// const res = format.map(f => {
-		// 	if (f.includes('.')) {
-		// 		let temp: any = data
-		// 		let ok = true
-
-		// 		const parts = f.split('.')
-		// 		for (let i = 0; i < parts.length; i++) {
-		// 			const element = parts[i]
-		// 			temp = temp[element]
-		// 			if (!temp) {
-		// 				ok = false
-		// 				break
-		// 			}
-		// 		}
-
-		// 		if (ok) return temp
-		// 		else return ''
-		// 	} else return f
-		// })
-
-		// return res.join('')
-
 		let designationMaterials = ''
 		let designationDesign = ''
 		let designationDesignParts: string[] = []
 
 		let notStandardMaterial = false
-
-		// const conditionIr = !!materials.ir && materialIr?.default.id != materials.ir?.id
-		// const conditionFr = !!materials.fr && materialFr?.default.id != materials.fr?.id
-		// const conditionOr = !!materials.or && materialOr?.default.id != materials.or?.id
 
 		const conditionIr = Boolean(materials.innerRing) && !materials.innerRing?.isDefault
 		const conditionFr = Boolean(materials.frame) && !materials.frame?.isDefault
@@ -206,9 +379,6 @@ export const Result: FC<Props> = () => {
 		if (main.snpStandard?.standard.title === 'ОСТ 26.260.454') {
 			if (notStandardMaterial) {
 				let temp = []
-				// if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
-				// if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
-				// if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
 				if (materials.innerRing) temp.push(`вн. кольцо - ${materials.innerRing.code}`)
 				if (materials.frame) temp.push(`каркас - ${materials.frame.code}`)
 				if (materials.outerRing) temp.push(`нар. кольцо - ${materials.outerRing.code}`)
@@ -223,9 +393,6 @@ export const Result: FC<Props> = () => {
 		}
 		if (main.snpStandard?.standard.title === 'ГОСТ Р 52376-2005') {
 			let y = ''
-			// if (!!materials.or && materials.or?.code === '5') {
-			// 	y = '-У'
-			// }
 
 			if (Boolean(materials.outerRing) && materials.outerRing?.baseCode === '5') y = '-У'
 			if (!(conditionIr || conditionFr) && y) {
@@ -235,15 +402,6 @@ export const Result: FC<Props> = () => {
 			let temp = []
 			// if (materials.filler.baseCode != '3' && materials.filler.baseCode != '4')
 			// 	temp.push(`наполнитель - ${materials.filler.code}`)
-
-			// if (size.h === 'another')
-			// 	temp.push(`толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}`)
-
-			// if (notStandardMaterial) {
-			// 	if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
-			// 	if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
-			// 	if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
-			// }
 
 			if (notStandardMaterial) {
 				if (materials.innerRing) temp.push(`вн. кольцо - ${materials.innerRing.code}`)
@@ -256,9 +414,6 @@ export const Result: FC<Props> = () => {
 			return `СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.title === 'ASME B 16.20') {
-			// let ir = materials.ir?.shortEn ? `-I.R. ${materials.ir.shortEn}` : ''
-			// let fr = `-${materials.fr?.shortEn}/`
-			// let or = materials.or?.shortEn ? `-O.R. ${materials.or.shortEn}` : ''
 			let ir = materials.innerRing?.code ? `-I.R. ${materials.innerRing?.code}` : ''
 			let fr = `-${materials.frame?.code}/`
 			let or = materials.outerRing?.code ? `-O.R. ${materials.outerRing?.code}` : ''
@@ -266,13 +421,7 @@ export const Result: FC<Props> = () => {
 			return `SWG-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${main.snpStandard.standard.title}`
 		}
 		if (main.snpStandard?.standard.title === 'EN 12560-2') {
-			// let ir = ''
 			let fr = ''
-			// let or = ''
-
-			// let ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
-			// if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-			// let or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
 
 			let ir = materials.innerRing?.code ? `${materials.innerRing?.code}-` : ''
 			if (materials.innerRing?.code != materials.frame?.code) fr = `${materials.frame?.code}-`
@@ -284,9 +433,6 @@ export const Result: FC<Props> = () => {
 			let temp = []
 
 			if (notStandardMaterial) {
-				// if (materials.ir) temp.push(`вн. кольцо - ${materials.ir.shortRus}`)
-				// if (materials.fr) temp.push(`каркас - ${materials.fr.shortRus}`)
-				// if (materials.or) temp.push(`нар. кольцо - ${materials.or.shortRus}`)
 				if (materials.innerRing) temp.push(`вн. кольцо - ${materials.innerRing.code}`)
 				if (materials.frame) temp.push(`каркас - ${materials.frame.code}`)
 				if (materials.outerRing) temp.push(`нар. кольцо - ${materials.outerRing.code}`)
@@ -297,29 +443,7 @@ export const Result: FC<Props> = () => {
 			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn.mpa} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.title === 'EN 1514-2') {
-			// let ir = ''
-			// let fr = ''
-			// let or = ''
-
-			// let thickness = ''
-			// if (size.h === 'another')
-			// 	thickness = `(толщина - ${(+size.another.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')}) `
-
-			// if (notStandardMaterial) {
-			// 	ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
-			// 	if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-			// 	or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
-			// }
-
-			// return `СНП-${main.snpType?.code}-${size.dn}-${size.pn.mpa}-${ir}${fr}${materials.filler.code}${or} ${thickness}${designationDesign}${main.snpStandard.standard.title}`
-
-			// let ir = ''
 			let fr = ''
-			// let or = ''
-
-			// let ir = materials.ir?.shortEn ? `${materials.ir.shortEn}-` : ''
-			// if (materials.ir?.shortEn != materials.fr?.shortEn) fr = `${materials.fr?.shortEn}-`
-			// let or = materials.or?.shortEn ? `-${materials.or.shortEn}` : ''
 
 			let ir = materials.innerRing?.code ? `${materials.innerRing?.code}-` : ''
 			if (materials.innerRing?.code != materials.frame?.code) fr = `${materials.frame?.code}-`
@@ -350,7 +474,6 @@ export const Result: FC<Props> = () => {
 			if (temp.length) notStandardMaterials = ` (${temp.join(', ')}) `
 
 			if (notStandardMaterial) {
-				// designationMaterials = `-${materials.ir?.code || 0}${materials.fr?.code || 0}${materials.or?.code || 0}`
 				designationMaterials = `-${materials.innerRing?.code || 0}${materials.frame?.code || 0}${
 					materials.outerRing?.code || 0
 				}`

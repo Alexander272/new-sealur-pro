@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import snpReducer from './gaskets/snp'
 import cardReducer from './card'
 import userReducer from './user'
-import { api } from './api/base'
+import { api, unauthenticatedMiddleware } from './api/base'
 
 export const store = configureStore({
 	reducer: {
@@ -11,7 +11,7 @@ export const store = configureStore({
 		user: userReducer,
 		[api.reducerPath]: api.reducer,
 	},
-	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware),
+	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware).concat(unauthenticatedMiddleware),
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

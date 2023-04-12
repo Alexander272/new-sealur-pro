@@ -10,6 +10,7 @@ let options: any = {
 	},
 }
 
+// отправление данных из формы для обратной связи
 export const sendFeedback = async (value: IFeedback) => {
 	options.body = JSON.stringify(value)
 	try {

@@ -37,7 +37,6 @@ export const Question = styled.span`
 	color: var(--primary-color);
 	display: inline-block;
 	width: 14px;
-	/* height: 14px; */
 	vertical-align: super;
 	font-size: 10px;
 	cursor: pointer;

@@ -13,6 +13,7 @@ type Props = {
 	onChangeTab: () => void
 }
 
+// форма авторизации
 export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const [loading, setLoading] = useState(false)
 	const [open, setOpen] = useState(false)

@@ -23,17 +23,20 @@ export const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
+		// установка авторизации пользователя
 		setAuth: (state, action: PayloadAction<IRefreshUser>) => {
 			state.userId = action.payload.id
 			state.roleCode = action.payload.roleCode
 			state.isAuth = true
 		},
+		// установка данных о пользователе и авторизации
 		setUser: (state, action: PayloadAction<IUser>) => {
 			state.userId = action.payload.id
 			state.roleCode = action.payload.roleCode
 			state.isAuth = true
 			state.user = action.payload
 		},
+		// сброс пользователя
 		clearUser: state => {
 			state.userId = ''
 			state.roleCode = ''

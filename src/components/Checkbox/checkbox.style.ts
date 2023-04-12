@@ -8,8 +8,6 @@ export const Field = styled.div`
 
 export const Svg = styled.svg`
 	position: absolute;
-	/* width: 0; */
-	/* height: 0; */
 	pointer-events: none;
 	user-select: none;
 `
@@ -31,7 +29,6 @@ export const Label = styled.label`
 	}
 
 	span {
-		// float: left;
 		vertical-align: middle;
 		transform: translate3d(0, 0, 0);
 

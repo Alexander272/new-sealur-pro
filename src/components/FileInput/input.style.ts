@@ -37,15 +37,6 @@ export const Label = styled.label`
 	&:hover {
 		border-color: rgba(7, 55, 177, 1);
 	}
-
-	/* &.danger {
-		margin-left: 10px;
-		border: 2px solid rgba(237, 17, 17, 0.5);
-
-		&:hover {
-			border-color: rgb(237, 17, 17);
-		}
-	} */
 `
 
 export const Icon = styled.span`

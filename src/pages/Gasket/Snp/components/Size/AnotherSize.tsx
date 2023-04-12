@@ -20,6 +20,7 @@ const thickness = [
 	{ id: '9', frame: '7,2', twisted: '7,8', ring: '5,0' },
 ]
 
+// нестандартные размеры
 export const AnotherSize: FC<Props> = () => {
 	const main = useAppSelector(state => state.snp.main)
 	const size = useAppSelector(state => state.snp.size)

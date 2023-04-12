@@ -27,6 +27,7 @@ const images = {
 
 type Props = {}
 
+// часть со стандартами, типами фланцев и типами снп
 export const Main: FC<Props> = () => {
 	const main = useAppSelector(state => state.snp.main)
 	// const cardIndex = useAppSelector(state => state.snp.cardIndex)

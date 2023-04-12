@@ -10,7 +10,8 @@ import { Loader } from '@/components/Loader/Loader'
 
 type Alert = { open: boolean; type: 'success' | 'error'; message: string }
 
-export default function Reset() {
+// страница для запроса на восстановление пароля
+export default function Recovery() {
 	const [alert, setAlert] = useState<Alert>({
 		open: false,
 		type: 'success',
@@ -67,8 +68,8 @@ export default function Reset() {
 						<Title open={true}>Восстановление пароля</Title>
 
 						<Typography align='justify' marginTop={2}>
-							Укажите свой адрес электронной почты, и мы отправим на него инструкции по восстановлению
-							пароля.
+							Укажите адрес электронной почты привязанный к аккаунту, и мы отправим на него инструкции по
+							восстановлению пароля.
 						</Typography>
 						<FormControl sx={{ marginTop: 3, marginBottom: 2, position: 'relative' }}>
 							<Input

@@ -8,6 +8,7 @@ import { useGetSnpQuery } from '@/store/api/snp'
 
 type Props = {}
 
+// часть с наполнителями и материалами каркаса и колец
 export const Materials: FC<Props> = () => {
 	const [alert, setAlert] = useState<{ type: 'error' | 'success'; open: boolean }>({ type: 'success', open: false })
 

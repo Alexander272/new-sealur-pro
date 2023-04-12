@@ -11,6 +11,7 @@ import { Container, Wrapper, Base } from '../auth.style'
 
 type Alert = { open: boolean; type: 'success' | 'error'; message: string }
 
+// страница для ввода нового пароля
 export default function RecoveryPassword() {
 	const [alert, setAlert] = useState<Alert>({
 		open: false,

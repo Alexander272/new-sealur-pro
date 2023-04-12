@@ -18,6 +18,7 @@ import { Input } from '@/components/Input/input.style'
 import { FileDownload } from '@/components/FileInput/FileDownload'
 import { FileInput } from '@/components/FileInput/FileInput'
 
+// часть с конструктивными элементами
 export const Design = () => {
 	const [alert, setAlert] = useState<{ type: 'create' | 'delete'; open: boolean }>({ type: 'create', open: false })
 

@@ -48,6 +48,7 @@ export const signOut = async () => {
 	}
 }
 
+// обновление токена доступа
 export const refresh = async () => {
 	// options.body = JSON.stringify(value)
 	try {

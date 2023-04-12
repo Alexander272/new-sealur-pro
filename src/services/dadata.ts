@@ -11,6 +11,7 @@ let options: any = {
 	},
 }
 
+// часть возвращаемых данных (то, что используется в программе)
 export type CompanyInfo = {
 	value: string // Наименование компании
 	data: {
@@ -28,6 +29,7 @@ export type CompanyInfo = {
 	}
 }
 
+// получение данных о компании по ее наименованию или инн (используется api https://dadata.ru/api/suggest/party)
 export const findCompany = async (value: string) => {
 	options.body = JSON.stringify({ query: value })
 	try {

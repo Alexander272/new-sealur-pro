@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Container, Wrapper } from './auth.style'
 
+// страница для подтверждения пользователя
 export default function Confirm() {
 	const location = useLocation()
 	const navigate = useNavigate()

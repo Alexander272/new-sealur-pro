@@ -7,7 +7,6 @@ export const Group = styled.div`
 	display: flex;
 	position: relative;
 	width: fit-content;
-	/* padding: 3px; */
 	pointer-events: none;
 `
 

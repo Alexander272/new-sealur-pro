@@ -6,15 +6,18 @@ import { proUrl } from './snp'
 
 export const orderApi = api.injectEndpoints({
 	endpoints: builder => ({
+		// получение текущей заявки
 		getOrder: builder.query<IOrderResponse, null>({
 			query: () => proUrl + '/orders/current',
 			providesTags: [{ type: 'Api', id: 'orders/current' }],
 		}),
+		// получение всех прошлых заявок
 		getAllOrders: builder.query<{ data: IFullOrder[] }, null>({
 			query: () => proUrl + '/orders/all',
 			providesTags: [{ type: 'Api', id: 'orders/all' }],
 		}),
 
+		// оформление заявки с последующей ее отправкой менеджеру
 		saveOrder: builder.mutation<string, IOrder>({
 			query: order => ({
 				url: proUrl + '/orders/save',
@@ -27,6 +30,7 @@ export const orderApi = api.injectEndpoints({
 			],
 		}),
 
+		// добавление позиции
 		createPosition: builder.mutation<string, Position>({
 			query: position => ({
 				url: proUrl + '/positions',
@@ -35,6 +39,7 @@ export const orderApi = api.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
 		}),
+		// обновление позиции
 		updatePosition: builder.mutation<string, Position>({
 			query: position => ({
 				url: `${proUrl}/positions/${position.id}`,
@@ -43,6 +48,7 @@ export const orderApi = api.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
 		}),
+		// удаление позиции
 		deletePosition: builder.mutation<string, string>({
 			query: positionId => ({
 				url: `${proUrl}/positions/${positionId}`,
@@ -51,6 +57,7 @@ export const orderApi = api.injectEndpoints({
 			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
 		}),
 
+		// перенос позиции из прошлой заявки в текущую
 		copyPosition: builder.mutation<string, ICopyPosition>({
 			query: position => ({
 				url: `${proUrl}/positions/${position.id}`,
@@ -59,6 +66,7 @@ export const orderApi = api.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: 'Api', id: 'orders/current' }],
 		}),
+		// перенос всех позиций из прошлой заявки в текущую
 		copyOrder: builder.mutation<string, ICopyOrder>({
 			query: order => ({
 				url: proUrl + '/orders/copy',

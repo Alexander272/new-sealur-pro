@@ -2,6 +2,7 @@
 
 const baseUrl = '/api/v1/'
 
+// добавление чертежа
 export async function CreateFile(url: string, data: FormData) {
 	let options: any = {
 		method: 'POST',
@@ -23,6 +24,7 @@ export async function CreateFile(url: string, data: FormData) {
 	}
 }
 
+// удаление чертежа
 export async function DeleteFile(url: string) {
 	let options: any = {
 		method: 'DELETE',

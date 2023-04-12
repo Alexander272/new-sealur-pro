@@ -8,6 +8,7 @@ let options: any = {
 	},
 }
 
+// подтверждение пользователя
 export const confirm = async (code: string) => {
 	try {
 		const response = await fetch(`${url}/confirm/${code}`, options)
@@ -20,6 +21,7 @@ export const confirm = async (code: string) => {
 	}
 }
 
+// запрос на получение кода для восстановления пароля
 export const recovery = async (email: string) => {
 	options.body = JSON.stringify({ email })
 	try {
@@ -33,6 +35,7 @@ export const recovery = async (email: string) => {
 	}
 }
 
+// запрос на обновление пароля
 export const recoveryPassword = async (password: string, code: string) => {
 	options.body = JSON.stringify({ password })
 	try {

@@ -44,7 +44,6 @@ export const SignUpForm = styled(Form)`
 
 export const Input = UIStyled(TextField)(({ theme }) => ({
 	'& .MuiOutlinedInput-root': {
-		// padding: '0px 6px',
 		backgroundColor: '#fff',
 		borderRadius: '20px',
 

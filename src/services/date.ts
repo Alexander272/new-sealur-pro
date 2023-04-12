@@ -5,6 +5,7 @@ const dateOption: Intl.DateTimeFormatOptions = {
 	day: 'numeric',
 }
 
+// преобразование штампа в дату определенного формата
 export const stampToDate = (stamp: number) => {
 	return new Date(stamp).toLocaleDateString('ru-GB', dateOption)
 }

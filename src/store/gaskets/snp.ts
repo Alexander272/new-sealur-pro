@@ -58,12 +58,14 @@ export interface ISNPState {
 }
 
 const initialState: ISNPState = {
+	// списки
 	fillers: [],
 	mountings: [],
 	materialsIr: undefined,
 	materialsFr: undefined,
 	materialsOr: undefined,
 
+	// ошибки
 	hasError: false,
 	hasSizeError: false,
 	hasDesignError: false,
@@ -83,6 +85,7 @@ const initialState: ISNPState = {
 		emptyDrawingJumper: false,
 	},
 
+	// стандарты, тип фланца и тип прокладки
 	main: {
 		snpStandardId: 'not_selected',
 		snpTypeId: 'not_selected',
@@ -91,6 +94,7 @@ const initialState: ISNPState = {
 		// snpTypeTitle: 'Д',
 		// snpTypeCode: '',
 	},
+	// флаги об открытии и материалы с наполнителем
 	material: {
 		openFiller: false,
 		openIr: false,
@@ -98,6 +102,7 @@ const initialState: ISNPState = {
 		openOr: false,
 		filler: {} as IFiller,
 	},
+	// размеры
 	size: {
 		dn: '',
 		dnMm: '',
@@ -111,6 +116,7 @@ const initialState: ISNPState = {
 		s2: '',
 		s3: '',
 	},
+	// конструктивные элементы
 	design: {
 		jumper: {
 			hasJumper: false,
@@ -124,6 +130,7 @@ const initialState: ISNPState = {
 			code: '',
 		},
 	},
+	// количество прокладок
 	amount: '',
 }
 
@@ -131,18 +138,21 @@ export const snpSlice = createSlice({
 	name: 'snp',
 	initialState,
 	reducers: {
+		// установка списка наполнителей
 		setFiller: (state, action: PayloadAction<IFiller[]>) => {
 			state.fillers = action.payload
 			if (state.positionId === undefined) {
 				state.material.filler = action.payload[0]
 			}
 		},
+		// установка списка креплений
 		setMounting: (state, action: PayloadAction<IMounting[]>) => {
 			state.mountings = action.payload
 			if (state.positionId === undefined) {
 				state.design.mounting.code = action.payload[0].title
 			}
 		},
+		// установка списка материалов
 		setMaterials: (state, action: PayloadAction<ISnpMaterial>) => {
 			state.materials = action.payload
 			if (state.positionId === undefined) {
@@ -157,21 +167,25 @@ export const snpSlice = createSlice({
 		// 	// и назвать функцию checkErrors
 		// 	state.hasError = action.payload
 		// },
-		checkErrors: state => {
-			state.hasError = state.hasSizeError
-		},
-		setSizeError: (state, action: PayloadAction<boolean>) => {
-			state.hasSizeError = action.payload
-		},
+		// checkErrors: state => {
+		// 	state.hasError = state.hasSizeError
+		// },
+		// // установка ошибки
+		// setSizeError: (state, action: PayloadAction<boolean>) => {
+		// 	state.hasSizeError = action.payload
+		// },
 
+		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<{ id: string; standard: IStandardForSNP }>) => {
 			state.main.snpStandardId = action.payload.id
 			state.main.snpStandard = action.payload.standard
 		},
+		// установка типа фланца
 		setMainFlangeType: (state, action: PayloadAction<{ code: string; title: string }>) => {
 			state.main.flangeTypeCode = action.payload.code
 			state.main.flangeTypeTitle = action.payload.title
 		},
+		// установка типа прокладки и проверка размеров на ошибку (пустоту)
 		setMainSnpType: (state, action: PayloadAction<{ id: string; type: ISNPType }>) => {
 			state.main.snpTypeId = action.payload.id
 			state.main.snpType = action.payload.type
@@ -203,24 +217,29 @@ export const snpSlice = createSlice({
 				state.sizeError.emptySize
 		},
 
+		// установка флагов об открытии select
 		setMaterialToggle: (state, action: PayloadAction<{ type: OpenMaterial; isOpen: boolean }>) => {
 			if (action.payload.type == 'filler') state.material.openFiller = action.payload.isOpen
 			if (action.payload.type == 'ir') state.material.openIr = action.payload.isOpen
 			if (action.payload.type == 'fr') state.material.openFr = action.payload.isOpen
 			if (action.payload.type == 'or') state.material.openOr = action.payload.isOpen
 		},
+		// установка наполнителя
 		setMaterialFiller: (state, action: PayloadAction<IFiller>) => {
 			state.material.filler = action.payload
 		},
+		// установка материалов (каркаса или колец)
 		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material: IMaterial }>) => {
 			state.material[action.payload.type] = action.payload.material
 		},
 
+		// установка всех размеров
 		setSize: (state, action: PayloadAction<ISizeBlockSnp>) => {
 			state.size = action.payload
 			state.sizeError.emptySize = false
 			state.hasSizeError = false
 		},
+		// установка условного прохода
 		setSizePn: (
 			state,
 			action: PayloadAction<{
@@ -243,6 +262,7 @@ export const snpSlice = createSlice({
 				state.size.another = action.payload.thickness.another
 			}
 		},
+		// установка размеров прокладки
 		setSizeMain: (state, action: PayloadAction<{ d4?: string; d3?: string; d2?: string; d1?: string }>) => {
 			if (action.payload.d4 != undefined) state.size.d4 = action.payload.d4
 			if (action.payload.d3 != undefined) state.size.d3 = action.payload.d3
@@ -271,6 +291,7 @@ export const snpSlice = createSlice({
 				state.sizeError.d2Err ||
 				state.sizeError.emptySize
 		},
+		// установка толщины
 		setSizeThickness: (
 			state,
 			action: PayloadAction<{ h?: string; s2?: string; s3?: string; another?: string }>
@@ -289,6 +310,7 @@ export const snpSlice = createSlice({
 			}
 		},
 
+		// сброс материалов и конструктивных элементов
 		clearMaterialAndDesign: (state, action: PayloadAction<ISnp>) => {
 			if (!action.payload.hasInnerRing) state.material.innerRing = undefined
 			else if (state.positionId === undefined)
@@ -306,12 +328,14 @@ export const snpSlice = createSlice({
 			if (!action.payload.hasMounting) state.design.mounting.hasMounting = false
 		},
 
+		// установка отверстия
 		setHasHole: (state, action: PayloadAction<boolean>) => {
 			state.design.hasHole = action.payload
 			state.designError.emptyDrawingHole = !state.drawing && action.payload
 
 			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
+		// установка перемычки и ее ширины
 		setDesignJumper: (
 			state,
 			action: PayloadAction<{ hasJumper?: boolean; code?: string; width?: string; hasDrawing?: boolean }>
@@ -327,10 +351,12 @@ export const snpSlice = createSlice({
 			if (!state.design.jumper.hasJumper) state.designError.emptyDrawingJumper = false
 			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
+		// установка крепления
 		setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
 			if (action.payload.hasMounting != undefined) state.design.mounting.hasMounting = action.payload.hasMounting
 			if (action.payload.code != undefined) state.design.mounting.code = action.payload.code
 		},
+		// установка чертежа
 		setDesignDrawing: (state, action: PayloadAction<IDrawing | null>) => {
 			if (action.payload) {
 				state.drawing = action.payload
@@ -344,10 +370,12 @@ export const snpSlice = createSlice({
 			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
 
+		// установка количества
 		setAmount: (state, action: PayloadAction<string>) => {
 			state.amount = action.payload
 		},
 
+		// выбор позиции (для редактирования)
 		setSnp: (
 			state,
 			action: PayloadAction<{
@@ -389,6 +417,7 @@ export const snpSlice = createSlice({
 
 			state.amount = action.payload.amount
 		},
+		// сброс выбранной позиции
 		clearSnp: state => {
 			state.cardIndex = undefined
 			state.positionId = undefined
@@ -400,7 +429,7 @@ export const {
 	setFiller,
 	setMounting,
 	setMaterials,
-	setSizeError,
+	// setSizeError,
 	setMainStandard,
 	setMainFlangeType,
 	setMainSnpType,

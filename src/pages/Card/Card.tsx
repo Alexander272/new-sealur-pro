@@ -75,6 +75,7 @@ const Card: FC<Props> = () => {
 	}
 
 	const sendHandler = () => {
+		dispatch(clearSnp())
 		save({ id: orderId, count: positions.length })
 		setAlert({ type: 'success', open: true })
 	}

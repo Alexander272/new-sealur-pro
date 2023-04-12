@@ -1,19 +1,8 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-// export const HeaderContainer = styled.header`
-// 	height: 40px;
-// 	margin-bottom: 20px;
-// 	display: flex;
-// 	align-items: center;
-// 	max-width: 1400px;
-// 	width: 100%;
-// 	padding: 0 10px;
-// `
-
 export const Container = styled.header`
 	width: 100%;
-	// height: 80px;
 	background: #fff;
 	box-shadow: 0 0 3px #0000004f;
 	margin-bottom: 20px;
@@ -54,9 +43,6 @@ export const Nav = styled.nav`
 `
 
 export const BarLink = styled.a`
-	/* font-size: 30px;
-	color: var(--primary-color);
-	text-decoration: none; */
 	height: 28px;
 `
 
@@ -75,14 +61,3 @@ export const Icon = styled.div`
 	cursor: pointer;
 	position: relative;
 `
-
-// .profile {
-//     margin-left: 20px;
-//     height: 100%;
-//     width: 32px;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     cursor: pointer;
-//     position: relative;
-// }
