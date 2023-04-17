@@ -1,22 +1,33 @@
-import { IconButton, Menu, MenuItem, TableCell, TableRow } from '@mui/material'
-import { FC, MouseEvent, useState } from 'react'
+import { Alert, IconButton, Menu, MenuItem, Snackbar, TableCell, TableRow } from '@mui/material'
+import { FC, MouseEvent, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { stampToDate } from '@/services/date'
 import { IManagerOrder } from '@/types/order'
 import { Icon } from './order.style'
 import { useFinishOrderMutation } from '@/store/api/manager'
+import { Loader } from '@/components/Loader/Loader'
 
 type Props = {
 	data: IManagerOrder
 	onOpen: (order: IManagerOrder, type: 'order' | 'manager') => void
 }
 
+type Alert = { type: 'success' | 'error'; open: boolean }
+
 export const OrderRow: FC<Props> = ({ data, onOpen }) => {
+	const [alert, setAlert] = useState<Alert>({ type: 'success', open: false })
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const navigate = useNavigate()
 
-	//TODO обработать ошибку
-	const [finish, { error }] = useFinishOrderMutation()
+	const [finish, { isError, isLoading, isSuccess, isUninitialized }] = useFinishOrderMutation()
+
+	//TODO проверить это вообще работает
+	useEffect(() => {
+		if (!isUninitialized && !isLoading) {
+			if (isError) setAlert({ type: 'error', open: true })
+			if (isSuccess) setAlert({ type: 'success', open: true })
+		}
+	}, [isError, isSuccess, isUninitialized])
 
 	const open = Boolean(anchorEl)
 	const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -48,8 +59,28 @@ export const OrderRow: FC<Props> = ({ data, onOpen }) => {
 		}
 	}
 
+	const alertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+		if (reason === 'clickaway') {
+			return
+		}
+		setAlert({ type: 'success', open: false })
+	}
+
 	return (
 		<TableRow key={data.id} hover role='checkbox' tabIndex={-1} onClick={selectHandler} sx={{ cursor: 'pointer' }}>
+			<Snackbar
+				open={alert.open}
+				autoHideDuration={6000}
+				onClose={alertClose}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert onClose={alertClose} severity={alert.type} sx={{ width: '100%' }}>
+					{isError && 'Не удалось закрыть заявку'}
+					{alert.type == 'success' && 'Заявка закрыта.'}
+				</Alert>
+			</Snackbar>
+			{isLoading ? <Loader background='fill' /> : null}
+
 			<TableCell data-id={data.id}>№{data.number}</TableCell>
 			<TableCell data-id={data.id}>{data.company}</TableCell>
 			<TableCell data-id={data.id}>{stampToDate(+data.date)}</TableCell>

@@ -1,11 +1,12 @@
-import { FC, useState } from 'react'
+import { FC, memo, useState } from 'react'
 import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { toggle } from '@/store/card'
-import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink, NavLink } from './header.style'
+import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
 import { clearUser } from '@/store/user'
 import { signOut } from '@/services/auth'
+import { sendMetric } from '@/services/metrics'
 
 import Instruction from '@/assets/files/instruction.pdf'
 
@@ -53,6 +54,11 @@ const Header: FC<Props> = () => {
 		dispatch(clearUser())
 	}
 
+	const readHandler = () => {
+		console.log('reading')
+		sendMetric('reachGoal', 'ReadInstruction')
+	}
+
 	return (
 		<Container>
 			<Content>
@@ -63,17 +69,17 @@ const Header: FC<Props> = () => {
 				</LogoLink>
 
 				<Nav>
-					<Tooltip title='Связаться с нами'>
+					{/* <Tooltip title='Связаться с нами'>
 						<Icon>
 							<NavLink to='/connect'>
 								<img src='/image/email.svg' alt='Связаться с нами' />
 							</NavLink>
 						</Icon>
-					</Tooltip>
+					</Tooltip> */}
 
 					<Tooltip title='Инструкция'>
 						<Icon>
-							<BarLink href={Instruction} target='_blank'>
+							<BarLink href={Instruction} onClick={readHandler} target='_blank'>
 								<img src='/image/question-icon.svg' alt='Инструкция' width='30' height='30' />
 							</BarLink>
 						</Icon>
@@ -150,4 +156,4 @@ const Header: FC<Props> = () => {
 	)
 }
 
-export default Header
+export default memo(Header)

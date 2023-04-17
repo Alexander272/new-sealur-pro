@@ -6,6 +6,7 @@ import { setOrder, toggle } from '@/store/card'
 import { useDeletePositionMutation, useGetOrderQuery, useSaveOrderMutation } from '@/store/api/order'
 import { Loader } from '@/components/Loader/Loader'
 import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
+import { sendMetric } from '@/services/metrics'
 
 type Props = {}
 
@@ -19,8 +20,9 @@ const Card: FC<Props> = () => {
 	const positionId = useAppSelector(state => state.snp.positionId)
 
 	const role = useAppSelector(state => state.user.roleCode)
+	const userId = useAppSelector(state => state.user.roleCode)
 
-	const { data } = useGetOrderQuery(null, { skip: role == 'manager' })
+	const { data, isLoading: isLoadingData, isError } = useGetOrderQuery(null, { skip: !userId || role == 'manager' })
 
 	const [deletePosition, { error: delError, isLoading: isLoadingDelete }] = useDeletePositionMutation()
 	const [save, { error, isLoading }] = useSaveOrderMutation()
@@ -37,21 +39,22 @@ const Card: FC<Props> = () => {
 		if (error || delError) setAlert({ type: 'error', open: true })
 	}, [error, delError])
 
+	if (!userId) return null
+
 	const toggleHandler = () => {
 		dispatch(toggle())
 	}
 
 	const selectHandler = (event: MouseEvent<HTMLDivElement>) => {
 		const { index, id } = (event.target as HTMLDivElement).dataset
-		if (index === undefined && id === undefined) return
+		if (!index && !id) return
 
-		if (index != undefined) saveHandler(+index)
+		if (index) saveHandler(+index)
 		if (id) deleteHandler(id)
 	}
 
 	const deleteHandler = (id: string) => {
 		deletePosition(id)
-		//TODO
 		// if (positionId && positionId === id) {
 		dispatch(clearSnp())
 		// }
@@ -75,6 +78,8 @@ const Card: FC<Props> = () => {
 	}
 
 	const sendHandler = () => {
+		sendMetric('reachGoal', 'SendOrder')
+
 		dispatch(clearSnp())
 		save({ id: orderId, count: positions.length })
 		setAlert({ type: 'success', open: true })
@@ -102,14 +107,20 @@ const Card: FC<Props> = () => {
 				</Alert>
 			</Snackbar>
 
-			{isLoading || isLoadingDelete ? <Loader background='fill' /> : null}
-
 			<CardContainer open={open}>
 				{open && (
 					<>
 						<Typography variant='h5' sx={{ marginBottom: 1 }}>
 							Заявка
 						</Typography>
+
+						{isError && (
+							<Typography variant='h6' color={'error'}>
+								Не удалось загрузить содержание заявки
+							</Typography>
+						)}
+
+						{isLoadingData || isLoading || isLoadingDelete ? <Loader background='fill' /> : null}
 
 						<Positions onClick={selectHandler}>
 							{positions.map((p, idx) => (

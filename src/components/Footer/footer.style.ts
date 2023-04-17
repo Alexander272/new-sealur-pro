@@ -13,6 +13,7 @@ export const FileLink = styled.a`
 	text-decoration: none;
 	color: black;
 	transition: all 0.3s ease-in-out;
+	font-size: 14px;
 
 	&:hover {
 		color: var(--primary-color);
@@ -25,6 +26,7 @@ export const NavLink = styled(Link)`
 	transition: all 0.3s ease-in-out;
 	display: flex;
 	align-items: center;
+	font-size: 14px;
 
 	&:hover {
 		color: var(--primary-color);

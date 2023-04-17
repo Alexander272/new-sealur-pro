@@ -15,7 +15,6 @@ export function useRefresh() {
 		const res = await refresh()
 		if (!res.error) dispatch(setAuth({ id: res.data.data.id, roleCode: res.data.data.roleCode }))
 		setReady(true)
-		console.log('ready')
 		setLoading(false)
 	}, [ready, userId])
 

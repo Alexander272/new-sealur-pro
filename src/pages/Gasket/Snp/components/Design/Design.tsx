@@ -17,10 +17,14 @@ import { JumperSelect } from '@/components/Jumper/Jumper'
 import { Input } from '@/components/Input/input.style'
 import { FileDownload } from '@/components/FileInput/FileDownload'
 import { FileInput } from '@/components/FileInput/FileInput'
+import { Loader } from '@/components/Loader/Loader'
+
+type Alert = { type: 'create' | 'delete'; open: boolean; message?: string }
 
 // часть с конструктивными элементами
 export const Design = () => {
-	const [alert, setAlert] = useState<{ type: 'create' | 'delete'; open: boolean }>({ type: 'create', open: false })
+	const [alert, setAlert] = useState<Alert>({ type: 'create', open: false })
+	const [loading, setLoading] = useState(false)
 
 	const main = useAppSelector(state => state.snp.main)
 	const design = useAppSelector(state => state.snp.design)
@@ -33,7 +37,7 @@ export const Design = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data } = useGetSnpQuery(
+	const { data, isError, isLoading } = useGetSnpQuery(
 		{ typeId: main.snpTypeId, hasD2: main.snpStandard?.hasD2 },
 		{ skip: main.snpTypeId == 'not_selected' }
 	)
@@ -75,13 +79,16 @@ export const Design = () => {
 		formData.append('drawing', files[0])
 		formData.append('group', orderId)
 
-		const res = await CreateFile('files/drawings/pro/', formData)
+		setLoading(true)
+		const res = await CreateFile('files/drawings/pro', formData)
 		if (res.data) {
 			dispatch(setDesignDrawing(res.data))
 		}
 		if (res.error) {
-			setAlert({ type: 'create', open: true })
+			if (res.error == 'Слишком большой файл') setAlert({ type: 'create', open: true, message: res.error })
+			else setAlert({ type: 'create', open: true })
 		}
+		setLoading(false)
 	}
 
 	const deleteFile = async () => {
@@ -101,97 +108,115 @@ export const Design = () => {
 		setAlert({ type: 'create', open: false })
 	}
 
+	if (isError)
+		return (
+			<AsideContainer>
+				<Typography variant='h6' color={'error'} align='center'>
+					Не удалось загрузить конструктивные элементы
+				</Typography>
+			</AsideContainer>
+		)
+
 	return (
-		<AsideContainer>
-			<Snackbar
-				open={alert.open}
-				autoHideDuration={6000}
-				onClose={handleClose}
-				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-			>
-				<Alert onClose={handleClose} severity={'error'} sx={{ width: '100%' }}>
-					{alert.type == 'create' && 'Не удалось добавить чертеж'}
-					{alert.type == 'delete' && 'Не удалось удалить чертеж'}
-				</Alert>
-			</Snackbar>
+		<>
+			{loading ? <Loader background='fill' /> : null}
+			<AsideContainer>
+				<Snackbar
+					open={alert.open}
+					autoHideDuration={6000}
+					onClose={handleClose}
+					anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+				>
+					<Alert onClose={handleClose} severity={'error'} sx={{ width: '100%' }}>
+						{alert.type == 'create' && 'Не удалось добавить чертеж. ' + (alert.message || '')}
+						{alert.type == 'delete' && 'Не удалось удалить чертеж.'}
+					</Alert>
+				</Snackbar>
 
-			<Typography fontWeight='bold'>Конструктивные элементы</Typography>
-			<Stack direction='row' spacing={2} marginBottom={1}>
-				<Checkbox
-					id='jumper'
-					name='jumper'
-					label='Перемычка'
-					checked={design.jumper.hasJumper}
-					disabled={!data?.data.snp.hasJumper}
-					onChange={jumperHandler}
-				/>
-
-				{design.jumper.hasJumper && (
+				{!data || isLoading ? (
+					<Loader />
+				) : (
 					<>
-						<JumperSelect value={design.jumper.code} onSelect={jumperSelectHandler} />
-						<Input
-							value={design.jumper.width}
-							onChange={jumperWidthHandler}
-							placeholder='Ширина перемычки'
-							size='small'
+						<Typography fontWeight='bold'>Конструктивные элементы</Typography>
+						<Stack direction='row' spacing={2} marginBottom={1}>
+							<Checkbox
+								id='jumper'
+								name='jumper'
+								label='Перемычка'
+								checked={design.jumper.hasJumper}
+								disabled={!data?.data.snp.hasJumper}
+								onChange={jumperHandler}
+							/>
+
+							{design.jumper.hasJumper && (
+								<>
+									<JumperSelect value={design.jumper.code} onSelect={jumperSelectHandler} />
+									<Input
+										value={design.jumper.width}
+										onChange={jumperWidthHandler}
+										placeholder='Ширина перемычки'
+										size='small'
+									/>
+								</>
+							)}
+						</Stack>
+
+						<Checkbox
+							id='holes'
+							name='holes'
+							label='Отверстия в наруж. ограничителе'
+							checked={design.hasHole}
+							disabled={!data?.data.snp.hasHole}
+							onChange={holeHandler}
 						/>
+
+						<Stack direction='row' spacing={2} marginTop={1} marginBottom={3}>
+							<Checkbox
+								id='mounting'
+								name='mounting'
+								label='Крепление на вертикальном фланце'
+								checked={design.mounting.hasMounting}
+								disabled={!data?.data.snp.hasMounting}
+								onChange={mountingHandler}
+							/>
+
+							{design.mounting.hasMounting && (
+								<Select
+									value={design.mounting.code || 'not_selected'}
+									onChange={mountingTitleHandler}
+									size='small'
+									sx={{
+										borderRadius: '12px',
+									}}
+								>
+									<MenuItem value='not_selected' disabled>
+										Выберите тип крепления
+									</MenuItem>
+									{mountings?.map(m => (
+										<MenuItem key={m.id} value={m.title}>
+											{m.title}
+										</MenuItem>
+									))}
+								</Select>
+							)}
+						</Stack>
+
+						{role != 'manager' ? (
+							drawing ? (
+								<FileDownload text={drawing.origName} link={drawing.link} onDelete={deleteFile} />
+							) : (
+								<FileInput name='drawing' id='file' label={'Прикрепить чертеж'} onChange={uploadFile} />
+							)
+						) : null}
+
+						{hasDesignError && (
+							<Typography sx={{ marginTop: 1, color: 'var(--danger-color)', fontSize: '1.4rem' }}>
+								К заявке приложите файл с чертежом.
+							</Typography>
+						)}
 					</>
 				)}
-			</Stack>
-
-			<Checkbox
-				id='holes'
-				name='holes'
-				label='Отверстия в наруж. ограничителе'
-				checked={design.hasHole}
-				disabled={!data?.data.snp.hasHole}
-				onChange={holeHandler}
-			/>
-
-			<Stack direction='row' spacing={2} marginTop={1} marginBottom={3}>
-				<Checkbox
-					id='mounting'
-					name='mounting'
-					label='Крепление на вертикальном фланце'
-					checked={design.mounting.hasMounting}
-					disabled={!data?.data.snp.hasMounting}
-					onChange={mountingHandler}
-				/>
-
-				{design.mounting.hasMounting && (
-					<Select
-						value={design.mounting.code || 'not_selected'}
-						onChange={mountingTitleHandler}
-						size='small'
-						sx={{
-							borderRadius: '12px',
-						}}
-					>
-						<MenuItem value='not_selected' disabled>
-							Выберите тип крепления
-						</MenuItem>
-						{mountings?.map(m => (
-							<MenuItem key={m.id} value={m.title}>
-								{m.title}
-							</MenuItem>
-						))}
-					</Select>
-				)}
-			</Stack>
-
-			{role != 'manager' ? (
-				drawing ? (
-					<FileDownload text={drawing.origName} link={drawing.link} onDelete={deleteFile} />
-				) : (
-					<FileInput name='drawing' id='file' label={'Прикрепить чертеж'} onChange={uploadFile} />
-				)
-			) : null}
-
-			{hasDesignError && (
-				<Typography sx={{ marginTop: 1, color: 'var(--danger-color)', fontSize: '1.4rem' }}>
-					К заявке приложите файл с чертежом.
-				</Typography>
-			)}
-		</AsideContainer>
+			</AsideContainer>
+		</>
 	)
 }

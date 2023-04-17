@@ -45,13 +45,15 @@ export const SizesBlockSnp = () => {
 	const main = useAppSelector(state => state.snp.main)
 	const sizes = useAppSelector(state => state.snp.size)
 
+	if (!main.snpType?.title) return null
+
 	return (
 		<>
 			<SizesBlock
 				sizes={sizes}
 				hasSizes={main.snpType!}
 				hasD2={main.snpStandard?.hasD2}
-				positions={sizePositionsSnp[main.snpType?.title as 'Д']}
+				positions={sizePositionsSnp[main.snpType.title as 'Д']}
 			/>
 		</>
 	)

@@ -2,9 +2,11 @@ import { FileDownload } from '@/components/FileInput/FileDownload'
 import { useFinishOrderMutation, useGetFullOrderQuery } from '@/store/api/manager'
 import { IManagerOrder } from '@/types/order'
 import {
+	Alert,
 	IconButton,
 	Menu,
 	MenuItem,
+	Snackbar,
 	Stack,
 	Table,
 	TableBody,
@@ -16,10 +18,14 @@ import {
 } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Loader } from '@/components/Loader/Loader'
 import Managers from '../Orders/Managers'
 import { Container, Icon, OrderList, Row, UserContainer } from './order.style'
 
+type Alert = { type: 'success' | 'error'; open: boolean }
+
 export default function Order() {
+	const [alert, setAlert] = useState<Alert>({ type: 'success', open: false })
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const [manager, setManager] = useState<{
 		order: IManagerOrder | null
@@ -36,14 +42,24 @@ export default function Order() {
 	const location = useLocation()
 	const navigate = useNavigate()
 
-	const { data } = useGetFullOrderQuery(params.id || '', { skip: !params.id })
+	const {
+		data,
+		isError: isErrorGetOrder,
+		error: errorGetOrder,
+	} = useGetFullOrderQuery(params.id || '', { skip: !params.id })
 
-	//TODO обработать ошибку
-	const [finish, { error }] = useFinishOrderMutation()
+	const [finish, { error, isSuccess, isLoading, isUninitialized }] = useFinishOrderMutation()
 
 	useEffect(() => {
 		if (location.search == '?action=save' && ref.current) ref.current.click()
 	}, [])
+
+	//TODO проверить это вообще работает
+	useEffect(() => {
+		if (!isUninitialized && !isLoading)
+			if (!error) navigate('/manager/orders')
+			else setAlert({ type: 'error', open: true })
+	}, [error, isSuccess, isLoading, isUninitialized])
 
 	const open = Boolean(anchorEl)
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -55,8 +71,7 @@ export default function Order() {
 	const finishHandler = () => {
 		handleClose()
 		if (data) {
-			finish(data?.data.order.id)
-			if (!error) navigate('/manager/orders')
+			finish(data.data.order.id)
 		}
 	}
 
@@ -99,11 +114,35 @@ export default function Order() {
 		openHandler(order, 'manager')
 	}
 
+	const alertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+		if (reason === 'clickaway') {
+			return
+		}
+		setAlert({ type: 'success', open: false })
+	}
+
 	const user = data?.data.user
 	const order = data?.data.order
 
+	if (isErrorGetOrder)
+		return (
+			<Container>
+				<Typography color={'error'}>
+					Не удалось получить данные о заявке. {(errorGetOrder as any).data.message}
+				</Typography>
+			</Container>
+		)
+
 	return (
 		<Container>
+			<Snackbar open={alert.open} onClose={alertClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+				<Alert onClose={alertClose} severity={alert.type} sx={{ width: '100%' }}>
+					{error && 'Не удалось закрыть заявку. ' + (error as any).data.message}
+					{alert.type == 'success' && 'Заявка закрыта.'}
+				</Alert>
+			</Snackbar>
+			{isLoading ? <Loader background='fill' /> : null}
+
 			<Managers manager={manager} onClose={closeHandler} />
 
 			<Typography variant='h5'>Заявка №{order?.number}</Typography>

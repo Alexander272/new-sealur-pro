@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { useGetOpenQuery } from '@/store/api/manager'
 import { IManagerOrder } from '@/types/order'
+import { Loader } from '@/components/Loader/Loader'
 import { OrderRow } from './OrderRow'
 import { Container } from './order.style'
 import Managers from './Managers'
 
 export default function Orders() {
-	const { data } = useGetOpenQuery(null)
+	const { data, error, isLoading } = useGetOpenQuery(null)
 
 	const [manager, setManager] = useState<{ order: IManagerOrder | null; type: 'order' | 'manager'; open: boolean }>({
 		order: null,
@@ -25,6 +26,8 @@ export default function Orders() {
 	// может все-таки сделать тут таблицу
 	return (
 		<Container>
+			{isLoading ? <Loader background='fill' /> : null}
+
 			{/* {data?.data.map(d => (
 				<ItemBlock key={d.id}>
 					<Typography align='center'>
@@ -45,24 +48,30 @@ export default function Orders() {
 					</Stack> 
 				</ItemBlock>
 			))} */}
-			<Managers manager={manager} onClose={closeHandler} />
-			<TableContainer sx={{ maxHeight: 740 }}>
-				<Table stickyHeader>
-					<TableHead>
-						<TableRow>
-							<TableCell>Заявка</TableCell>
-							<TableCell>Компания</TableCell>
-							<TableCell>Дата</TableCell>
-							<TableCell colSpan={2}>Количество позиций</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{data?.data?.map(d => (
-							<OrderRow key={d.id} data={d} onOpen={openHandler} />
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
+			{error ? (
+				<Typography color={'error'}>Не удалось загрузить заказы. {(error as any).data.message}</Typography>
+			) : (
+				<>
+					<Managers manager={manager} onClose={closeHandler} />
+					<TableContainer sx={{ maxHeight: 740 }}>
+						<Table stickyHeader>
+							<TableHead>
+								<TableRow>
+									<TableCell>Заявка</TableCell>
+									<TableCell>Компания</TableCell>
+									<TableCell>Дата</TableCell>
+									<TableCell colSpan={2}>Количество позиций</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{data?.data?.map(d => (
+									<OrderRow key={d.id} data={d} onOpen={openHandler} />
+								))}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</>
+			)}
 		</Container>
 	)
 }

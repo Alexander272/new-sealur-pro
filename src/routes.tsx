@@ -1,10 +1,11 @@
-import { lazy, Suspense } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { Loader } from '@/components/Loader/Loader'
 import { useRefresh } from './hooks/refresh'
 
 import Main from '@/layout/Main/Main'
 import RequireAuth from './pages/Auth/RequireAuth'
+import Metrics from './components/Metrics/Metrics'
 const Auth = lazy(() => import('@/pages/Auth/Auth'))
 const Recovery = lazy(() => import('@/pages/Auth/Recovery/Recovery'))
 const RecoveryPassword = lazy(() => import('@/pages/Auth/Recovery/RecoveryPassword'))
@@ -28,11 +29,17 @@ export const AppRoutes = () => {
 	return (
 		<BrowserRouter basename={'/'}>
 			<Suspense fallback={<Loader />}>
+				<Metrics />
 				<Routes>
 					<Route path='/auth' element={<Auth />} />
 					<Route path='/auth/confirm' element={<Confirm />} />
 					<Route path='/auth/recovery' element={<Recovery />} />
 					<Route path='/auth/recovery/:code' element={<RecoveryPassword />} />
+
+					<Route path='/connect' element={<Main />}>
+						<Route index element={<Connect />} />
+					</Route>
+
 					<Route
 						path='/'
 						element={
@@ -46,7 +53,7 @@ export const AppRoutes = () => {
 						</Route>
 						<Route path='/orders' element={<Orders />} />
 
-						<Route path='/connect' element={<Connect />} />
+						{/* <Route path='/connect' element={<Connect />} /> */}
 					</Route>
 
 					{/* <Route

@@ -20,33 +20,68 @@ export const useInput = (props?: Props) => {
 	const onChange = (event: ChangeEvent<HTMLInputElement>) => {
 		let newValue = event.target.value
 
-		// let regex: RegExp = /^/
-
 		if (props?.replace === 'phone') {
-			let parts = newValue.split('')
-			let phone = maskPhone.split('')
-			const regex = /[0-9]/
-			newValue = ''
-
-			if (parts[0] == '8' && parts.length > 1) parts.splice(0, 1)
-
-			for (let i = 0; i < parts.length; i++) {
-				if (i == phone.length) break
-				const p = parts[i]
-
-				if (phone[i] == '#') {
-					if (regex.test(p)) {
-						newValue += p
-						continue
-					}
-				}
-
-				if (p === phone[i]) newValue += p
-				else {
-					newValue += phone[i]
-					parts.splice(i, 0, phone[i])
-				}
+			if (newValue.length == 1) {
+				newValue = '7' + newValue
 			}
+			// newValue = newValue.replace(/[^0-9]/g, '')
+
+			// let pattern = /(\+7|8)[\s(]?(\d{3})[\s)]?(\d{3})[\s-]?(\d{2})[\s-]?(\d{2})/g
+			// newValue = newValue.replace(pattern, '+7 ($2) $3-$4-$5')
+
+			// newValue = newValue.replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4')
+
+			// let parts = newValue.split('')
+			// let phone = maskPhone.split('')
+			// const regex = /[0-9]/
+			// newValue = ''
+
+			// if (parts[0] == '8' && parts.length > 1) parts.splice(0, 1)
+
+			// if (newValue.length < 5) {
+			// 	newValue = newValue.replace(/^(\d{3})$/, '+7 ($1)')
+			// } else {
+			// 	newValue = newValue.replace(/^(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4')
+			// }
+
+			// for (let i = 0; i < parts.length; i++) {
+			// 	if (i == phone.length) break
+			// 	const p = parts[i]
+
+			// 	if (phone[i] == '#') {
+			// 		if (regex.test(p)) {
+			// 			newValue += p
+			// 			continue
+			// 		}
+			// 	}
+
+			// 	if (p === phone[i]) newValue += p
+			// 	else {
+			// 		newValue += phone[i]
+			// 		parts.splice(i, 0, phone[i])
+			// 	}
+			// }
+
+			let matrix = '+7 (___) ___-__-__ (доб. ___)',
+				i = 0,
+				def = matrix.replace(/\D/g, ''),
+				val = newValue.replace(/\D/g, ''),
+				new_value = matrix.replace(/[_\d]/g, function (a) {
+					return i < val.length ? val.charAt(i++) || def.charAt(i) : a
+				})
+			i = new_value.indexOf('_')
+			if (i != -1) {
+				i < 5 && (i = 3)
+				new_value = new_value.slice(0, i)
+			}
+			let reg = matrix
+				.substring(0, newValue.length)
+				.replace(/_+/g, function (a) {
+					return '\\d{1,' + a.length + '}'
+				})
+				.replace(/[+()]/g, '\\$&')
+			const regex = new RegExp('^' + reg + '$')
+			if (!regex.test(newValue) || newValue.length < 5) newValue = new_value
 		}
 
 		// if (event.target.value === '' || regex.test(event.target.value)) {

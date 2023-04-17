@@ -16,6 +16,7 @@ import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import FlangeA from '@/assets/snp/A.webp'
 import FlangeB from '@/assets/snp/B.webp'
 import FlangeV from '@/assets/snp/V.webp'
+import { Loader } from '@/components/Loader/Loader'
 
 const images = {
 	А: FlangeA,
@@ -33,12 +34,12 @@ export const Main: FC<Props> = () => {
 	// const cardIndex = useAppSelector(state => state.snp.cardIndex)
 	const positionId = useAppSelector(state => state.snp.positionId)
 
-	const { data: standards } = useGetStandardForSNPQuery(null)
-	// const { data } = useGetSnpDataQuery({
-	// 	standardId: main.snpStandard?.standard.id || '',
-	// 	snpStandardId: main.snpStandardId,
-	// })
-	const { data } = useGetSnpDataQuery({
+	const {
+		data: standards,
+		isError: isErrorStandards,
+		isLoading: isLoadingStandards,
+	} = useGetStandardForSNPQuery(null)
+	const { data, isError, isLoading } = useGetSnpDataQuery({
 		standardId: main.snpStandard?.standard.id || '',
 		snpStandardId: main.snpStandardId,
 	})
@@ -137,47 +138,58 @@ export const Main: FC<Props> = () => {
 
 	return (
 		<MainContainer>
-			<Column>
-				<Typography fontWeight='bold'>Стандарт на прокладку / стандарт на фланец</Typography>
-				<FormControl size='small'>
+			{!data || !standards || isLoading || isLoadingStandards ? (
+				<Column>
+					{isError || isErrorStandards ? (
+						<Typography variant='h6' color={'error'} align='center'>
+							Не удалось загрузить стандарты или типы фланца и снп
+						</Typography>
+					) : (
+						<Loader background='fill' />
+					)}
+				</Column>
+			) : (
+				<Column>
+					<Typography fontWeight='bold'>Стандарт на прокладку / стандарт на фланец</Typography>
+					<FormControl size='small'>
+						<Select
+							value={main.snpStandardId || 'not_selected'}
+							onChange={snpStandardHandler}
+							// input={<Input />}
+							sx={{ borderRadius: '12px' }}
+							disabled={Boolean(positionId)}
+						>
+							<MenuItem disabled value='not_selected'>
+								Выберите стандарт
+							</MenuItem>
+							{standards?.data.map(s => (
+								<MenuItem key={s.id} value={s.id}>
+									{s.standard.title} {s.flangeStandard.title && '/'} {s.flangeStandard.title}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+
+					<Typography fontWeight='bold'>Тип фланца</Typography>
 					<Select
-						value={main.snpStandardId || 'not_selected'}
-						onChange={snpStandardHandler}
-						// input={<Input />}
+						value={main.flangeTypeCode || 'not_selected'}
+						onChange={flangeTypeHandler}
+						size='small'
 						sx={{ borderRadius: '12px' }}
 						disabled={Boolean(positionId)}
 					>
 						<MenuItem disabled value='not_selected'>
-							Выберите стандарт
+							Выберите тип фланца
 						</MenuItem>
-						{standards?.data.map(s => (
-							<MenuItem key={s.id} value={s.id}>
-								{s.standard.title} {s.flangeStandard.title && '/'} {s.flangeStandard.title}
+						{[...(data?.data.flangeTypes || [])].reverse().map(f => (
+							<MenuItem key={f.id} value={f.code}>
+								{f.title} {f.description && `(${f.description})`}
 							</MenuItem>
 						))}
 					</Select>
-				</FormControl>
 
-				<Typography fontWeight='bold'>Тип фланца</Typography>
-				<Select
-					value={main.flangeTypeCode || 'not_selected'}
-					onChange={flangeTypeHandler}
-					size='small'
-					sx={{ borderRadius: '12px' }}
-					disabled={Boolean(positionId)}
-				>
-					<MenuItem disabled value='not_selected'>
-						Выберите тип фланца
-					</MenuItem>
-					{[...(data?.data.flangeTypes || [])].reverse().map(f => (
-						<MenuItem key={f.id} value={f.code}>
-							{f.title} {f.description && `(${f.description})`}
-						</MenuItem>
-					))}
-				</Select>
-
-				<Typography fontWeight='bold'>Тип СНП</Typography>
-				{/* <RadioGroup onChange={typeHandler}>
+					<Typography fontWeight='bold'>Тип СНП</Typography>
+					{/* <RadioGroup onChange={typeHandler}>
 					{data?.data.flangeTypes.map(f =>
 						f.types.map(t => (
 							<RadioItem key={t.id} value={t.id} active={t.id === main.snpTypeId}>
@@ -186,10 +198,11 @@ export const Main: FC<Props> = () => {
 						))
 					)}
 				</RadioGroup> */}
-				<RadioGroup onChange={typeHandlerNew} disabled={Boolean(positionId)}>
-					{renderTypes()}
-				</RadioGroup>
-			</Column>
+					<RadioGroup onChange={typeHandlerNew} disabled={Boolean(positionId)}>
+						{renderTypes()}
+					</RadioGroup>
+				</Column>
+			)}
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
 				{main.flangeTypeCode == 'not_selected' ? (

@@ -37,6 +37,7 @@ const BaseContainer = styled.div`
 	border-radius: 12px;
 	background-color: var(--theme-bg-color);
 	box-shadow: 0px 0px 4px 0px #2626262b;
+	position: relative;
 `
 
 export const MainContainer = styled(BaseContainer)`
@@ -62,6 +63,7 @@ export const SizeContainer = styled(BaseContainer)`
 	grid-row-end: 3;
 	display: flex;
 	gap: 10px;
+	min-height: 100px;
 
 	@media screen and (max-width: 1150px) {
 		grid-column-end: 13;
@@ -95,6 +97,7 @@ export const Column = styled.div<ColumnProps>`
 	width: ${props => (props.width ? props.width + '%' : '50%')};
 	flex-direction: column;
 	gap: 6px;
+	position: relative;
 
 	@media screen and (max-width: 700px) {
 		width: 100%;

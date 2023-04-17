@@ -20,7 +20,7 @@ export default function ConnectWithUs() {
 
 	const dispatch = useAppDispatch()
 
-	const { data } = useGetUserQuery(userId, { skip: Boolean(user) })
+	const { data } = useGetUserQuery(userId, { skip: !userId || Boolean(user) })
 
 	useEffect(() => {
 		if (data && !user) dispatch(setUser(data.data))
@@ -86,33 +86,11 @@ export default function ConnectWithUs() {
 
 			{loading ? <Loader background='fill' /> : null}
 
-			<Links>
-				<Typography variant='h5' align='center'>
-					Способы связи
-				</Typography>
-				<LinksLine>
-					<Link href='https://t.me/m_alex272' target='_blank'>
-						<TelegramIcon sx={{ color: 'white', marginRight: 1 }} /> Telegram
-					</Link>
-				</LinksLine>
-			</Links>
-
 			<Form onSubmit={submitHandler}>
 				<Typography variant='h5' align='center'>
 					Напишите нам
 				</Typography>
 				<Typography>Оставьте нам свое сообщение, и мы обязательно свяжемся с Вами!</Typography>
-				<FormControl>
-					<Input
-						value={subject.value}
-						onChange={subject.onChange}
-						label='Тема обращения'
-						fullWidth
-						size='small'
-						error={!subject.valid}
-						helperText={!subject.valid && 'Поле обязательно для заполнения.'}
-					/>
-				</FormControl>
 				<FormControl>
 					<Input
 						value={email.value}
@@ -136,6 +114,17 @@ export default function ConnectWithUs() {
 					/>
 				</FormControl>
 
+				<FormControl>
+					<Input
+						value={subject.value}
+						onChange={subject.onChange}
+						label='Тема обращения'
+						fullWidth
+						size='small'
+						error={!subject.valid}
+						helperText={!subject.valid && 'Поле обязательно для заполнения.'}
+					/>
+				</FormControl>
 				<FormControl>
 					<Input
 						value={message.value}
@@ -170,6 +159,17 @@ export default function ConnectWithUs() {
 					Отправить
 				</Button>
 			</Form>
+
+			<Links>
+				<Typography variant='h5' align='center'>
+					Иные способы связи
+				</Typography>
+				<LinksLine>
+					<Link href='https://t.me/m_alex272' target='_blank'>
+						<TelegramIcon sx={{ color: 'white', marginRight: 1 }} /> Telegram
+					</Link>
+				</LinksLine>
+			</Links>
 		</Container>
 	)
 }

@@ -15,10 +15,14 @@ export async function CreateFile(url: string, data: FormData) {
 
 	try {
 		const response = await fetch(baseUrl + url, options)
+		if (response.status == 413) return { data: null, error: 'Слишком большой файл' }
+
 		const data = await response.json()
 
 		if (response.ok) return { data: data, error: null }
-		else return { data: null, error: data.message }
+		else {
+			return { data: null, error: data.message }
+		}
 	} catch (error: any) {
 		return { data: null, error: error }
 	}

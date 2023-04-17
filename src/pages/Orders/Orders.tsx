@@ -22,6 +22,7 @@ export default function Orders() {
 	const orderId = useAppSelector(state => state.card.orderId)
 	const positions = useAppSelector(state => state.card.positions)
 
+	//TODO ошибка + loader
 	const { data } = useGetAllOrdersQuery(null)
 
 	const [copyPosition, { error, isSuccess, isLoading }] = useCopyPositionMutation()

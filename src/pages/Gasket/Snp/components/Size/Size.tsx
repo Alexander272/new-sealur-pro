@@ -13,6 +13,7 @@ import SnpG from '@/assets/snp/SNP-P-D.webp'
 import SnpV from '@/assets/snp/SNP-P-C.webp'
 import SnpB from '@/assets/snp/SNP-P-AB.webp'
 import SnpA from '@/assets/snp/SNP-P-AB.webp'
+import { Loader } from '@/components/Loader/Loader'
 
 const images = {
 	Д: SnpD,
@@ -28,20 +29,30 @@ export const Size: FC<Props> = () => {
 	const main = useAppSelector(state => state.snp.main)
 	// const sizes = useAppSelector(state => state.snp.size)
 
-	const { data } = useGetSnpQuery(
+	const { data, isError, isLoading } = useGetSnpQuery(
 		{ typeId: main.snpTypeId, hasD2: main.snpStandard?.hasD2 },
 		{ skip: main.snpTypeId == 'not_selected' }
 	)
 
 	return (
 		<SizeContainer>
-			<Column width={45}>
-				{main.snpStandard?.flangeStandard.code && data?.data.sizes ? (
-					<StandardSize sizes={data.data.sizes} />
-				) : (
-					<AnotherSize />
-				)}
-			</Column>
+			{isError ? (
+				<Column width={45}>
+					<Typography variant='h6' color={'error'} align='center'>
+						Не удалось загрузить размеры
+					</Typography>
+				</Column>
+			) : (
+				<Column width={45}>
+					{!data || isLoading ? (
+						<Loader background='fill' />
+					) : main.snpStandard?.flangeStandard.code && data?.data.sizes ? (
+						<StandardSize sizes={data.data.sizes} />
+					) : (
+						<AnotherSize />
+					)}
+				</Column>
+			)}
 			<Column width={55}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
 				{!main.snpType ? (

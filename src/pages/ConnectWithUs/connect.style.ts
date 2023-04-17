@@ -21,7 +21,7 @@ export const Links = styled.div`
 	background-color: var(--theme-bg-color);
 	box-shadow: 0px 0px 4px 0px #2626262b;
 	margin: auto;
-	margin-bottom: 5px;
+	margin-top: 5px;
 	width: 100%;
 	max-width: 600px;
 `
@@ -51,7 +51,7 @@ export const Form = styled.form`
 	background-color: var(--theme-bg-color);
 	box-shadow: 0px 0px 4px 0px #2626262b;
 	margin: auto;
-	margin-top: 5px;
+	margin-bottom: 5px;
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
