@@ -8,6 +8,7 @@ import { ISignUp } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
 import { FormContent, Input, SignUpForm, Title } from './forms.style'
 import { ValidMessage } from '../ValidMessage/ValidMessage'
+import { VisiblePassword } from '../VisiblePassword/VisiblePassword'
 
 import Privacy from '@/assets/files/privacy.pdf'
 
@@ -93,6 +94,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 		} else {
 			handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
 		}
+		localStorage.removeItem('managerId')
 		setLoading(false)
 	}
 
@@ -220,8 +222,10 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						size='small'
 						error={!password.valid}
 					/>
+					<VisiblePassword password={password.value} />
 					{!password.valid && (
 						<ValidMessage
+							iconRight='46px'
 							messages={[
 								'Минимальная длина пароля 6 символов',
 								'Пароль должен содержать заглавные, строчные буквы и цифры',

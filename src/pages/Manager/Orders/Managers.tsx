@@ -1,9 +1,7 @@
 import {
-	Alert,
 	Dialog,
 	DialogContent,
 	DialogTitle,
-	Snackbar,
 	Table,
 	TableBody,
 	TableCell,
@@ -11,28 +9,28 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material'
+import { useEffect } from 'react'
 import { useGetManagersQuery, useSetOrderManagerMutation, useSetUserManagerMutation } from '@/store/api/manager'
 import { IUser } from '@/types/user'
 import { IManagerOrder } from '@/types/order'
 import { useAppSelector } from '@/hooks/useStore'
 import { Loader } from '@/components/Loader/Loader'
-import { useEffect, useState } from 'react'
+import { Alert } from './Orders'
 
 type Props = {
 	manager: { order: IManagerOrder | null; type: 'order' | 'manager'; open: boolean }
 	onClose: () => void
+	setAlert: (alert: Alert) => void
 }
 
-type Alert = { type: 'success' | 'error'; message: string; open: boolean }
-
-export default function Managers({ manager, onClose }: Props) {
-	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', open: false })
+export default function Managers({ manager, onClose, setAlert }: Props) {
 	const userId = useAppSelector(state => state.user.userId)
 	const { data, error, isLoading: isLoadingData } = useGetManagersQuery(null, { skip: !manager.open })
 
-	//TODO обработать ошибки
-	const [setOrder, { error: errorOrder, isLoading: isLoadingOrder, isSuccess }] = useSetOrderManagerMutation()
-	const [setManager, { error: errorManager, isLoading: isLoadingManager }] = useSetUserManagerMutation()
+	const [setOrder, { error: errorOrder, isLoading: isLoadingOrder, isSuccess: isSuccessOrder }] =
+		useSetOrderManagerMutation()
+	const [setManager, { error: errorManager, isLoading: isLoadingManager, isSuccess: isSuccessManager }] =
+		useSetUserManagerMutation()
 
 	useEffect(() => {
 		if (errorManager) {
@@ -49,39 +47,28 @@ export default function Managers({ manager, onClose }: Props) {
 				open: true,
 			})
 		}
-	}, [errorOrder, errorManager])
+		if (isSuccessOrder) setAlert({ type: 'success', message: `Заявка перенаправлена`, open: true })
+		if (isSuccessManager) setAlert({ type: 'success', message: `Клиент передан`, open: true })
+	}, [errorOrder, errorManager, isSuccessOrder, isSuccessManager])
 
 	const changeHandler = (user: IUser) => () => {
 		if (!manager.order) return
 
 		if (manager.type == 'manager') setManager({ id: manager.order.userId, managerId: user.id })
-		setOrder({ orderId: manager.order.id, managerId: user.id })
+		setOrder({
+			orderId: manager.order.id,
+			managerId: user.id,
+			managerEmail: user.email,
+			userId: manager.order.userId,
+			oldManagerId: userId,
+		})
 		onClose()
-	}
-
-	const alertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-		if (reason === 'clickaway') {
-			return
-		}
-		setAlert({ type: 'success', message: '', open: false })
 	}
 
 	return (
 		<Dialog onClose={onClose} open={manager.open} fullWidth maxWidth={'sm'}>
 			<DialogTitle>Укажите менеджера</DialogTitle>
 			<DialogContent>
-				{/* //TODO а будет ли это выводиться? */}
-				<Snackbar
-					open={alert.open}
-					onClose={alertClose}
-					anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-				>
-					<Alert onClose={alertClose} severity={alert.type} sx={{ width: '100%' }}>
-						{alert.type == 'error' && alert.message}
-						{alert.type == 'success' && alert.message}
-					</Alert>
-				</Snackbar>
-
 				{isLoadingData || isLoadingOrder || isLoadingManager ? <Loader background='fill' /> : null}
 
 				{error ? (

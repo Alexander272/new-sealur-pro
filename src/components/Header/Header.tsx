@@ -56,6 +56,7 @@ const Header: FC<Props> = () => {
 
 	const readHandler = () => {
 		console.log('reading')
+		// TODO убрать коммент с метрики
 		sendMetric('reachGoal', 'ReadInstruction')
 	}
 

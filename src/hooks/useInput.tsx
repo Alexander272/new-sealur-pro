@@ -6,7 +6,7 @@ type Props = {
 	replace?: 'phone'
 }
 
-const maskPhone = '+7 (###) ###-##-## (доб. ###)'
+// const maskPhone = '+7 (###) ###-##-## (доб. ###)'
 
 export const useInput = (props?: Props) => {
 	const [value, setValue] = useState(props?.value || '')
@@ -21,11 +21,13 @@ export const useInput = (props?: Props) => {
 		let newValue = event.target.value
 
 		if (props?.replace === 'phone') {
-			if (newValue.length == 1) {
+			// if (newValue.length == 1) {
+			// 	newValue = '7' + newValue
+			// }
+			newValue = newValue.replace(/[^0-9]/g, '')
+			if (newValue[0] != '7' && (newValue.length < 10 || (newValue.length > 11 && newValue.length < 14))) {
 				newValue = '7' + newValue
 			}
-			// newValue = newValue.replace(/[^0-9]/g, '')
-
 			// let pattern = /(\+7|8)[\s(]?(\d{3})[\s)]?(\d{3})[\s-]?(\d{2})[\s-]?(\d{2})/g
 			// newValue = newValue.replace(pattern, '+7 ($2) $3-$4-$5')
 
@@ -104,7 +106,7 @@ export const useInput = (props?: Props) => {
 			} else isValid = false
 		}
 		if (props?.validation === 'password') {
-			const regex = /(?=.*[0-9])(?=.*[a-zа-я])(?=.*[A-ZА-Я])[0-9a-zA-Zа-яА-Я]{6,20}/g
+			const regex = /(?=.*[0-9])(?=.*[a-zа-я])(?=.*[A-ZА-Я])[0-9a-zA-Zа-яА-Я.,!@#$%^&?!*]{6,20}/g
 			if (regex.test(value)) {
 				isValid = true
 			} else isValid = false

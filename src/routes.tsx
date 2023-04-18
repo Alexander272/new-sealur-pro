@@ -29,6 +29,7 @@ export const AppRoutes = () => {
 	return (
 		<BrowserRouter basename={'/'}>
 			<Suspense fallback={<Loader />}>
+				{/* //TODO убрать коммент с метрики  */}
 				<Metrics />
 				<Routes>
 					<Route path='/auth' element={<Auth />} />

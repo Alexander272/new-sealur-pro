@@ -7,6 +7,7 @@ import { signIn } from '@/services/auth'
 import { ISignIn } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
 import { Input, FormContent, SignInForm, Title, NavLink } from './forms.style'
+import { VisiblePassword } from '../VisiblePassword/VisiblePassword'
 
 type Props = {
 	isOpen: boolean
@@ -44,6 +45,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 			// показать ошибку
 			handleClick(res.error)
 		} else {
+			localStorage.removeItem('managerId')
 			dispatch(setUser(res.data.data))
 		}
 		setLoading(false)
@@ -91,7 +93,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 					/>
 				</FormControl>
 
-				<FormControl sx={{ marginBottom: 2 }}>
+				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
 					<Input
 						value={password.value}
 						onChange={password.onChange}
@@ -101,6 +103,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 						size='small'
 						error={!password.valid}
 					/>
+					<VisiblePassword password={password.value} />
 				</FormControl>
 
 				<NavLink to='recovery'>Забыли пароль?</NavLink>

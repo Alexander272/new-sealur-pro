@@ -8,6 +8,7 @@ import { Input, Title } from '../components/AuthForms/forms.style'
 import { ValidMessage } from '../components/ValidMessage/ValidMessage'
 import { Form } from './recovery.style'
 import { Container, Wrapper, Base } from '../auth.style'
+import { VisiblePassword } from '../components/VisiblePassword/VisiblePassword'
 
 type Alert = { open: boolean; type: 'success' | 'error'; message: string }
 
@@ -96,8 +97,10 @@ export default function RecoveryPassword() {
 								error={!password.valid}
 								size='small'
 							/>
+							<VisiblePassword password={password.value} />
 							{!password.valid && (
 								<ValidMessage
+									iconRight='46px'
 									messages={[
 										'Минимальная длина пароля 6 символов',
 										'Пароль должен содержать заглавные, строчные буквы и цифры',
@@ -115,8 +118,9 @@ export default function RecoveryPassword() {
 								error={!confirm.valid || !compare}
 								size='small'
 							/>
+							<VisiblePassword password={password.value} />
 							{!confirm.valid || !compare ? (
-								<ValidMessage messages={['Пароли должны совпадать']} />
+								<ValidMessage iconRight='46px' messages={['Пароли должны совпадать']} />
 							) : null}
 						</FormControl>
 

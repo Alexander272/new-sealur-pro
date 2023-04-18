@@ -78,6 +78,7 @@ const Card: FC<Props> = () => {
 	}
 
 	const sendHandler = () => {
+		// TODO убрать коммент с метрики
 		sendMetric('reachGoal', 'SendOrder')
 
 		dispatch(clearSnp())

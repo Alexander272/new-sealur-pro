@@ -7,7 +7,7 @@ import { SignIn } from './components/AuthForms/SignInForm'
 import { SignUp } from './components/AuthForms/SignUpForm'
 
 export default function Auth() {
-	const [isSignUp, setIsSignUp] = useState(false)
+	const [isSignUp, setIsSignUp] = useState(Boolean(localStorage.getItem('managerId')))
 
 	const navigate = useNavigate()
 	const location = useLocation()

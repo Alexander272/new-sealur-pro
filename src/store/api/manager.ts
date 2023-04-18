@@ -3,6 +3,14 @@ import { IUser } from '@/types/user'
 import { api } from './base'
 import { proUrl } from './snp'
 
+type OrderManger = {
+	orderId: string
+	managerId: string
+	managerEmail: string
+	userId: string
+	oldManagerId: string
+}
+
 // кусок стора для менеджеров
 export const managerApi = api.injectEndpoints({
 	endpoints: builder => ({
@@ -31,7 +39,7 @@ export const managerApi = api.injectEndpoints({
 			query: () => `users/managers`,
 		}),
 		// изменение менеджера привязанного к заявке
-		setOrderManager: builder.mutation<string, { orderId: string; managerId: string }>({
+		setOrderManager: builder.mutation<string, OrderManger>({
 			query: data => ({
 				url: `${proUrl}/orders/manager`,
 				method: 'POST',

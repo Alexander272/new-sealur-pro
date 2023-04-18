@@ -19,15 +19,13 @@ export const OrderRow: FC<Props> = ({ data, onOpen }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const navigate = useNavigate()
 
-	const [finish, { isError, isLoading, isSuccess, isUninitialized }] = useFinishOrderMutation()
+	const [finish, { isError, isLoading, isSuccess }] = useFinishOrderMutation()
 
 	//TODO проверить это вообще работает
 	useEffect(() => {
-		if (!isUninitialized && !isLoading) {
-			if (isError) setAlert({ type: 'error', open: true })
-			if (isSuccess) setAlert({ type: 'success', open: true })
-		}
-	}, [isError, isSuccess, isUninitialized])
+		if (isError) setAlert({ type: 'error', open: true })
+		if (isSuccess) setAlert({ type: 'success', open: true })
+	}, [isError, isSuccess])
 
 	const open = Boolean(anchorEl)
 	const handleClick = (event: MouseEvent<HTMLElement>) => {

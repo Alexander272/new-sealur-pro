@@ -22,16 +22,12 @@ export default function Orders() {
 	const orderId = useAppSelector(state => state.card.orderId)
 	const positions = useAppSelector(state => state.card.positions)
 
-	//TODO ошибка + loader
-	const { data } = useGetAllOrdersQuery(null)
+	const { data, isError, isLoading: isLoadingData } = useGetAllOrdersQuery(null)
 
 	const [copyPosition, { error, isSuccess, isLoading }] = useCopyPositionMutation()
 	const [copyOrder, { error: errorOrder, isSuccess: isSuccessOrder, isLoading: isLoadingOrder }] =
 		useCopyOrderMutation()
 
-	// const [open, setOpen] = useState(false)
-	// const [order, setOrder] = useState<IFullOrder | null>(null)
-	// const [openAlert, setOpen] = useState(false)
 	const [alert, setAlert] = useState<{ type: 'error' | 'success'; open: boolean }>({ type: 'success', open: false })
 
 	useEffect(() => {
@@ -40,15 +36,6 @@ export default function Orders() {
 	useEffect(() => {
 		if (isSuccess || isSuccessOrder) setAlert({ type: 'success', open: true })
 	}, [isSuccess, isSuccessOrder])
-
-	// const handleClickOpen = (order: IFullOrder) => () => {
-	// 	// setOpen(true)
-	// 	setOrder(order)
-	// }
-	// const handleClose = () => {
-	// 	// setOpen(false)
-	// 	setOrder(null)
-	// }
 
 	const allCopyHandler = (id: string) => (event: MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault()
@@ -97,7 +84,7 @@ export default function Orders() {
 				</Alert>
 			</Snackbar>
 
-			{isLoading || isLoadingOrder ? <Loader background='fill' /> : null}
+			{isLoadingData || isLoading || isLoadingOrder ? <Loader background='fill' /> : null}
 
 			{data?.data ? (
 				data?.data.map((o, i) => (
@@ -129,6 +116,10 @@ export default function Orders() {
 						{/* <PositionTable order={o} onCopy={copyHandler} /> */}
 					</Accordion>
 				))
+			) : isError ? (
+				<Typography variant='h5' color={'error'} align='center'>
+					Не удалось загрузить заказы
+				</Typography>
 			) : (
 				<Typography align='center' variant='h5'>
 					Ни одной заявки еще не создано

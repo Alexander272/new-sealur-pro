@@ -3,13 +3,14 @@ import WarningIcon from '@mui/icons-material/Warning'
 import { Icon, Item, List, Message } from './message.style'
 
 type Props = {
+	iconRight?: string
 	messages: string[]
 }
 
-export const ValidMessage: FC<Props> = ({ messages }) => {
+export const ValidMessage: FC<Props> = ({ iconRight, messages }) => {
 	return (
 		<>
-			<Icon>
+			<Icon right={iconRight}>
 				<WarningIcon color='error' />
 			</Icon>
 			<Message>

@@ -22,20 +22,13 @@ import { Loader } from '@/components/Loader/Loader'
 import Managers from '../Orders/Managers'
 import { Container, Icon, OrderList, Row, UserContainer } from './order.style'
 
-type Alert = { type: 'success' | 'error'; open: boolean }
+type Alert = { type: 'success' | 'error'; message: string; open: boolean }
+type Manager = { order: IManagerOrder | null; type: 'order' | 'manager'; open: boolean }
 
 export default function Order() {
-	const [alert, setAlert] = useState<Alert>({ type: 'success', open: false })
+	const [alert, setAlert] = useState<Alert>({ type: 'error', message: '', open: false })
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-	const [manager, setManager] = useState<{
-		order: IManagerOrder | null
-		type: 'order' | 'manager'
-		open: boolean
-	}>({
-		order: null,
-		type: 'order',
-		open: false,
-	})
+	const [manager, setManager] = useState<Manager>({ order: null, type: 'order', open: false })
 	const ref = useRef<HTMLAnchorElement | null>(null)
 
 	const params = useParams()
@@ -48,18 +41,26 @@ export default function Order() {
 		error: errorGetOrder,
 	} = useGetFullOrderQuery(params.id || '', { skip: !params.id })
 
-	const [finish, { error, isSuccess, isLoading, isUninitialized }] = useFinishOrderMutation()
+	const [finish, { error, isSuccess, isLoading }] = useFinishOrderMutation()
 
 	useEffect(() => {
 		if (location.search == '?action=save' && ref.current) ref.current.click()
 	}, [])
 
-	//TODO проверить это вообще работает
 	useEffect(() => {
-		if (!isUninitialized && !isLoading)
-			if (!error) navigate('/manager/orders')
-			else setAlert({ type: 'error', open: true })
-	}, [error, isSuccess, isLoading, isUninitialized])
+		if (error) {
+			setAlert({
+				type: 'error',
+				message: 'Не удалось закрыть заявку. ' + (error as any).data.message,
+				open: true,
+			})
+		}
+		if (isSuccess) setAlert({ type: 'success', message: '', open: false })
+	}, [error, isSuccess])
+
+	useEffect(() => {
+		if (alert.type === 'success') navigate('/manager/orders')
+	}, [alert])
 
 	const open = Boolean(anchorEl)
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -118,8 +119,9 @@ export default function Order() {
 		if (reason === 'clickaway') {
 			return
 		}
-		setAlert({ type: 'success', open: false })
+		setAlert({ type: 'success', message: 'Заявка закрыта.', open: false })
 	}
+	const changeAlert = (alert: Alert) => setAlert(alert)
 
 	const user = data?.data.user
 	const order = data?.data.order
@@ -137,13 +139,15 @@ export default function Order() {
 		<Container>
 			<Snackbar open={alert.open} onClose={alertClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
 				<Alert onClose={alertClose} severity={alert.type} sx={{ width: '100%' }}>
-					{error && 'Не удалось закрыть заявку. ' + (error as any).data.message}
-					{alert.type == 'success' && 'Заявка закрыта.'}
+					{/* {error && 'Не удалось закрыть заявку. ' + (error as any).data.message} */}
+					{/* {alert.type == 'success' && 'Заявка закрыта.'} */}
+					{alert.type == 'error' && alert.message}
+					{/* {alert.type == 'success' && alert.message} */}
 				</Alert>
 			</Snackbar>
 			{isLoading ? <Loader background='fill' /> : null}
 
-			<Managers manager={manager} onClose={closeHandler} />
+			<Managers manager={manager} onClose={closeHandler} setAlert={changeAlert} />
 
 			<Typography variant='h5'>Заявка №{order?.number}</Typography>
 			<Row>

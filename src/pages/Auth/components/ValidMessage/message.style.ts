@@ -15,10 +15,13 @@ export const Message = styled.div`
 	transition: all 0.4s ease-in-out;
 `
 
-export const Icon = styled.div`
+type IconProps = {
+	right?: string
+}
+export const Icon = styled.div<IconProps>`
 	position: absolute;
 	top: 50%;
-	right: 15px;
+	right: ${props => (props.right ? props.right : '15px')};
 	height: 24px;
 	width: 24px;
 	transform: translateY(-50%);
