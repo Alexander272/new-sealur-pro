@@ -4,6 +4,7 @@ export interface IOrderResponse {
 	data: {
 		id: string
 		number?: number
+		info?: string
 		positions?: Position[]
 	}
 }
@@ -14,6 +15,7 @@ export interface IFullOrder {
 	date?: string
 	countPosition?: number
 	positions?: Position[]
+	info?: string
 }
 
 export interface IOrder {

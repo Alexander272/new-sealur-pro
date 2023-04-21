@@ -11,9 +11,11 @@ import { ResultContainer } from '@/pages/Gasket/gasket.style'
 
 type Props = {}
 
+type Alert = { type: 'error' | 'success'; message: string; open: boolean }
+
 // блок с выводом результата
 export const Result: FC<Props> = () => {
-	const [alert, setAlert] = useState<{ type: 'error' | 'success'; open: boolean }>({ type: 'success', open: false })
+	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', open: false })
 
 	const main = useAppSelector(state => state.snp.main)
 	const size = useAppSelector(state => state.snp.size)
@@ -36,7 +38,9 @@ export const Result: FC<Props> = () => {
 	const [update, { error: updateError, isLoading: isLoadingUpdate }] = useUpdatePositionMutation()
 
 	useEffect(() => {
-		if (updateError || createError) setAlert({ type: 'error', open: true })
+		//TODO стоит наверное разделить это на 2 части
+		if (updateError || createError)
+			setAlert({ type: 'error', message: (updateError || (createError as any)).data.message, open: true })
 	}, [createError, updateError])
 
 	const savePosition = () => {
@@ -65,7 +69,7 @@ export const Result: FC<Props> = () => {
 			create(position)
 			// dispatch(addPosition(position))
 		}
-		setAlert({ type: 'success', open: true })
+		setAlert({ type: 'success', message: '', open: true })
 	}
 
 	const cancelHandler = () => {
@@ -82,11 +86,11 @@ export const Result: FC<Props> = () => {
 	}
 
 	const closeHandler = () => {
-		setAlert({ type: 'success', open: false })
+		setAlert({ type: 'success', message: '', open: false })
 	}
 	const openCardHandler = () => {
 		dispatch(toggle({ open: true }))
-		setAlert({ type: 'success', open: false })
+		setAlert({ type: 'success', message: '', open: false })
 	}
 
 	// костыль
@@ -376,7 +380,7 @@ export const Result: FC<Props> = () => {
 			designationDesign = `(${designationDesignParts.join(', ')}) `
 		}
 
-		if (main.snpStandard?.standard.title === 'ОСТ 26.260.454') {
+		if (main.snpStandard?.standard.title === 'ОСТ 26.260.454-99') {
 			if (notStandardMaterial) {
 				let temp = []
 				if (materials.innerRing) temp.push(`вн. кольцо - ${materials.innerRing.code}`)
@@ -386,8 +390,8 @@ export const Result: FC<Props> = () => {
 				designationMaterials = ` (${temp.join(', ')}) `
 			}
 
-			let thickness = size.h != 'another' ? size.h : size.another
-			thickness = (+thickness.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')
+			let thickness: string | number = size.h != 'another' ? size.h : size.another
+			if (thickness) thickness = (+thickness.replace(',', '.'))?.toFixed(1)?.replace('.', ',')
 
 			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
@@ -458,7 +462,7 @@ export const Result: FC<Props> = () => {
 			if (size?.d1) sizes += 'x' + size.d1
 
 			let thickness = size.h != 'another' ? size.h : size.another
-			thickness = (+thickness.replaceAll(',', '.')).toFixed(1).replaceAll('.', ',')
+			if (thickness) thickness = (+thickness.replace(',', '.'))?.toFixed(1)?.replace('.', ',')
 
 			//TODO выводить словами материалы (с 09Г2С не очень получается)
 
@@ -473,11 +477,9 @@ export const Result: FC<Props> = () => {
 			let notStandardMaterials = ''
 			if (temp.length) notStandardMaterials = ` (${temp.join(', ')}) `
 
-			if (notStandardMaterial) {
-				designationMaterials = `-${materials.innerRing?.code || 0}${materials.frame?.code || 0}${
-					materials.outerRing?.code || 0
-				}`
-			}
+			designationMaterials = `-${materials.innerRing?.code || 0}${materials.frame?.code || 0}${
+				materials.outerRing?.code || 0
+			}`
 
 			return `СНП-${main.snpType?.code}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}${notStandardMaterials}`
 		}
@@ -487,18 +489,26 @@ export const Result: FC<Props> = () => {
 
 	return (
 		<ResultContainer>
-			<Stack direction={'row'} spacing={1} marginBottom={1}>
-				<Typography fontWeight='bold' marginRight={1}>
-					Описание:
-				</Typography>
+			<Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0, sm: 2 }} marginBottom={2}>
+				<Typography fontWeight='bold'>Описание:</Typography>
 				<Typography textAlign='justify'>{renderDescription()}</Typography>
 			</Stack>
 
-			<Stack direction={'row'} spacing={2} alignItems='center' marginBottom={1}>
+			<Stack
+				direction={{ xs: 'column', sm: 'row' }}
+				spacing={{ xs: 0, sm: 2 }}
+				alignItems={{ xs: 'flex-start', sm: 'center' }}
+				marginBottom={2}
+			>
 				<Typography fontWeight='bold'>Обозначение:</Typography>
 				<Typography fontSize={'1.12rem'}>{renderDesignation()}</Typography>
 			</Stack>
-			<Stack direction={'row'} spacing={2} alignItems='center' justifyContent='space-between'>
+			<Stack
+				direction={{ xs: 'column', md: 'row' }}
+				spacing={2}
+				alignItems={{ xs: 'flex-start', md: 'center' }}
+				justifyContent='space-between'
+			>
 				{isLoading || isLoadingUpdate ? <Loader background='fill' /> : null}
 
 				<Stack direction={'row'} spacing={2} alignItems='center'>
@@ -507,7 +517,7 @@ export const Result: FC<Props> = () => {
 				</Stack>
 
 				{role != 'manager' && (
-					<Stack direction={'row'} spacing={2} alignItems='center'>
+					<Stack direction={'row'} spacing={2}>
 						{cardIndex !== undefined && (
 							<Button
 								onClick={cancelHandler}
@@ -558,7 +568,7 @@ export const Result: FC<Props> = () => {
 					}
 					sx={{ width: '100%' }}
 				>
-					{createError && 'Не удалось добавить позицию'}
+					{createError && 'Не удалось добавить позицию. ' + alert.message}
 					{updateError && 'Не удалось обновить позицию'}
 					{alert.type == 'success' && <>Позиция {cardIndex !== undefined ? 'изменена' : 'добавлена'}</>}
 				</Alert>

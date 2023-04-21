@@ -30,6 +30,15 @@ export const orderApi = api.injectEndpoints({
 			],
 		}),
 
+		// сохранение доп. информации о заявке
+		saveInfo: builder.mutation<string, { orderId: string; info: string }>({
+			query: info => ({
+				url: `${proUrl}/orders/info`,
+				method: 'PUT',
+				body: info,
+			}),
+		}),
+
 		// добавление позиции
 		createPosition: builder.mutation<string, Position>({
 			query: position => ({
@@ -83,6 +92,7 @@ export const {
 	useGetOrderQuery,
 	useGetAllOrdersQuery,
 	useSaveOrderMutation,
+	useSaveInfoMutation,
 	useCreatePositionMutation,
 	useUpdatePositionMutation,
 	useDeletePositionMutation,

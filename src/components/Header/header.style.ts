@@ -33,6 +33,12 @@ export const LogoLink = styled(Link)`
 	span {
 		margin-left: 3px;
 	}
+
+	@media screen and (max-width: 500px) {
+		flex-basis: 100%;
+		justify-content: center;
+		margin-bottom: 10px;
+	}
 `
 
 export const Nav = styled.nav`
@@ -40,6 +46,11 @@ export const Nav = styled.nav`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	@media screen and (max-width: 500px) {
+		flex-basis: 100%;
+		margin-bottom: 10px;
+	}
 `
 
 export const BarLink = styled.a`

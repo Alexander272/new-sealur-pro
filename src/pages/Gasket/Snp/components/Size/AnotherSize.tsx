@@ -32,8 +32,8 @@ export const AnotherSize: FC<Props> = () => {
 		// if (!['Г', 'Д'].includes(main.snpType?.title || '')) dispatch(setSizeMain({ d4: '' }))
 		// if (!['В', 'Д'].includes(main.snpType?.title || '')) dispatch(setSizeMain({ d1: '' }))
 		if (main.snpType) {
-			if (!main.snpType?.hasD4) dispatch(setSizeMain({ d4: '' }))
-			if (!main.snpType?.hasD1) dispatch(setSizeMain({ d1: '' }))
+			if (!main.snpType.hasD4) dispatch(setSizeMain({ d4: '' }))
+			if (!main.snpType.hasD1) dispatch(setSizeMain({ d1: '' }))
 		}
 	}, [main.snpType])
 
@@ -42,8 +42,8 @@ export const AnotherSize: FC<Props> = () => {
 	}, [])
 
 	const sizeHandler = (name: 'd4' | 'd3' | 'd2' | 'd1') => (event: React.ChangeEvent<HTMLInputElement>) => {
-		const regex = /^[0-9.,\b]+$/
-		const temp = event.target.value.replaceAll(',', '.')
+		const regex = /^[0-9.\b]+$/
+		const temp = event.target.value.replace(',', '.')
 
 		if (isNaN(+temp)) return
 
@@ -52,7 +52,7 @@ export const AnotherSize: FC<Props> = () => {
 			if (temp[temp.length - 1] == '.') value = temp
 			if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeMain({ [name]: value.toString().replaceAll('.', ',') }))
+			dispatch(setSizeMain({ [name]: value.toString().replace('.', ',') }))
 		}
 
 		// if (event.target.value === '' || regex.test(event.target.value)) {
@@ -78,8 +78,8 @@ export const AnotherSize: FC<Props> = () => {
 		dispatch(setSizeThickness(newThickness))
 	}
 	const anotherThicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		const regex = /^[0-9.,\b]+$/
-		const temp = event.target.value.replaceAll(',', '.')
+		const regex = /^[0-9.\b]+$/
+		const temp = event.target.value.replace(',', '.')
 
 		if (isNaN(+temp)) return
 
@@ -88,7 +88,7 @@ export const AnotherSize: FC<Props> = () => {
 			if (temp[temp.length - 1] == '.') value = temp
 			if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeThickness({ another: value.toString().replaceAll('.', ',') }))
+			dispatch(setSizeThickness({ another: value.toString().replace('.', ',') }))
 		}
 	}
 

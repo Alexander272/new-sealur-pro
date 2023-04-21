@@ -8,10 +8,13 @@ export const Container = styled.div<ContainerProps>`
 	transition: width 0.3s ease-in-out;
 	margin: 10px 0;
 
-	@media screen and (max-width: 1400px) {
-		position: absolute;
+	@media screen and (max-width: 1600px) {
+		position: fixed;
+		z-index: 30;
 		right: 0;
-		height: calc(100% - 20px);
+		top: 10px;
+		/* height: calc(100% - 20px); */
+		height: calc(100vh - 30px);
 	}
 `
 
@@ -39,7 +42,7 @@ export const CardContainer = styled.div<ContainerProps>`
 `
 
 export const Positions = styled.div`
-	max-height: 750px;
+	max-height: 600px;
 	overflow-y: auto;
 	overflow-x: hidden;
 	position: relative;
@@ -73,11 +76,12 @@ export const CircleButton = styled.div<ContainerProps>`
 	position: absolute;
 	left: ${props => (props.open ? '0' : 'inherit')};
 	right: ${props => (props.open ? 'inherit' : '-5px')};
-	bottom: 100px;
+	bottom: 180px;
 	border-radius: 0 70px 70px 0;
 	background-color: var(--secondary-color);
 	font-size: 1.8rem;
 	padding: 8px 16px 8px 0;
 	color: var(--primary-color);
 	cursor: pointer;
+	z-index: 5;
 `

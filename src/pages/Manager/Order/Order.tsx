@@ -3,6 +3,7 @@ import { useFinishOrderMutation, useGetFullOrderQuery } from '@/store/api/manage
 import { IManagerOrder } from '@/types/order'
 import {
 	Alert,
+	Divider,
 	IconButton,
 	Menu,
 	MenuItem,
@@ -152,6 +153,15 @@ export default function Order() {
 			<Typography variant='h5'>Заявка №{order?.number}</Typography>
 			<Row>
 				<OrderList>
+					{order?.info && (
+						<>
+							<Typography variant='h6' align='center'>
+								Дополнительная информация
+							</Typography>
+							<Typography marginBottom={2}>{order.info}</Typography>
+						</>
+					)}
+
 					<TableContainer sx={{ maxHeight: 470 }}>
 						<Table stickyHeader>
 							<TableHead>

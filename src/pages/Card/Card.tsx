@@ -1,12 +1,19 @@
-import { Alert, Button, IconButton, Snackbar, Typography } from '@mui/material'
-import { FC, MouseEvent, useEffect, useState } from 'react'
+import { Alert, Button, FormControl, IconButton, Snackbar, Typography } from '@mui/material'
+import { ChangeEvent, FC, MouseEvent, useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { clearSnp, setSnp } from '@/store/gaskets/snp'
-import { setOrder, toggle } from '@/store/card'
-import { useDeletePositionMutation, useGetOrderQuery, useSaveOrderMutation } from '@/store/api/order'
+import { setInfo, setOrder, toggle } from '@/store/card'
+import {
+	useDeletePositionMutation,
+	useGetOrderQuery,
+	useSaveInfoMutation,
+	useSaveOrderMutation,
+} from '@/store/api/order'
 import { Loader } from '@/components/Loader/Loader'
 import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 import { sendMetric } from '@/services/metrics'
+import { Input } from '@/components/Input/input.style'
+import { useDebounce } from '@/hooks/debounce'
 
 type Props = {}
 
@@ -15,6 +22,7 @@ const Card: FC<Props> = () => {
 
 	const open = useAppSelector(state => state.card.open)
 	const orderId = useAppSelector(state => state.card.orderId)
+	const info = useAppSelector(state => state.card.info)
 	const positions = useAppSelector(state => state.card.positions)
 	// const snpCardIndex = useAppSelector(state => state.snp.cardIndex)
 	const positionId = useAppSelector(state => state.snp.positionId)
@@ -22,18 +30,28 @@ const Card: FC<Props> = () => {
 	const role = useAppSelector(state => state.user.roleCode)
 	const userId = useAppSelector(state => state.user.roleCode)
 
-	const { data, isLoading: isLoadingData, isError } = useGetOrderQuery(null, { skip: !userId || role == 'manager' })
+	const infoChanged = useRef(false)
+	const newInfo = useDebounce(info, 1000)
+
+	const { data, isLoading: isLoadingData, isError } = useGetOrderQuery(null, { skip: !userId || role != 'user' })
 
 	const [deletePosition, { error: delError, isLoading: isLoadingDelete }] = useDeletePositionMutation()
 	const [save, { error, isLoading }] = useSaveOrderMutation()
+	const [saveInfo] = useSaveInfoMutation()
 
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
 		if (data) {
-			dispatch(setOrder({ id: data.data.id, positions: data.data.positions || [] }))
+			dispatch(setOrder({ id: data.data.id, info: data.data.info || '', positions: data.data.positions || [] }))
 		}
 	}, [data])
+
+	useEffect(() => {
+		if (infoChanged.current) {
+			saveInfo({ orderId: orderId, info: newInfo })
+		}
+	}, [orderId, newInfo])
 
 	useEffect(() => {
 		if (error || delError) setAlert({ type: 'error', open: true })
@@ -77,9 +95,14 @@ const Card: FC<Props> = () => {
 		}
 	}
 
+	const infoHandler = (event: ChangeEvent<HTMLInputElement>) => {
+		infoChanged.current = true
+		dispatch(setInfo(event.target.value))
+	}
+
 	const sendHandler = () => {
 		// TODO убрать коммент с метрики
-		sendMetric('reachGoal', 'SendOrder')
+		// sendMetric('reachGoal', 'SendOrder')
 
 		dispatch(clearSnp())
 		save({ id: orderId, count: positions.length })
@@ -167,11 +190,22 @@ const Card: FC<Props> = () => {
 							{/* ➔ */}➜
 						</CircleButton>
 
+						<FormControl sx={{ marginTop: 'auto', marginBottom: '10px' }}>
+							<Input
+								value={info}
+								onChange={infoHandler}
+								label='Дополнительная информация'
+								size='small'
+								multiline
+								rows={4}
+							/>
+						</FormControl>
+
 						{positions.length ? (
 							<Button
 								onClick={sendHandler}
 								variant='contained'
-								sx={{ borderRadius: '12px', marginTop: 'auto' }}
+								sx={{ borderRadius: '12px', marginTop: '10px' }}
 							>
 								Отправить заявку
 							</Button>

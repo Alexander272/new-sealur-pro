@@ -28,6 +28,30 @@ export const useInput = (props?: Props) => {
 			if (newValue[0] != '7' && (newValue.length < 10 || (newValue.length > 11 && newValue.length < 14))) {
 				newValue = '7' + newValue
 			}
+
+			newValue = newValue.substring(1)
+
+			let template = '+7 (###) ###-##-## (доб. ###)'
+			newValue.split('').forEach(v => {
+				let idx = template.indexOf('#')
+				let parts = template.split('')
+				parts[idx] = v
+				template = parts.join('')
+			})
+
+			let idx = template.indexOf('#')
+
+			if (newValue.length === 10) {
+				template = template.substring(0, idx - 1)
+				idx = template.lastIndexOf(' ')
+			}
+
+			if (idx != -1) {
+				newValue = template.substring(0, idx)
+			} else {
+				newValue = template
+			}
+
 			// let pattern = /(\+7|8)[\s(]?(\d{3})[\s)]?(\d{3})[\s-]?(\d{2})[\s-]?(\d{2})/g
 			// newValue = newValue.replace(pattern, '+7 ($2) $3-$4-$5')
 
@@ -64,26 +88,26 @@ export const useInput = (props?: Props) => {
 			// 	}
 			// }
 
-			let matrix = '+7 (___) ___-__-__ (доб. ___)',
-				i = 0,
-				def = matrix.replace(/\D/g, ''),
-				val = newValue.replace(/\D/g, ''),
-				new_value = matrix.replace(/[_\d]/g, function (a) {
-					return i < val.length ? val.charAt(i++) || def.charAt(i) : a
-				})
-			i = new_value.indexOf('_')
-			if (i != -1) {
-				i < 5 && (i = 3)
-				new_value = new_value.slice(0, i)
-			}
-			let reg = matrix
-				.substring(0, newValue.length)
-				.replace(/_+/g, function (a) {
-					return '\\d{1,' + a.length + '}'
-				})
-				.replace(/[+()]/g, '\\$&')
-			const regex = new RegExp('^' + reg + '$')
-			if (!regex.test(newValue) || newValue.length < 5) newValue = new_value
+			let matrix = '+7 (___) ___-__-__ (доб. ___)'
+			// 	i = 0,
+			// 	def = matrix.replace(/\D/g, ''),
+			// 	val = newValue.replace(/\D/g, ''),
+			// 	new_value = matrix.replace(/[_\d]/g, function (a) {
+			// 		return i < val.length ? val.charAt(i++) || def.charAt(i) : a
+			// 	})
+			// i = new_value.indexOf('_')
+			// if (i != -1) {
+			// 	i < 5 && (i = 3)
+			// 	new_value = new_value.slice(0, i)
+			// }
+			// let reg = matrix
+			// 	.substring(0, newValue.length)
+			// 	.replace(/_+/g, function (a) {
+			// 		return '\\d{1,' + a.length + '}'
+			// 	})
+			// 	.replace(/[+()]/g, '\\$&')
+			// const regex = new RegExp('^' + reg + '$')
+			// if (!regex.test(newValue) || newValue.length < 5) newValue = new_value
 		}
 
 		// if (event.target.value === '' || regex.test(event.target.value)) {

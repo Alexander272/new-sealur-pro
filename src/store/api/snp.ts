@@ -17,7 +17,7 @@ export const snpApi = api.injectEndpoints({
 	endpoints: builder => ({
 		// получение стандартов на прокладки и фланцы
 		getStandardForSNP: builder.query<ISnpStandardResponse, null>({
-			query: () => `${proUrl}/snp-standards`,
+			query: () => `${proUrl}/snp-standards/`,
 		}),
 		// получение общих данных (материалов, наполнителей, типах фланца, креплений) о типах прокладок (зависит от стандарта)
 		getSnpData: builder.query<ISnpDataResponse, SnpDataRequest>({

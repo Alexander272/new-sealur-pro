@@ -8,6 +8,7 @@ export interface ICardState {
 	// count: number
 	open: boolean
 	orderId: string
+	info: string
 	positions: Position[]
 }
 
@@ -15,6 +16,7 @@ const initialState: ICardState = {
 	// count: 0,
 	open: false,
 	orderId: '',
+	info: '',
 	// positions: JSON.parse(localStorage.getItem(localKey) || 'null') || [],
 	positions: [],
 }
@@ -31,9 +33,15 @@ export const cardSlice = createSlice({
 		},
 
 		// установка текущей заявки
-		setOrder: (state, action: PayloadAction<{ id: string; positions: Position[] }>) => {
+		setOrder: (state, action: PayloadAction<{ id: string; info: string; positions: Position[] }>) => {
 			state.orderId = action.payload.id
+			state.info = action.payload.info
 			state.positions = action.payload.positions
+		},
+
+		// изменение доп. информации о заявке
+		setInfo: (state, action: PayloadAction<string>) => {
+			state.info = action.payload
 		},
 
 		// добавление позиции
@@ -62,6 +70,6 @@ export const cardSlice = createSlice({
 	},
 })
 
-export const { toggle, setOrder, addPosition, updatePosition, deletePosition } = cardSlice.actions
+export const { toggle, setOrder, setInfo, addPosition, updatePosition, deletePosition } = cardSlice.actions
 
 export default cardSlice.reducer
