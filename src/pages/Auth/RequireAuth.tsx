@@ -9,7 +9,8 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
 	const location = useLocation()
 
 	if (location.search) {
-		localStorage.setItem('managerId', location.search.split('=')[1])
+		let parts = location.search.split('=')
+		if (parts[0] === '?managerId') localStorage.setItem('managerId', parts[1])
 	}
 
 	if (!isAuth) return <Navigate to='/auth' state={{ from: location }} />
