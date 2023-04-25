@@ -102,11 +102,12 @@ const Card: FC<Props> = () => {
 
 	const sendHandler = () => {
 		// TODO убрать коммент с метрики
-		// sendMetric('reachGoal', 'SendOrder')
+		sendMetric('reachGoal', 'SendOrder')
 
 		dispatch(clearSnp())
 		save({ id: orderId, count: positions.length })
 		setAlert({ type: 'success', open: true })
+		infoChanged.current = false
 	}
 
 	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {

@@ -12,11 +12,11 @@ import {
 } from '@/store/gaskets/snp'
 import { useGetSnpDataQuery, useGetStandardForSNPQuery } from '@/store/api/snp'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
+import { Loader } from '@/components/Loader/Loader'
 
 import FlangeA from '@/assets/snp/A.webp'
 import FlangeB from '@/assets/snp/B.webp'
 import FlangeV from '@/assets/snp/V.webp'
-import { Loader } from '@/components/Loader/Loader'
 
 const images = {
 	А: FlangeA,

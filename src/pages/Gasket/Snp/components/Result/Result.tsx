@@ -393,7 +393,7 @@ export const Result: FC<Props> = () => {
 			let thickness: string | number = size.h != 'another' ? size.h : size.another
 			if (thickness) thickness = (+thickness.replace(',', '.'))?.toFixed(1)?.replace('.', ',')
 
-			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
+			return `Прокладка СНП-${main.snpType?.code}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.title === 'ГОСТ Р 52376-2005') {
 			let y = ''
@@ -415,7 +415,7 @@ export const Result: FC<Props> = () => {
 
 			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
 
-			return `СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
+			return `Прокладка СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.title === 'ASME B 16.20') {
 			let ir = materials.innerRing?.code ? `-I.R. ${materials.innerRing?.code}` : ''
@@ -444,7 +444,7 @@ export const Result: FC<Props> = () => {
 
 			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
 
-			return `СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn.mpa} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
+			return `Прокладка СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn.mpa} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 		}
 		if (main.snpStandard?.standard.title === 'EN 1514-2') {
 			let fr = ''
@@ -481,7 +481,7 @@ export const Result: FC<Props> = () => {
 				materials.outerRing?.code || 0
 			}`
 
-			return `СНП-${main.snpType?.code}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}${notStandardMaterials}`
+			return `Прокладка СНП-${main.snpType?.code}-${materials.filler.code}-${sizes}-${thickness}${designationMaterials} ${designationDesign}${main.snpStandard.standard.title}${notStandardMaterials}`
 		}
 
 		return ''
@@ -568,8 +568,8 @@ export const Result: FC<Props> = () => {
 					}
 					sx={{ width: '100%' }}
 				>
-					{createError && 'Не удалось добавить позицию. ' + alert.message}
-					{updateError && 'Не удалось обновить позицию'}
+					{alert.type == 'error' && createError ? 'Не удалось добавить позицию. ' + alert.message : ''}
+					{alert.type == 'error' && updateError ? 'Не удалось обновить позицию' : ''}
 					{alert.type == 'success' && <>Позиция {cardIndex !== undefined ? 'изменена' : 'добавлена'}</>}
 				</Alert>
 			</Snackbar>
