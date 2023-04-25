@@ -13,6 +13,7 @@ const Confirm = lazy(() => import('@/pages/Auth/Confirm'))
 
 const ProGasket = lazy(() => import('@/pages/Gasket/Gasket'))
 const ProSnp = lazy(() => import('@/pages/Gasket/Snp/Snp'))
+const ProPutg = lazy(() => import('@/pages/Gasket/Putg/Putg'))
 const Orders = lazy(() => import('@/pages/Orders/Orders'))
 
 const OnlyManager = lazy(() => import('@/pages/Auth/OnlyManager'))
@@ -50,8 +51,11 @@ export const AppRoutes = () => {
 						}
 					>
 						<Route path='/' element={<ProGasket />}>
-							<Route index element={<ProSnp />} />
+							{/* <Route index element={<ProSnp />} /> */}
+							<Route path='snp' element={<ProSnp />} />
+							<Route path='putg' element={<ProPutg />} />
 						</Route>
+
 						<Route path='/orders' element={<Orders />} />
 
 						{/* <Route path='/connect' element={<Connect />} /> */}
@@ -79,11 +83,6 @@ export const AppRoutes = () => {
 						<Route path='orders' element={<ManagerOrders />} />
 						<Route path='orders/:id' element={<ManagerOrder />} />
 					</Route>
-					{/* <Route path='/' element={<Main />}>
-					<Route path='/' element={<ProGasket />}>
-						<Route index element={<ProSnp />} />
-					</Route>
-				</Route> */}
 				</Routes>
 			</Suspense>
 		</BrowserRouter>

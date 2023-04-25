@@ -13,6 +13,7 @@ export const Group = styled.div`
 type ItemProps = {
 	active?: boolean
 	disabled?: boolean
+	size: 'large' | 'middle'
 }
 
 export const Item = styled.div<ItemProps>`
@@ -20,7 +21,7 @@ export const Item = styled.div<ItemProps>`
 	color: ${props => (props.active ? '#fff' : props.disabled ? 'GrayText' : 'var(--primary-color)')};
 	cursor: pointer;
 	font-weight: 500;
-	padding: 5px 14px;
+	padding: ${props => (props.size === 'middle' ? '5px 14px' : '5px 24px')};
 	position: relative;
 	transition: all 0.3s ease-in-out;
 	white-space: nowrap;

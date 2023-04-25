@@ -49,11 +49,12 @@ type ItemProps = {
 	active?: boolean
 	disabled?: boolean
 	value: string
+	size?: 'large' | 'middle'
 }
 
-export const RadioItem: FC<PropsWithChildren<ItemProps>> = ({ children, active, value, disabled }) => {
+export const RadioItem: FC<PropsWithChildren<ItemProps>> = ({ children, active, value, disabled, size = 'middle' }) => {
 	return (
-		<Item data-active={active} data-value={value} active={active} disabled={disabled}>
+		<Item data-active={active} data-value={value} active={active} disabled={disabled} size={size}>
 			{children}
 		</Item>
 	)

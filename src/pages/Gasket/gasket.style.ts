@@ -10,6 +10,7 @@ export const Container = styled.div`
 	justify-content: center;
 	margin: 0 auto;
 	width: 100%;
+	align-self: flex-start;
 `
 
 export const Content = styled.div`
@@ -29,6 +30,8 @@ export const PageTitle = styled.h3`
 	grid-row-start: 1;
 	grid-row-end: 2;
 	margin: 5px;
+	text-align: center;
+	margin-top: -30px;
 	/* margin-left: 5px; */
 `
 

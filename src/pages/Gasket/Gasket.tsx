@@ -1,21 +1,37 @@
-// import { useAppSelector } from '@/hooks/useStore'
-// import { useEffect } from 'react'
-import { Suspense } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Suspense, useEffect } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Loader } from '@/components/Loader/Loader'
+import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Container } from './gasket.style'
 
-export default function Gasket() {
-	// const navigate = useNavigate()
-	// const role = useAppSelector(state => state.user.roleCode)
+const gasketRoute = '/'
+const snpRoute = '/snp'
+const putgRoute = '/putg'
 
-	// useEffect(() => {
-	// 	if (role == 'manager') navigate('/manager/orders')
-	// }, [role])
+export default function Gasket() {
+	const navigate = useNavigate()
+	const location = useLocation()
+
+	useEffect(() => {
+		if (location.pathname == gasketRoute) navigate('snp')
+	}, [location.pathname])
+
+	const navigateHandler = (path: string) => {
+		navigate(path)
+	}
 
 	return (
 		<Container>
-			{/* //TODO tabs с переключением типа прокладки */}
+			{/* // tabs с переключением типа прокладки */}
+			<RadioGroup onChange={navigateHandler}>
+				<RadioItem size='large' value={snpRoute} active={location.pathname == snpRoute}>
+					СНП
+				</RadioItem>
+				<RadioItem size='large' value={putgRoute} active={location.pathname == putgRoute}>
+					ПУТГ
+				</RadioItem>
+			</RadioGroup>
+
 			{/* <Content> */}
 			<Suspense fallback={<Loader />}>
 				<Outlet />
