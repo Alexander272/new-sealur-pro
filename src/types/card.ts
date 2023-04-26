@@ -10,6 +10,7 @@ export type PositionBase<Type, ExtraProps> = {
 	count: number
 	title: string
 	amount: string
+	info: string
 	type?: Type
 } & ExtraProps
 

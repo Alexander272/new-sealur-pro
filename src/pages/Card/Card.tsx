@@ -85,6 +85,7 @@ const Card: FC<Props> = () => {
 				cardIndex: index,
 				positionId: position.id,
 				amount: position.amount,
+				info: position.info,
 				main: position.snpData.main,
 				sizes: position.snpData.size,
 				materials: position.snpData.material,
@@ -102,7 +103,7 @@ const Card: FC<Props> = () => {
 
 	const sendHandler = () => {
 		// TODO убрать коммент с метрики
-		sendMetric('reachGoal', 'SendOrder')
+		// sendMetric('reachGoal', 'SendOrder')
 
 		dispatch(clearSnp())
 		save({ id: orderId, count: positions.length })
