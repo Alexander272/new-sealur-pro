@@ -103,7 +103,7 @@ const Card: FC<Props> = () => {
 
 	const sendHandler = () => {
 		// TODO убрать коммент с метрики
-		// sendMetric('reachGoal', 'SendOrder')
+		sendMetric('reachGoal', 'SendOrder')
 
 		dispatch(clearSnp())
 		save({ id: orderId, count: positions.length })
