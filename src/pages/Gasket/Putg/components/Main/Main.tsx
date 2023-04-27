@@ -1,9 +1,16 @@
 import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
-import { setMainConfiguration, setMainFlangeType, setMainStandard } from '@/store/gaskets/putg'
+import {
+	setConstruction,
+	setMainConfiguration,
+	setMainFlangeType,
+	setMainStandard,
+	setMaterialFiller,
+	setMaterials,
+} from '@/store/gaskets/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
+import { useGetPutgBaseQuery, useGetPutgDataQuery } from '@/store/api/putg'
 import { Loader } from '@/components/Loader/Loader'
-import { IFlangeStandard, IGasketConfiguration } from '@/types/putg'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Column, Image, MainContainer, PlugImage } from '@/pages/Gasket/gasket.style'
 
@@ -19,35 +26,41 @@ const images = {
 
 type Props = {}
 
-const data = {
-	gasketConfiguration: [
-		{ id: '1', title: 'Круглая', code: 'round', hasStandard: true },
-		{ id: '2', title: 'Овальная', code: 'oval', hasDrawing: true },
-		{ id: '3', title: 'Прямоугольная', code: 'rectangular' },
-	] as IGasketConfiguration[],
-	flangeStandard: [
-		{ id: '1', title: 'ГОСТ 33259', code: 'gost_33259' },
-		{ id: '2', title: 'ГОСТ 28759.3', code: 'gost_28759' },
-	] as IFlangeStandard[],
-	flangeTypes: [{ id: '1', title: 'соединительный выступ', code: 'А' }],
-}
-
 export const Main: FC<Props> = () => {
 	const main = useAppSelector(state => state.putg.main)
 	const positionId = useAppSelector(state => state.snp.positionId)
 
 	const dispatch = useAppDispatch()
 
-	useEffect(() => {
-		if (data.gasketConfiguration) dispatch(setMainConfiguration(data.gasketConfiguration[0]))
-		if (data.flangeStandard) dispatch(setMainStandard(data.flangeStandard[0]))
-	}, [data.flangeStandard, data.gasketConfiguration])
+	const { data: base, isError: isErrorBase, isLoading: isLoadingBase } = useGetPutgBaseQuery(null)
+
+	const { data, isError, isLoading } = useGetPutgDataQuery(
+		{
+			standardId: main.flangeStandard?.id || '',
+			constructionId: 'e3089c9c-54c2-4248-9341-734e22dba223',
+			configuration: main.configuration?.code || '',
+			// constructionId: main.,
+		},
+		{ skip: !main.flangeStandard?.id }
+	)
 
 	useEffect(() => {
-		if (data) {
+		if (base) {
+			if (base.data.configurations) dispatch(setMainConfiguration(base.data.configurations[0]))
+			if (base.data.standards) dispatch(setMainStandard(base.data.standards[0]))
+			if (base.data.constructions) dispatch(setConstruction(base.data.constructions[0]))
+		}
+	}, [base?.data])
+
+	useEffect(() => {
+		if (data?.data) {
 			if (positionId === undefined) {
-				const flange = data.flangeTypes[data.flangeTypes.length - 1]
+				const flange = data.data.flangeTypes[0]
 				dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
+
+				const filler = data.data.fillers[0]
+				dispatch(setMaterialFiller(filler))
+
 				// const type = {
 				// 	id: flange.types[flange.types.length - 1].id,
 				// 	// title: flange.types[flange.types.length - 1].title,
@@ -57,27 +70,48 @@ export const Main: FC<Props> = () => {
 				// dispatch(setMainSnpType(type))
 			}
 
-			// dispatch(setMaterials(data.data.materials))
+			if (data.data.materials?.rotaryPlug) dispatch(setMaterials(data.data.materials))
 			// if (data.data.mounting?.length) {
 			// 	dispatch(setMounting(data.data.mounting))
 			// }
 		}
 	}, [data])
 
+	// useEffect(() => {
+	// if (res.data) {
+	// 	if (positionId === undefined) {
+	// 		const flange = data.flangeTypes[data.flangeTypes.length - 1]
+	// 		dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
+	// 		// const type = {
+	// 		// 	id: flange.types[flange.types.length - 1].id,
+	// 		// 	// title: flange.types[flange.types.length - 1].title,
+	// 		// 	// code: flange.types[flange.types.length - 1].code,
+	// 		// 	type: flange.types[flange.types.length - 1],
+	// 		// }
+	// 		// dispatch(setMainSnpType(type))
+	// 	}
+
+	// 	// dispatch(setMaterials(data.data.materials))
+	// 	// if (data.data.mounting?.length) {
+	// 	// 	dispatch(setMounting(data.data.mounting))
+	// 	// }
+	// }
+	// }, [res?.data])
+
 	const gasketHandler = (type: string) => {
-		const configuration = data?.gasketConfiguration.find(s => s.code === type)
+		const configuration = base?.data.configurations.find(s => s.code === type)
 		if (!configuration) return
 		dispatch(setMainConfiguration(configuration))
 	}
 
 	const flangeStandardHandler = (event: SelectChangeEvent<string>) => {
-		const standard = data?.flangeStandard.find(s => s.id === event.target.value)
+		const standard = base?.data.standards.find(s => s.id === event.target.value)
 		if (!standard) return
 		dispatch(setMainStandard(standard))
 	}
 
 	const flangeTypeHandler = (event: SelectChangeEvent<string>) => {
-		const flangeType = data.flangeTypes.find(f => f.code === event.target.value)
+		const flangeType = data?.data.flangeTypes.find(f => f.code === event.target.value)
 		if (!flangeType) return
 		dispatch(setMainFlangeType({ code: event.target.value, title: flangeType.title }))
 	}
@@ -90,7 +124,7 @@ export const Main: FC<Props> = () => {
 					{/* {isError || isErrorStandards ? ( */}
 					{true ? (
 						<Typography variant='h6' color={'error'} align='center'>
-							Не удалось загрузить стандарты на фланец ил конфигурации
+							Не удалось загрузить стандарты на фланец или конфигурации
 						</Typography>
 					) : (
 						<Loader background='fill' />
@@ -100,7 +134,7 @@ export const Main: FC<Props> = () => {
 				<Column>
 					<Typography fontWeight='bold'>Конфигурация прокладки</Typography>
 					<RadioGroup onChange={gasketHandler}>
-						{data.gasketConfiguration.map(c => (
+						{base?.data.configurations.map(c => (
 							<RadioItem key={c.id} value={c.code} active={c.code == main.configuration?.code}>
 								{c.title}
 							</RadioItem>
@@ -129,7 +163,7 @@ export const Main: FC<Props> = () => {
 								<MenuItem disabled value='not_selected'>
 									Выберите стандарт
 								</MenuItem>
-								{data.flangeStandard?.map(s => (
+								{base?.data.standards?.map(s => (
 									<MenuItem key={s.id} value={s.id}>
 										{s.title}
 									</MenuItem>
@@ -149,7 +183,7 @@ export const Main: FC<Props> = () => {
 						<MenuItem disabled value='not_selected'>
 							Выберите тип фланца
 						</MenuItem>
-						{data.flangeTypes.map(f => (
+						{data?.data.flangeTypes.map(f => (
 							<MenuItem key={f.id} value={f.code}>
 								{f.title}
 							</MenuItem>

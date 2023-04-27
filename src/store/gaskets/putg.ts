@@ -1,21 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { IMounting } from '@/types/mounting'
-import { IDrawing } from '@/types/drawing'
-import { IFlangeStandard, IGasketConfiguration, IMainBlockPutg } from '@/types/putg'
+import type { IMounting } from '@/types/mounting'
+import type { IDrawing } from '@/types/drawing'
+import type {
+	IFlangeStandard,
+	IPutgConfiguration,
+	IMainBlockPutg,
+	IPutgMaterial,
+	IMaterialBlockPutg,
+	IFiller,
+	IConstruction,
+} from '@/types/putg'
 
 export interface ISNPState {
 	mountings: IMounting[]
-	// materialsIr?: ISNPMaterial
-	// materialsFr?: ISNPMaterial
-	// materialsOr?: ISNPMaterial
-	// materials?: ISnpMaterial
+	materials?: IPutgMaterial
 
 	cardIndex?: number
 	positionId?: string
 	//TODO
 	main: IMainBlockPutg
-	material: any
+	material: IMaterialBlockPutg
 	// main: IMainSnp
 	// material: IMaterialBlockSnp
 	// size: ISizeBlockSnp
@@ -47,9 +52,6 @@ export interface ISNPState {
 const initialState: ISNPState = {
 	// списки
 	mountings: [],
-	// materialsIr: undefined,
-	// materialsFr: undefined,
-	// materialsOr: undefined,
 
 	// ошибки
 	hasError: false,
@@ -78,10 +80,11 @@ const initialState: ISNPState = {
 	},
 	// флаги об открытии и материалы с наполнителем
 	material: {
-		openFiller: false,
-		openIr: false,
-		openFr: false,
-		openOr: false,
+		typeCode: 'not_selected',
+		// openFiller: false,
+		// openIr: false,
+		// openFr: false,
+		// openOr: false,
 	},
 	// размеры
 	// size: {
@@ -94,8 +97,6 @@ const initialState: ISNPState = {
 	// 	pn: { mpa: '', kg: '' },
 	// 	h: '',
 	// 	another: '',
-	// 	s2: '',
-	// 	s3: '',
 	// },
 	// конструктивные элементы
 	// design: {
@@ -120,7 +121,7 @@ export const putgSlice = createSlice({
 	initialState,
 	reducers: {
 		// установка конфигурации
-		setMainConfiguration: (state, action: PayloadAction<IGasketConfiguration>) => {
+		setMainConfiguration: (state, action: PayloadAction<IPutgConfiguration>) => {
 			state.main.configuration = action.payload
 		},
 		// установка стандарта
@@ -132,9 +133,33 @@ export const putgSlice = createSlice({
 			state.main.flangeTypeCode = action.payload.code
 			state.main.flangeTypeTitle = action.payload.title
 		},
+		// установка материала прокладки
+		setMaterialFiller: (state, action: PayloadAction<IFiller>) => {
+			state.material.filler = action.payload
+		},
+		// установка тип конструкции
+		setConstruction: (state, action: PayloadAction<IConstruction>) => {
+			state.material.construction = action.payload
+		},
+		// установка списка материалов
+		setMaterials: (state, action: PayloadAction<IPutgMaterial>) => {
+			state.materials = action.payload
+			if (state.positionId === undefined) {
+				state.material.rotaryPlug = action.payload.rotaryPlug[action.payload.rotaryPlugDefaultIndex || 0]
+				state.material.innerRing = action.payload.innerRing[action.payload.innerRingDefaultIndex || 0]
+				state.material.outerRing = action.payload.outerRing[action.payload.outerRingDefaultIndex || 0]
+			}
+		},
 	},
 })
 
-export const { setMainConfiguration, setMainStandard, setMainFlangeType } = putgSlice.actions
+export const {
+	setMainConfiguration,
+	setMainStandard,
+	setMainFlangeType,
+	setMaterialFiller,
+	setConstruction,
+	setMaterials,
+} = putgSlice.actions
 
 export default putgSlice.reducer

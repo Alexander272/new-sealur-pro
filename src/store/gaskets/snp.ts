@@ -1,30 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import {
+import type {
 	IDesignBlockSnp,
 	IFiller,
 	IMainSnp,
 	IMaterialBlockSnp,
 	ISizeBlockSnp,
 	ISnp,
-	ISNPMaterial,
 	ISnpMaterial,
 	ISNPType,
 	IStandardForSNP,
 	OpenMaterial,
 	TypeMaterial,
 } from '@/types/snp'
-import { IMaterial } from '@/types/material'
-import { PN } from '@/types/sizes'
-import { IMounting } from '@/types/mounting'
-import { IDrawing } from '@/types/drawing'
+import type { IMaterial } from '@/types/material'
+import type { PN } from '@/types/sizes'
+import type { IMounting } from '@/types/mounting'
+import type { IDrawing } from '@/types/drawing'
 
 export interface ISNPState {
 	fillers: IFiller[]
 	mountings: IMounting[]
-	materialsIr?: ISNPMaterial
-	materialsFr?: ISNPMaterial
-	materialsOr?: ISNPMaterial
+	// materialsIr?: ISNPMaterial
+	// materialsFr?: ISNPMaterial
+	// materialsOr?: ISNPMaterial
 	materials?: ISnpMaterial
 
 	cardIndex?: number
@@ -61,9 +60,9 @@ const initialState: ISNPState = {
 	// списки
 	fillers: [],
 	mountings: [],
-	materialsIr: undefined,
-	materialsFr: undefined,
-	materialsOr: undefined,
+	// materialsIr: undefined,
+	// materialsFr: undefined,
+	// materialsOr: undefined,
 
 	// ошибки
 	hasError: false,

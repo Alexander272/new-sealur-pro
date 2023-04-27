@@ -461,6 +461,7 @@ export const Result: FC<Props> = () => {
 			sizes += `${size?.d3}x${size?.d2}`
 			if (size?.d1) sizes += 'x' + size.d1
 
+			//TODO стоить выводить пред. толщину, а не пустоту
 			let thickness = size.h != 'another' ? size.h : size.another
 			if (thickness) thickness = (+thickness.replace(',', '.'))?.toFixed(1)?.replace('.', ',')
 

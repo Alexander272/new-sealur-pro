@@ -31,3 +31,19 @@ export interface PN {
 	mpa: string
 	kg: string
 }
+
+export interface IPutgSize {
+	id: string
+	dn: string
+	dnMm?: string
+	sizes: IPutgMainSize[]
+}
+
+export interface IPutgMainSize {
+	pn: PN[]
+	d4: string
+	d3: string
+	d2: string
+	d1: string
+	h: string[]
+}

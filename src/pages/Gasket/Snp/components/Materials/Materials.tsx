@@ -108,8 +108,6 @@ export const Materials: FC<Props> = () => {
 						disabled={fillers.length == 1}
 						size='small'
 						sx={{
-							borderColor: 'var(--border-color)',
-							borderWidth: '2px',
 							borderRadius: '12px',
 							width: '100%',
 						}}
@@ -134,8 +132,6 @@ export const Materials: FC<Props> = () => {
 								onClose={closeHandler('fr')}
 								size='small'
 								sx={{
-									borderColor: 'var(--border-color)',
-									borderWidth: '2px',
 									borderRadius: '12px',
 									width: '100%',
 								}}
@@ -159,8 +155,6 @@ export const Materials: FC<Props> = () => {
 								onClose={closeHandler('ir')}
 								size='small'
 								sx={{
-									borderColor: 'var(--border-color)',
-									borderWidth: '2px',
 									borderRadius: '12px',
 									width: '100%',
 								}}
@@ -184,8 +178,6 @@ export const Materials: FC<Props> = () => {
 								onClose={closeHandler('or')}
 								size='small'
 								sx={{
-									borderColor: 'var(--border-color)',
-									borderWidth: '2px',
 									borderRadius: '12px',
 									width: '100%',
 								}}
