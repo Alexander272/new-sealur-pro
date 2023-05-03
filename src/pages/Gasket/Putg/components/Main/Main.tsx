@@ -2,11 +2,13 @@ import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import {
 	setConstruction,
+	setFiller,
 	setMainConfiguration,
 	setMainFlangeType,
 	setMainStandard,
 	setMaterialFiller,
 	setMaterials,
+	setMounting,
 } from '@/store/gaskets/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetPutgBaseQuery, useGetPutgDataQuery } from '@/store/api/putg'
@@ -28,7 +30,8 @@ type Props = {}
 
 export const Main: FC<Props> = () => {
 	const main = useAppSelector(state => state.putg.main)
-	const positionId = useAppSelector(state => state.snp.positionId)
+	const material = useAppSelector(state => state.putg.material)
+	const positionId = useAppSelector(state => state.putg.positionId)
 
 	const dispatch = useAppDispatch()
 
@@ -37,11 +40,10 @@ export const Main: FC<Props> = () => {
 	const { data, isError, isLoading } = useGetPutgDataQuery(
 		{
 			standardId: main.flangeStandard?.id || '',
-			constructionId: 'e3089c9c-54c2-4248-9341-734e22dba223',
+			constructionId: material.construction?.id || '',
 			configuration: main.configuration?.code || '',
-			// constructionId: main.,
 		},
-		{ skip: !main.flangeStandard?.id }
+		{ skip: !main.flangeStandard?.id || !material.construction?.id }
 	)
 
 	useEffect(() => {
@@ -49,6 +51,7 @@ export const Main: FC<Props> = () => {
 			if (base.data.configurations) dispatch(setMainConfiguration(base.data.configurations[0]))
 			if (base.data.standards) dispatch(setMainStandard(base.data.standards[0]))
 			if (base.data.constructions) dispatch(setConstruction(base.data.constructions[0]))
+			if (base.data.mounting) dispatch(setMounting(base.data.mounting))
 		}
 	}, [base?.data])
 
@@ -58,8 +61,8 @@ export const Main: FC<Props> = () => {
 				const flange = data.data.flangeTypes[0]
 				dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
 
-				const filler = data.data.fillers[0]
-				dispatch(setMaterialFiller(filler))
+				// const filler = data.data.fillers[0]
+				// dispatch(setMaterialFiller(filler))
 
 				// const type = {
 				// 	id: flange.types[flange.types.length - 1].id,
@@ -71,8 +74,8 @@ export const Main: FC<Props> = () => {
 			}
 
 			if (data.data.materials?.rotaryPlug) dispatch(setMaterials(data.data.materials))
-			// if (data.data.mounting?.length) {
-			// 	dispatch(setMounting(data.data.mounting))
+			// if (data.data.fillers?.length) {
+			dispatch(setFiller(data.data.fillers || []))
 			// }
 		}
 	}, [data])
@@ -117,7 +120,7 @@ export const Main: FC<Props> = () => {
 	}
 
 	return (
-		<MainContainer>
+		<MainContainer rowEnd={5}>
 			{/* {!data || !standards || isLoading || isLoadingStandards ? ( */}
 			{false ? (
 				<Column>
@@ -152,7 +155,9 @@ export const Main: FC<Props> = () => {
 
 					{main.configuration?.hasStandard && (
 						<>
-							<Typography fontWeight='bold'>Стандарт на фланец</Typography>
+							<Typography fontWeight='bold' mt={1}>
+								Стандарт на фланец
+							</Typography>
 							<Select
 								value={main.flangeStandard?.id || 'not_selected'}
 								onChange={flangeStandardHandler}
@@ -172,7 +177,9 @@ export const Main: FC<Props> = () => {
 						</>
 					)}
 
-					<Typography fontWeight='bold'>Тип фланца</Typography>
+					<Typography fontWeight='bold' mt={1}>
+						Тип фланца
+					</Typography>
 					<Select
 						value={main.flangeTypeCode || 'not_selected'}
 						onChange={flangeTypeHandler}

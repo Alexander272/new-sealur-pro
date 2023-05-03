@@ -10,9 +10,13 @@ import type {
 	IMaterialBlockPutg,
 	IFiller,
 	IConstruction,
+	IDesignBlockPutg,
+	TypeMaterial,
 } from '@/types/putg'
+import { IMaterial } from '@/types/material'
 
 export interface ISNPState {
+	fillers: IFiller[]
 	mountings: IMounting[]
 	materials?: IPutgMaterial
 
@@ -21,10 +25,8 @@ export interface ISNPState {
 	//TODO
 	main: IMainBlockPutg
 	material: IMaterialBlockPutg
-	// main: IMainSnp
-	// material: IMaterialBlockSnp
 	// size: ISizeBlockSnp
-	// design: IDesignBlockSnp
+	design: IDesignBlockPutg
 	amount: string
 
 	hasError: boolean
@@ -44,6 +46,7 @@ export interface ISNPState {
 	designError: {
 		emptyDrawingHole: boolean
 		emptyDrawingJumper: boolean
+		emptyDrawingRemovable: boolean
 	}
 
 	drawing?: IDrawing
@@ -51,6 +54,7 @@ export interface ISNPState {
 
 const initialState: ISNPState = {
 	// списки
+	fillers: [],
 	mountings: [],
 
 	// ошибки
@@ -71,6 +75,7 @@ const initialState: ISNPState = {
 	designError: {
 		emptyDrawingHole: false,
 		emptyDrawingJumper: false,
+		emptyDrawingRemovable: false,
 	},
 
 	// стандарты, тип фланца и тип прокладки
@@ -99,19 +104,19 @@ const initialState: ISNPState = {
 	// 	another: '',
 	// },
 	// конструктивные элементы
-	// design: {
-	// 	jumper: {
-	// 		hasJumper: false,
-	// 		code: 'A',
-	// 		width: '',
-	// 		hasDrawing: false,
-	// 	},
-	// 	hasHole: false,
-	// 	mounting: {
-	// 		hasMounting: false,
-	// 		code: '',
-	// 	},
-	// },
+	design: {
+		jumper: {
+			hasJumper: false,
+			code: 'A',
+			width: '',
+			hasDrawing: false,
+		},
+		hasHole: false,
+		mounting: {
+			hasMounting: false,
+			code: '',
+		},
+	},
 	// количество прокладок
 	amount: '',
 }
@@ -120,6 +125,31 @@ export const putgSlice = createSlice({
 	name: 'putg',
 	initialState,
 	reducers: {
+		// установка списка наполнителей
+		setFiller: (state, action: PayloadAction<IFiller[]>) => {
+			state.fillers = action.payload
+			if (state.positionId === undefined) {
+				state.material.filler = action.payload[0]
+			}
+		},
+		// установка списка креплений
+		setMounting: (state, action: PayloadAction<IMounting[]>) => {
+			state.mountings = action.payload
+			if (state.positionId === undefined) {
+				//TODO
+				// state.design.mounting.code = action.payload[0].title
+			}
+		},
+		// установка списка материалов
+		setMaterials: (state, action: PayloadAction<IPutgMaterial>) => {
+			state.materials = action.payload
+			if (state.positionId === undefined) {
+				state.material.rotaryPlug = action.payload.rotaryPlug[action.payload.rotaryPlugDefaultIndex || 0]
+				state.material.innerRing = action.payload.innerRing[action.payload.innerRingDefaultIndex || 0]
+				state.material.outerRing = action.payload.outerRing[action.payload.outerRingDefaultIndex || 0]
+			}
+		},
+
 		// установка конфигурации
 		setMainConfiguration: (state, action: PayloadAction<IPutgConfiguration>) => {
 			state.main.configuration = action.payload
@@ -133,33 +163,102 @@ export const putgSlice = createSlice({
 			state.main.flangeTypeCode = action.payload.code
 			state.main.flangeTypeTitle = action.payload.title
 		},
+
 		// установка материала прокладки
 		setMaterialFiller: (state, action: PayloadAction<IFiller>) => {
 			state.material.filler = action.payload
+		},
+		// установка кода типа прокладки
+		setType: (state, action: PayloadAction<string>) => {
+			state.material.typeCode = action.payload
 		},
 		// установка тип конструкции
 		setConstruction: (state, action: PayloadAction<IConstruction>) => {
 			state.material.construction = action.payload
 		},
-		// установка списка материалов
-		setMaterials: (state, action: PayloadAction<IPutgMaterial>) => {
-			state.materials = action.payload
-			if (state.positionId === undefined) {
-				state.material.rotaryPlug = action.payload.rotaryPlug[action.payload.rotaryPlugDefaultIndex || 0]
-				state.material.innerRing = action.payload.innerRing[action.payload.innerRingDefaultIndex || 0]
-				state.material.outerRing = action.payload.outerRing[action.payload.outerRingDefaultIndex || 0]
+		// установка материалов (обтюраторов или ограничителей)
+		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material: IMaterial }>) => {
+			state.material[action.payload.type] = action.payload.material
+		},
+
+		// установка отверстия
+		setHasHole: (state, action: PayloadAction<boolean>) => {
+			state.design.hasHole = action.payload
+			state.designError.emptyDrawingHole = !state.drawing && action.payload
+
+			state.hasDesignError =
+				state.designError.emptyDrawingJumper ||
+				state.designError.emptyDrawingHole ||
+				state.designError.emptyDrawingRemovable
+		},
+		// самоклеящееся покрытие
+		setHasCoating: (state, action: PayloadAction<boolean>) => {
+			state.design.hasCoating = action.payload
+		},
+		// разъемная
+		setHasRemovable: (state, action: PayloadAction<boolean>) => {
+			state.design.hasRemovable = action.payload
+			state.designError.emptyDrawingRemovable = !state.drawing && action.payload
+
+			state.hasDesignError =
+				state.designError.emptyDrawingJumper ||
+				state.designError.emptyDrawingHole ||
+				state.designError.emptyDrawingRemovable
+		},
+		// установка перемычки и ее ширины
+		setDesignJumper: (
+			state,
+			action: PayloadAction<{ hasJumper?: boolean; code?: string; width?: string; hasDrawing?: boolean }>
+		) => {
+			if (action.payload.hasJumper != undefined) state.design.jumper.hasJumper = action.payload.hasJumper
+			if (action.payload.code != undefined) state.design.jumper.code = action.payload.code
+			if (action.payload.width != undefined) state.design.jumper.width = action.payload.width
+			if (action.payload.hasDrawing != undefined) {
+				state.design.jumper.hasDrawing = action.payload.hasDrawing
 			}
+			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
+
+			if (!state.design.jumper.hasJumper) state.designError.emptyDrawingJumper = false
+			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
+		},
+		// установка крепления
+		setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
+			if (action.payload.hasMounting != undefined) state.design.mounting.hasMounting = action.payload.hasMounting
+			if (action.payload.code != undefined) state.design.mounting.code = action.payload.code
+		},
+		// установка чертежа
+		setDesignDrawing: (state, action: PayloadAction<IDrawing | null>) => {
+			if (action.payload) {
+				state.drawing = action.payload
+				state.design.drawing = action.payload.link
+			} else {
+				state.drawing = undefined
+				state.design.drawing = undefined
+			}
+			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
+			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
+			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
 	},
 })
 
 export const {
+	setFiller,
+	setMounting,
+	setMaterials,
 	setMainConfiguration,
 	setMainStandard,
 	setMainFlangeType,
 	setMaterialFiller,
+	setType,
 	setConstruction,
-	setMaterials,
+	setMaterial,
+	setHasHole,
+	setHasCoating,
+	setHasRemovable,
+	setDesignJumper,
+	setDesignMounting,
+	setDesignDrawing,
 } = putgSlice.actions
 
 export default putgSlice.reducer

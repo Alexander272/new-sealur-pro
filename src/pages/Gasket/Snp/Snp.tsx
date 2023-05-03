@@ -1,4 +1,3 @@
-import { useAppSelector } from '@/hooks/useStore'
 import { Content, PageTitle } from '../gasket.style'
 import { Design } from './components/Design/Design'
 import { Main } from './components/Main/Main'
@@ -7,7 +6,7 @@ import { Result } from './components/Result/Result'
 import { Size } from './components/Size/Size'
 
 export default function Snp() {
-	const main = useAppSelector(state => state.snp.main)
+	//TODO переделать loading компонентов
 
 	return (
 		<>

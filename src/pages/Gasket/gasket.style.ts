@@ -22,20 +22,25 @@ export const Content = styled.div`
 	grid-column-gap: 16px;
 	grid-row-gap: 16px;
 	grid-template-columns: repeat(12, 1fr);
+	/* grid-template-rows: 1fr; */
 `
 
 export const PageTitle = styled.h3`
-	grid-column-start: 1;
+	/* grid-column-start: 1;
 	grid-column-end: 12;
 	grid-row-start: 1;
-	grid-row-end: 2;
+	grid-row-end: 2; */
 	margin: 5px;
 	text-align: center;
 	margin-top: -30px;
 	/* margin-left: 5px; */
 `
 
-const BaseContainer = styled.div`
+type ContainerProps = {
+	rowStart?: number
+	rowEnd?: number
+}
+const BaseContainer = styled.div<ContainerProps>`
 	padding: 20px 30px;
 	border-radius: 12px;
 	background-color: var(--theme-bg-color);
@@ -46,8 +51,8 @@ const BaseContainer = styled.div`
 export const MainContainer = styled(BaseContainer)`
 	grid-column-start: 1;
 	grid-column-end: 8;
-	grid-row-start: 1;
-	grid-row-end: 2;
+	grid-row-start: ${props => props.rowStart || '1'};
+	grid-row-end: ${props => props.rowEnd || '2'};
 	display: flex;
 	gap: 10px;
 
@@ -62,8 +67,8 @@ export const MainContainer = styled(BaseContainer)`
 export const SizeContainer = styled(BaseContainer)`
 	grid-column-start: 1;
 	grid-column-end: 8;
-	grid-row-start: 2;
-	grid-row-end: 3;
+	grid-row-start: ${props => props.rowStart || '2'};
+	grid-row-end: ${props => props.rowEnd || '3'};
 	display: flex;
 	gap: 10px;
 	min-height: 100px;
@@ -86,6 +91,8 @@ export const AsideContainer = styled(BaseContainer)`
 	grid-column-start: 8;
 	/* grid-row-end: 2;
 	grid-row-start: 1; */
+	grid-row-start: ${props => props.rowStart || 'auto'};
+	grid-row-end: ${props => props.rowEnd || 'auto'};
 
 	@media screen and (max-width: 1150px) {
 		grid-column-start: 1;

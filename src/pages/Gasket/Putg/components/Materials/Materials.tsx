@@ -1,36 +1,54 @@
+import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
-import { FC } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { useGetPutgBaseQuery, useGetPutgDataQuery } from '@/store/api/putg'
-import { setConstruction, setMaterialFiller } from '@/store/gaskets/putg'
+import { useGetPutgBaseQuery, useGetPutgQuery } from '@/store/api/putg'
+import { setConstruction, setMaterial, setMaterialFiller, setType } from '@/store/gaskets/putg'
 import { AsideContainer } from '@/pages/Gasket/gasket.style'
+import { TypeMaterial } from '@/types/putg'
 
 type Props = {}
 
 export const Materials: FC<Props> = () => {
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
+	const positionId = useAppSelector(state => state.putg.positionId)
 
 	const materials = useAppSelector(state => state.putg.materials)
+	const fillers = useAppSelector(state => state.putg.fillers)
 
 	const dispatch = useAppDispatch()
 
 	const { data: base, isError: isErrorBase, isLoading: isLoadingBase } = useGetPutgBaseQuery(null)
 
-	const { data, isError, isLoading } = useGetPutgDataQuery(
-		{
-			standardId: main.flangeStandard?.id || '',
-			constructionId: 'e3089c9c-54c2-4248-9341-734e22dba223',
-			configuration: main.configuration?.code || '',
-			// constructionId: main.,
-		},
-		{ skip: !main.flangeStandard?.id }
+	//TODO может filler засунуть в store и тогда этот запрос тут будет не нужен
+	// const { data, isError, isLoading } = useGetPutgDataQuery(
+	// 	{
+	// 		standardId: main.flangeStandard?.id || '',
+	// 		constructionId: material.construction?.id || '',
+	// 		configuration: main.configuration?.code || '',
+	// 	},
+	// 	{ skip: !main.flangeStandard?.id || !material.construction?.id }
+	// )
+
+	const { data, isError, isLoading } = useGetPutgQuery(
+		{ fillerId: material.filler?.id || '', baseId: material.filler?.baseId || '' },
+		{ skip: !material.filler }
 	)
 
+	useEffect(() => {
+		if (!positionId) {
+			dispatch(setType(data?.data.putgTypes[0].code || 'not_selected'))
+		}
+	}, [data])
+
 	const fillerHandler = (event: SelectChangeEvent<string>) => {
-		const filler = data?.data.fillers.find(s => s.id === event.target.value)
+		const filler = fillers.find(s => s.id === event.target.value)
 		if (!filler) return
 		dispatch(setMaterialFiller(filler))
+	}
+
+	const typeHandler = (event: SelectChangeEvent<string>) => {
+		dispatch(setType(event.target.value))
 	}
 
 	const constructionHandler = (event: SelectChangeEvent<string>) => {
@@ -39,8 +57,14 @@ export const Materials: FC<Props> = () => {
 		dispatch(setConstruction(construction))
 	}
 
+	const materialHandler = (type: TypeMaterial) => (event: SelectChangeEvent<string>) => {
+		const material = materials?.[type].find(m => m.materialId === event.target.value)
+		if (!material) return
+		dispatch(setMaterial({ type, material }))
+	}
+
 	return (
-		<AsideContainer>
+		<AsideContainer rowStart={1} rowEnd={6}>
 			<Typography fontWeight='bold'>Материал прокладки</Typography>
 			<Select
 				value={material.filler?.id || 'not_selected'}
@@ -54,16 +78,38 @@ export const Materials: FC<Props> = () => {
 				<MenuItem disabled value='not_selected'>
 					Выберите материал прокладки
 				</MenuItem>
-				{data?.data.fillers.map(f => (
+				{fillers.map(f => (
 					<MenuItem key={f.id} value={f.id}>
 						{f.title} ({f.description} {f.description && ', '} {f.temperature})
 					</MenuItem>
 				))}
 			</Select>
 
-			<Typography fontWeight='bold'>Тип прокладки</Typography>
+			<Typography fontWeight='bold' mt={1}>
+				Тип прокладки
+			</Typography>
+			<Select
+				value={material.typeCode || 'not_selected'}
+				onChange={typeHandler}
+				size='small'
+				sx={{
+					borderRadius: '12px',
+					width: '100%',
+				}}
+			>
+				<MenuItem disabled value='not_selected'>
+					Выберите тип прокладки
+				</MenuItem>
+				{data?.data.putgTypes.map(f => (
+					<MenuItem key={f.id} value={f.code}>
+						{f.title}
+					</MenuItem>
+				))}
+			</Select>
 
-			<Typography fontWeight='bold'>Тип конструкции</Typography>
+			<Typography fontWeight='bold' mt={1}>
+				Тип конструкции
+			</Typography>
 			<Select
 				value={material.construction?.code || 'not_selected'}
 				onChange={constructionHandler}
@@ -85,10 +131,12 @@ export const Materials: FC<Props> = () => {
 
 			{materials ? (
 				<>
-					<Typography fontWeight='bold'>Материал обтюраторов</Typography>
+					<Typography fontWeight='bold' mt={1}>
+						Материал обтюраторов
+					</Typography>
 					<Select
 						value={material.rotaryPlug?.materialId || 'not_selected'}
-						// onChange={materialHandler('rotaryPlug')}
+						onChange={materialHandler('rotaryPlug')}
 						size='small'
 						sx={{
 							borderRadius: '12px',
@@ -103,10 +151,13 @@ export const Materials: FC<Props> = () => {
 							</MenuItem>
 						))}
 					</Select>
-					<Typography fontWeight='bold'>Материал внутреннего ограничителя</Typography>
+
+					<Typography fontWeight='bold' mt={1}>
+						Материал внутреннего ограничителя
+					</Typography>
 					<Select
 						value={material.innerRing?.materialId || 'not_selected'}
-						// onChange={materialHandler('rotaryPlug')}
+						onChange={materialHandler('innerRing')}
 						size='small'
 						sx={{
 							borderRadius: '12px',
@@ -121,10 +172,13 @@ export const Materials: FC<Props> = () => {
 							</MenuItem>
 						))}
 					</Select>
-					<Typography fontWeight='bold'>Материал внешнего ограничителя</Typography>
+
+					<Typography fontWeight='bold' mt={1}>
+						Материал внешнего ограничителя
+					</Typography>
 					<Select
 						value={material.outerRing?.materialId || 'not_selected'}
-						// onChange={materialHandler('rotaryPlug')}
+						onChange={materialHandler('outerRing')}
 						size='small'
 						sx={{
 							borderRadius: '12px',

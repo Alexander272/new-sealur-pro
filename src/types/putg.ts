@@ -1,4 +1,8 @@
+import { IJumper } from './jumper'
 import { IMaterial } from './material'
+import { IHasMounting } from './mounting'
+
+export type TypeMaterial = 'innerRing' | 'rotaryPlug' | 'outerRing'
 
 export interface IPutgConfiguration {
 	id: string
@@ -29,6 +33,7 @@ export interface IConstruction {
 
 export interface IFiller {
 	id: string
+	baseId: string
 	temperature: string
 	title: string
 	code: string
@@ -49,6 +54,12 @@ export interface IPutgData {
 	hasRemovable?: boolean
 	hasMounting?: boolean
 	hasCoating?: boolean
+}
+
+export interface IPutgType {
+	id: string
+	title: string
+	code: string
 }
 
 export interface IPutgMaterial {
@@ -74,4 +85,13 @@ export interface IMaterialBlockPutg {
 	rotaryPlug?: IMaterial
 	innerRing?: IMaterial
 	outerRing?: IMaterial
+}
+
+export interface IDesignBlockPutg {
+	jumper: IJumper
+	hasHole?: boolean
+	hasCoating?: boolean
+	hasRemovable?: boolean
+	mounting: IHasMounting
+	drawing?: string
 }
