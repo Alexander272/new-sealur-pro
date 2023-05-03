@@ -539,7 +539,7 @@ export const Result: FC<Props> = () => {
 					<Input value={amount} onChange={amountHandler} size='small' />
 				</Stack>
 
-				{role != 'manager' && (
+				{role == 'user' && (
 					<Stack direction={'row'} spacing={2}>
 						{cardIndex !== undefined && (
 							<Button

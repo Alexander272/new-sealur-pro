@@ -1,6 +1,6 @@
-import { ICopyOrder, IFullOrder, IOrder, IOrderResponse } from '@/types/order'
-import { Position } from '@/types/card'
-import { ICopyPosition } from '@/types/position'
+import type { ICopyOrder, IFullOrder, IOrder, IOrderResponse } from '@/types/order'
+import type { Position } from '@/types/card'
+import type { ICopyPosition } from '@/types/position'
 import { api } from './base'
 import { proUrl } from './snp'
 

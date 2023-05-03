@@ -1,4 +1,4 @@
-import { ISnpDataResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
+import type { ISnpDataResponse, ISnpResponse, ISnpStandardResponse } from '@/types/snp'
 import { api } from './base'
 
 type SnpDataRequest = {

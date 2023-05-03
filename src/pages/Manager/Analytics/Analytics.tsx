@@ -2,6 +2,8 @@ import { Stack, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, T
 import { BaseInfo, Container, Info, Period } from './analytics.style'
 import { Input } from '@/components/Input/input.style'
 import { ChangeEvent, useState } from 'react'
+import { useGetAnalyticsQuery } from '@/store/api/analytics'
+import { Loader } from '@/components/Loader/Loader'
 
 interface IAnalytics {
 	ordersCount: number
@@ -20,69 +22,14 @@ interface IAnalytics {
 	}[]
 }
 
-const data: { data: IAnalytics } = {
-	data: {
-		ordersCount: 39,
-		usersCount: 10,
-		usersCountRegister: 12,
-		snpPositionCount: 50,
-
-		orders: [
-			{
-				id: '1',
-				manager: 'Test',
-				clients: [
-					{
-						id: '11',
-						name: 'user1',
-						ordersCount: 3,
-						snpPositionCount: 10,
-					},
-					{
-						id: '12',
-						name: 'user2',
-						ordersCount: 3,
-						snpPositionCount: 10,
-					},
-					{
-						id: '13',
-						name: 'user3',
-						ordersCount: 3,
-						snpPositionCount: 10,
-					},
-				],
-			},
-			{
-				id: '2',
-				manager: 'Test2',
-				clients: [
-					{
-						id: '21',
-						name: 'user1',
-						ordersCount: 3,
-						snpPositionCount: 10,
-					},
-					{
-						id: '22',
-						name: 'user2',
-						ordersCount: 3,
-						snpPositionCount: 10,
-					},
-					{
-						id: '23',
-						name: 'user3',
-						ordersCount: 3,
-						snpPositionCount: 10,
-					},
-				],
-			},
-		],
-	},
-}
-
 export default function Analytics() {
 	const [periodAt, setPeriodAt] = useState(new Date().setDate(1))
 	const [periodEnd, setPeriodEnd] = useState(new Date().getTime())
+
+	const { data, isError, isLoading } = useGetAnalyticsQuery({
+		periodAt: periodAt.toString(),
+		periodEnd: periodEnd.toString(),
+	})
 
 	const periodAtHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		setPeriodAt(event.target.valueAsNumber)
@@ -96,7 +43,7 @@ export default function Analytics() {
 		let usersCount = 0
 		let snpPositionCount = 0
 
-		const rows = data?.data.orders.map(o => {
+		const rows = data?.data.orders?.map(o => {
 			let r = []
 			r.push(
 				<TableRow key={o.id}>
@@ -160,6 +107,8 @@ export default function Analytics() {
 
 	return (
 		<Container>
+			{isLoading && <Loader background='fill' />}
+
 			<Typography variant='h6'>Поступление заявок с использованием "SealurPro"</Typography>
 
 			<BaseInfo>
@@ -172,8 +121,20 @@ export default function Analytics() {
 							</TableCell>
 						</TableRow>
 						<TableRow>
+							<TableCell>Пользователей зарегистрировалось (от менеджера)</TableCell>
+							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+								{data?.data.userCountLink}
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>Пользователей зарегистрировалось (с сайта)</TableCell>
+							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+								{data ? data?.data.usersCountRegister - data?.data.userCountLink : ''}
+							</TableCell>
+						</TableRow>
+						<TableRow>
 							<TableCell>Всего пользователей сделало заказ</TableCell>
-							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>{data?.data.usersCount}</TableCell>
+							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>{data?.data.userCount}</TableCell>
 						</TableRow>
 						<TableRow>
 							<TableCell>Всего заявок</TableCell>
@@ -189,26 +150,51 @@ export default function Analytics() {
 						</TableRow>
 					</TableBody>
 				</Table>
+
+				<Stack
+					direction='row'
+					spacing={2}
+					justifyContent={'center'}
+					alignItems='center'
+					marginTop={3}
+					marginBottom={3}
+				>
+					<Typography>За период с</Typography>
+					<Input
+						type='date'
+						value={new Date(periodAt).toISOString().substring(0, 10)}
+						onChange={periodAtHandler}
+						size='small'
+					/>
+					<Typography>по</Typography>
+					<Input
+						type='date'
+						value={new Date(periodEnd).toISOString().substring(0, 10)}
+						onChange={periodEndHandler}
+						size='small'
+					/>
+				</Stack>
+
+				<Table>
+					<TableBody>
+						<TableRow>
+							{/* //? можно еще выводить компанию пользователей которые зарегались */}
+							<TableCell>Пользователей зарегистрировалось</TableCell>
+							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+								{data?.data.newUserCount || 0}
+							</TableCell>
+							{/* //TODO вывести количество пользователей которые зарегались по ссылке от менеджера */}
+						</TableRow>
+					</TableBody>
+				</Table>
 			</BaseInfo>
 
-			<Stack direction='row' spacing={2} alignItems='center'>
-				<Typography>За период с</Typography>
-				<Input
-					type='date'
-					value={new Date(periodAt).toISOString().substring(0, 10)}
-					onChange={periodAtHandler}
-					size='small'
-				/>
-				<Typography>по</Typography>
-				<Input
-					type='date'
-					value={new Date(periodEnd).toISOString().substring(0, 10)}
-					onChange={periodEndHandler}
-					size='small'
-				/>
-			</Stack>
-
-			<Info>{renderInfo()}</Info>
+			<Info>
+				<Typography variant='h5' align='center' marginBottom={2}>
+					Заявки
+				</Typography>
+				{renderInfo()}
+			</Info>
 		</Container>
 	)
 }
