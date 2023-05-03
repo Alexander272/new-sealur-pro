@@ -44,6 +44,11 @@ const Header: FC<Props> = () => {
 		else navigate('/orders')
 	}
 
+	const analyticsHandler = () => {
+		handleClose()
+		navigate('/manager/analytics')
+	}
+
 	const signOutHandler = async () => {
 		handleClose()
 
@@ -57,7 +62,7 @@ const Header: FC<Props> = () => {
 	const readHandler = () => {
 		console.log('reading')
 		// TODO убрать коммент с метрики
-		sendMetric('reachGoal', 'ReadInstruction')
+		// sendMetric('reachGoal', 'ReadInstruction')
 	}
 
 	return (
@@ -144,6 +149,14 @@ const Header: FC<Props> = () => {
 						</ListItemIcon>
 						Заказы
 					</MenuItem>
+					{role !== 'user' && role != 'manager' ? (
+						<MenuItem onClick={analyticsHandler} selected={false}>
+							<ListItemIcon>
+								<img height={24} width={18} src='/image/graph.svg' />
+							</ListItemIcon>
+							Отчет
+						</MenuItem>
+					) : null}
 					<Divider />
 					<MenuItem onClick={signOutHandler} selected={false}>
 						<ListItemIcon>

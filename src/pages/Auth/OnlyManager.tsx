@@ -8,7 +8,7 @@ export default function OnlyManager({ children }: { children: JSX.Element }) {
 	// const location = useLocation()
 
 	// if (!isAuth) return <Navigate to='/auth' state={{ from: location }} />
-	if (role != 'manager') return <Navigate to='/' />
+	if (role == 'user') return <Navigate to='/' />
 
 	return children
 }

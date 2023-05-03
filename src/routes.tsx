@@ -19,6 +19,7 @@ const OnlyManager = lazy(() => import('@/pages/Auth/OnlyManager'))
 const Manager = lazy(() => import('@/layout/Manager/Manager'))
 const ManagerOrders = lazy(() => import('@/pages/Manager/Orders/Orders'))
 const ManagerOrder = lazy(() => import('@/pages/Manager/Order/Order'))
+const Analytics = lazy(() => import('@/pages/Manager/Analytics/Analytics'))
 
 const Connect = lazy(() => import('@/pages/ConnectWithUs/ConnectWithUs'))
 
@@ -30,7 +31,7 @@ export const AppRoutes = () => {
 		<BrowserRouter basename={'/'}>
 			<Suspense fallback={<Loader />}>
 				{/* //TODO убрать коммент с метрики  */}
-				<Metrics />
+				{/* <Metrics /> */}
 				<Routes>
 					<Route path='/auth' element={<Auth />} />
 					<Route path='/auth/confirm' element={<Confirm />} />
@@ -52,6 +53,7 @@ export const AppRoutes = () => {
 						<Route path='/' element={<ProGasket />}>
 							<Route index element={<ProSnp />} />
 						</Route>
+
 						<Route path='/orders' element={<Orders />} />
 
 						{/* <Route path='/connect' element={<Connect />} /> */}
@@ -78,12 +80,9 @@ export const AppRoutes = () => {
 					>
 						<Route path='orders' element={<ManagerOrders />} />
 						<Route path='orders/:id' element={<ManagerOrder />} />
+
+						<Route path='analytics' element={<Analytics />} />
 					</Route>
-					{/* <Route path='/' element={<Main />}>
-					<Route path='/' element={<ProGasket />}>
-						<Route index element={<ProSnp />} />
-					</Route>
-				</Route> */}
 				</Routes>
 			</Suspense>
 		</BrowserRouter>
