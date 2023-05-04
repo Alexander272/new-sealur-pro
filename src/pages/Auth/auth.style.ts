@@ -21,7 +21,7 @@ export const Container = styled.div<ContainerProps>`
 	box-shadow: 2px 2px 8px 0px #3636362b;
 	width: 400px;
 	overflow: hidden;
-	height: ${props => (props.signUp ? '580px' : '360px')};
+	height: ${props => (props.signUp ? '630px' : '360px')};
 	transition: all 0.5s ease-in-out;
 
 	@media (max-width: 420px) {
@@ -37,6 +37,7 @@ export const Wrapper = styled.div`
 	align-items: center;
 	overflow: hidden;
 	position: relative;
+	padding-top: 90px;
 
 	&::after,
 	&::before,

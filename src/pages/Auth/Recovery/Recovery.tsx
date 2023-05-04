@@ -74,6 +74,7 @@ export default function Recovery() {
 						<FormControl sx={{ marginTop: 3, marginBottom: 2, position: 'relative' }}>
 							<Input
 								label='email'
+								type='email'
 								value={email.value}
 								onChange={email.onChange}
 								error={!email.valid}

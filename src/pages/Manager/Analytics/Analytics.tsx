@@ -1,26 +1,9 @@
 import { Stack, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography } from '@mui/material'
-import { BaseInfo, Container, Info, Period } from './analytics.style'
+import { BaseInfo, Container, Info } from './analytics.style'
 import { Input } from '@/components/Input/input.style'
 import { ChangeEvent, useState } from 'react'
 import { useGetAnalyticsQuery } from '@/store/api/analytics'
 import { Loader } from '@/components/Loader/Loader'
-
-interface IAnalytics {
-	ordersCount: number
-	usersCountRegister: number
-	usersCount: number
-	snpPositionCount: number
-	orders: {
-		id: string
-		manager: string
-		clients: {
-			id: string
-			name: string
-			ordersCount: number
-			snpPositionCount: number
-		}[]
-	}[]
-}
 
 export default function Analytics() {
 	const [periodAt, setPeriodAt] = useState(new Date().setDate(1))
@@ -109,92 +92,117 @@ export default function Analytics() {
 		<Container>
 			{isLoading && <Loader background='fill' />}
 
-			<Typography variant='h6'>Поступление заявок с использованием "SealurPro"</Typography>
+			<Typography variant='h5' marginBottom={2}>
+				Поступление заявок с использованием "SealurPro"
+			</Typography>
 
-			<BaseInfo>
-				<Table>
-					<TableBody>
-						<TableRow>
-							<TableCell>Всего пользователей зарегистрировалось</TableCell>
-							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-								{data?.data.usersCountRegister}
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Пользователей зарегистрировалось (от менеджера)</TableCell>
-							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-								{data?.data.userCountLink}
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Пользователей зарегистрировалось (с сайта)</TableCell>
-							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-								{data ? data?.data.usersCountRegister - data?.data.userCountLink : ''}
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Всего пользователей сделало заказ</TableCell>
-							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>{data?.data.userCount}</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Всего заявок</TableCell>
-							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-								{data?.data.ordersCount}
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>Всего снп заказано</TableCell>
-							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-								{data?.data.snpPositionCount}
-							</TableCell>
-						</TableRow>
-					</TableBody>
-				</Table>
-
-				<Stack
-					direction='row'
-					spacing={2}
-					justifyContent={'center'}
-					alignItems='center'
-					marginTop={3}
-					marginBottom={3}
-				>
-					<Typography>За период с</Typography>
-					<Input
-						type='date'
-						value={new Date(periodAt).toISOString().substring(0, 10)}
-						onChange={periodAtHandler}
-						size='small'
-					/>
-					<Typography>по</Typography>
-					<Input
-						type='date'
-						value={new Date(periodEnd).toISOString().substring(0, 10)}
-						onChange={periodEndHandler}
-						size='small'
-					/>
-				</Stack>
-
-				<Table>
-					<TableBody>
-						<TableRow>
-							{/* //? можно еще выводить компанию пользователей которые зарегались */}
-							<TableCell>Пользователей зарегистрировалось</TableCell>
-							<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-								{data?.data.newUserCount || 0}
-							</TableCell>
-							{/* //TODO вывести количество пользователей которые зарегались по ссылке от менеджера */}
-						</TableRow>
-					</TableBody>
-				</Table>
-			</BaseInfo>
-
-			<Info>
-				<Typography variant='h5' align='center' marginBottom={2}>
-					Заявки
+			{isError && (
+				<Typography variant='h5' color='error'>
+					Не удалось загрузить данные для отчета
 				</Typography>
-				{renderInfo()}
-			</Info>
+			)}
+
+			{!isError && (
+				<>
+					<BaseInfo>
+						<Table>
+							<TableBody>
+								<TableRow>
+									<TableCell>Всего пользователей зарегистрировалось</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.usersCountRegister}
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell>Пользователей зарегистрировалось (от менеджера)</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.userCountLink}
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell>Пользователей зарегистрировалось (с сайта)</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data ? data?.data.usersCountRegister - data?.data.userCountLink : ''}
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell>Всего пользователей сделало заказ</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.userCount}
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell>Всего заявок</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.ordersCount}
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell>Всего снп заказано</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.snpPositionCount}
+									</TableCell>
+								</TableRow>
+							</TableBody>
+						</Table>
+
+						<Stack
+							direction='row'
+							spacing={2}
+							justifyContent={'center'}
+							alignItems='center'
+							marginTop={4}
+							marginBottom={2}
+						>
+							<Typography>За период с</Typography>
+							<Input
+								type='date'
+								value={new Date(periodAt).toISOString().substring(0, 10)}
+								onChange={periodAtHandler}
+								size='small'
+							/>
+							<Typography>по</Typography>
+							<Input
+								type='date'
+								value={new Date(periodEnd).toISOString().substring(0, 10)}
+								onChange={periodEndHandler}
+								size='small'
+							/>
+						</Stack>
+
+						<Table>
+							<TableBody>
+								<TableRow>
+									{/* //? можно еще выводить компании пользователей которые зарегались */}
+									<TableCell>Пользователей зарегистрировалось</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.newUserCount || 0}
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell>Пользователей зарегистрировалось (от менеджера)</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.newUserCountLink || 0}
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell>Пользователей зарегистрировалось (с сайта)</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data ? (data.data.newUserCount || 0) - (data?.data.newUserCountLink || 0) : ''}
+									</TableCell>
+								</TableRow>
+							</TableBody>
+						</Table>
+					</BaseInfo>
+
+					<Info>
+						<Typography variant='h5' align='center' marginBottom={2}>
+							Заявки
+						</Typography>
+						{renderInfo()}
+					</Info>
+				</>
+			)}
 		</Container>
 	)
 }

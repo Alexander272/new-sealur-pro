@@ -118,7 +118,7 @@ export default function RecoveryPassword() {
 								error={!confirm.valid || !compare}
 								size='small'
 							/>
-							<VisiblePassword password={password.value} />
+							<VisiblePassword password={confirm.value} />
 							{!confirm.valid || !compare ? (
 								<ValidMessage iconRight='46px' messages={['Пароли должны совпадать']} />
 							) : null}
