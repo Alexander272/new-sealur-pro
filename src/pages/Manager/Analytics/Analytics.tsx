@@ -11,6 +11,7 @@ const periodAtName = 'analytics_period_at'
 const periodEndName = 'analytics_period_end'
 
 export default function Analytics() {
+	//теперь период сохраняется в local storage, поэтому не чистится при перезагрузке страницы
 	const [periodAt, setPeriodAt] = useState(+(localStorage.getItem(periodAtName) || 0) || new Date().setDate(1))
 	const [periodEnd, setPeriodEnd] = useState(+(localStorage.getItem(periodEndName) || 0) || new Date().getTime())
 
@@ -30,7 +31,6 @@ export default function Analytics() {
 		localStorage.setItem(periodEndName, event.target.valueAsNumber.toString())
 	}
 
-	//TODO надо бы запоминать период при переходе по страницам
 	const navigateUser = (req?: IUserParams) => () => {
 		navigate('users', { state: req })
 	}

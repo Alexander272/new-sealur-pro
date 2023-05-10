@@ -21,7 +21,6 @@ export const OrderRow: FC<Props> = ({ data, onOpen }) => {
 
 	const [finish, { isError, isLoading, isSuccess }] = useFinishOrderMutation()
 
-	//TODO проверить это вообще работает
 	useEffect(() => {
 		if (isError) setAlert({ type: 'error', open: true })
 		if (isSuccess) setAlert({ type: 'success', open: true })
