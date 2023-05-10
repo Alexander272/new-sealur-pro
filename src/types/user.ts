@@ -11,6 +11,7 @@ export interface IUser {
 	email: string
 	phone: string
 	roleCode: string
+	useLink?: boolean
 }
 
 export interface IRefreshUser {

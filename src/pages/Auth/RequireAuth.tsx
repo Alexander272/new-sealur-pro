@@ -9,7 +9,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
 	const location = useLocation()
 
 	if (location.search) {
-		let parts = location.search.split('=')
+		let parts = location.search.split('&')[0].split('=')
 		if (parts[0] === '?managerId') localStorage.setItem('managerId', parts[1])
 	}
 

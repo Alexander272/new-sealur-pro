@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect } from 'react'
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Loader } from '@/components/Loader/Loader'
 import { useRefresh } from './hooks/refresh'
 
@@ -19,7 +19,10 @@ const OnlyManager = lazy(() => import('@/pages/Auth/OnlyManager'))
 const Manager = lazy(() => import('@/layout/Manager/Manager'))
 const ManagerOrders = lazy(() => import('@/pages/Manager/Orders/Orders'))
 const ManagerOrder = lazy(() => import('@/pages/Manager/Order/Order'))
+
 const Analytics = lazy(() => import('@/pages/Manager/Analytics/Analytics'))
+const AnalyticsUsers = lazy(() => import('@/pages/Manager/Analytics/Users/Users'))
+const AnalyticsOrders = lazy(() => import('@/pages/Manager/Analytics/Orders/Orders'))
 
 const Connect = lazy(() => import('@/pages/ConnectWithUs/ConnectWithUs'))
 
@@ -55,20 +58,7 @@ export const AppRoutes = () => {
 						</Route>
 
 						<Route path='/orders' element={<Orders />} />
-
-						{/* <Route path='/connect' element={<Connect />} /> */}
 					</Route>
-
-					{/* <Route
-						path='/orders'
-						element={
-							<RequireAuth>
-								<Manager />
-							</RequireAuth>
-						}
-					>
-						<Route index element={<Orders />} />
-					</Route> */}
 
 					<Route
 						path='/manager'
@@ -82,6 +72,8 @@ export const AppRoutes = () => {
 						<Route path='orders/:id' element={<ManagerOrder />} />
 
 						<Route path='analytics' element={<Analytics />} />
+						<Route path='analytics/users' element={<AnalyticsUsers />} />
+						<Route path='analytics/orders' element={<AnalyticsOrders />} />
 					</Route>
 				</Routes>
 			</Suspense>
