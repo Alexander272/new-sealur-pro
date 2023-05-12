@@ -42,7 +42,7 @@ export const AnotherSize: FC<Props> = () => {
 	}, [])
 
 	const sizeHandler = (name: 'd4' | 'd3' | 'd2' | 'd1') => (event: React.ChangeEvent<HTMLInputElement>) => {
-		const regex = /^[0-9.\b]+$/
+		const regex = /^[0-9.,\b]+$/
 		const temp = event.target.value.replace(',', '.')
 
 		if (isNaN(+temp)) return
@@ -78,7 +78,7 @@ export const AnotherSize: FC<Props> = () => {
 		dispatch(setSizeThickness(newThickness))
 	}
 	const anotherThicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		const regex = /^[0-9.\b]+$/
+		const regex = /^[0-9.,\b]+$/
 		const temp = event.target.value.replace(',', '.')
 
 		if (isNaN(+temp)) return
@@ -110,24 +110,11 @@ export const AnotherSize: FC<Props> = () => {
 	return (
 		<>
 			{/* //TODO возможно будет лучше сделать тут отдельный state для каждого поля и через debounce заносить в store */}
-			{/* {['Г', 'Д'].includes(main.snpType?.title || '') && (
-				<>
-					<Typography fontWeight='bold'>D4, мм</Typography>
-					<Input
-						value={size.d4}
-						onChange={sizeHandler('d4')}
-						error={sizeErr.d4Err}
-						helperText={sizeErr.d4Err && 'D4 должен быть больше, чем D3'}
-						size='small'
-						// type='number'
-						// inputProps={{ min: 1 }}
-					/>
-				</>
-			)} */}
 			{main.snpType?.hasD4 && (
 				<>
 					<Typography fontWeight='bold'>D4, мм</Typography>
 					<Input
+						name='d4'
 						value={size.d4}
 						onChange={sizeHandler('d4')}
 						error={sizeErr.d4Err || sizeErr.emptyD4}
@@ -145,6 +132,7 @@ export const AnotherSize: FC<Props> = () => {
 				<>
 					<Typography fontWeight='bold'>D3, мм</Typography>
 					<Input
+						name='d3'
 						value={size.d3}
 						onChange={sizeHandler('d3')}
 						error={sizeErr.d3Err || sizeErr.emptyD3}
@@ -162,6 +150,7 @@ export const AnotherSize: FC<Props> = () => {
 				<>
 					<Typography fontWeight='bold'>D2, мм</Typography>
 					<Input
+						name='d2'
 						value={size.d2}
 						onChange={sizeHandler('d2')}
 						error={sizeErr.d2Err || sizeErr.emptyD2}
@@ -179,6 +168,7 @@ export const AnotherSize: FC<Props> = () => {
 				<>
 					<Typography fontWeight='bold'>D1, мм</Typography>
 					<Input
+						name='d1'
 						value={size.d1}
 						onChange={sizeHandler('d1')}
 						error={sizeErr.emptyD1}
@@ -189,19 +179,6 @@ export const AnotherSize: FC<Props> = () => {
 					/>
 				</>
 			)}
-
-			{/* {['В', 'Д'].includes(main.snpType?.title || '') && (
-				<>
-					<Typography fontWeight='bold'>D1, мм</Typography>
-					<Input
-						value={size.d1}
-						onChange={sizeHandler('d1')}
-						size='small'
-						// type='number'
-						// inputProps={{ min: 1 }}
-					/>
-				</>
-			)} */}
 
 			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
 			{/* <Input
@@ -228,6 +205,7 @@ export const AnotherSize: FC<Props> = () => {
 
 				{size.h == 'another' || size.h == '' ? (
 					<Input
+						name='thickness'
 						value={size.another}
 						onChange={anotherThicknessHandler}
 						size='small'
@@ -237,42 +215,5 @@ export const AnotherSize: FC<Props> = () => {
 				) : null}
 			</Stack>
 		</>
-
-		//     <div className={`${classes.block} ${classes.snpDrawFl}`}>
-		//         <p className={classes.titleGroup}>Чертеж прокладки</p>
-		//         <div className={`${classes.blockImage}`}>
-		//             <div className={classes.imageContainer}>
-		//                 <img
-		//                     className={classes.image}
-		//                     width={470}
-		//                     height={200}
-		//                     src={imgUrls[(typePr as "Д") || "Д"]}
-		//                     alt='gasket drawing'
-		//                 />
-		//                 {/* Элементы отвечающие за подкраску участков прокладки */}
-		//                 <Excretion
-		//                     typePr={typePr || ""}
-		//                     isOpenFr={isOpenFr}
-		//                     isOpenIr={isOpenIr}
-		//                     isOpenOr={isOpenOr}
-		//                 />
-
-		//                 {/* Вывод размеров */}
-		//                 <Sizes
-		//                     typePr={typePr || ""}
-		//                     h={h}
-		//                     oh={oh}
-		//                     s2={s2}
-		//                     s3={s3}
-		//                     st={st}
-		//                     d1={size?.d1 || "0"}
-		//                     d2={size?.d2 || "0"}
-		//                     d3={size?.d3 || "0"}
-		//                     d4={size?.d4 || "0"}
-		//                 />
-		//             </div>
-		//         </div>
-		//     </div>
-		// </div>
 	)
 }

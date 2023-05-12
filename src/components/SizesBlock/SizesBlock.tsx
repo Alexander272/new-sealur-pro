@@ -5,12 +5,12 @@ import { Description, SizesProps, Size, Container, Question } from './sizes.styl
 
 type Position = {
 	frame: SizesProps
-	ring: SizesProps
-	twisted: SizesProps
-	d4: SizesProps
+	ring?: SizesProps
+	twisted?: SizesProps
+	d4?: SizesProps
 	d3: SizesProps
 	d2: SizesProps
-	d1: SizesProps
+	d1?: SizesProps
 }
 
 type HasSizes = {

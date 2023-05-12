@@ -1,6 +1,8 @@
 import { IJumper } from './jumper'
 import { IMaterial } from './material'
 import { IHasMounting } from './mounting'
+import { PN } from './sizes'
+import { IFlangeStandard, IStandard } from './snp'
 
 export type TypeMaterial = 'innerRing' | 'rotaryPlug' | 'outerRing'
 
@@ -12,14 +14,17 @@ export interface IPutgConfiguration {
 	hasStandard?: boolean
 }
 
-export interface IFlangeStandard {
+export interface IPutgStandard {
 	id: string
-	title: string
-	code: string
+	dnTitle: string
+	pnTitle: string
+	standard: IStandard
+	flangeStandard: IFlangeStandard
 }
 
 export interface IConstruction {
 	id: string
+	baseId: string
 	title: string
 	code: string
 	hasD4: boolean
@@ -60,6 +65,8 @@ export interface IPutgType {
 	id: string
 	title: string
 	code: string
+	minThickness: number
+	maxThickness: number
 }
 
 export interface IPutgMaterial {
@@ -73,14 +80,13 @@ export interface IPutgMaterial {
 
 export interface IMainBlockPutg {
 	configuration?: IPutgConfiguration
-	flangeStandard?: IFlangeStandard
-	flangeTypeCode: string
-	flangeTypeTitle: string
+	standard?: IPutgStandard
+	flangeType?: IFlangeType
 }
 
 export interface IMaterialBlockPutg {
 	filler?: IFiller
-	typeCode: string
+	type?: IPutgType
 	construction?: IConstruction
 	rotaryPlug?: IMaterial
 	innerRing?: IMaterial
@@ -94,4 +100,16 @@ export interface IDesignBlockPutg {
 	hasRemovable?: boolean
 	mounting: IHasMounting
 	drawing?: string
+}
+
+export interface ISizeBlockPutg {
+	dn: string
+	dnMm: string
+	d4: string
+	d3: string
+	d2: string
+	d1: string
+	pn: PN
+	h: string
+	another: string
 }

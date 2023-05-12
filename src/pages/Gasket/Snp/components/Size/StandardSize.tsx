@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { MenuItem, Select, SelectChangeEvent, Stack, Typography } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { ISNPMainSize, ISnpSize, PN } from '@/types/sizes'
 import { setSize, setSizePn, setSizeThickness } from '@/store/gaskets/snp'

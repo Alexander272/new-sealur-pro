@@ -2,7 +2,7 @@ import { api } from './base'
 import { proUrl } from './snp'
 import type {
 	IConstruction,
-	IFlangeStandard,
+	IPutgStandard,
 	IFlangeType,
 	IPutgConfiguration,
 	IPutgData,
@@ -13,28 +13,33 @@ import type {
 import type { IPutgSize } from '@/types/sizes'
 import type { IMounting } from '@/types/mounting'
 
+type PutgBaseRequest = {
+	standardId: string
+	typeFlangeId: string
+}
+
 type PutgBaseResponse = {
 	data: {
 		configurations: IPutgConfiguration[]
-		standards: IFlangeStandard[]
-		constructions: IConstruction[]
+		standards: IPutgStandard[]
 		mounting: IMounting[]
+		constructions: IConstruction[]
+		materials: IPutgMaterial
+		flangeTypes: IFlangeType[]
 	}
 }
 
 type PutgDataRequest = {
 	standardId: string
 	constructionId: string
+	baseConstructionId: string
 	configuration: string
 	// fillerId: string
 	// changeStandard: boolean
 }
 type PutgDataResponse = {
 	data: {
-		materials: IPutgMaterial
 		fillers: IFiller[]
-		flangeTypes: IFlangeType[]
-		data: IPutgData[]
 		sizes: IPutgSize[]
 	}
 }
@@ -53,8 +58,15 @@ type PutgResponse = {
 export const putgApi = api.injectEndpoints({
 	endpoints: builder => ({
 		// получение основных данных для путг (конфигурации, стандарты на фланцы, конструкции)
-		getPutgBase: builder.query<PutgBaseResponse, null>({
-			query: () => `${proUrl}/putg/base`,
+		getPutgBase: builder.query<PutgBaseResponse, PutgBaseRequest>({
+			query: req => ({
+				url: `${proUrl}/putg/base`,
+				method: 'GET',
+				params: new URLSearchParams([
+					['standardId', req.standardId],
+					['typeFlangeId', req.typeFlangeId],
+				]),
+			}),
 		}),
 		// получение второй части данных о путг (типы фланцев, материалы, размеры)
 		getPutgData: builder.query<PutgDataResponse, PutgDataRequest>({
@@ -65,6 +77,7 @@ export const putgApi = api.injectEndpoints({
 					['standardId', req.standardId],
 					['constructionId', req.constructionId],
 					['configuration', req.configuration],
+					['baseConstructionId', req.baseConstructionId],
 					// ['fillerId', req.fillerId],
 					// ['changeStandard', `${req.changeStandard}`],
 				]),

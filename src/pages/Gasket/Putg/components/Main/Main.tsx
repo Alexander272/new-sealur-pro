@@ -1,14 +1,16 @@
 import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import {
+	setConfigurations,
 	setConstruction,
 	setFiller,
+	setFlangeTypes,
 	setMainConfiguration,
 	setMainFlangeType,
 	setMainStandard,
-	setMaterialFiller,
 	setMaterials,
 	setMounting,
+	setStandards,
 } from '@/store/gaskets/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetPutgBaseQuery, useGetPutgDataQuery } from '@/store/api/putg'
@@ -33,37 +35,51 @@ export const Main: FC<Props> = () => {
 	const material = useAppSelector(state => state.putg.material)
 	const positionId = useAppSelector(state => state.putg.positionId)
 
+	const standards = useAppSelector(state => state.putg.standards)
+	const configurations = useAppSelector(state => state.putg.configurations)
+	const flangeTypes = useAppSelector(state => state.putg.flangeTypes)
+
 	const dispatch = useAppDispatch()
 
-	const { data: base, isError: isErrorBase, isLoading: isLoadingBase } = useGetPutgBaseQuery(null)
+	const {
+		data: base,
+		isError: isErrorBase,
+		isLoading: isLoadingBase,
+	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '', typeFlangeId: main.flangeType?.id || '' })
 
 	const { data, isError, isLoading } = useGetPutgDataQuery(
 		{
-			standardId: main.flangeStandard?.id || '',
+			standardId: main.standard?.id || '',
 			constructionId: material.construction?.id || '',
+			baseConstructionId: material.construction?.baseId || '',
 			configuration: main.configuration?.code || '',
 		},
-		{ skip: !main.flangeStandard?.id || !material.construction?.id }
+		{ skip: !main.standard?.id || !material.construction }
 	)
 
 	useEffect(() => {
 		if (base) {
-			if (base.data.configurations) dispatch(setMainConfiguration(base.data.configurations[0]))
-			if (base.data.standards) dispatch(setMainStandard(base.data.standards[0]))
-			if (base.data.constructions) dispatch(setConstruction(base.data.constructions[0]))
+			if (base.data.configurations) dispatch(setConfigurations(base.data.configurations))
+			if (base.data.standards) dispatch(setStandards(base.data.standards))
+			if (base.data.materials?.rotaryPlug) dispatch(setMaterials(base.data.materials))
 			if (base.data.mounting) dispatch(setMounting(base.data.mounting))
+
+			if (base.data.flangeTypes) {
+				dispatch(setFlangeTypes(base.data.flangeTypes))
+				// const flange = base.data.flangeTypes[0]
+				// dispatch(setMainFlangeType(flange))
+			}
+			if (base.data.constructions) dispatch(setConstruction(base.data.constructions[0]))
 		}
 	}, [base?.data])
 
 	useEffect(() => {
 		if (data?.data) {
 			if (positionId === undefined) {
-				const flange = data.data.flangeTypes[0]
-				dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
-
+				// const flange = data.data.flangeTypes[0]
+				// dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
 				// const filler = data.data.fillers[0]
 				// dispatch(setMaterialFiller(filler))
-
 				// const type = {
 				// 	id: flange.types[flange.types.length - 1].id,
 				// 	// title: flange.types[flange.types.length - 1].title,
@@ -73,50 +89,29 @@ export const Main: FC<Props> = () => {
 				// dispatch(setMainSnpType(type))
 			}
 
-			if (data.data.materials?.rotaryPlug) dispatch(setMaterials(data.data.materials))
+			// if (data.data.materials?.rotaryPlug) dispatch(setMaterials(data.data.materials))
 			// if (data.data.fillers?.length) {
 			dispatch(setFiller(data.data.fillers || []))
 			// }
 		}
 	}, [data])
 
-	// useEffect(() => {
-	// if (res.data) {
-	// 	if (positionId === undefined) {
-	// 		const flange = data.flangeTypes[data.flangeTypes.length - 1]
-	// 		dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
-	// 		// const type = {
-	// 		// 	id: flange.types[flange.types.length - 1].id,
-	// 		// 	// title: flange.types[flange.types.length - 1].title,
-	// 		// 	// code: flange.types[flange.types.length - 1].code,
-	// 		// 	type: flange.types[flange.types.length - 1],
-	// 		// }
-	// 		// dispatch(setMainSnpType(type))
-	// 	}
-
-	// 	// dispatch(setMaterials(data.data.materials))
-	// 	// if (data.data.mounting?.length) {
-	// 	// 	dispatch(setMounting(data.data.mounting))
-	// 	// }
-	// }
-	// }, [res?.data])
-
 	const gasketHandler = (type: string) => {
-		const configuration = base?.data.configurations.find(s => s.code === type)
+		const configuration = configurations.find(s => s.code === type)
 		if (!configuration) return
 		dispatch(setMainConfiguration(configuration))
 	}
 
 	const flangeStandardHandler = (event: SelectChangeEvent<string>) => {
-		const standard = base?.data.standards.find(s => s.id === event.target.value)
+		const standard = standards.find(s => s.id === event.target.value)
 		if (!standard) return
 		dispatch(setMainStandard(standard))
 	}
 
 	const flangeTypeHandler = (event: SelectChangeEvent<string>) => {
-		const flangeType = data?.data.flangeTypes.find(f => f.code === event.target.value)
+		const flangeType = flangeTypes.find(f => f.code === event.target.value)
 		if (!flangeType) return
-		dispatch(setMainFlangeType({ code: event.target.value, title: flangeType.title }))
+		dispatch(setMainFlangeType(flangeType))
 	}
 
 	return (
@@ -137,29 +132,20 @@ export const Main: FC<Props> = () => {
 				<Column>
 					<Typography fontWeight='bold'>Конфигурация прокладки</Typography>
 					<RadioGroup onChange={gasketHandler}>
-						{base?.data.configurations.map(c => (
+						{configurations.map(c => (
 							<RadioItem key={c.id} value={c.code} active={c.code == main.configuration?.code}>
 								{c.title}
 							</RadioItem>
 						))}
-						{/* <RadioItem value='round' active={true}>
-							Круглая
-						</RadioItem>
-						<RadioItem value='oval' active={false}>
-							Овальная
-						</RadioItem>
-						<RadioItem value='rectangular' active={false}>
-							Прямоугольная
-						</RadioItem> */}
 					</RadioGroup>
 
 					{main.configuration?.hasStandard && (
 						<>
 							<Typography fontWeight='bold' mt={1}>
-								Стандарт на фланец
+								Стандарт на прокладку / стандарт на фланец
 							</Typography>
 							<Select
-								value={main.flangeStandard?.id || 'not_selected'}
+								value={main.standard?.id || 'not_selected'}
 								onChange={flangeStandardHandler}
 								disabled={Boolean(positionId)}
 								size='small'
@@ -168,9 +154,9 @@ export const Main: FC<Props> = () => {
 								<MenuItem disabled value='not_selected'>
 									Выберите стандарт
 								</MenuItem>
-								{base?.data.standards?.map(s => (
+								{standards?.map(s => (
 									<MenuItem key={s.id} value={s.id}>
-										{s.title}
+										{s.standard.title} {s.flangeStandard.title && '/'} {s.flangeStandard.title}
 									</MenuItem>
 								))}
 							</Select>
@@ -181,7 +167,7 @@ export const Main: FC<Props> = () => {
 						Тип фланца
 					</Typography>
 					<Select
-						value={main.flangeTypeCode || 'not_selected'}
+						value={main.flangeType?.code || 'not_selected'}
 						onChange={flangeTypeHandler}
 						disabled={Boolean(positionId)}
 						size='small'
@@ -190,7 +176,7 @@ export const Main: FC<Props> = () => {
 						<MenuItem disabled value='not_selected'>
 							Выберите тип фланца
 						</MenuItem>
-						{data?.data.flangeTypes.map(f => (
+						{flangeTypes.map(f => (
 							<MenuItem key={f.id} value={f.code}>
 								{f.title}
 							</MenuItem>
@@ -201,11 +187,11 @@ export const Main: FC<Props> = () => {
 
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
-				{main.flangeTypeCode == 'not_selected' ? (
+				{main.flangeType?.code == 'not_selected' ? (
 					<PlugImage />
 				) : (
 					<Image
-						src={images[main.flangeTypeCode as 'А']}
+						src={images[main.flangeType?.code as 'А']}
 						alt='flange drawing'
 						maxWidth={'450px'}
 						width={450}

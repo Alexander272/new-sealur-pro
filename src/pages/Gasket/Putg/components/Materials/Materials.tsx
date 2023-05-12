@@ -1,10 +1,10 @@
 import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import type { TypeMaterial } from '@/types/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetPutgBaseQuery, useGetPutgQuery } from '@/store/api/putg'
 import { setConstruction, setMaterial, setMaterialFiller, setType } from '@/store/gaskets/putg'
 import { AsideContainer } from '@/pages/Gasket/gasket.style'
-import { TypeMaterial } from '@/types/putg'
 
 type Props = {}
 
@@ -18,17 +18,11 @@ export const Materials: FC<Props> = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data: base, isError: isErrorBase, isLoading: isLoadingBase } = useGetPutgBaseQuery(null)
-
-	//TODO может filler засунуть в store и тогда этот запрос тут будет не нужен
-	// const { data, isError, isLoading } = useGetPutgDataQuery(
-	// 	{
-	// 		standardId: main.flangeStandard?.id || '',
-	// 		constructionId: material.construction?.id || '',
-	// 		configuration: main.configuration?.code || '',
-	// 	},
-	// 	{ skip: !main.flangeStandard?.id || !material.construction?.id }
-	// )
+	const {
+		data: base,
+		isError: isErrorBase,
+		isLoading: isLoadingBase,
+	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '', typeFlangeId: main.flangeType?.id || '' })
 
 	const { data, isError, isLoading } = useGetPutgQuery(
 		{ fillerId: material.filler?.id || '', baseId: material.filler?.baseId || '' },
@@ -36,8 +30,8 @@ export const Materials: FC<Props> = () => {
 	)
 
 	useEffect(() => {
-		if (!positionId) {
-			dispatch(setType(data?.data.putgTypes[0].code || 'not_selected'))
+		if (!positionId && data?.data.putgTypes) {
+			dispatch(setType(data.data.putgTypes[0]))
 		}
 	}, [data])
 
@@ -48,7 +42,9 @@ export const Materials: FC<Props> = () => {
 	}
 
 	const typeHandler = (event: SelectChangeEvent<string>) => {
-		dispatch(setType(event.target.value))
+		const type = data?.data.putgTypes.find(s => s.code === event.target.value)
+		if (!type) return
+		dispatch(setType(type))
 	}
 
 	const constructionHandler = (event: SelectChangeEvent<string>) => {
@@ -89,7 +85,7 @@ export const Materials: FC<Props> = () => {
 				Тип прокладки
 			</Typography>
 			<Select
-				value={material.typeCode || 'not_selected'}
+				value={material.type?.code || 'not_selected'}
 				onChange={typeHandler}
 				size='small'
 				sx={{
