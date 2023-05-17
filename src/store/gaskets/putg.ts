@@ -341,6 +341,11 @@ export const putgSlice = createSlice({
 					state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
 			}
 		},
+
+		// установка количества
+		setAmount: (state, action: PayloadAction<string>) => {
+			state.amount = action.payload
+		},
 	},
 })
 
@@ -369,6 +374,7 @@ export const {
 	setSizePn,
 	setSizeMain,
 	setSizeThickness,
+	setAmount,
 } = putgSlice.actions
 
 export default putgSlice.reducer

@@ -3,7 +3,9 @@ import { Typography } from '@mui/material'
 import { useGetPutgDataQuery } from '@/store/api/putg'
 import { useAppSelector } from '@/hooks/useStore'
 import { Loader } from '@/components/Loader/Loader'
-import { Column, ImageContainer, PlugImage, SizeContainer } from '@/pages/Gasket/gasket.style'
+import { Column, ImageContainer, SizeContainer } from '@/pages/Gasket/gasket.style'
+import { PutgImage } from './components/PutgImage/PutgImage'
+import { SizesBlockPutg } from './components/SizesBlock/SizesBlock'
 import { StandardSize } from './StandardSize'
 import { AnotherSize } from './AnotherSize'
 
@@ -45,7 +47,12 @@ export const Size: FC<Props> = () => {
 			)}
 			<Column width={60}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
-				<PlugImage />
+				{/* <PlugImage /> */}
+				<ImageContainer>
+					<PutgImage type={material.type} construction={material.construction} />
+					<SizesBlockPutg />
+				</ImageContainer>
+
 				{/* //TODO понять как определять какую картинку вывести */}
 				{/* {!main.snpType ? (
 					<PlugImage />

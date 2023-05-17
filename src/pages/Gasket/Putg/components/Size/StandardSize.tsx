@@ -136,7 +136,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 
 			if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeThickness({ h: value.toString().replace('.', ',') }))
+			dispatch(setSizeThickness({ h: value.toString() }))
 		}
 	}
 

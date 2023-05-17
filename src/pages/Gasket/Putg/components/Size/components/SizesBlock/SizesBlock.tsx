@@ -1,42 +1,36 @@
 import { useAppSelector } from '@/hooks/useStore'
-import { SizesBlock } from '@/components/SizesBlock/SizesBlock'
+import { Container, Description, Size } from './size.style'
 
 const sizePositionsPutg = {}
 
 export const SizesBlockPutg = () => {
-	const main = useAppSelector(state => state.putg.main)
+	const material = useAppSelector(state => state.putg.material)
 	const sizes = useAppSelector(state => state.putg.size)
 
 	// if (!main.snpType?.title) return null
 
 	return (
-		<>
-			{/* <SizesBlock
-				sizes={sizes}
-				hasSizes={main.snpType!}
-				hasD2={main.snpStandard?.hasD2} positions={{
-					frame: {
-						top: undefined,
-						left: undefined
-					},
-					d4: {
-						top: undefined,
-						left: undefined
-					},
-					d3: {
-						top: undefined,
-						left: undefined
-					},
-					d2: {
-						top: undefined,
-						left: undefined
-					},
-					d1: {
-						top: undefined,
-						left: undefined
-					}
-				}}				// positions={sizePositionsSnp[main.snpType.title as 'Д']}
-			/> */}
-		</>
+		<Container>
+			{material.construction?.hasD4 && (
+				<Size top={'77%'}>
+					{sizes.d4?.replace('.', ',')} <Description>(D4)</Description>
+				</Size>
+			)}
+			{material.construction?.hasD3 && (
+				<Size top={'64%'}>
+					{sizes.d3.replace('.', ',')} <Description>(D3)</Description>
+				</Size>
+			)}
+			{material.construction?.hasD2 && (
+				<Size top={'51%'}>
+					{sizes.d2.replace('.', ',')} <Description>(D2)</Description>
+				</Size>
+			)}
+			{material.construction?.hasD1 && (
+				<Size top={'38%'}>
+					{sizes.d1?.replace('.', ',')} <Description>(D1)</Description>
+				</Size>
+			)}
+		</Container>
 	)
 }

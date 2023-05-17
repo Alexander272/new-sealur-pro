@@ -29,7 +29,6 @@ export const AnotherSize: FC<Props> = () => {
 	}
 
 	const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		//TODO как-то много replace
 		const temp = event.target.value.replace(',', '.')
 
 		if (event.target.value === '' || !isNaN(+temp)) {

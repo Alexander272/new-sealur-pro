@@ -34,6 +34,7 @@ export interface IConstruction {
 	hasRotaryPlug: boolean
 	hasInnerRing: boolean
 	hasOuterRing: boolean
+	description: string
 }
 
 export interface IFiller {
@@ -67,6 +68,7 @@ export interface IPutgType {
 	code: string
 	minThickness: number
 	maxThickness: number
+	description: string
 }
 
 export interface IPutgMaterial {

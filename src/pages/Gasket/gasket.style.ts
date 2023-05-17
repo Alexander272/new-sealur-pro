@@ -34,6 +34,10 @@ export const PageTitle = styled.h3`
 	text-align: center;
 	margin-top: -30px;
 	/* margin-left: 5px; */
+
+	@media screen and (max-width: 1000px) {
+		margin-top: 10px;
+	}
 `
 
 type ContainerProps = {
@@ -96,6 +100,8 @@ export const AsideContainer = styled(BaseContainer)`
 
 	@media screen and (max-width: 1150px) {
 		grid-column-start: 1;
+		grid-row-start: auto;
+		grid-row-end: auto;
 	}
 `
 
@@ -126,16 +132,38 @@ export const ImageContainer = styled.div`
 	margin: auto;
 	padding: 20px 0;
 	width: fit-content;
+	/* width: 100%;
+	height: 100%; */
 `
 
 type ImageProps = {
 	maxWidth?: string
+	position?: string
+	top?: string
+	left?: string
+	padding?: string
+	isHidden?: boolean
 }
 export const Image = styled.img<ImageProps>`
 	width: 100%;
+	/* width: auto; */
 	height: auto;
 	margin: auto;
+	max-height: 100%;
 	max-width: ${props => (props.maxWidth ? props.maxWidth : '100%')};
+	padding: ${props => props.padding && props.padding};
+	position: ${props => (props.position ? props.position : 'relative')};
+	top: ${props => props.top && props.top};
+	left: ${props => props.left && props.left};
+	visibility: ${props => props.isHidden && 'hidden'};
+`
+
+export const CompositeImage = styled.div`
+	/* position: absolute;
+	max-width: 500px;
+	width: 100%;
+	height: 100%; */
+	position: relative;
 `
 
 // export const Description = styled.p`

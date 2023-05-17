@@ -96,14 +96,18 @@ export const Result: FC<Props> = () => {
 	// костыль
 	const renderDescription = () => {
 		let rings
-		if (main.snpType?.title == 'Д')
+		if (main.snpType?.title == 'Д') {
 			rings = `(с наружным ${materials.outerRing?.title} и внутренним ${materials.innerRing?.title} ограничительными кольцами), с металлическим каркасом из ленты ${materials.frame?.title}`
-		if (main.snpType?.title == 'Г')
+		}
+		if (main.snpType?.title == 'Г') {
 			rings = `(с наружным ограничительным кольцом ${materials.outerRing?.title}), с металлическим каркасом из ленты ${materials.frame?.title}`
-		if (main.snpType?.title == 'В')
+		}
+		if (main.snpType?.title == 'В') {
 			rings = `(с внутренним ограничительным кольцом ${materials.innerRing?.title}), с металлическим каркасом из ленты ${materials.frame?.title}`
-		if (main.snpType?.title == 'Б' || main.snpType?.title == 'А')
+		}
+		if (main.snpType?.title == 'Б' || main.snpType?.title == 'А') {
 			rings = `(без ограничительных колец), с металлическим каркасом из ленты ${materials.frame?.title}`
+		}
 
 		let flange = main.snpStandard?.flangeStandard.code ? ` по ${main.snpStandard.flangeStandard.title}` : ''
 
