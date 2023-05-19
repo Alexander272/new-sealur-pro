@@ -5,6 +5,7 @@ import { stampToDate } from '@/services/date'
 import { useGetAnalyticsOrdersQuery } from '@/store/api/analytics'
 import { Loader } from '@/components/Loader/Loader'
 import { Container, TableContainer } from './order.style'
+import { Question } from '../analytics.style'
 
 export default function Orders() {
 	const navigate = useNavigate()
@@ -22,6 +23,10 @@ export default function Orders() {
 		navigate(`/manager/orders/${id}`)
 	}
 
+	const userNavigate = (userId: string) => () => {
+		navigate('/manager/analytics/user', { state: userId })
+	}
+
 	const renderRows = () => {
 		return data?.data?.map(o => {
 			let r = []
@@ -32,7 +37,13 @@ export default function Orders() {
 				span += c.orders.length
 				arr.push(
 					<TableRow key={c.id}>
-						<TableCell rowSpan={c.orders.length + 1}>{c.company}</TableCell>
+						<TableCell
+							rowSpan={c.orders.length + 1}
+							onClick={userNavigate(c.id)}
+							sx={{ cursor: 'pointer' }}
+						>
+							{c.company} <Question>?</Question>
+						</TableCell>
 						<TableCell rowSpan={c.orders.length + 1}>{c.name}</TableCell>
 					</TableRow>
 				)
