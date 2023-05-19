@@ -36,3 +36,16 @@ export const Info = styled.div`
 	box-shadow: 0px 0px 4px 0px #2626262b;
 	margin-bottom: 20px;
 `
+
+export const Question = styled.span`
+	border-radius: 50%;
+	line-height: 14px;
+	border: 1px dotted var(--primary-color);
+	color: var(--primary-color);
+	display: inline-block;
+	width: 14px;
+	vertical-align: super;
+	font-size: 10px;
+	cursor: pointer;
+	text-align: center;
+`

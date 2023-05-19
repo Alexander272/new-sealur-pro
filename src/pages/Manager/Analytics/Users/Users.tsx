@@ -1,3 +1,4 @@
+import { MouseEvent } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { IOrderParams, IUserParams } from '@/types/analytics'
@@ -5,6 +6,7 @@ import { useGetAnalyticUsersQuery } from '@/store/api/analytics'
 import { stampToDate } from '@/services/date'
 import { Loader } from '@/components/Loader/Loader'
 import { Container, TableContainer } from './user.style'
+import { Question } from '../analytics.style'
 
 export default function Users() {
 	const navigate = useNavigate()
@@ -22,6 +24,11 @@ export default function Users() {
 		navigate('/manager/analytics/orders', { state: req })
 	}
 
+	const navigateUser = (userId: string) => (event: MouseEvent<HTMLTableCellElement>) => {
+		event.stopPropagation()
+		navigate('/manager/analytics/user', { state: userId })
+	}
+
 	const renderRows = () => {
 		return data?.data?.map(o => {
 			let r = []
@@ -34,7 +41,9 @@ export default function Users() {
 			const clients = (o.users || []).map(c => {
 				return (
 					<TableRow key={c.id} hover onClick={navigateOrder({ userId: c.id })} sx={{ cursor: 'pointer' }}>
-						<TableCell>{c.company}</TableCell>
+						<TableCell onClick={navigateUser(c.id)}>
+							{c.company} <Question>?</Question>
+						</TableCell>
 						<TableCell>{c.name}</TableCell>
 						<TableCell align='center'>{c.ordersCount || 0}</TableCell>
 						{from == '' && <TableCell>{c.useLink ? 'Да' : 'Нет'}</TableCell>}

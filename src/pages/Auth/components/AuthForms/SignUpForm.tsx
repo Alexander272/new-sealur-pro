@@ -32,7 +32,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const name = useInput({ validation: 'empty' })
 	const position = useInput({ validation: 'empty' })
 	const email = useInput({ validation: 'email' })
-	const phone = useInput({ validation: 'empty', replace: 'phone' })
+	const phone = useInput({ replace: 'phone' })
 	const password = useInput({ validation: 'password' })
 	const confirm = useInput({ validation: 'empty' })
 
@@ -97,14 +97,16 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			managerId: localStorage.getItem('managerId') || '',
 		}
 
-		const res = await signUp(user)
-		if (res.error) {
-			console.log(res.error)
-			handleClick('error', res.error)
-		} else {
-			handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
-		}
-		localStorage.removeItem('managerId')
+		// const res = await signUp(user)
+		// if (res.error) {
+		// 	console.log(res.error)
+		// 	handleClick('error', res.error)
+		// } else {
+		// 	handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
+		// }
+		// localStorage.removeItem('managerId')
+		console.log('sing up')
+
 		setLoading(false)
 	}
 
@@ -155,7 +157,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 							<Input
 								{...params}
 								name='company'
-								placeholder='Название организации'
+								placeholder='Название организации *'
 								size='small'
 								autoComplete='off'
 								error={companyError}
@@ -194,7 +196,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						name='position'
 						value={position.value}
 						onChange={position.onChange}
-						placeholder='Должность'
+						placeholder='Должность *'
 						size='small'
 						error={!position.valid}
 					/>
@@ -207,7 +209,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						type='email'
 						value={email.value}
 						onChange={email.onChange}
-						placeholder='Email'
+						placeholder='Email *'
 						size='small'
 						error={!email.valid}
 					/>
@@ -232,7 +234,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						value={password.value}
 						onChange={password.onChange}
 						type='password'
-						placeholder='Пароль'
+						placeholder='Пароль *'
 						size='small'
 						error={!password.valid}
 					/>
@@ -254,7 +256,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						value={confirm.value}
 						onChange={confirm.onChange}
 						type='password'
-						placeholder='Повторите пароль'
+						placeholder='Повторите пароль *'
 						size='small'
 						error={!confirm.valid || !compare}
 					/>
