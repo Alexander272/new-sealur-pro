@@ -69,6 +69,7 @@ export interface IPutgType {
 	minThickness: number
 	maxThickness: number
 	description: string
+	typeCode: string
 }
 
 export interface IPutgMaterial {

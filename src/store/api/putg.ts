@@ -15,7 +15,7 @@ import type { IMounting } from '@/types/mounting'
 
 type PutgBaseRequest = {
 	standardId: string
-	typeFlangeId: string
+	// typeFlangeId: string
 }
 
 type PutgBaseResponse = {
@@ -23,7 +23,8 @@ type PutgBaseResponse = {
 		configurations: IPutgConfiguration[]
 		standards: IPutgStandard[]
 		mounting: IMounting[]
-		constructions: IConstruction[]
+		// constructions: IConstruction[]
+		fillers: IFiller[]
 		materials: IPutgMaterial
 		flangeTypes: IFlangeType[]
 	}
@@ -39,7 +40,7 @@ type PutgDataRequest = {
 }
 type PutgDataResponse = {
 	data: {
-		fillers: IFiller[]
+		// fillers: IFiller[]
 		sizes: IPutgSize[]
 	}
 }
@@ -47,11 +48,13 @@ type PutgDataResponse = {
 type PutgRequest = {
 	fillerId: string
 	baseId: string
+	flangeTypeId: string
 }
 type PutgResponse = {
 	data: {
 		putgTypes: IPutgType[]
 		data: IPutgData
+		constructions: IConstruction[]
 	}
 }
 
@@ -64,7 +67,7 @@ export const putgApi = api.injectEndpoints({
 				method: 'GET',
 				params: new URLSearchParams([
 					['standardId', req.standardId],
-					['typeFlangeId', req.typeFlangeId],
+					// ['typeFlangeId', req.typeFlangeId],
 				]),
 			}),
 		}),
@@ -83,7 +86,7 @@ export const putgApi = api.injectEndpoints({
 				]),
 			}),
 		}),
-		// получение типов прокладок и дынных о конструктивных элементах
+		// получение типов прокладок и данных о конструктивных элементах
 		getPutg: builder.query<PutgResponse, PutgRequest>({
 			query: req => ({
 				url: `${proUrl}/putg`,
@@ -91,6 +94,7 @@ export const putgApi = api.injectEndpoints({
 				params: new URLSearchParams([
 					['fillerId', req.fillerId],
 					['baseId', req.baseId],
+					['flangeTypeId', req.flangeTypeId],
 				]),
 			}),
 		}),

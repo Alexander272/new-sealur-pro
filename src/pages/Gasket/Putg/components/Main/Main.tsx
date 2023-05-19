@@ -45,17 +45,19 @@ export const Main: FC<Props> = () => {
 		data: base,
 		isError: isErrorBase,
 		isLoading: isLoadingBase,
-	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '', typeFlangeId: main.flangeType?.id || '' })
+		// } = useGetPutgBaseQuery({ standardId: main.standard?.id || '', typeFlangeId: main.flangeType?.id || '' })
+	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '' })
 
-	const { data, isError, isLoading } = useGetPutgDataQuery(
-		{
-			standardId: main.standard?.id || '',
-			constructionId: material.construction?.id || '',
-			baseConstructionId: material.construction?.baseId || '',
-			configuration: main.configuration?.code || '',
-		},
-		{ skip: !main.standard?.id || !material.construction }
-	)
+	// const { data, isError, isLoading } = useGetPutgDataQuery(
+	// 	{
+	// 		standardId: main.standard?.id || '',
+	// 		constructionId: material.construction?.id || '',
+	// 		baseConstructionId: material.construction?.baseId || '',
+	// 		configuration: main.configuration?.code || '',
+	// 	},
+	// 	// { skip: !main.standard?.id || !material.construction }
+	// 	{ skip: !main.standard?.id }
+	// )
 
 	useEffect(() => {
 		if (base) {
@@ -69,32 +71,34 @@ export const Main: FC<Props> = () => {
 				// const flange = base.data.flangeTypes[0]
 				// dispatch(setMainFlangeType(flange))
 			}
-			if (base.data.constructions) dispatch(setConstruction(base.data.constructions[0]))
+			if (base?.data.fillers) dispatch(setFiller(base.data.fillers || []))
+
+			// if (base.data.constructions) dispatch(setConstruction(base.data.constructions[0]))
 		}
 	}, [base?.data])
 
-	useEffect(() => {
-		if (data?.data) {
-			if (positionId === undefined) {
-				// const flange = data.data.flangeTypes[0]
-				// dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
-				// const filler = data.data.fillers[0]
-				// dispatch(setMaterialFiller(filler))
-				// const type = {
-				// 	id: flange.types[flange.types.length - 1].id,
-				// 	// title: flange.types[flange.types.length - 1].title,
-				// 	// code: flange.types[flange.types.length - 1].code,
-				// 	type: flange.types[flange.types.length - 1],
-				// }
-				// dispatch(setMainSnpType(type))
-			}
+	// useEffect(() => {
+	// 	if (data?.data) {
+	// 		if (positionId === undefined) {
+	// const flange = data.data.flangeTypes[0]
+	// dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
+	// const filler = data.data.fillers[0]
+	// dispatch(setMaterialFiller(filler))
+	// const type = {
+	// 	id: flange.types[flange.types.length - 1].id,
+	// 	// title: flange.types[flange.types.length - 1].title,
+	// 	// code: flange.types[flange.types.length - 1].code,
+	// 	type: flange.types[flange.types.length - 1],
+	// }
+	// dispatch(setMainSnpType(type))
+	// }
 
-			// if (data.data.materials?.rotaryPlug) dispatch(setMaterials(data.data.materials))
-			// if (data.data.fillers?.length) {
-			dispatch(setFiller(data.data.fillers || []))
-			// }
-		}
-	}, [data])
+	// if (data.data.materials?.rotaryPlug) dispatch(setMaterials(data.data.materials))
+	// if (data.data.fillers?.length) {
+	// dispatch(setFiller(data.data.fillers || []))
+	// }
+	// 	}
+	// }, [data])
 
 	const gasketHandler = (type: string) => {
 		const configuration = configurations.find(s => s.code === type)

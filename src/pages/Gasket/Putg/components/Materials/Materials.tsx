@@ -18,21 +18,27 @@ export const Materials: FC<Props> = () => {
 
 	const dispatch = useAppDispatch()
 
-	const {
-		data: base,
-		isError: isErrorBase,
-		isLoading: isLoadingBase,
-	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '', typeFlangeId: main.flangeType?.id || '' })
+	// const {
+	// 	data: base,
+	// 	isError: isErrorBase,
+	// 	isLoading: isLoadingBase,
+	// 	// } = useGetPutgBaseQuery({ standardId: main.standard?.id || '', typeFlangeId: main.flangeType?.id || '' })
+	// } = useGetPutgBaseQuery({ standardId: main.standard?.id || '' })
 
 	const { data, isError, isLoading } = useGetPutgQuery(
-		{ fillerId: material.filler?.id || '', baseId: material.filler?.baseId || '' },
-		{ skip: !material.filler }
+		{
+			fillerId: material.filler?.id || '',
+			baseId: material.filler?.baseId || '',
+			flangeTypeId: main.flangeType?.id || '',
+		},
+		{ skip: !material.filler || !main.flangeType?.id }
 	)
 
 	useEffect(() => {
 		if (!positionId && data?.data.putgTypes) {
 			dispatch(setType(data.data.putgTypes[0]))
 		}
+		if (data?.data.constructions) dispatch(setConstruction(data.data.constructions[0]))
 	}, [data])
 
 	const fillerHandler = (event: SelectChangeEvent<string>) => {
@@ -48,7 +54,7 @@ export const Materials: FC<Props> = () => {
 	}
 
 	const constructionHandler = (event: SelectChangeEvent<string>) => {
-		const construction = base?.data.constructions.find(s => s.code === event.target.value)
+		const construction = data?.data.constructions.find(s => s.code === event.target.value)
 		if (!construction) return
 		dispatch(setConstruction(construction))
 	}
@@ -118,7 +124,7 @@ export const Materials: FC<Props> = () => {
 				<MenuItem disabled value='not_selected'>
 					Выберите тип конструкции
 				</MenuItem>
-				{base?.data.constructions.map(f => (
+				{data?.data.constructions.map(f => (
 					<MenuItem key={f.id} value={f.code}>
 						{f.title}
 					</MenuItem>

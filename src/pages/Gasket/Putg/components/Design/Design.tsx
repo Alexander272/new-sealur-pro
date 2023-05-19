@@ -29,6 +29,7 @@ export const Design: FC<Props> = () => {
 	const [loading, setLoading] = useState(false)
 
 	const design = useAppSelector(state => state.putg.design)
+	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
 	const mountings = useAppSelector(state => state.putg.mountings)
 	const drawing = useAppSelector(state => state.putg.drawing)
@@ -40,8 +41,12 @@ export const Design: FC<Props> = () => {
 	const dispatch = useAppDispatch()
 
 	const { data, isError, isLoading } = useGetPutgQuery(
-		{ fillerId: material.filler?.id || '', baseId: material.filler?.baseId || '' },
-		{ skip: !material.filler }
+		{
+			fillerId: material.filler?.id || '',
+			baseId: material.filler?.baseId || '',
+			flangeTypeId: main.flangeType?.id || '',
+		},
+		{ skip: !material.filler || !main.flangeType?.id }
 	)
 
 	const jumperHandler = (event: ChangeEvent<HTMLInputElement>) => {

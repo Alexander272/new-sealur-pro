@@ -2,10 +2,8 @@ import { FC } from 'react'
 import type { IConstruction, IPutgType } from '@/types/putg'
 import { CompositeImage, Image } from '@/pages/Gasket/gasket.style'
 
-// import type200 from '@/assets/putg/200.webp'
-import type200 from '@/assets/putg/200.png'
-import type210 from '@/assets/putg/210.png'
-// import type210 from '@/assets/putg/210.webp'
+import type200 from '@/assets/putg/200.webp'
+import type210 from '@/assets/putg/210.webp'
 import type220 from '@/assets/putg/220.webp'
 import type230 from '@/assets/putg/230.webp'
 import type240 from '@/assets/putg/240.webp'
@@ -14,8 +12,9 @@ import type260 from '@/assets/putg/260.webp'
 
 import rotary02 from '@/assets/putg/obt_02.webp'
 import rotary03 from '@/assets/putg/obt_03.webp'
-// import rotary04 from '@/assets/putg/obt_04.webp'
-import rotary04 from '@/assets/putg/obt_04.png'
+import rotary04 from '@/assets/putg/obt_04.webp'
+import rotary05 from '@/assets/putg/obt_05_2.webp'
+// import rotary05 from '@/assets/putg/obt_05.webp'
 
 import ring042 from '@/assets/putg/ring_042.webp'
 import ring043 from '@/assets/putg/ring_043.webp'
@@ -66,6 +65,11 @@ const constructionImages = {
 		ringUrl: ring044,
 		isHidden: false,
 	},
+	'05': {
+		rotaryUrl: rotary05,
+		ringUrl: ring044,
+		isHidden: true,
+	},
 }
 
 type Props = {
@@ -78,7 +82,7 @@ export const PutgImage: FC<Props> = ({ type, construction }) => {
 
 	return (
 		<CompositeImage>
-			<Image src={typeImages[(type?.code as '200') || '200']} position='absolute' padding='0 4%' />
+			<Image src={typeImages[(type?.typeCode as '200') || '200']} position='absolute' padding='0 4%' />
 			<Image src={constructionImage.ringUrl} isHidden={constructionImage.isHidden} padding='4.3% 0 0 0' />
 			{constructionImage.rotaryUrl && (
 				<Image src={constructionImage.rotaryUrl} position='absolute' left='0' padding='4.3% 4% 0' />
