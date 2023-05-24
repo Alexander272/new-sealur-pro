@@ -421,6 +421,8 @@ export const snpSlice = createSlice({
 					group: parts[parts.length - 3],
 				}
 				state.drawing = drawing
+			} else {
+				state.drawing = undefined
 			}
 
 			state.info = action.payload.info || ''
@@ -430,6 +432,8 @@ export const snpSlice = createSlice({
 		clearSnp: state => {
 			state.cardIndex = undefined
 			state.positionId = undefined
+			state.drawing = undefined
+			state.design.drawing = undefined
 		},
 	},
 })

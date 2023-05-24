@@ -201,7 +201,7 @@ export const Design = () => {
 							)}
 						</Stack>
 
-						{role != 'manager' ? (
+						{role == 'user' ? (
 							drawing ? (
 								<FileDownload text={drawing.origName} link={drawing.link} onDelete={deleteFile} />
 							) : (

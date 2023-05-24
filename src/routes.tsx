@@ -23,6 +23,7 @@ const ManagerOrder = lazy(() => import('@/pages/Manager/Order/Order'))
 const Analytics = lazy(() => import('@/pages/Manager/Analytics/Analytics'))
 const AnalyticsUsers = lazy(() => import('@/pages/Manager/Analytics/Users/Users'))
 const AnalyticsOrders = lazy(() => import('@/pages/Manager/Analytics/Orders/Orders'))
+const AnalyticsCount = lazy(() => import('@/pages/Manager/Analytics/Count/Count'))
 const AnalyticsUser = lazy(() => import('@/pages/Manager/Analytics/User/User'))
 
 const Connect = lazy(() => import('@/pages/ConnectWithUs/ConnectWithUs'))
@@ -75,6 +76,7 @@ export const AppRoutes = () => {
 						<Route path='analytics' element={<Analytics />} />
 						<Route path='analytics/users' element={<AnalyticsUsers />} />
 						<Route path='analytics/orders' element={<AnalyticsOrders />} />
+						<Route path='analytics/count' element={<AnalyticsCount />} />
 						<Route path='analytics/user' element={<AnalyticsUser />} />
 					</Route>
 				</Routes>

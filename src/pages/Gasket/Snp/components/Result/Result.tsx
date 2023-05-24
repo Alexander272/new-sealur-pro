@@ -3,7 +3,7 @@ import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/mat
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { Position } from '@/types/card'
 import { toggle } from '@/store/card'
-import { setInfo, clearSnp, setAmount } from '@/store/gaskets/snp'
+import { setInfo, clearSnp, setAmount, setDesignDrawing } from '@/store/gaskets/snp'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
@@ -71,6 +71,7 @@ export const Result: FC<Props> = () => {
 			create(position)
 			// dispatch(addPosition(position))
 		}
+		dispatch(setDesignDrawing(null))
 		setAlert({ type: 'success', message: '', open: true })
 	}
 

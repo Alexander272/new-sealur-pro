@@ -1,4 +1,11 @@
-import type { IAnalyticFullClient, IAnalyticFullOrder, IAnalytics, IOrderParams, IUserParams } from '@/types/analytics'
+import type {
+	IAnalyticFullClient,
+	IAnalyticFullOrder,
+	IAnalytics,
+	IOrderCount,
+	IOrderParams,
+	IUserParams,
+} from '@/types/analytics'
 import type { IUserData } from '@/types/user'
 import { api } from './base'
 import { proUrl } from './snp'
@@ -22,6 +29,10 @@ type AnalyticsOrderResponse = {
 
 type UserResponse = {
 	data: IUserData
+}
+
+type OrderCountResponse = {
+	data: IOrderCount[]
 }
 
 // кусок стора для аналитики
@@ -70,9 +81,18 @@ export const analyticApi = api.injectEndpoints({
 				]),
 			}),
 		}),
+
+		getOrdersCount: builder.query<OrderCountResponse, null>({
+			query: () => `${proUrl}/orders/analytics/count`,
+		}),
 	}),
 	overrideExisting: false,
 })
 
-export const { useGetAnalyticsQuery, useGetAnalyticUsersQuery, useGetAnalyticsOrdersQuery, useGetUserDataQuery } =
-	analyticApi
+export const {
+	useGetAnalyticsQuery,
+	useGetAnalyticUsersQuery,
+	useGetAnalyticsOrdersQuery,
+	useGetUserDataQuery,
+	useGetOrdersCountQuery,
+} = analyticApi

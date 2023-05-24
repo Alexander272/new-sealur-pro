@@ -83,6 +83,16 @@ export default function User() {
 								<TableCell>Пришел от менеджера</TableCell>
 								<TableCell>{data?.data.useLink ? 'Да' : 'Нет'}</TableCell>
 							</TableRow>
+							<TableRow>
+								<TableCell>Пришел с landing</TableCell>
+								<TableCell>{data?.data.useLanding ? 'Да' : 'Нет'}</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>Дата последнего посещения</TableCell>
+								<TableCell>
+									{data?.data.lastVisit ? stampToDate(+(data?.data.lastVisit || 0)) : '-'}
+								</TableCell>
+							</TableRow>
 						</TableBody>
 					</Table>
 				</TableContainer>

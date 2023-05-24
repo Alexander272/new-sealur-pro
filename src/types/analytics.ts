@@ -78,3 +78,10 @@ export interface IOrder {
 	date: string
 	status: 'new' | 'work' | 'finish'
 }
+
+export interface IOrderCount {
+	id: string
+	name: string
+	company: string
+	orderCount: number
+}
