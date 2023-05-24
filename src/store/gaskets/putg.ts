@@ -173,6 +173,11 @@ export const putgSlice = createSlice({
 		// установка конфигурации
 		setMainConfiguration: (state, action: PayloadAction<IPutgConfiguration>) => {
 			state.main.configuration = action.payload
+
+			state.size.d4 = ''
+			state.size.d3 = ''
+			state.size.d2 = ''
+			state.size.d1 = ''
 		},
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<IPutgStandard>) => {

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Typography } from '@mui/material'
-import { useGetPutgDataQuery } from '@/store/api/putg'
+import { useGetPutgDataQuery, useGetPutgSizeQuery } from '@/store/api/putg'
 import { useAppSelector } from '@/hooks/useStore'
 import { Loader } from '@/components/Loader/Loader'
 import { Column, ImageContainer, SizeContainer } from '@/pages/Gasket/gasket.style'
@@ -8,6 +8,7 @@ import { PutgImage } from './components/PutgImage/PutgImage'
 import { SizesBlockPutg } from './components/SizesBlock/SizesBlock'
 import { StandardSize } from './StandardSize'
 import { AnotherSize } from './AnotherSize'
+import ConfigurationSize from './ConfigurationSize'
 
 type Props = {}
 
@@ -15,15 +16,33 @@ export const Size: FC<Props> = () => {
 	const material = useAppSelector(state => state.putg.material)
 	const main = useAppSelector(state => state.putg.main)
 
-	const { data, isError, isLoading } = useGetPutgDataQuery(
+	// const { data, isError, isLoading } = useGetPutgDataQuery(
+	// 	{
+	// 		standardId: main.standard?.id || '',
+	// 		constructionId: material.construction?.id || '',
+	// 		baseConstructionId: material.construction?.baseId || '',
+	// 		configuration: main.configuration?.code || '',
+	// 	},
+	// 	{ skip: !main.standard?.id || !material.construction }
+	// )
+
+	const { data, isError, isLoading } = useGetPutgSizeQuery(
 		{
-			standardId: main.standard?.id || '',
-			constructionId: material.construction?.id || '',
+			flangeTypeId: main.flangeType?.id || '',
 			baseConstructionId: material.construction?.baseId || '',
-			configuration: main.configuration?.code || '',
+			baseFillerId: material.filler?.baseId || '',
 		},
-		{ skip: !main.standard?.id || !material.construction }
+		{
+			skip:
+				!main.flangeType?.id ||
+				!material.construction ||
+				!material.filler ||
+				main.configuration?.code != 'round',
+		}
 	)
+
+	console.log(isLoading)
+	console.log(data)
 
 	return (
 		<SizeContainer rowStart={5} rowEnd={9}>
@@ -36,22 +55,29 @@ export const Size: FC<Props> = () => {
 			) : (
 				// TODO придумать как лучше показывать loader
 				<Column width={40}>
-					{!data || isLoading ? (
+					{isLoading ? (
 						<Loader background='fill' />
 					) : data?.data.sizes ? (
 						<StandardSize sizes={data.data.sizes} />
 					) : (
-						<AnotherSize />
+						<>
+							{main.configuration?.code !== 'round' && <ConfigurationSize />}
+							{main.configuration?.code === 'round' && <AnotherSize />}
+						</>
 					)}
 				</Column>
 			)}
 			<Column width={60}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
 				{/* <PlugImage /> */}
-				<ImageContainer>
-					<PutgImage type={material.type} construction={material.construction} />
-					<SizesBlockPutg />
-				</ImageContainer>
+				{main.configuration?.code == 'round' && (
+					<ImageContainer>
+						<PutgImage type={material.type} construction={material.construction} />
+						<SizesBlockPutg />
+					</ImageContainer>
+				)}
+
+				{main.configuration?.code != 'round' && <></>}
 
 				{/* //TODO понять как определять какую картинку вывести */}
 				{/* {!main.snpType ? (

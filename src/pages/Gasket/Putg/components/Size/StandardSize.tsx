@@ -30,10 +30,10 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 				dn: s.dn,
 				dnMm: s.dnMm || '',
 				pn: s.sizes[0].pn[0],
-				d4: s.sizes[0].d4,
+				d4: s.sizes[0]?.d4 || '',
 				d3: s.sizes[0].d3,
 				d2: s.sizes[0].d2,
-				d1: s.sizes[0].d1,
+				d1: s.sizes[0]?.d1 || '',
 				h: s.sizes[0].h[0],
 				another: '',
 			}
@@ -54,10 +54,10 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 			dn: s.dn,
 			dnMm: s.dnMm || '',
 			pn: s.sizes[0].pn[0],
-			d4: s.sizes[0].d4.replace(',', '.'),
+			d4: (s.sizes[0]?.d4 || '').replace(',', '.'),
 			d3: s.sizes[0].d3.replace(',', '.'),
 			d2: s.sizes[0].d2.replace(',', '.'),
-			d1: s.sizes[0].d1.replace(',', '.'),
+			d1: (s.sizes[0]?.d1 || '').replace(',', '.'),
 			h: s.sizes[0].h[0].replace(',', '.'),
 			another: '',
 		}
@@ -83,10 +83,10 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 			pn,
 		}
 
-		let newD4 = curSize.sizes[sizeIdx].d4.replace(',', '.')
+		let newD4 = (curSize.sizes[sizeIdx]?.d4 || '').replace(',', '.')
 		let newD3 = curSize.sizes[sizeIdx].d3.replace(',', '.')
 		let newD2 = curSize.sizes[sizeIdx].d2.replace(',', '.')
-		let newD1 = curSize.sizes[sizeIdx].d1.replace(',', '.')
+		let newD1 = (curSize.sizes[sizeIdx]?.d1 || '').replace(',', '.')
 
 		if (size.d4 != newD4 || size.d3 != newD3 || size.d2 != newD2 || size.d1 != newD1) {
 			const s = {

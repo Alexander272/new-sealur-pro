@@ -45,6 +45,19 @@ type PutgDataResponse = {
 	}
 }
 
+type PutgSizeRequest = {
+	flangeTypeId: string
+	baseConstructionId: string
+	baseFillerId: string
+	// configuration: string
+}
+type PutgSizeResponse = {
+	data: {
+		// fillers: IFiller[]
+		sizes: IPutgSize[]
+	}
+}
+
 type PutgRequest = {
 	fillerId: string
 	baseId: string
@@ -82,6 +95,20 @@ export const putgApi = api.injectEndpoints({
 					['configuration', req.configuration],
 					['baseConstructionId', req.baseConstructionId],
 					// ['fillerId', req.fillerId],
+					// ['changeStandard', `${req.changeStandard}`],
+				]),
+			}),
+		}),
+		// получение размеров путг
+		getPutgSize: builder.query<PutgSizeResponse, PutgSizeRequest>({
+			query: req => ({
+				url: `${proUrl}/putg/sizes`,
+				method: 'GET',
+				params: new URLSearchParams([
+					['flangeTypeId', req.flangeTypeId],
+					['baseConstructionId', req.baseConstructionId],
+					['baseFillerId', req.baseFillerId],
+					// ['configuration', req.configuration],
 					// ['changeStandard', `${req.changeStandard}`],
 				]),
 			}),
@@ -128,4 +155,4 @@ export const putgApi = api.injectEndpoints({
 	overrideExisting: false,
 })
 
-export const { useGetPutgBaseQuery, useGetPutgDataQuery, useGetPutgQuery } = putgApi
+export const { useGetPutgBaseQuery, useGetPutgDataQuery, useGetPutgQuery, useGetPutgSizeQuery } = putgApi
