@@ -1,8 +1,6 @@
 import { useAppSelector } from '@/hooks/useStore'
 import { Container, Description, Size } from './size.style'
 
-const sizePositionsPutg = {}
-
 export const SizesBlockPutg = () => {
 	const material = useAppSelector(state => state.putg.material)
 	const sizes = useAppSelector(state => state.putg.size)

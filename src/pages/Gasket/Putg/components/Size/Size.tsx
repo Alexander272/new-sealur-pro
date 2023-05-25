@@ -1,14 +1,24 @@
 import { FC } from 'react'
 import { Typography } from '@mui/material'
-import { useGetPutgDataQuery, useGetPutgSizeQuery } from '@/store/api/putg'
+import { useGetPutgSizeQuery } from '@/store/api/putg'
 import { useAppSelector } from '@/hooks/useStore'
 import { Loader } from '@/components/Loader/Loader'
-import { Column, ImageContainer, SizeContainer } from '@/pages/Gasket/gasket.style'
+import { Column, Image, ImageContainer, SizeContainer } from '@/pages/Gasket/gasket.style'
 import { PutgImage } from './components/PutgImage/PutgImage'
+import { PutgPartImage } from './components/PutgImage/PutgPartImage'
 import { SizesBlockPutg } from './components/SizesBlock/SizesBlock'
 import { StandardSize } from './StandardSize'
 import { AnotherSize } from './AnotherSize'
 import ConfigurationSize from './ConfigurationSize'
+
+//TODO заменить изображения
+import ovalImage from '@/assets/putg/ov.webp'
+import rectangularImage from '@/assets/putg/pr.webp'
+
+const images = {
+	oval: ovalImage,
+	rectangular: rectangularImage,
+}
 
 type Props = {}
 
@@ -40,9 +50,6 @@ export const Size: FC<Props> = () => {
 				main.configuration?.code != 'round',
 		}
 	)
-
-	console.log(isLoading)
-	console.log(data)
 
 	return (
 		<SizeContainer rowStart={5} rowEnd={9}>
@@ -77,7 +84,25 @@ export const Size: FC<Props> = () => {
 					</ImageContainer>
 				)}
 
-				{main.configuration?.code != 'round' && <></>}
+				{main.configuration?.code != 'round' && (
+					<>
+						<ImageContainer padding='0'>
+							<PutgPartImage type={material.type} construction={material.construction} />
+						</ImageContainer>
+
+						<Typography fontWeight='bold'>Размеры прокладки</Typography>
+						<ImageContainer padding='0 20px'>
+							<Image
+								src={images[main.configuration?.code || 'rectangular']}
+								alt='gasket drawing'
+								maxWidth={'400px'}
+								width={600}
+								height={255}
+							/>
+							<SizesBlockPutg />
+						</ImageContainer>
+					</>
+				)}
 
 				{/* //TODO понять как определять какую картинку вывести */}
 				{/* {!main.snpType ? (

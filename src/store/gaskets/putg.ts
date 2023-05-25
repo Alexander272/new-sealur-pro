@@ -107,6 +107,7 @@ const initialState: ISNPState = {
 		pn: { mpa: '', kg: '' },
 		h: '',
 		another: '',
+		useDimensions: true,
 	},
 	// конструктивные элементы
 	design: {
@@ -178,6 +179,7 @@ export const putgSlice = createSlice({
 			state.size.d3 = ''
 			state.size.d2 = ''
 			state.size.d1 = ''
+			state.size.useDimensions = true
 		},
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<IPutgStandard>) => {
@@ -346,6 +348,15 @@ export const putgSlice = createSlice({
 					state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
 			}
 		},
+		// Размеры задаются через Габариты?
+		setUseDimensions: (state, action: PayloadAction<boolean>) => {
+			state.size.useDimensions = action.payload
+
+			state.size.d4 = ''
+			state.size.d3 = ''
+			state.size.d2 = ''
+			state.size.d1 = ''
+		},
 
 		// установка количества
 		setAmount: (state, action: PayloadAction<string>) => {
@@ -379,6 +390,7 @@ export const {
 	setSizePn,
 	setSizeMain,
 	setSizeThickness,
+	setUseDimensions,
 	setAmount,
 } = putgSlice.actions
 

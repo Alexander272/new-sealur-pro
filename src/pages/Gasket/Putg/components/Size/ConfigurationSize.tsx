@@ -1,23 +1,37 @@
 import { ChangeEvent, useState } from 'react'
 import { Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { setSizeThickness } from '@/store/gaskets/putg'
+import { setSizeMain, setSizeThickness, setUseDimensions } from '@/store/gaskets/putg'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Input } from '@/components/Input/input.style'
 
 export default function ConfigurationSize() {
-	const [useDimensions, setUseDimensions] = useState(true)
 	const material = useAppSelector(state => state.putg.material)
+	const useDimensions = useAppSelector(state => state.putg.size.useDimensions)
 	const size = useAppSelector(state => state.putg.size)
 	const sizeErr = useAppSelector(state => state.putg.sizeError)
 
 	const dispatch = useAppDispatch()
 
 	const changeUseDimensions = (value: string) => {
-		setUseDimensions(value === 'dimensions')
+		dispatch(setUseDimensions(value === 'dimensions'))
+		// setUseDimensions(value === 'dimensions')
 	}
 
-	//order with error/ id: d052ceae-9bda-4db2-8d6f-b1611a1f557f
+	const sizeHandler = (name: 'd4' | 'd3' | 'd2' | 'd1') => (event: React.ChangeEvent<HTMLInputElement>) => {
+		const temp = event.target.value.replace(',', '.')
+
+		if (event.target.value === '' || !isNaN(+temp)) {
+			let value: number | string
+
+			if (temp[temp.length - 1] == '.') value = temp
+			else value = Math.trunc(+temp * 10) / 10
+
+			if (event.target.value === '') value = event.target.value
+
+			dispatch(setSizeMain({ [name]: value.toString() }))
+		}
+	}
 
 	const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		const temp = event.target.value.replace(',', '.')
@@ -109,8 +123,8 @@ export default function ConfigurationSize() {
 					<Typography fontWeight='bold'>C, мм</Typography>
 					<Input
 						name='C'
-						// value={size.d4}
-						// onChange={sizeHandler('d4')}
+						// value={size.d1}
+						// onChange={sizeHandler('d1')}
 						// error={sizeErr.d4Err || sizeErr.emptyD4}
 						// helperText={
 						// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')

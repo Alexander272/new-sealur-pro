@@ -115,4 +115,5 @@ export interface ISizeBlockPutg {
 	pn: PN
 	h: string
 	another: string
+	useDimensions?: boolean
 }

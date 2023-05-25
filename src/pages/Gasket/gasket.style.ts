@@ -127,10 +127,13 @@ export const PlugImage = styled.div`
 	border-radius: 12px;
 `
 
-export const ImageContainer = styled.div`
+type ImageContainerProps = {
+	padding?: string
+}
+export const ImageContainer = styled.div<ImageContainerProps>`
 	position: relative;
 	margin: auto;
-	padding: 20px 0;
+	padding: ${props => (props.padding ? props.padding : '20px 0')};
 	width: fit-content;
 	/* width: 100%;
 	height: 100%; */
