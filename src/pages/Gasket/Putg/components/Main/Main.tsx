@@ -32,21 +32,24 @@ type Props = {}
 
 export const Main: FC<Props> = () => {
 	const main = useAppSelector(state => state.putg.main)
-	const material = useAppSelector(state => state.putg.material)
-	const positionId = useAppSelector(state => state.putg.positionId)
+	// const material = useAppSelector(state => state.putg.material)
+	// const positionId = useAppSelector(state => state.putg.positionId)
 
 	const standards = useAppSelector(state => state.putg.standards)
 	const configurations = useAppSelector(state => state.putg.configurations)
 	const flangeTypes = useAppSelector(state => state.putg.flangeTypes)
 
+	const positionId = useAppSelector(state => state.card.activePosition?.id)
+
 	const dispatch = useAppDispatch()
 
+	//TODO при отправлении id стандарта список стандартов не возвращается
+	// это проблема тк при переходе со страницы снп (через редактирование) стандартов может не быть
 	const {
 		data: base,
 		isError: isErrorBase,
 		isLoading: isLoadingBase,
-		// } = useGetPutgBaseQuery({ standardId: main.standard?.id || '', typeFlangeId: main.flangeType?.id || '' })
-	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '' })
+	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '', empty: !standards.length })
 
 	// const { data, isError, isLoading } = useGetPutgDataQuery(
 	// 	{
@@ -61,17 +64,18 @@ export const Main: FC<Props> = () => {
 
 	useEffect(() => {
 		if (base) {
+			//TODO исправить получение всех этих вещей
 			if (base.data.configurations) dispatch(setConfigurations(base.data.configurations))
 			if (base.data.standards) dispatch(setStandards(base.data.standards))
-			if (base.data.materials?.rotaryPlug) dispatch(setMaterials(base.data.materials))
-			if (base.data.mounting) dispatch(setMounting(base.data.mounting))
+			if (base.data.mounting) dispatch(setMounting({ mountings: base.data.mounting, positionId }))
 
+			if (base.data.materials?.rotaryPlug) dispatch(setMaterials({ materials: base.data.materials, positionId }))
 			if (base.data.flangeTypes) {
-				dispatch(setFlangeTypes(base.data.flangeTypes))
+				dispatch(setFlangeTypes({ types: base.data.flangeTypes, positionId }))
 				// const flange = base.data.flangeTypes[0]
 				// dispatch(setMainFlangeType(flange))
 			}
-			if (base?.data.fillers) dispatch(setFiller(base.data.fillers || []))
+			if (base?.data.fillers) dispatch(setFiller({ fillers: base.data.fillers || [], positionId }))
 
 			// if (base.data.constructions) dispatch(setConstruction(base.data.constructions[0]))
 		}
@@ -124,18 +128,16 @@ export const Main: FC<Props> = () => {
 			{false ? (
 				<Column>
 					{/* {isError || isErrorStandards ? ( */}
-					{true ? (
+					{isErrorBase && (
 						<Typography variant='h6' color={'error'} align='center'>
 							Не удалось загрузить стандарты на фланец или конфигурации
 						</Typography>
-					) : (
-						<Loader background='fill' />
 					)}
 				</Column>
 			) : (
 				<Column>
 					<Typography fontWeight='bold'>Конфигурация прокладки</Typography>
-					<RadioGroup onChange={gasketHandler}>
+					<RadioGroup onChange={gasketHandler} disabled={Boolean(positionId)}>
 						{configurations.map(c => (
 							<RadioItem key={c.id} value={c.code} active={c.code == main.configuration?.code}>
 								{c.title}

@@ -26,8 +26,9 @@ export interface ISNPState {
 	// materialsOr?: ISNPMaterial
 	materials?: ISnpMaterial
 
-	cardIndex?: number
-	positionId?: string
+	// cardIndex?: number
+	// positionId?: string
+
 	main: IMainSnp
 	material: IMaterialBlockSnp
 	size: ISizeBlockSnp
@@ -138,26 +139,28 @@ export const snpSlice = createSlice({
 	initialState,
 	reducers: {
 		// установка списка наполнителей
-		setFiller: (state, action: PayloadAction<IFiller[]>) => {
-			state.fillers = action.payload
-			if (state.positionId === undefined) {
-				state.material.filler = action.payload[0]
+		setFiller: (state, action: PayloadAction<{ fillers: IFiller[]; positionId?: string }>) => {
+			state.fillers = action.payload.fillers
+			if (action.payload.positionId === undefined) {
+				state.material.filler = action.payload.fillers[0]
 			}
 		},
 		// установка списка креплений
-		setMounting: (state, action: PayloadAction<IMounting[]>) => {
-			state.mountings = action.payload
-			if (state.positionId === undefined) {
-				state.design.mounting.code = action.payload[0].title
+		setMounting: (state, action: PayloadAction<{ mountings: IMounting[]; positionId?: string }>) => {
+			state.mountings = action.payload.mountings
+			if (action.payload.positionId === undefined) {
+				state.design.mounting.code = action.payload.mountings[0].title
 			}
 		},
 		// установка списка материалов
-		setMaterials: (state, action: PayloadAction<ISnpMaterial>) => {
-			state.materials = action.payload
-			if (state.positionId === undefined) {
-				state.material.frame = action.payload.frame[action.payload.frameDefaultIndex || 0]
-				state.material.innerRing = action.payload.innerRing[action.payload.innerRingDefaultIndex || 0]
-				state.material.outerRing = action.payload.outerRing[action.payload.outerRingDefaultIndex || 0]
+		setMaterials: (state, action: PayloadAction<{ material: ISnpMaterial; positionId?: string }>) => {
+			state.materials = action.payload.material
+			if (action.payload.positionId === undefined) {
+				state.material.frame = action.payload.material.frame[action.payload.material.frameDefaultIndex || 0]
+				state.material.innerRing =
+					action.payload.material.innerRing[action.payload.material.innerRingDefaultIndex || 0]
+				state.material.outerRing =
+					action.payload.material.outerRing[action.payload.material.outerRingDefaultIndex || 0]
 			}
 		},
 
@@ -312,16 +315,22 @@ export const snpSlice = createSlice({
 		// сброс материалов и конструктивных элементов
 		clearMaterialAndDesign: (state, action: PayloadAction<ISnp>) => {
 			if (!action.payload.hasInnerRing) state.material.innerRing = undefined
-			else if (state.positionId === undefined)
-				state.material.innerRing = state.materials?.innerRing[state.materials.innerRingDefaultIndex || 0]
+			else state.material.innerRing = state.materials?.innerRing[state.materials.innerRingDefaultIndex || 0]
+
+			// else if (state.positionId === undefined)
+			// 	state.material.innerRing = state.materials?.innerRing[state.materials.innerRingDefaultIndex || 0]
 
 			if (!action.payload.hasFrame) state.material.frame = undefined
-			else if (state.positionId === undefined)
-				state.material.frame = state.materials?.frame[state.materials.frameDefaultIndex || 0]
+			else state.material.frame = state.materials?.frame[state.materials.frameDefaultIndex || 0]
+
+			// else if (state.positionId === undefined)
+			// 	state.material.frame = state.materials?.frame[state.materials.frameDefaultIndex || 0]
 
 			if (!action.payload.hasOuterRing) state.material.outerRing = undefined
-			else if (state.positionId === undefined)
-				state.material.outerRing = state.materials?.outerRing[state.materials.outerRingDefaultIndex || 0]
+			else state.material.outerRing = state.materials?.outerRing[state.materials.outerRingDefaultIndex || 0]
+
+			// else if (state.positionId === undefined)
+			// 	state.material.outerRing = state.materials?.outerRing[state.materials.outerRingDefaultIndex || 0]
 
 			if (!action.payload.hasJumper) state.design.jumper.hasJumper = false
 			if (!action.payload.hasMounting) state.design.mounting.hasMounting = false
@@ -375,40 +384,78 @@ export const snpSlice = createSlice({
 		},
 
 		// выбор позиции (для редактирования)
+		// setSnp: (
+		// 	state,
+		// 	action: PayloadAction<{
+		// 		main: IMainSnp
+		// 		sizes: ISizeBlockSnp
+		// 		materials: IMaterialBlockSnp
+		// 		design: IDesignBlockSnp
+		// 		amount: string
+		// 		cardIndex: number
+		// 		positionId: string
+		// 	}>
+		// ) => {
+		// 	state.cardIndex = action.payload.cardIndex
+		// 	state.positionId = action.payload.positionId
+		// 	state.main = action.payload.main
+		// 	state.size = action.payload.sizes
+
+		// 	state.material = action.payload.materials
+
+		// 	state.design.hasHole = action.payload.design.hasHole || false
+		// 	state.design.jumper.hasJumper = action.payload.design.jumper.hasJumper || false
+		// 	state.design.jumper.code = action.payload.design.jumper.code
+		// 	state.design.jumper.width = action.payload.design.jumper.width
+		// 	state.design.mounting.hasMounting = action.payload.design.mounting.hasMounting || false
+		// 	state.design.mounting.code = action.payload.design.mounting.code
+		// 	state.design.drawing = action.payload.design.drawing
+
+		// 	if (action.payload.design.drawing) {
+		// 		const parts = action.payload.design.drawing.split('/')
+		// 		const drawing: IDrawing = {
+		// 			id: parts[parts.length - 2],
+		// 			name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
+		// 			origName: parts[parts.length - 1],
+		// 			link: action.payload.design.drawing,
+		// 			group: parts[parts.length - 3],
+		// 		}
+		// 		state.drawing = drawing
+		// 	}
+
+		// 	state.amount = action.payload.amount
+		// },
 		setSnp: (
 			state,
 			action: PayloadAction<{
-				main: IMainSnp
-				sizes: ISizeBlockSnp
-				materials: IMaterialBlockSnp
-				design: IDesignBlockSnp
+				data: {
+					main: IMainSnp
+					size: ISizeBlockSnp
+					material: IMaterialBlockSnp
+					design: IDesignBlockSnp
+				}
 				amount: string
-				cardIndex: number
-				positionId: string
 			}>
 		) => {
-			state.cardIndex = action.payload.cardIndex
-			state.positionId = action.payload.positionId
-			state.main = action.payload.main
-			state.size = action.payload.sizes
+			state.main = action.payload.data.main
+			state.size = action.payload.data.size
+			state.material = action.payload.data.material
 
-			state.material = action.payload.materials
+			state.design.hasHole = action.payload.data.design.hasHole || false
+			state.design.jumper.hasJumper = action.payload.data.design.jumper.hasJumper || false
+			state.design.jumper.code = action.payload.data.design.jumper.code
+			state.design.jumper.width = action.payload.data.design.jumper.width
+			state.design.mounting.hasMounting = action.payload.data.design.mounting.hasMounting || false
+			state.design.mounting.code = action.payload.data.design.mounting.code
+			state.design.drawing = action.payload.data.design.drawing
 
-			state.design.hasHole = action.payload.design.hasHole || false
-			state.design.jumper.hasJumper = action.payload.design.jumper.hasJumper || false
-			state.design.jumper.code = action.payload.design.jumper.code
-			state.design.jumper.width = action.payload.design.jumper.width
-			state.design.mounting.hasMounting = action.payload.design.mounting.hasMounting || false
-			state.design.mounting.code = action.payload.design.mounting.code
-			state.design.drawing = action.payload.design.drawing
-
-			if (action.payload.design.drawing) {
-				const parts = action.payload.design.drawing.split('/')
+			if (action.payload.data.design.drawing) {
+				const parts = action.payload.data.design.drawing.split('/')
 				const drawing: IDrawing = {
 					id: parts[parts.length - 2],
 					name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
 					origName: parts[parts.length - 1],
-					link: action.payload.design.drawing,
+					link: action.payload.data.design.drawing,
 					group: parts[parts.length - 3],
 				}
 				state.drawing = drawing
@@ -418,8 +465,10 @@ export const snpSlice = createSlice({
 		},
 		// сброс выбранной позиции
 		clearSnp: state => {
-			state.cardIndex = undefined
-			state.positionId = undefined
+			// state.cardIndex = undefined
+			// state.positionId = undefined
+			state.drawing = undefined
+			state.design.drawing = undefined
 		},
 	},
 })

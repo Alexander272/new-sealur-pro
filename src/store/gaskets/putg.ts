@@ -27,13 +27,15 @@ export interface ISNPState {
 	mountings: IMounting[]
 	materials?: IPutgMaterial
 
-	cardIndex?: number
-	positionId?: string
+	// cardIndex?: number
+	// positionId?: string
+
 	main: IMainBlockPutg
 	material: IMaterialBlockPutg
 	size: ISizeBlockPutg
 	design: IDesignBlockPutg
 	amount: string
+	info: string
 
 	hasError: boolean
 	hasSizeError: boolean
@@ -123,6 +125,8 @@ const initialState: ISNPState = {
 			code: '',
 		},
 	},
+	// доп. информация к позиции
+	info: '',
 	// количество прокладок
 	amount: '',
 }
@@ -142,33 +146,37 @@ export const putgSlice = createSlice({
 			state.main.configuration = action.payload[0]
 		},
 		// установка списка наполнителей
-		setFiller: (state, action: PayloadAction<IFiller[]>) => {
-			state.fillers = action.payload
-			if (state.positionId === undefined) {
-				state.material.filler = action.payload[0]
+		setFiller: (state, action: PayloadAction<{ fillers: IFiller[]; positionId?: string }>) => {
+			state.fillers = action.payload.fillers
+			if (action.payload.positionId === undefined) {
+				state.material.filler = action.payload.fillers[0]
 			}
 		},
 		// установка типов фланцев
-		setFlangeTypes: (state, action: PayloadAction<IFlangeType[]>) => {
-			state.flangeTypes = action.payload
-			state.main.flangeType = action.payload[0]
+		setFlangeTypes: (state, action: PayloadAction<{ types: IFlangeType[]; positionId?: string }>) => {
+			state.flangeTypes = action.payload.types
+			if (action.payload.positionId === undefined) {
+				state.main.flangeType = action.payload.types[0]
+			}
 		},
 		// установка списка креплений
-		setMounting: (state, action: PayloadAction<IMounting[]>) => {
-			state.mountings = action.payload
-			if (state.positionId === undefined) {
-				//TODO
-				// state.design.mounting.code = action.payload[0].title
+		setMounting: (state, action: PayloadAction<{ mountings: IMounting[]; positionId?: string }>) => {
+			state.mountings = action.payload.mountings
+			if (action.payload.positionId === undefined) {
+				state.design.mounting.code = action.payload.mountings[0].title
 			}
 		},
 		// установка списка материалов
-		setMaterials: (state, action: PayloadAction<IPutgMaterial>) => {
-			state.materials = action.payload
-			// if (state.positionId === undefined) {
-			// 	state.material.rotaryPlug = action.payload.rotaryPlug[action.payload.rotaryPlugDefaultIndex || 0]
-			// 	state.material.innerRing = action.payload.innerRing[action.payload.innerRingDefaultIndex || 0]
-			// 	state.material.outerRing = action.payload.outerRing[action.payload.outerRingDefaultIndex || 0]
-			// }
+		setMaterials: (state, action: PayloadAction<{ materials: IPutgMaterial; positionId?: string }>) => {
+			state.materials = action.payload.materials
+			if (action.payload.positionId === undefined) {
+				state.material.rotaryPlug =
+					action.payload.materials.rotaryPlug[action.payload.materials.rotaryPlugDefaultIndex || 0]
+				state.material.innerRing =
+					action.payload.materials.innerRing[action.payload.materials.innerRingDefaultIndex || 0]
+				state.material.outerRing =
+					action.payload.materials.outerRing[action.payload.materials.outerRingDefaultIndex || 0]
+			}
 		},
 
 		// установка конфигурации
@@ -196,7 +204,7 @@ export const putgSlice = createSlice({
 		},
 		// установка кода типа прокладки
 		setType: (state, action: PayloadAction<IPutgType>) => {
-			state.material.type = action.payload
+			state.material.putgType = action.payload
 		},
 		// установка тип конструкции
 		setConstruction: (state, action: PayloadAction<IConstruction>) => {
@@ -280,6 +288,10 @@ export const putgSlice = createSlice({
 			state.size = action.payload
 			state.sizeError.emptySize = false
 			state.hasSizeError = false
+
+			if (!action.payload.h) {
+				state.size.h = '3.0'
+			}
 		},
 		// установка условного прохода
 		setSizePn: (
@@ -337,8 +349,8 @@ export const putgSlice = createSlice({
 			if (action.payload.another != undefined) {
 				state.size.another = action.payload.another
 
-				let minThickness = state.material.type?.minThickness || -1
-				let maxThickness = state.material.type?.maxThickness || 99999
+				let minThickness = state.material.putgType?.minThickness || -1
+				let maxThickness = state.material.putgType?.maxThickness || 99999
 
 				state.sizeError.thickness =
 					+action.payload.another.replaceAll(',', '.') < minThickness ||
@@ -358,9 +370,67 @@ export const putgSlice = createSlice({
 			state.size.d1 = ''
 		},
 
+		// установка доп. инфы
+		setInfo: (state, action: PayloadAction<string>) => {
+			state.info = action.payload
+		},
 		// установка количества
 		setAmount: (state, action: PayloadAction<string>) => {
 			state.amount = action.payload
+		},
+
+		// выбор позиции (для редактирования)
+		setPutg: (
+			state,
+			action: PayloadAction<{
+				data: {
+					main: IMainBlockPutg
+					size: ISizeBlockPutg
+					material: IMaterialBlockPutg
+					design: IDesignBlockPutg
+				}
+				amount: string
+				info?: string
+				// cardIndex: number
+				// positionId: string
+			}>
+		) => {
+			// state.cardIndex = action.payload.cardIndex
+			// state.positionId = action.payload.positionId
+
+			state.main = action.payload.data.main
+			state.size = action.payload.data.size
+			state.material = action.payload.data.material
+
+			state.design.hasHole = action.payload.data.design.hasHole || false
+			state.design.jumper.hasJumper = action.payload.data.design.jumper.hasJumper || false
+			state.design.jumper.code = action.payload.data.design.jumper.code
+			state.design.jumper.width = action.payload.data.design.jumper.width
+			state.design.mounting.hasMounting = action.payload.data.design.mounting.hasMounting || false
+			state.design.mounting.code = action.payload.data.design.mounting.code
+			state.design.drawing = action.payload.data.design.drawing
+
+			if (action.payload.data.design.drawing) {
+				const parts = action.payload.data.design.drawing.split('/')
+				const drawing: IDrawing = {
+					id: parts[parts.length - 2],
+					name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
+					origName: parts[parts.length - 1],
+					link: action.payload.data.design.drawing,
+					group: parts[parts.length - 3],
+				}
+				state.drawing = drawing
+			}
+
+			state.amount = action.payload.amount
+			state.info = action.payload.info || ''
+		},
+		// сброс выбранной позиции
+		clearPutg: state => {
+			// state.cardIndex = undefined
+			// state.positionId = undefined
+			state.drawing = undefined
+			state.design.drawing = undefined
 		},
 	},
 })
@@ -391,7 +461,12 @@ export const {
 	setSizeMain,
 	setSizeThickness,
 	setUseDimensions,
+
+	setInfo,
 	setAmount,
+
+	setPutg,
+	clearPutg,
 } = putgSlice.actions
 
 export default putgSlice.reducer

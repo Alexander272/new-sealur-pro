@@ -1,19 +1,22 @@
 import { Alert, Button, FormControl, IconButton, Snackbar, Typography } from '@mui/material'
 import { ChangeEvent, FC, MouseEvent, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
+import { useDebounce } from '@/hooks/debounce'
 import { clearSnp, setSnp } from '@/store/gaskets/snp'
-import { setInfo, setOrder, toggle } from '@/store/card'
+import { setActive, setInfo, setOrder, toggle } from '@/store/card'
 import {
 	useDeletePositionMutation,
 	useGetOrderQuery,
 	useSaveInfoMutation,
 	useSaveOrderMutation,
 } from '@/store/api/order'
-import { Loader } from '@/components/Loader/Loader'
-import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 import { sendMetric } from '@/services/metrics'
+import { Loader } from '@/components/Loader/Loader'
+import { putgRoute, snpRoute } from '../Gasket/Gasket'
+import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 import { Input } from '@/components/Input/input.style'
-import { useDebounce } from '@/hooks/debounce'
+import { setPutg } from '@/store/gaskets/putg'
 
 type Props = {}
 
@@ -25,7 +28,9 @@ const Card: FC<Props> = () => {
 	const info = useAppSelector(state => state.card.info)
 	const positions = useAppSelector(state => state.card.positions)
 	// const snpCardIndex = useAppSelector(state => state.snp.cardIndex)
-	const positionId = useAppSelector(state => state.snp.positionId)
+	// const positionId = useAppSelector(state => state.snp.positionId)
+
+	const positionId = useAppSelector(state => state.card.activePosition?.id)
 
 	const role = useAppSelector(state => state.user.roleCode)
 	const userId = useAppSelector(state => state.user.roleCode)
@@ -40,6 +45,8 @@ const Card: FC<Props> = () => {
 	const [saveInfo] = useSaveInfoMutation()
 
 	const dispatch = useAppDispatch()
+
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		if (data) {
@@ -80,18 +87,38 @@ const Card: FC<Props> = () => {
 
 	const saveHandler = (index: number) => {
 		const position = positions[index]
-		if (!position.type || position.type === 'Snp') {
+
+		dispatch(setActive({ index, id: position.id, type: position.type }))
+
+		if (position.type === 'Snp') {
+			// const snp = {
+			// 	cardIndex: index,
+			// 	positionId: position.id,
+			// 	amount: position.amount,
+			// 	main: position.snpData.main,
+			// 	sizes: position.snpData.size,
+			// 	materials: position.snpData.material,
+			// 	design: position.snpData.design,
+			// }
 			const snp = {
-				cardIndex: index,
-				positionId: position.id,
 				amount: position.amount,
-				main: position.snpData.main,
-				sizes: position.snpData.size,
-				materials: position.snpData.material,
-				design: position.snpData.design,
+				data: position.snpData,
 			}
 
 			dispatch(setSnp(snp))
+			navigate(snpRoute)
+		}
+		if (position.type === 'Putg') {
+			const putg = {
+				// cardIndex: index,
+				// positionId: position.id,
+				amount: position.amount,
+				info: position.info,
+				data: position.putgData,
+			}
+
+			dispatch(setPutg(putg))
+			navigate(putgRoute)
 		}
 	}
 

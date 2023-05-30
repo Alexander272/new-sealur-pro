@@ -14,9 +14,11 @@ type Props = {
 export const StandardSize: FC<Props> = ({ sizes }) => {
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
-	const cardIndex = useAppSelector(state => state.putg.cardIndex)
+	// const cardIndex = useAppSelector(state => state.putg.cardIndex)
 	const size = useAppSelector(state => state.putg.size)
 	const sizeErr = useAppSelector(state => state.putg.sizeError)
+
+	const cardIndex = useAppSelector(state => state.card.activePosition?.index)
 
 	const dispatch = useAppDispatch()
 

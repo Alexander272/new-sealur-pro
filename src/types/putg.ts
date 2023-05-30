@@ -89,7 +89,7 @@ export interface IMainBlockPutg {
 
 export interface IMaterialBlockPutg {
 	filler?: IFiller
-	type?: IPutgType
+	putgType?: IPutgType
 	construction?: IConstruction
 	rotaryPlug?: IMaterial
 	innerRing?: IMaterial

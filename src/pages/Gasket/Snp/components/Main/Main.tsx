@@ -32,7 +32,8 @@ type Props = {}
 export const Main: FC<Props> = () => {
 	const main = useAppSelector(state => state.snp.main)
 	// const cardIndex = useAppSelector(state => state.snp.cardIndex)
-	const positionId = useAppSelector(state => state.snp.positionId)
+	// const positionId = useAppSelector(state => state.snp.positionId)
+	const positionId = useAppSelector(state => state.card.activePosition?.id)
 
 	const {
 		data: standards,
@@ -64,12 +65,12 @@ export const Main: FC<Props> = () => {
 				dispatch(setMainSnpType(type))
 			}
 
-			dispatch(setMaterials(data.data.materials))
+			dispatch(setMaterials({ material: data.data.materials, positionId }))
 			if (data.data.fillers?.length) {
-				dispatch(setFiller(data.data.fillers))
+				dispatch(setFiller({ fillers: data.data.fillers, positionId }))
 			}
 			if (data.data.mounting?.length) {
-				dispatch(setMounting(data.data.mounting))
+				dispatch(setMounting({ mountings: data.data.mounting, positionId }))
 			}
 		}
 	}, [data])

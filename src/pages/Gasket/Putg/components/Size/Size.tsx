@@ -79,7 +79,7 @@ export const Size: FC<Props> = () => {
 				{/* <PlugImage /> */}
 				{main.configuration?.code == 'round' && (
 					<ImageContainer>
-						<PutgImage type={material.type} construction={material.construction} />
+						<PutgImage type={material.putgType} construction={material.construction} />
 						<SizesBlockPutg />
 					</ImageContainer>
 				)}
@@ -87,7 +87,7 @@ export const Size: FC<Props> = () => {
 				{main.configuration?.code != 'round' && (
 					<>
 						<ImageContainer padding='0'>
-							<PutgPartImage type={material.type} construction={material.construction} />
+							<PutgPartImage type={material.putgType} construction={material.construction} />
 						</ImageContainer>
 
 						<Typography fontWeight='bold'>Размеры прокладки</Typography>

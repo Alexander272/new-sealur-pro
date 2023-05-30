@@ -11,7 +11,8 @@ type Props = {}
 export const Materials: FC<Props> = () => {
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
-	const positionId = useAppSelector(state => state.putg.positionId)
+	// const positionId = useAppSelector(state => state.putg.positionId)
+	const positionId = useAppSelector(state => state.card.activePosition?.id)
 
 	const materials = useAppSelector(state => state.putg.materials)
 	const fillers = useAppSelector(state => state.putg.fillers)
@@ -35,10 +36,10 @@ export const Materials: FC<Props> = () => {
 	)
 
 	useEffect(() => {
-		if (!positionId && data?.data.putgTypes) {
-			dispatch(setType(data.data.putgTypes[0]))
+		if (!positionId) {
+			if (data?.data.putgTypes) dispatch(setType(data.data.putgTypes[0]))
+			if (data?.data.constructions) dispatch(setConstruction(data.data.constructions[0]))
 		}
-		if (data?.data.constructions) dispatch(setConstruction(data.data.constructions[0]))
 	}, [data])
 
 	const fillerHandler = (event: SelectChangeEvent<string>) => {
@@ -91,7 +92,7 @@ export const Materials: FC<Props> = () => {
 				Тип прокладки
 			</Typography>
 			<Select
-				value={material.type?.code || 'not_selected'}
+				value={material.putgType?.code || 'not_selected'}
 				onChange={typeHandler}
 				size='small'
 				sx={{

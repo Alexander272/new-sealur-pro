@@ -32,6 +32,7 @@ export const Design = () => {
 	const drawing = useAppSelector(state => state.snp.drawing)
 	const hasDesignError = useAppSelector(state => state.snp.hasDesignError)
 	const orderId = useAppSelector(state => state.card.orderId)
+	const positionId = useAppSelector(state => state.card.activePosition?.id)
 
 	const role = useAppSelector(state => state.user.roleCode)
 
@@ -43,7 +44,7 @@ export const Design = () => {
 	)
 
 	useEffect(() => {
-		if (data) dispatch(clearMaterialAndDesign(data.data.snp))
+		if (data && !positionId) dispatch(clearMaterialAndDesign(data.data.snp))
 	}, [data])
 
 	const jumperHandler = (event: ChangeEvent<HTMLInputElement>) => {

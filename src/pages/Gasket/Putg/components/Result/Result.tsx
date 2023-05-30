@@ -1,11 +1,13 @@
-import { ChangeEvent, FC, useState } from 'react'
-import { ResultContainer } from '@/pages/Gasket/gasket.style'
+import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { setAmount } from '@/store/gaskets/putg'
-import { toggle } from '@/store/card'
+import { clearPutg, setAmount, setInfo } from '@/store/gaskets/putg'
+import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
+import type { Position } from '@/types/card'
+import { clearActive, toggle } from '@/store/card'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
+import { ResultContainer } from '@/pages/Gasket/gasket.style'
 
 type Props = {}
 
@@ -14,56 +16,74 @@ type Alert = { type: 'error' | 'success'; message: string; open: boolean }
 export const Result: FC<Props> = () => {
 	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', open: false })
 
-	//TODO получать значения из запроса
-	const isLoading = false
-	const isLoadingUpdate = false
-	const createError = ''
-	const updateError = ''
-
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
 	const size = useAppSelector(state => state.putg.size)
 	const design = useAppSelector(state => state.putg.design)
 	const amount = useAppSelector(state => state.putg.amount)
-	const cardIndex = useAppSelector(state => state.putg.cardIndex)
+	const info = useAppSelector(state => state.putg.info)
 
 	const hasSizeError = useAppSelector(state => state.putg.hasSizeError)
 	const hasDesignError = useAppSelector(state => state.putg.hasDesignError)
+
+	const positions = useAppSelector(state => state.card.positions)
+	const orderId = useAppSelector(state => state.card.orderId)
+	const cardIndex = useAppSelector(state => state.card.activePosition?.index)
 
 	const role = useAppSelector(state => state.user.roleCode)
 
 	const dispatch = useAppDispatch()
 
-	const savePosition = () => {
-		// const position: Position = {
-		// 	id: Date.now().toString() + (positions.length + 1),
-		// 	orderId: orderId,
-		// 	count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
-		// 	title: renderDesignation(),
-		// 	amount: amount,
-		// 	type: 'Snp',
-		// 	snpData: {
-		// 		main: main,
-		// 		size: size,
-		// 		material: materials,
-		// 		design: design,
-		// 	},
-		// }
-		// if (cardIndex !== undefined) {
-		// 	position.id = positions[cardIndex].id
-		// 	position.count = positions[cardIndex].count
-		// 	// dispatch(updatePosition({ index: cardIndex, position: position }))
-		// 	update(position)
-		// 	dispatch(clearSnp())
-		// } else {
-		// 	create(position)
-		// 	// dispatch(addPosition(position))
-		// }
-		// setAlert({ type: 'success', message: '', open: true })
+	const [create, { error: createError, isLoading }] = useCreatePositionMutation()
+	const [update, { error: updateError, isLoading: isLoadingUpdate }] = useUpdatePositionMutation()
+
+	useEffect(() => {
+		//TODO стоит наверное разделить это на 2 части
+		if (updateError || createError)
+			setAlert({ type: 'error', message: (updateError || (createError as any)).data.message, open: true })
+	}, [createError, updateError])
+
+	const savePosition = async () => {
+		const position: Position = {
+			id: Date.now().toString() + (positions.length + 1),
+			orderId: orderId,
+			count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
+			title: renderDesignation(),
+			amount: amount,
+			info: info,
+			type: 'Putg',
+			putgData: {
+				main: main,
+				size: size,
+				material: material,
+				design: design,
+			},
+		}
+
+		try {
+			if (cardIndex !== undefined) {
+				position.id = positions[cardIndex].id
+				position.count = positions[cardIndex].count
+				await update(position).unwrap()
+				dispatch(clearPutg())
+				dispatch(clearActive())
+			} else {
+				await create(position).unwrap()
+			}
+		} catch (error) {
+			return
+		}
+
+		setAlert({ type: 'success', message: '', open: true })
 	}
 
 	const cancelHandler = () => {
-		// dispatch(clearSnp())
+		dispatch(clearPutg())
+		dispatch(clearActive())
+	}
+
+	const infoHandler = (event: ChangeEvent<HTMLInputElement>) => {
+		dispatch(setInfo(event.target.value))
 	}
 
 	const amountHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +141,7 @@ export const Result: FC<Props> = () => {
 
 		let sizes = `${d4 && d4 + 'x'}${d3}x${d2}${d1 && 'x' + d1}-${thickness}`
 
-		let res = `Прокладка ${form}из ${material.filler?.designation}, ${material.type?.description}, ${materials}, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"${coating}${mounting}${hole}${jumper}${removable}, с размерами ${sizes}`
+		let res = `Прокладка ${form}из ${material.filler?.designation}, ${material.putgType?.description}, ${materials}, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"${coating}${mounting}${hole}${jumper}${removable}, с размерами ${sizes}`
 
 		return res
 	}
@@ -162,10 +182,18 @@ export const Result: FC<Props> = () => {
 			jumper = `(${design.jumper.code}${design.jumper?.width ? `/${design.jumper.width}` : ''})`
 		}
 
-		let removable = ''
-		if (design.hasRemovable) removable = ', разъемная'
+		let materials = ''
+		if (
+			material.construction?.hasRotaryPlug ||
+			material.construction?.hasInnerRing ||
+			material.construction?.hasOuterRing
+		) {
+			materials = `-${material.innerRing?.code || '0'}${material.rotaryPlug?.code || '0'}${
+				material.outerRing?.code || '0'
+			}`
+		}
 
-		return `ПУТГ-${main.flangeType?.code}-${material.type?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper} ${designationDesign}${sizes} ${main.standard?.standard.title}`
+		return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}${sizes} ${main.standard?.standard.title}`
 	}
 
 	return (
@@ -184,20 +212,37 @@ export const Result: FC<Props> = () => {
 				<Typography fontWeight='bold'>Обозначение:</Typography>
 				<Typography fontSize={'1.12rem'}>{renderDesignation()}</Typography>
 			</Stack>
+
+			<Stack
+				direction={{ xs: 'column', sm: 'row' }}
+				spacing={{ xs: 0, sm: 2 }}
+				alignItems={{ xs: 'flex-start', sm: 'center' }}
+				marginBottom={2}
+			>
+				<Typography fontWeight='bold'>Доп. информация:</Typography>
+				<Input
+					value={info}
+					onChange={infoHandler}
+					size='small'
+					multiline
+					sx={{ width: '100%', maxWidth: '500px' }}
+				/>
+			</Stack>
+
 			<Stack
 				direction={{ xs: 'column', md: 'row' }}
 				spacing={2}
-				alignItems={{ xs: 'flex-start', md: 'center' }}
+				alignItems={{ md: 'center' }}
 				justifyContent='space-between'
 			>
 				{isLoading || isLoadingUpdate ? <Loader background='fill' /> : null}
 
 				<Stack direction={'row'} spacing={2} alignItems='center'>
 					<Typography fontWeight='bold'>Количество:</Typography>
-					<Input value={amount} onChange={amountHandler} size='small' />
+					<Input name='amount' value={amount} onChange={amountHandler} fullWidth size='small' />
 				</Stack>
 
-				{role != 'manager' && (
+				{role == 'user' && (
 					<Stack direction={'row'} spacing={2}>
 						{cardIndex !== undefined && (
 							<Button
@@ -215,6 +260,7 @@ export const Result: FC<Props> = () => {
 							onClick={savePosition}
 							variant='contained'
 							sx={{ borderRadius: '12px', padding: '6px 20px' }}
+							fullWidth
 						>
 							{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
 						</Button>
@@ -249,8 +295,8 @@ export const Result: FC<Props> = () => {
 					}
 					sx={{ width: '100%' }}
 				>
-					{createError && 'Не удалось добавить позицию. ' + alert.message}
-					{updateError && 'Не удалось обновить позицию'}
+					{alert.type == 'error' && createError ? 'Не удалось добавить позицию. ' + alert.message : null}
+					{alert.type == 'error' && updateError ? 'Не удалось обновить позицию' : null}
 					{alert.type == 'success' && <>Позиция {cardIndex !== undefined ? 'изменена' : 'добавлена'}</>}
 				</Alert>
 			</Snackbar>

@@ -3,20 +3,25 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Loader } from '@/components/Loader/Loader'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Container } from './gasket.style'
+import { useAppDispatch } from '@/hooks/useStore'
+import { clearActive } from '@/store/card'
 
 const gasketRoute = '/'
-const snpRoute = '/snp'
-const putgRoute = '/putg'
+export const snpRoute = '/snp'
+export const putgRoute = '/putg'
 
 export default function Gasket() {
 	const navigate = useNavigate()
 	const location = useLocation()
 
+	const dispatch = useAppDispatch()
+
 	useEffect(() => {
-		if (location.pathname == gasketRoute) navigate('snp')
+		if (location.pathname == gasketRoute) navigate(snpRoute)
 	}, [location.pathname])
 
 	const navigateHandler = (path: string) => {
+		dispatch(clearActive())
 		navigate(path)
 	}
 

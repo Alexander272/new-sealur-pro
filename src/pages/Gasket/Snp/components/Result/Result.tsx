@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { Position } from '@/types/card'
-import { toggle } from '@/store/card'
+import { clearActive, toggle } from '@/store/card'
 import { clearSnp, setAmount } from '@/store/gaskets/snp'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
 import { Loader } from '@/components/Loader/Loader'
@@ -27,8 +27,8 @@ export const Result: FC<Props> = () => {
 	const hasDesignError = useAppSelector(state => state.snp.hasDesignError)
 
 	const positions = useAppSelector(state => state.card.positions)
-	const cardIndex = useAppSelector(state => state.snp.cardIndex)
 	const orderId = useAppSelector(state => state.card.orderId)
+	const cardIndex = useAppSelector(state => state.card.activePosition?.index)
 
 	const role = useAppSelector(state => state.user.roleCode)
 
@@ -43,7 +43,7 @@ export const Result: FC<Props> = () => {
 			setAlert({ type: 'error', message: (updateError || (createError as any)).data.message, open: true })
 	}, [createError, updateError])
 
-	const savePosition = () => {
+	const savePosition = async () => {
 		const position: Position = {
 			id: Date.now().toString() + (positions.length + 1),
 			orderId: orderId,
@@ -59,21 +59,28 @@ export const Result: FC<Props> = () => {
 			},
 		}
 
-		if (cardIndex !== undefined) {
-			position.id = positions[cardIndex].id
-			position.count = positions[cardIndex].count
-			// dispatch(updatePosition({ index: cardIndex, position: position }))
-			update(position)
-			dispatch(clearSnp())
-		} else {
-			create(position)
-			// dispatch(addPosition(position))
+		try {
+			if (cardIndex !== undefined) {
+				position.id = positions[cardIndex].id
+				position.count = positions[cardIndex].count
+				// dispatch(updatePosition({ index: cardIndex, position: position }))
+				await update(position).unwrap()
+				dispatch(clearSnp())
+				dispatch(clearActive())
+			} else {
+				await create(position).unwrap()
+				// dispatch(addPosition(position))
+			}
+		} catch (error) {
+			return
 		}
+
 		setAlert({ type: 'success', message: '', open: true })
 	}
 
 	const cancelHandler = () => {
 		dispatch(clearSnp())
+		dispatch(clearActive())
 	}
 
 	const amountHandler = (event: ChangeEvent<HTMLInputElement>) => {

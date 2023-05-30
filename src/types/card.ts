@@ -1,3 +1,4 @@
+import { IDesignBlockPutg, IMainBlockPutg, IMaterialBlockPutg, ISizeBlockPutg } from './putg'
 import { IDesignBlockSnp, IMainSnp, IMaterialBlockSnp, ISizeBlockSnp } from './snp'
 
 export type SnpType = 'Snp'
@@ -10,7 +11,8 @@ export type PositionBase<Type, ExtraProps> = {
 	count: number
 	title: string
 	amount: string
-	type?: Type
+	info?: string
+	type: Type
 } & ExtraProps
 
 export type PositionSnp = PositionBase<
@@ -20,4 +22,17 @@ export type PositionSnp = PositionBase<
 	}
 >
 
-export type Position = PositionSnp
+export type PositionPutg = PositionBase<
+	PutgType,
+	{
+		putgData: { main: IMainBlockPutg; size: ISizeBlockPutg; material: IMaterialBlockPutg; design: IDesignBlockPutg }
+	}
+>
+
+export type Position = PositionSnp | PositionPutg
+
+export interface IActivePosition {
+	index: number
+	id: string
+	type: SnpType | PutgType
+}

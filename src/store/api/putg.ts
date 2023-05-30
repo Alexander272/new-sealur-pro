@@ -15,6 +15,7 @@ import type { IMounting } from '@/types/mounting'
 
 type PutgBaseRequest = {
 	standardId: string
+	empty: boolean
 	// typeFlangeId: string
 }
 
@@ -34,7 +35,7 @@ type PutgDataRequest = {
 	standardId: string
 	constructionId: string
 	baseConstructionId: string
-	configuration: string
+	// configuration: string
 	// fillerId: string
 	// changeStandard: boolean
 }
@@ -80,6 +81,7 @@ export const putgApi = api.injectEndpoints({
 				method: 'GET',
 				params: new URLSearchParams([
 					['standardId', req.standardId],
+					['empty', `${req.empty}`],
 					// ['typeFlangeId', req.typeFlangeId],
 				]),
 			}),
@@ -92,7 +94,7 @@ export const putgApi = api.injectEndpoints({
 				params: new URLSearchParams([
 					['standardId', req.standardId],
 					['constructionId', req.constructionId],
-					['configuration', req.configuration],
+					// ['configuration', req.configuration],
 					['baseConstructionId', req.baseConstructionId],
 					// ['fillerId', req.fillerId],
 					// ['changeStandard', `${req.changeStandard}`],
