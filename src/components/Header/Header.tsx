@@ -10,9 +10,11 @@ import { sendMetric } from '@/services/metrics'
 
 import Instruction from '@/assets/files/instruction.pdf'
 
-type Props = {}
+type Props = {
+	disableCard?: boolean
+}
 
-const Header: FC<Props> = () => {
+const Header: FC<Props> = ({ disableCard }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
 	const userId = useAppSelector(state => state.user.userId)
@@ -100,11 +102,13 @@ const Header: FC<Props> = () => {
 								</Icon>
 							</Tooltip>
 
-							<Tooltip title='Заявка'>
-								<Icon onClick={basketHandler}>
-									<img src='/image/basket.svg' alt='Заявка' width='30' height='30' />
-								</Icon>
-							</Tooltip>
+							{!disableCard && (
+								<Tooltip title='Заявка'>
+									<Icon onClick={basketHandler}>
+										<img src='/image/basket.svg' alt='Заявка' width='30' height='30' />
+									</Icon>
+								</Tooltip>
+							)}
 
 							<Tooltip title='Профиль'>
 								<Icon onClick={handleClick}>

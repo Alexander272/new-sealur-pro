@@ -8,7 +8,7 @@ export const Container = styled.header`
 	padding: 10px;
 	margin-bottom: -100px;
 	position: relative;
-	z-index: 10;
+	z-index: 3;
 `
 
 export const Logo = styled.img`

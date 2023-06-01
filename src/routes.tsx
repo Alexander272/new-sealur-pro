@@ -28,6 +28,8 @@ const AnalyticsUser = lazy(() => import('@/pages/Manager/Analytics/User/User'))
 
 const Connect = lazy(() => import('@/pages/ConnectWithUs/ConnectWithUs'))
 
+const NotFound = lazy(() => import('@/pages/NotFound/NotFound'))
+
 export const AppRoutes = () => {
 	const { ready } = useRefresh()
 
@@ -43,9 +45,11 @@ export const AppRoutes = () => {
 					<Route path='/auth/recovery' element={<Recovery />} />
 					<Route path='/auth/recovery/:code' element={<RecoveryPassword />} />
 
-					<Route path='/connect' element={<Main />}>
+					<Route path='/connect' element={<Manager />}>
 						<Route index element={<Connect />} />
 					</Route>
+
+					<Route path='*' element={<NotFound />} />
 
 					<Route
 						path='/'
