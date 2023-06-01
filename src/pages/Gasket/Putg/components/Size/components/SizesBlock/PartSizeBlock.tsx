@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useAppSelector } from '@/hooks/useStore'
-import { Container, Size } from './size.style'
+import { Container, Description, Size } from './size.style'
 
 type Props = {}
 
@@ -11,7 +11,10 @@ export const PartSizeBlock: FC<Props> = () => {
 		<Container>
 			{sizes.useDimensions && (
 				<>
-					<Size top={'77%'}>{sizes.d4?.replace('.', ',')}</Size>
+					{/* //TODO отметить где какие размеры (А1,А2 и тд) */}
+					<Size top={'87%'} left='55%'>
+						{sizes.d4?.replace('.', ',')} <Description>(A1)</Description>
+					</Size>
 					<Size top={'77%'}>{sizes.d3?.replace('.', ',')}</Size>
 					<Size top={'77%'}>{sizes.d2?.replace('.', ',')}</Size>
 					<Size top={'77%'}>{sizes.d1?.replace('.', ',')}</Size>
@@ -20,9 +23,15 @@ export const PartSizeBlock: FC<Props> = () => {
 
 			{!sizes.useDimensions && (
 				<>
-					<Size top={'77%'}>{sizes.d3?.replace('.', ',')}</Size>
-					<Size top={'77%'}>{sizes.d2?.replace('.', ',')}</Size>
-					<Size top={'77%'}>{sizes.d1?.replace('.', ',')}</Size>
+					<Size top={'87%'} left='55%'>
+						{sizes.d3?.replace('.', ',')} <Description>(A1)</Description>
+					</Size>
+					<Size top={'33%'} left='0%'>
+						{sizes.d2?.replace('.', ',')} <Description>(B1)</Description>
+					</Size>
+					<Size top={'12%'} left='90%'>
+						{sizes.d1?.replace('.', ',')} <Description>(C)</Description>
+					</Size>
 				</>
 			)}
 		</Container>

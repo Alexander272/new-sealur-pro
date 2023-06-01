@@ -1,10 +1,10 @@
 import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { Loader } from '@/components/Loader/Loader'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Container } from './gasket.style'
 import { useAppDispatch } from '@/hooks/useStore'
 import { clearActive } from '@/store/card'
+import { GasketSkeleton } from './GasketSkeleton'
 
 const gasketRoute = '/'
 export const snpRoute = '/snp'
@@ -38,7 +38,7 @@ export default function Gasket() {
 			</RadioGroup>
 
 			{/* <Content> */}
-			<Suspense fallback={<Loader />}>
+			<Suspense fallback={<GasketSkeleton />}>
 				<Outlet />
 			</Suspense>
 			{/* </Content> */}

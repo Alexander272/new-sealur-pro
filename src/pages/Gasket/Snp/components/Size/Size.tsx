@@ -1,9 +1,10 @@
-import { FC } from 'react'
-import { Typography } from '@mui/material'
-import { useAppSelector } from '@/hooks/useStore'
+import { FC, useEffect } from 'react'
+import { Skeleton, Typography } from '@mui/material'
+import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetSnpQuery } from '@/store/api/snp'
-import { Loader } from '@/components/Loader/Loader'
-import { Column, ImageContainer, SizeContainer, Image, PlugImage } from '@/pages/Gasket/gasket.style'
+import { setIsReady } from '@/store/gaskets/snp'
+import { Column, ImageContainer, SizeContainer, Image } from '@/pages/Gasket/gasket.style'
+import { SizeSkeleton } from '@/pages/Gasket/Skeletons/SizeSkeleton'
 import { BacklightSnp } from './components/Backlight/BacklightSnp'
 import { SizesBlockSnp } from './components/SizesBlock/SizesBlock'
 import { StandardSize } from './StandardSize'
@@ -26,37 +27,58 @@ const images = {
 type Props = {}
 
 export const Size: FC<Props> = () => {
+	const isReady = useAppSelector(state => state.snp.isReady)
+
 	const main = useAppSelector(state => state.snp.main)
 	// const sizes = useAppSelector(state => state.snp.size)
 
-	const { data, isError, isLoading } = useGetSnpQuery(
+	const dispatch = useAppDispatch()
+
+	const { data, isError, isLoading, isSuccess, isUninitialized, isFetching } = useGetSnpQuery(
 		{ typeId: main.snpTypeId, hasD2: main.snpStandard?.hasD2 },
 		{ skip: main.snpTypeId == 'not_selected' }
 	)
 
+	useEffect(() => {
+		if (!isUninitialized) dispatch(setIsReady(!isLoading))
+	}, [isSuccess, isError, isUninitialized])
+
+	if (!isReady) {
+		return (
+			<SizeContainer>
+				<SizeSkeleton />
+				<Column width={55}>
+					<Skeleton animation='wave' />
+					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
+				</Column>
+			</SizeContainer>
+		)
+	}
+
 	return (
 		<SizeContainer>
-			{isError ? (
+			{isError && (
 				<Column width={45}>
 					<Typography variant='h6' color={'error'} align='center'>
 						Не удалось загрузить размеры
 					</Typography>
 				</Column>
-			) : (
+			)}
+
+			{!isError && !isLoading ? (
 				<Column width={45}>
-					{!data || isLoading ? (
-						<Loader background='fill' />
-					) : main.snpStandard?.flangeStandard.code && data?.data.sizes ? (
-						<StandardSize sizes={data.data.sizes} />
+					{main.snpStandard?.flangeStandard.code && data?.data.sizes ? (
+						<StandardSize sizes={data.data.sizes} isFetching={isFetching} />
 					) : (
 						<AnotherSize />
 					)}
 				</Column>
-			)}
+			) : null}
+
 			<Column width={55}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
 				{!main.snpType ? (
-					<PlugImage />
+					<Skeleton animation='wave' variant='rounded' width={'100%'} height={245} />
 				) : (
 					<ImageContainer>
 						<Image

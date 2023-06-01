@@ -1,8 +1,7 @@
 import { FC, useEffect } from 'react'
-import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 import {
 	setConfigurations,
-	setConstruction,
 	setFiller,
 	setFlangeTypes,
 	setMainConfiguration,
@@ -13,10 +12,10 @@ import {
 	setStandards,
 } from '@/store/gaskets/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { useGetPutgBaseQuery, useGetPutgDataQuery } from '@/store/api/putg'
-import { Loader } from '@/components/Loader/Loader'
+import { useGetPutgBaseQuery } from '@/store/api/putg'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Column, Image, MainContainer, PlugImage } from '@/pages/Gasket/gasket.style'
+import { MainSkeleton } from '@/pages/Gasket/Skeletons/MainSkeleton'
 
 import FlangeA from '@/assets/putg/PUTG-A.webp'
 import FlangeB from '@/assets/putg/PUTG-B.webp'
@@ -31,9 +30,9 @@ const images = {
 type Props = {}
 
 export const Main: FC<Props> = () => {
+	const isReady = useAppSelector(state => state.putg.isReady)
+
 	const main = useAppSelector(state => state.putg.main)
-	// const material = useAppSelector(state => state.putg.material)
-	// const positionId = useAppSelector(state => state.putg.positionId)
 
 	const standards = useAppSelector(state => state.putg.standards)
 	const configurations = useAppSelector(state => state.putg.configurations)
@@ -43,66 +42,23 @@ export const Main: FC<Props> = () => {
 
 	const dispatch = useAppDispatch()
 
-	//TODO при отправлении id стандарта список стандартов не возвращается
-	// это проблема тк при переходе со страницы снп (через редактирование) стандартов может не быть
 	const {
 		data: base,
 		isError: isErrorBase,
-		isLoading: isLoadingBase,
+		isFetching: isFetchingBase,
 	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '', empty: !standards.length })
-
-	// const { data, isError, isLoading } = useGetPutgDataQuery(
-	// 	{
-	// 		standardId: main.standard?.id || '',
-	// 		constructionId: material.construction?.id || '',
-	// 		baseConstructionId: material.construction?.baseId || '',
-	// 		configuration: main.configuration?.code || '',
-	// 	},
-	// 	// { skip: !main.standard?.id || !material.construction }
-	// 	{ skip: !main.standard?.id }
-	// )
 
 	useEffect(() => {
 		if (base) {
-			//TODO исправить получение всех этих вещей
 			if (base.data.configurations) dispatch(setConfigurations(base.data.configurations))
 			if (base.data.standards) dispatch(setStandards(base.data.standards))
 			if (base.data.mounting) dispatch(setMounting({ mountings: base.data.mounting, positionId }))
 
 			if (base.data.materials?.rotaryPlug) dispatch(setMaterials({ materials: base.data.materials, positionId }))
-			if (base.data.flangeTypes) {
-				dispatch(setFlangeTypes({ types: base.data.flangeTypes, positionId }))
-				// const flange = base.data.flangeTypes[0]
-				// dispatch(setMainFlangeType(flange))
-			}
+			if (base.data.flangeTypes) dispatch(setFlangeTypes({ types: base.data.flangeTypes, positionId }))
 			if (base?.data.fillers) dispatch(setFiller({ fillers: base.data.fillers || [], positionId }))
-
-			// if (base.data.constructions) dispatch(setConstruction(base.data.constructions[0]))
 		}
 	}, [base?.data])
-
-	// useEffect(() => {
-	// 	if (data?.data) {
-	// 		if (positionId === undefined) {
-	// const flange = data.data.flangeTypes[0]
-	// dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
-	// const filler = data.data.fillers[0]
-	// dispatch(setMaterialFiller(filler))
-	// const type = {
-	// 	id: flange.types[flange.types.length - 1].id,
-	// 	// title: flange.types[flange.types.length - 1].title,
-	// 	// code: flange.types[flange.types.length - 1].code,
-	// 	type: flange.types[flange.types.length - 1],
-	// }
-	// dispatch(setMainSnpType(type))
-	// }
-
-	// if (data.data.materials?.rotaryPlug) dispatch(setMaterials(data.data.materials))
-	// if (data.data.fillers?.length) {
-	// dispatch(setFiller(data.data.fillers || []))
-	// }
-	// 	}
-	// }, [data])
 
 	const gasketHandler = (type: string) => {
 		const configuration = configurations.find(s => s.code === type)
@@ -122,22 +78,32 @@ export const Main: FC<Props> = () => {
 		dispatch(setMainFlangeType(flangeType))
 	}
 
+	if (!isReady) {
+		return (
+			<MainContainer rowEnd={5}>
+				<MainSkeleton />
+				<Column>
+					<Skeleton animation='wave' />
+					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
+				</Column>
+			</MainContainer>
+		)
+	}
+
 	return (
 		<MainContainer rowEnd={5}>
-			{/* {!data || !standards || isLoading || isLoadingStandards ? ( */}
-			{false ? (
+			{isErrorBase && (
 				<Column>
-					{/* {isError || isErrorStandards ? ( */}
-					{isErrorBase && (
-						<Typography variant='h6' color={'error'} align='center'>
-							Не удалось загрузить стандарты на фланец или конфигурации
-						</Typography>
-					)}
+					<Typography variant='h6' color={'error'} align='center'>
+						Не удалось загрузить стандарты на фланец или конфигурации
+					</Typography>
 				</Column>
-			) : (
+			)}
+
+			{!isErrorBase && base ? (
 				<Column>
 					<Typography fontWeight='bold'>Конфигурация прокладки</Typography>
-					<RadioGroup onChange={gasketHandler} disabled={Boolean(positionId)}>
+					<RadioGroup onChange={gasketHandler} disabled={Boolean(positionId) || isFetchingBase}>
 						{configurations.map(c => (
 							<RadioItem key={c.id} value={c.code} active={c.code == main.configuration?.code}>
 								{c.title}
@@ -153,7 +119,7 @@ export const Main: FC<Props> = () => {
 							<Select
 								value={main.standard?.id || 'not_selected'}
 								onChange={flangeStandardHandler}
-								disabled={Boolean(positionId)}
+								disabled={Boolean(positionId) || isFetchingBase}
 								size='small'
 								sx={{ borderRadius: '12px' }}
 							>
@@ -175,7 +141,7 @@ export const Main: FC<Props> = () => {
 					<Select
 						value={main.flangeType?.code || 'not_selected'}
 						onChange={flangeTypeHandler}
-						disabled={Boolean(positionId)}
+						disabled={Boolean(positionId) || isFetchingBase}
 						size='small'
 						sx={{ borderRadius: '12px' }}
 					>
@@ -189,12 +155,12 @@ export const Main: FC<Props> = () => {
 						))}
 					</Select>
 				</Column>
-			)}
+			) : null}
 
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
-				{main.flangeType?.code == 'not_selected' ? (
-					<PlugImage />
+				{!main.flangeType?.code ? (
+					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
 				) : (
 					<Image
 						src={images[main.flangeType?.code as 'А']}

@@ -1,17 +1,18 @@
-import { FC } from 'react'
-import { Typography } from '@mui/material'
+import { FC, useEffect } from 'react'
+import { Skeleton, Typography } from '@mui/material'
 import { useGetPutgSizeQuery } from '@/store/api/putg'
-import { useAppSelector } from '@/hooks/useStore'
-import { Loader } from '@/components/Loader/Loader'
+import { setIsReady } from '@/store/gaskets/putg'
+import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
+import { SizeSkeleton } from '@/pages/Gasket/Skeletons/SizeSkeleton'
 import { Column, Image, ImageContainer, SizeContainer } from '@/pages/Gasket/gasket.style'
 import { PutgImage } from './components/PutgImage/PutgImage'
 import { PutgPartImage } from './components/PutgImage/PutgPartImage'
 import { SizesBlockPutg } from './components/SizesBlock/SizesBlock'
+import { PartSizeBlock } from './components/SizesBlock/PartSizeBlock'
 import { StandardSize } from './StandardSize'
 import { AnotherSize } from './AnotherSize'
 import ConfigurationSize from './ConfigurationSize'
 
-//TODO заменить изображения
 import ovalImage from '@/assets/putg/ov.webp'
 import rectangularImage from '@/assets/putg/pr.webp'
 
@@ -26,17 +27,11 @@ export const Size: FC<Props> = () => {
 	const material = useAppSelector(state => state.putg.material)
 	const main = useAppSelector(state => state.putg.main)
 
-	// const { data, isError, isLoading } = useGetPutgDataQuery(
-	// 	{
-	// 		standardId: main.standard?.id || '',
-	// 		constructionId: material.construction?.id || '',
-	// 		baseConstructionId: material.construction?.baseId || '',
-	// 		configuration: main.configuration?.code || '',
-	// 	},
-	// 	{ skip: !main.standard?.id || !material.construction }
-	// )
+	const isReady = useAppSelector(state => state.putg.isReady)
 
-	const { data, isError, isLoading } = useGetPutgSizeQuery(
+	const dispatch = useAppDispatch()
+
+	const { data, isError, isLoading, isFetching, isSuccess, isUninitialized } = useGetPutgSizeQuery(
 		{
 			flangeTypeId: main.flangeType?.id || '',
 			baseConstructionId: material.construction?.baseId || '',
@@ -51,21 +46,35 @@ export const Size: FC<Props> = () => {
 		}
 	)
 
+	useEffect(() => {
+		if (!isUninitialized) dispatch(setIsReady(true))
+	}, [isSuccess, isError, isUninitialized])
+
+	if (!isReady)
+		return (
+			<SizeContainer rowStart={5} rowEnd={9}>
+				<SizeSkeleton />
+				<Column width={55}>
+					<Skeleton animation='wave' />
+					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
+				</Column>
+			</SizeContainer>
+		)
+
 	return (
 		<SizeContainer rowStart={5} rowEnd={9}>
-			{isError ? (
+			{isError && (
 				<Column width={40}>
 					<Typography variant='h6' color={'error'} align='center'>
 						Не удалось загрузить размеры
 					</Typography>
 				</Column>
-			) : (
-				// TODO придумать как лучше показывать loader
+			)}
+
+			{!isError && !isLoading ? (
 				<Column width={40}>
-					{isLoading ? (
-						<Loader background='fill' />
-					) : data?.data.sizes ? (
-						<StandardSize sizes={data.data.sizes} />
+					{data?.data.sizes ? (
+						<StandardSize sizes={data.data.sizes} isFetching={isFetching} />
 					) : (
 						<>
 							{main.configuration?.code !== 'round' && <ConfigurationSize />}
@@ -73,7 +82,8 @@ export const Size: FC<Props> = () => {
 						</>
 					)}
 				</Column>
-			)}
+			) : null}
+
 			<Column width={60}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
 				{/* <PlugImage /> */}
@@ -99,28 +109,10 @@ export const Size: FC<Props> = () => {
 								width={600}
 								height={255}
 							/>
-							<SizesBlockPutg />
+							<PartSizeBlock />
 						</ImageContainer>
 					</>
 				)}
-
-				{/* //TODO понять как определять какую картинку вывести */}
-				{/* {!main.snpType ? (
-					<PlugImage />
-				) : (
-					<ImageContainer>
-						<Image
-							src={images[main.snpType.title as 'Д']}
-							alt='gasket drawing'
-							maxWidth={'500px'}
-							width={600}
-							height={255}
-						/>
-
-						<SizesBlockPutg />
-
-					</ImageContainer>
-				)} */}
 			</Column>
 		</SizeContainer>
 	)

@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetSnpQuery } from '@/store/api/snp'
 import { setMaterialFiller, setMaterial, setMaterialToggle } from '@/store/gaskets/snp'
 import { AsideContainer } from '@/pages/Gasket/gasket.style'
-import { Loader } from '@/components/Loader/Loader'
+import { MaterialSkeleton } from '@/pages/Gasket/Skeletons/MaterialSkeleton'
 
 type Props = {}
 
@@ -14,6 +14,8 @@ type Alert = { type: 'error' | 'success'; errType: 'filler' | 'material'; open: 
 // часть с наполнителями и материалами каркаса и колец
 export const Materials: FC<Props> = () => {
 	const [alert, setAlert] = useState<Alert>({ type: 'success', errType: 'filler', open: false })
+
+	const isReady = useAppSelector(state => state.snp.isReady)
 
 	const fillers = useAppSelector(state => state.snp.fillers)
 	const materials = useAppSelector(state => state.snp.materials)
@@ -26,7 +28,7 @@ export const Materials: FC<Props> = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isError, isLoading } = useGetSnpQuery(
+	const { data, isError, isFetching } = useGetSnpQuery(
 		{ typeId: main.snpTypeId, hasD2: main.snpStandard?.hasD2 },
 		{ skip: main.snpTypeId == 'not_selected' }
 	)
@@ -72,14 +74,13 @@ export const Materials: FC<Props> = () => {
 		setAlert({ type: 'error', errType: 'filler', open: false })
 	}
 
-	if (isError)
+	if (!isReady) {
 		return (
 			<AsideContainer>
-				<Typography variant='h6' color={'error'} align='center'>
-					Не удалось загрузить материалы
-				</Typography>
+				<MaterialSkeleton />
 			</AsideContainer>
 		)
+	}
 
 	return (
 		<AsideContainer>
@@ -95,9 +96,13 @@ export const Materials: FC<Props> = () => {
 				</Alert>
 			</Snackbar>
 
-			{!data || isLoading ? (
-				<Loader />
-			) : (
+			{isError && (
+				<Typography variant='h6' color={'error'} align='center'>
+					Не удалось загрузить материалы
+				</Typography>
+			)}
+
+			{data && (
 				<>
 					<Typography fontWeight='bold'>Тип наполнителя</Typography>
 					<Select
@@ -105,7 +110,7 @@ export const Materials: FC<Props> = () => {
 						onChange={fillerHandler}
 						onOpen={openHandler('filler')}
 						onClose={closeHandler('filler')}
-						disabled={fillers.length == 1}
+						disabled={fillers.length == 1 || isFetching}
 						size='small'
 						sx={{
 							borderRadius: '12px',
@@ -135,7 +140,7 @@ export const Materials: FC<Props> = () => {
 									borderRadius: '12px',
 									width: '100%',
 								}}
-								disabled={!data?.data.snp.hasFrame}
+								disabled={!data?.data.snp.hasFrame || isFetching}
 							>
 								<MenuItem value='not_selected'>Выберите материал</MenuItem>
 								{materials.frame.map(m => (
@@ -158,7 +163,7 @@ export const Materials: FC<Props> = () => {
 									borderRadius: '12px',
 									width: '100%',
 								}}
-								disabled={!data?.data.snp.hasInnerRing}
+								disabled={!data?.data.snp.hasInnerRing || isFetching}
 							>
 								<MenuItem value='not_selected'>Выберите материал</MenuItem>
 								{materials.innerRing.map(m => (
@@ -181,7 +186,7 @@ export const Materials: FC<Props> = () => {
 									borderRadius: '12px',
 									width: '100%',
 								}}
-								disabled={!data?.data.snp.hasOuterRing}
+								disabled={!data?.data.snp.hasOuterRing || isFetching}
 							>
 								<MenuItem value='not_selected'>Выберите материал</MenuItem>
 								{materials.outerRing.map(m => (

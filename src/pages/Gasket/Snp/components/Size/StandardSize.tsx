@@ -7,10 +7,11 @@ import { ISizeBlockSnp } from '@/types/snp'
 
 type Props = {
 	sizes: ISnpSize[]
+	isFetching: boolean
 }
 
 // размеры по стандарту
-export const StandardSize: FC<Props> = ({ sizes }) => {
+export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 	const main = useAppSelector(state => state.snp.main)
 	const size = useAppSelector(state => state.snp.size)
 	// const cardIndex = useAppSelector(state => state.snp.cardIndex)
@@ -194,6 +195,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 			<Select
 				value={size.dn || 'not_selected'}
 				onChange={dnHandler('dn')}
+				disabled={isFetching}
 				size='small'
 				sx={{ borderRadius: '12px' }}
 			>
@@ -234,6 +236,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 					<Select
 						value={size.d2 || 'not_selected'}
 						onChange={d2Handler}
+						disabled={isFetching}
 						size='small'
 						sx={{ borderRadius: '12px' }}
 					>
@@ -249,6 +252,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 			<Select
 				value={size.pn.mpa || 'not_selected'}
 				onChange={pnHandler}
+				disabled={isFetching}
 				size='small'
 				sx={{ borderRadius: '12px' }}
 			>
@@ -269,6 +273,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 			<Select
 				value={size.h || 'another'}
 				onChange={thicknessHandler}
+				disabled={isFetching}
 				size='small'
 				sx={{ borderRadius: '12px', width: '100%' }}
 			>

@@ -8,6 +8,7 @@ import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/ap
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
 import { ResultContainer } from '@/pages/Gasket/gasket.style'
+import { ResultSkeleton } from '@/pages/Gasket/Skeletons/ResultSkeleton'
 
 type Props = {}
 
@@ -16,6 +17,8 @@ type Alert = { type: 'error' | 'success'; message: string; open: boolean }
 // блок с выводом результата
 export const Result: FC<Props> = () => {
 	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', open: false })
+
+	const isReady = useAppSelector(state => state.snp.isReady)
 
 	const main = useAppSelector(state => state.snp.main)
 	const size = useAppSelector(state => state.snp.size)
@@ -498,6 +501,8 @@ export const Result: FC<Props> = () => {
 
 		return ''
 	}
+
+	if (!isReady) return <ResultSkeleton />
 
 	return (
 		<ResultContainer>

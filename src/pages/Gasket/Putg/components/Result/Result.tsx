@@ -7,6 +7,7 @@ import type { Position } from '@/types/card'
 import { clearActive, toggle } from '@/store/card'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
+import { ResultSkeleton } from '@/pages/Gasket/Skeletons/ResultSkeleton'
 import { ResultContainer } from '@/pages/Gasket/gasket.style'
 
 type Props = {}
@@ -15,6 +16,8 @@ type Alert = { type: 'error' | 'success'; message: string; open: boolean }
 
 export const Result: FC<Props> = () => {
 	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', open: false })
+
+	const isReady = useAppSelector(state => state.putg.isReady)
 
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
@@ -156,7 +159,7 @@ export const Result: FC<Props> = () => {
 		let d2 = size.d2.replace('.', ',')
 		let d1 = (size?.d1 || '').replace('.', ',')
 
-		let sizes = `(${d4 && d4 + 'x'}${d3}x${d2}${d1 && 'x' + d1})`
+		let sizes = `${d4 && d4 + 'x'}${d3}x${d2}${d1 && 'x' + d1}`
 
 		let designationDesign = ''
 		let designationDesignParts: string[] = []
@@ -193,8 +196,48 @@ export const Result: FC<Props> = () => {
 			}`
 		}
 
-		return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}${sizes} ${main.standard?.standard.title}`
+		if (main.configuration?.code == 'round') {
+			//* ТУ 5728-006-93978201-2008
+			if (main.standard?.standard.id == '42dca821-6189-445c-877c-87ced7ddf556') {
+				// != нестандартные фланцы
+				if (main.standard.flangeStandard.id != '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7') {
+					return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}(${sizes}) ${main.standard?.standard.title}`
+				} else {
+					return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${sizes}-${h}${coating}${jumper}${materials} ${designationDesign} ${main.standard?.standard.title}`
+				}
+			}
+			//* ГОСТ 15180-86
+			if (main.standard?.standard.id == '79ef2110-5c48-4b43-be3e-816be1459fb7') {
+				return ``
+			}
+			//* ГОСТ 28759.6-2022
+			if (main.standard?.standard.id == 'f7ae1f5e-4dee-45d8-952c-3ab46d235002') {
+				return ``
+			}
+			//* ASME B 16.21
+			if (main.standard?.standard.id == '2f4150f0-9ab7-409a-815e-6bcc60cb5d86') {
+				return ``
+			}
+			//* DIN 2690
+			if (main.standard?.standard.id == '892b44dd-3afe-4bad-a07e-28123204ed66') {
+				return ``
+			}
+			//* EN 1514-1
+			if (main.standard?.standard.id == '6acf5aa4-41a5-4ecf-a576-09ec89ef885f') {
+				return ``
+			}
+		}
+		const form = main.configuration?.code == 'oval' ? 'О' : 'П'
+
+		designationDesignParts.unshift(form)
+		if (designationDesignParts.length) {
+			designationDesign = `(${designationDesignParts.join(', ')}) `
+		}
+
+		return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${sizes}-${h}${coating}${jumper}${materials} ${designationDesign} ${main.standard?.standard.title}`
 	}
+
+	if (!isReady) return <ResultSkeleton />
 
 	return (
 		<ResultContainer>

@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react'
-import { FormControl, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
-import { MainContainer, Column, PlugImage, Image } from '@/pages/Gasket/gasket.style'
+import { FormControl, MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
+import { MainContainer, Column, Image } from '@/pages/Gasket/gasket.style'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import {
 	setFiller,
@@ -12,11 +12,11 @@ import {
 } from '@/store/gaskets/snp'
 import { useGetSnpDataQuery, useGetStandardForSNPQuery } from '@/store/api/snp'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
+import { MainSkeleton } from '@/pages/Gasket/Skeletons/MainSkeleton'
 
 import FlangeA from '@/assets/snp/A.webp'
 import FlangeB from '@/assets/snp/B.webp'
 import FlangeV from '@/assets/snp/V.webp'
-import { Loader } from '@/components/Loader/Loader'
 
 const images = {
 	А: FlangeA,
@@ -30,17 +30,18 @@ type Props = {}
 
 // часть со стандартами, типами фланцев и типами снп
 export const Main: FC<Props> = () => {
+	const isReady = useAppSelector(state => state.snp.isReady)
+
 	const main = useAppSelector(state => state.snp.main)
-	// const cardIndex = useAppSelector(state => state.snp.cardIndex)
-	// const positionId = useAppSelector(state => state.snp.positionId)
 	const positionId = useAppSelector(state => state.card.activePosition?.id)
 
 	const {
 		data: standards,
 		isError: isErrorStandards,
-		isLoading: isLoadingStandards,
+		isFetching: isFetchingStandards,
 	} = useGetStandardForSNPQuery(null)
-	const { data, isError, isLoading } = useGetSnpDataQuery({
+
+	const { data, isError, isFetching } = useGetSnpDataQuery({
 		standardId: main.snpStandard?.standard.id || '',
 		snpStandardId: main.snpStandardId,
 	})
@@ -58,8 +59,6 @@ export const Main: FC<Props> = () => {
 				dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
 				const type = {
 					id: flange.types[flange.types.length - 1].id,
-					// title: flange.types[flange.types.length - 1].title,
-					// code: flange.types[flange.types.length - 1].code,
 					type: flange.types[flange.types.length - 1],
 				}
 				dispatch(setMainSnpType(type))
@@ -84,25 +83,14 @@ export const Main: FC<Props> = () => {
 	const flangeTypeHandler = (event: SelectChangeEvent<string>) => {
 		const flangeType = data?.data.flangeTypes.find(f => f.code === event.target.value)
 		if (!flangeType) return
-		// flangeType.title
+
 		const type = {
 			id: flangeType.types[flangeType.types.length - 1].id,
-			// title: flangeType.types[flangeType.types.length - 1].title,
-			// code: flangeType.types[flangeType.types.length - 1].code,
 			type: flangeType.types[flangeType.types.length - 1],
 		}
 		dispatch(setMainSnpType(type))
 		dispatch(setMainFlangeType({ code: event.target.value, title: flangeType.title }))
 	}
-	// const typeHandler = (typeId: string) => {
-	// 	const flangeType = data?.data.flangeTypes.find(f => f.types.some(t => t.id === typeId))
-	// 	if (!flangeType) return
-
-	// 	if (flangeType.code != main.flangeTypeCode)
-	// 		dispatch(setMainFlangeType({ code: flangeType.code, title: flangeType.title }))
-	// 	const type = flangeType.types.find(t => t.id === typeId)
-	// 	dispatch(setMainSnpType({ id: typeId, title: type!.title, code: type!.code }))
-	// }
 
 	const typeHandlerNew = (type: string) => {
 		let flangeType = data?.data.flangeTypes.find(
@@ -137,28 +125,37 @@ export const Main: FC<Props> = () => {
 		))
 	}
 
+	if (!isReady) {
+		return (
+			<MainContainer>
+				<MainSkeleton />
+				<Column>
+					<Skeleton animation='wave' />
+					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
+				</Column>
+			</MainContainer>
+		)
+	}
+
 	return (
 		<MainContainer>
-			{!data || !standards || isLoading || isLoadingStandards ? (
+			{isError || isErrorStandards ? (
 				<Column>
-					{isError || isErrorStandards ? (
-						<Typography variant='h6' color={'error'} align='center'>
-							Не удалось загрузить стандарты или типы фланца и снп
-						</Typography>
-					) : (
-						<Loader background='fill' />
-					)}
+					<Typography variant='h6' color={'error'} align='center'>
+						Не удалось загрузить стандарты или типы фланца и снп
+					</Typography>
 				</Column>
-			) : (
+			) : null}
+
+			{data && standards ? (
 				<Column>
 					<Typography fontWeight='bold'>Стандарт на прокладку / стандарт на фланец</Typography>
 					<FormControl size='small'>
 						<Select
 							value={main.snpStandardId || 'not_selected'}
 							onChange={snpStandardHandler}
-							// input={<Input />}
 							sx={{ borderRadius: '12px' }}
-							disabled={Boolean(positionId)}
+							disabled={Boolean(positionId) || isFetching || isFetchingStandards}
 						>
 							<MenuItem disabled value='not_selected'>
 								Выберите стандарт
@@ -177,7 +174,7 @@ export const Main: FC<Props> = () => {
 						onChange={flangeTypeHandler}
 						size='small'
 						sx={{ borderRadius: '12px' }}
-						disabled={Boolean(positionId)}
+						disabled={Boolean(positionId) || isFetching || isFetchingStandards}
 					>
 						<MenuItem disabled value='not_selected'>
 							Выберите тип фланца
@@ -190,24 +187,18 @@ export const Main: FC<Props> = () => {
 					</Select>
 
 					<Typography fontWeight='bold'>Тип СНП</Typography>
-					{/* <RadioGroup onChange={typeHandler}>
-					{data?.data.flangeTypes.map(f =>
-						f.types.map(t => (
-							<RadioItem key={t.id} value={t.id} active={t.id === main.snpTypeId}>
-								{t.title}
-							</RadioItem>
-						))
-					)}
-				</RadioGroup> */}
-					<RadioGroup onChange={typeHandlerNew} disabled={Boolean(positionId)}>
+					<RadioGroup
+						onChange={typeHandlerNew}
+						disabled={Boolean(positionId) || isFetching || isFetchingStandards}
+					>
 						{renderTypes()}
 					</RadioGroup>
 				</Column>
-			)}
+			) : null}
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
 				{main.flangeTypeCode == 'not_selected' ? (
-					<PlugImage />
+					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
 				) : (
 					<Image
 						src={images[main.flangeTypeCode as 'А']}

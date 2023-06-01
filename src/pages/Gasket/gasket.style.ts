@@ -141,6 +141,7 @@ export const ImageContainer = styled.div<ImageContainerProps>`
 
 type ImageProps = {
 	maxWidth?: string
+	maxHeight?: string
 	position?: string
 	top?: string
 	left?: string
@@ -152,7 +153,7 @@ export const Image = styled.img<ImageProps>`
 	/* width: auto; */
 	height: auto;
 	margin: auto;
-	max-height: 100%;
+	max-height: ${props => (props.maxHeight ? props.maxHeight : '100%')};
 	max-width: ${props => (props.maxWidth ? props.maxWidth : '100%')};
 	padding: ${props => props.padding && props.padding};
 	position: ${props => (props.position ? props.position : 'relative')};

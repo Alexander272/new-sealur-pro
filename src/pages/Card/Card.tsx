@@ -74,7 +74,7 @@ const Card: FC<Props> = () => {
 		const { index, id } = (event.target as HTMLDivElement).dataset
 		if (!index && !id) return
 
-		if (index) saveHandler(+index)
+		if (index) activeHandler(+index)
 		if (id) deleteHandler(id)
 	}
 
@@ -85,7 +85,7 @@ const Card: FC<Props> = () => {
 		// }
 	}
 
-	const saveHandler = (index: number) => {
+	const activeHandler = (index: number) => {
 		const position = positions[index]
 
 		dispatch(setActive({ index, id: position.id, type: position.type }))
@@ -127,12 +127,16 @@ const Card: FC<Props> = () => {
 		dispatch(setInfo(event.target.value))
 	}
 
-	const sendHandler = () => {
+	const sendHandler = async () => {
 		// TODO убрать коммент с метрики
-		// sendMetric('reachGoal', 'SendOrder')
+		// await sendMetric('reachGoal', 'SendOrder')
 
 		dispatch(clearSnp())
-		save({ id: orderId, count: positions.length })
+		try {
+			await save({ id: orderId, count: positions.length }).unwrap
+		} catch (error) {
+			return
+		}
 		setAlert({ type: 'success', open: true })
 	}
 

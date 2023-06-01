@@ -63,8 +63,8 @@ export default function ConfigurationSize() {
 			<Typography fontWeight='bold'>A1, мм</Typography>
 			<Input
 				name='A1'
-				// value={size.d4}
-				// onChange={sizeHandler('d4')}
+				value={!useDimensions ? size.d3 : size.d4}
+				onChange={!useDimensions ? sizeHandler('d3') : sizeHandler('d4')}
 				// error={sizeErr.d4Err || sizeErr.emptyD4}
 				// helperText={
 				// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
@@ -92,8 +92,8 @@ export default function ConfigurationSize() {
 			<Typography fontWeight='bold'>B1, мм</Typography>
 			<Input
 				name='B1'
-				// value={size.d4}
-				// onChange={sizeHandler('d4')}
+				value={!useDimensions ? size.d2 : size.d3}
+				onChange={!useDimensions ? sizeHandler('d2') : sizeHandler('d3')}
 				// error={sizeErr.d4Err || sizeErr.emptyD4}
 				// helperText={
 				// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
@@ -123,12 +123,10 @@ export default function ConfigurationSize() {
 					<Typography fontWeight='bold'>C, мм</Typography>
 					<Input
 						name='C'
-						// value={size.d1}
-						// onChange={sizeHandler('d1')}
-						// error={sizeErr.d4Err || sizeErr.emptyD4}
-						// helperText={
-						// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
-						// }
+						value={size.d1}
+						onChange={sizeHandler('d1')}
+						error={sizeErr.emptyD1}
+						helperText={sizeErr.emptyD1 && 'размер не задан'}
 						inputProps={{ inputMode: 'decimal' }}
 						size='small'
 					/>
@@ -143,9 +141,9 @@ export default function ConfigurationSize() {
 				error={sizeErr.thickness}
 				helperText={
 					sizeErr.thickness &&
-					`толщина должна быть ≥ ${material.type?.minThickness.toFixed(
+					`толщина должна быть ≥ ${material.putgType?.minThickness.toFixed(
 						1
-					)} и ≤ ${material.type?.maxThickness.toFixed(1)}`
+					)} и ≤ ${material.putgType?.maxThickness.toFixed(1)}`
 				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'

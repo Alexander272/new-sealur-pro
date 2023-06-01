@@ -8,13 +8,13 @@ import { Input } from '@/components/Input/input.style'
 
 type Props = {
 	sizes: IPutgSize[]
+	isFetching: boolean
 }
 
 // размеры по стандарту
-export const StandardSize: FC<Props> = ({ sizes }) => {
+export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
-	// const cardIndex = useAppSelector(state => state.putg.cardIndex)
 	const size = useAppSelector(state => state.putg.size)
 	const sizeErr = useAppSelector(state => state.putg.sizeError)
 
@@ -145,7 +145,13 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 	return (
 		<>
 			<Typography fontWeight='bold'>{main.standard?.dnTitle}</Typography>
-			<Select value={size.dn || 'not_selected'} onChange={dnHandler} size='small' sx={{ borderRadius: '12px' }}>
+			<Select
+				value={size.dn || 'not_selected'}
+				onChange={dnHandler}
+				disabled={isFetching}
+				size='small'
+				sx={{ borderRadius: '12px' }}
+			>
 				<MenuItem disabled value='not_selected'>
 					Выберите значение
 				</MenuItem>
@@ -162,6 +168,7 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 			<Select
 				value={size.pn.mpa || 'not_selected'}
 				onChange={pnHandler}
+				disabled={isFetching}
 				size='small'
 				sx={{ borderRadius: '12px' }}
 			>
@@ -203,12 +210,13 @@ export const StandardSize: FC<Props> = ({ sizes }) => {
 				name='thickness'
 				value={size.h}
 				onChange={thicknessHandler}
+				disabled={isFetching}
 				error={sizeErr.thickness}
 				helperText={
 					sizeErr.thickness &&
-					`толщина должна быть ≥ ${material.type?.minThickness.toFixed(
+					`толщина должна быть ≥ ${material.putgType?.minThickness.toFixed(
 						1
-					)} и ≤ ${material.type?.maxThickness.toFixed(1)}`
+					)} и ≤ ${material.putgType?.maxThickness.toFixed(1)}`
 				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'

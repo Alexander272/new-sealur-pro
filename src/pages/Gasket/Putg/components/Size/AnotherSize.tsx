@@ -119,9 +119,9 @@ export const AnotherSize: FC<Props> = () => {
 				error={sizeErr.thickness}
 				helperText={
 					sizeErr.thickness &&
-					`толщина должна быть ≥ ${material.type?.minThickness.toFixed(
+					`толщина должна быть ≥ ${material.putgType?.minThickness.toFixed(
 						1
-					)} и ≤ ${material.type?.maxThickness.toFixed(1)}`
+					)} и ≤ ${material.putgType?.maxThickness.toFixed(1)}`
 				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'

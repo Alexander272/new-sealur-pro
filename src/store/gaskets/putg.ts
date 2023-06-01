@@ -19,7 +19,9 @@ import type {
 import type { IMaterial } from '@/types/material'
 import { PN } from '@/types/sizes'
 
-export interface ISNPState {
+export interface IPutgState {
+	isReady: boolean
+
 	standards: IPutgStandard[]
 	configurations: IPutgConfiguration[]
 	fillers: IFiller[]
@@ -60,7 +62,10 @@ export interface ISNPState {
 	drawing?: IDrawing
 }
 
-const initialState: ISNPState = {
+const initialState: IPutgState = {
+	// готовы ли данные
+	isReady: false,
+
 	// списки
 	standards: [],
 	configurations: [],
@@ -109,7 +114,7 @@ const initialState: ISNPState = {
 		pn: { mpa: '', kg: '' },
 		h: '',
 		another: '',
-		useDimensions: true,
+		useDimensions: false,
 	},
 	// конструктивные элементы
 	design: {
@@ -135,6 +140,10 @@ export const putgSlice = createSlice({
 	name: 'putg',
 	initialState,
 	reducers: {
+		// данные готовы
+		setIsReady: (state, action: PayloadAction<boolean>) => {
+			state.isReady = action.payload
+		},
 		// установка стандартов
 		setStandards: (state, action: PayloadAction<IPutgStandard[]>) => {
 			state.standards = action.payload
@@ -187,7 +196,7 @@ export const putgSlice = createSlice({
 			state.size.d3 = ''
 			state.size.d2 = ''
 			state.size.d1 = ''
-			state.size.useDimensions = true
+			state.size.useDimensions = false
 		},
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<IPutgStandard>) => {
@@ -436,6 +445,8 @@ export const putgSlice = createSlice({
 })
 
 export const {
+	setIsReady,
+
 	setStandards,
 	setConfigurations,
 	setFiller,

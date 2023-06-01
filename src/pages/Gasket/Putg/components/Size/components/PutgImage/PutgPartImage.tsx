@@ -84,7 +84,13 @@ export const PutgPartImage: FC<Props> = ({ type, construction }) => {
 			<Image src={typeImages[(type?.typeCode as '200') || '200']} position='absolute' padding='0 0 0 8%' />
 			<Image src={constructionImage.ringUrl} isHidden={constructionImage.isHidden} padding='6% 0 4% 0' />
 			{constructionImage.rotaryUrl && (
-				<Image src={constructionImage.rotaryUrl} position='absolute' left='0' padding='6.7% 15% 0% 8%' />
+				<Image
+					src={constructionImage.rotaryUrl}
+					position='absolute'
+					left='0'
+					maxHeight='76px'
+					padding='6.7% 0% 0% 8%'
+				/>
 			)}
 		</CompositeImage>
 	)

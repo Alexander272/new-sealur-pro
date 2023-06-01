@@ -11,13 +11,14 @@ import {
 import { useGetSnpQuery } from '@/store/api/snp'
 import { IMainJumper } from '@/types/jumper'
 import { CreateFile, DeleteFile } from '@/services/file'
-import { AsideContainer, Image } from '@/pages/Gasket/gasket.style'
+import { AsideContainer } from '@/pages/Gasket/gasket.style'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { JumperSelect } from '@/components/Jumper/Jumper'
 import { Input } from '@/components/Input/input.style'
 import { FileDownload } from '@/components/FileInput/FileDownload'
 import { FileInput } from '@/components/FileInput/FileInput'
 import { Loader } from '@/components/Loader/Loader'
+import { DesignSkeleton } from '@/pages/Gasket/Skeletons/DesignSkeleton'
 
 type Alert = { type: 'create' | 'delete'; open: boolean; message?: string }
 
@@ -25,6 +26,8 @@ type Alert = { type: 'create' | 'delete'; open: boolean; message?: string }
 export const Design = () => {
 	const [alert, setAlert] = useState<Alert>({ type: 'create', open: false })
 	const [loading, setLoading] = useState(false)
+
+	const isReady = useAppSelector(state => state.snp.isReady)
 
 	const main = useAppSelector(state => state.snp.main)
 	const design = useAppSelector(state => state.snp.design)
@@ -38,7 +41,7 @@ export const Design = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isError, isLoading } = useGetSnpQuery(
+	const { data, isError, isFetching } = useGetSnpQuery(
 		{ typeId: main.snpTypeId, hasD2: main.snpStandard?.hasD2 },
 		{ skip: main.snpTypeId == 'not_selected' }
 	)
@@ -109,14 +112,13 @@ export const Design = () => {
 		setAlert({ type: 'create', open: false })
 	}
 
-	if (isError)
+	if (!isReady) {
 		return (
 			<AsideContainer>
-				<Typography variant='h6' color={'error'} align='center'>
-					Не удалось загрузить конструктивные элементы
-				</Typography>
+				<DesignSkeleton />
 			</AsideContainer>
 		)
+	}
 
 	return (
 		<>
@@ -134,9 +136,13 @@ export const Design = () => {
 					</Alert>
 				</Snackbar>
 
-				{!data || isLoading ? (
-					<Loader />
-				) : (
+				{isError && (
+					<Typography variant='h6' color={'error'} align='center'>
+						Не удалось загрузить конструктивные элементы
+					</Typography>
+				)}
+
+				{data && (
 					<>
 						<Typography fontWeight='bold'>Конструктивные элементы</Typography>
 						<Stack direction='row' spacing={2} marginBottom={1}>
@@ -145,7 +151,7 @@ export const Design = () => {
 								name='jumper'
 								label='Перемычка'
 								checked={design.jumper.hasJumper}
-								disabled={!data?.data.snp.hasJumper}
+								disabled={!data?.data.snp.hasJumper || isFetching}
 								onChange={jumperHandler}
 							/>
 
@@ -155,6 +161,7 @@ export const Design = () => {
 									<Input
 										value={design.jumper.width}
 										onChange={jumperWidthHandler}
+										disabled={isFetching}
 										placeholder='Ширина перемычки'
 										size='small'
 									/>
@@ -167,7 +174,7 @@ export const Design = () => {
 							name='holes'
 							label='Отверстия в наруж. ограничителе'
 							checked={design.hasHole}
-							disabled={!data?.data.snp.hasHole}
+							disabled={!data?.data.snp.hasHole || isFetching}
 							onChange={holeHandler}
 						/>
 
@@ -177,7 +184,7 @@ export const Design = () => {
 								name='mounting'
 								label='Крепление на вертикальном фланце'
 								checked={design.mounting.hasMounting}
-								disabled={!data?.data.snp.hasMounting}
+								disabled={!data?.data.snp.hasMounting || isFetching}
 								onChange={mountingHandler}
 							/>
 
@@ -185,6 +192,7 @@ export const Design = () => {
 								<Select
 									value={design.mounting.code || 'not_selected'}
 									onChange={mountingTitleHandler}
+									disabled={isFetching}
 									size='small'
 									sx={{
 										borderRadius: '12px',

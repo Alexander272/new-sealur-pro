@@ -19,6 +19,8 @@ import type { IMounting } from '@/types/mounting'
 import type { IDrawing } from '@/types/drawing'
 
 export interface ISNPState {
+	isReady: boolean
+
 	fillers: IFiller[]
 	mountings: IMounting[]
 	// materialsIr?: ISNPMaterial
@@ -58,6 +60,9 @@ export interface ISNPState {
 }
 
 const initialState: ISNPState = {
+	// готовы ли данные
+	isReady: false,
+
 	// списки
 	fillers: [],
 	mountings: [],
@@ -138,6 +143,11 @@ export const snpSlice = createSlice({
 	name: 'snp',
 	initialState,
 	reducers: {
+		// данные готовы
+		setIsReady: (state, action: PayloadAction<boolean>) => {
+			state.isReady = action.payload
+		},
+
 		// установка списка наполнителей
 		setFiller: (state, action: PayloadAction<{ fillers: IFiller[]; positionId?: string }>) => {
 			state.fillers = action.payload.fillers
@@ -474,6 +484,8 @@ export const snpSlice = createSlice({
 })
 
 export const {
+	setIsReady,
+
 	setFiller,
 	setMounting,
 	setMaterials,
