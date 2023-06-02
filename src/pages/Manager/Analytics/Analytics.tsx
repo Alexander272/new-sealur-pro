@@ -45,8 +45,8 @@ export default function Analytics() {
 		navigate('orders', { state: req })
 	}
 
-	const navigateOrderCount = () => {
-		navigate('count')
+	const navigateOrderCount = (hash: string) => () => {
+		navigate(`count#${hash}`)
 	}
 
 	const renderInfo = () => {
@@ -162,13 +162,13 @@ export default function Analytics() {
 										{data?.data.userCount}
 									</TableCell>
 								</TableRow>
-								<TableRow hover onClick={navigateOrderCount} sx={{ cursor: 'pointer' }}>
+								<TableRow hover onClick={navigateOrderCount('common')} sx={{ cursor: 'pointer' }}>
 									<TableCell>Всего заявок</TableCell>
 									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
 										{data?.data.ordersCount}
 									</TableCell>
 								</TableRow>
-								<TableRow>
+								<TableRow hover onClick={navigateOrderCount('snp')} sx={{ cursor: 'pointer' }}>
 									<TableCell>Всего СНП заказано</TableCell>
 									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
 										{data?.data.snpPositionCount}

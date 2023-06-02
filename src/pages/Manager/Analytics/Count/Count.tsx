@@ -1,13 +1,46 @@
-import { MouseEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { FC, MouseEvent } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import { useGetOrdersCountQuery } from '@/store/api/analytics'
-import type { IOrderParams } from '@/types/analytics'
+import type { IOrderCount, IOrderParams } from '@/types/analytics'
 import { Loader } from '@/components/Loader/Loader'
 import { Container, TableContainer } from './count.style'
 import { Question } from '../analytics.style'
 
+type DataProps = {
+	o: IOrderCount
+}
+
+const CommonHeader: FC = () => (
+	<>
+		<TableCell align='center'>Кол-во позиций</TableCell>
+		<TableCell align='center'>Среднее кол-во в 1 заявке</TableCell>
+	</>
+)
+const CommonData: FC<DataProps> = ({ o }) => (
+	<>
+		<TableCell align='center'>{o.positionCount}</TableCell>
+		<TableCell align='center'>{o.averagePosition}</TableCell>
+	</>
+)
+
+const SnpHeader: FC = () => (
+	<>
+		<TableCell align='center'>Кол-во заявок с СНП</TableCell>
+		<TableCell align='center'>Кол-во СНП</TableCell>
+		<TableCell align='center'>Среднее кол-во СНП в 1 заявке</TableCell>
+	</>
+)
+const SnpData: FC<DataProps> = ({ o }) => (
+	<>
+		<TableCell align='center'>{o.snpOrderCount}</TableCell>
+		<TableCell align='center'>{o.snpPositionCount}</TableCell>
+		<TableCell align='center'>{o.averageSnpPosition}</TableCell>
+	</>
+)
+
 export default function OrderCount() {
+	const location = useLocation()
 	const navigate = useNavigate()
 
 	const { data, isError, isLoading } = useGetOrdersCountQuery(null)
@@ -20,6 +53,16 @@ export default function OrderCount() {
 	const userNavigate = (userId: string) => (event: MouseEvent<HTMLTableCellElement>) => {
 		event.stopPropagation()
 		navigate('/manager/analytics/user', { state: userId })
+	}
+
+	const renderHeader = () => {
+		if (location.hash == '#common') return <CommonHeader />
+		if (location.hash == '#snp') return <SnpHeader />
+	}
+
+	const renderRow = (o: IOrderCount) => {
+		if (location.hash == '#common') return <CommonData o={o} />
+		if (location.hash == '#snp') return <SnpData o={o} />
 	}
 
 	return (
@@ -42,7 +85,8 @@ export default function OrderCount() {
 							<TableRow>
 								<TableCell>Компания</TableCell>
 								<TableCell>Клиент</TableCell>
-								<TableCell>Кол-во заявок</TableCell>
+								<TableCell align='center'>Кол-во заявок</TableCell>
+								{renderHeader()}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -52,7 +96,8 @@ export default function OrderCount() {
 										{o.company} <Question>?</Question>
 									</TableCell>
 									<TableCell>{o.name}</TableCell>
-									<TableCell>{o.orderCount}</TableCell>
+									<TableCell align='center'>{o.orderCount}</TableCell>
+									{renderRow(o)}
 								</TableRow>
 							))}
 						</TableBody>

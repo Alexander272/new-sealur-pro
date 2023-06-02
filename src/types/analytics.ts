@@ -84,4 +84,12 @@ export interface IOrderCount {
 	name: string
 	company: string
 	orderCount: number
+	snpOrderCount?: number
+	putgOrderCount?: number
+	positionCount: number
+	snpPositionCount?: number
+	putgPositionCount?: number
+	averagePosition: number
+	averageSnpPosition?: number
+	averagePutgPosition?: number
 }
