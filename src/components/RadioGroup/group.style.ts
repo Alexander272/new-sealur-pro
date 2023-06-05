@@ -7,6 +7,7 @@ export const Group = styled.div`
 	display: flex;
 	position: relative;
 	width: fit-content;
+	max-width: 100%;
 	pointer-events: none;
 `
 
@@ -24,13 +25,22 @@ export const Item = styled.div<ItemProps>`
 	padding: ${props => (props.size === 'middle' ? '5px 14px' : '5px 24px')};
 	position: relative;
 	transition: all 0.3s ease-in-out;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 	z-index: 5;
 	font-weight: bold;
 	pointer-events: ${props => (props.active ? 'none' : 'all')};
 
 	&:hover {
-		background-color: #fff;
+		background-color: ${props => !props.active && '#fff'};
+	}
+
+	@media screen and (max-width: 500px) {
+		font-size: 0.8rem;
+		line-height: 1;
+		padding-top: 10px;
+		padding-bottom: 10px;
 	}
 `
 

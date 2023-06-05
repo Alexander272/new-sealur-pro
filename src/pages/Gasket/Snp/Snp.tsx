@@ -6,8 +6,6 @@ import { Result } from './components/Result/Result'
 import { Size } from './components/Size/Size'
 
 export default function Snp() {
-	//TODO переделать loading компонентов
-
 	return (
 		<>
 			<PageTitle>Спирально-навитые прокладки</PageTitle>

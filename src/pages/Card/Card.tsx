@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useDebounce } from '@/hooks/debounce'
 import { clearSnp, setSnp } from '@/store/gaskets/snp'
-import { setActive, setInfo, setOrder, toggle } from '@/store/card'
+import { clearPutg, setPutg } from '@/store/gaskets/putg'
+import { clearActive, setActive, setInfo, setOrder, toggle } from '@/store/card'
 import {
 	useDeletePositionMutation,
 	useGetOrderQuery,
@@ -13,10 +14,9 @@ import {
 } from '@/store/api/order'
 import { sendMetric } from '@/services/metrics'
 import { Loader } from '@/components/Loader/Loader'
+import { Input } from '@/components/Input/input.style'
 import { putgRoute, snpRoute } from '../Gasket/Gasket'
 import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
-import { Input } from '@/components/Input/input.style'
-import { setPutg } from '@/store/gaskets/putg'
 
 type Props = {}
 
@@ -27,8 +27,6 @@ const Card: FC<Props> = () => {
 	const orderId = useAppSelector(state => state.card.orderId)
 	const info = useAppSelector(state => state.card.info)
 	const positions = useAppSelector(state => state.card.positions)
-	// const snpCardIndex = useAppSelector(state => state.snp.cardIndex)
-	// const positionId = useAppSelector(state => state.snp.positionId)
 
 	const positionId = useAppSelector(state => state.card.activePosition?.id)
 
@@ -81,7 +79,10 @@ const Card: FC<Props> = () => {
 	const deleteHandler = (id: string) => {
 		deletePosition(id)
 		// if (positionId && positionId === id) {
+		dispatch(clearActive())
+
 		dispatch(clearSnp())
+		dispatch(clearPutg())
 		// }
 	}
 
@@ -91,15 +92,6 @@ const Card: FC<Props> = () => {
 		dispatch(setActive({ index, id: position.id, type: position.type }))
 
 		if (position.type === 'Snp') {
-			// const snp = {
-			// 	cardIndex: index,
-			// 	positionId: position.id,
-			// 	amount: position.amount,
-			// 	main: position.snpData.main,
-			// 	sizes: position.snpData.size,
-			// 	materials: position.snpData.material,
-			// 	design: position.snpData.design,
-			// }
 			const snp = {
 				amount: position.amount,
 				data: position.snpData,
@@ -110,8 +102,6 @@ const Card: FC<Props> = () => {
 		}
 		if (position.type === 'Putg') {
 			const putg = {
-				// cardIndex: index,
-				// positionId: position.id,
 				amount: position.amount,
 				info: position.info,
 				data: position.putgData,

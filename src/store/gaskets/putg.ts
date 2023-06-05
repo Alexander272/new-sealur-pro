@@ -125,6 +125,8 @@ const initialState: IPutgState = {
 			hasDrawing: false,
 		},
 		hasHole: false,
+		hasCoating: false,
+		hasRemovable: false,
 		mounting: {
 			hasMounting: false,
 			code: '',
@@ -412,6 +414,8 @@ export const putgSlice = createSlice({
 			state.material = action.payload.data.material
 
 			state.design.hasHole = action.payload.data.design.hasHole || false
+			state.design.hasCoating = action.payload.data.design.hasCoating || false
+			state.design.hasRemovable = action.payload.data.design.hasRemovable || false
 			state.design.jumper.hasJumper = action.payload.data.design.jumper.hasJumper || false
 			state.design.jumper.code = action.payload.data.design.jumper.code
 			state.design.jumper.width = action.payload.data.design.jumper.width
