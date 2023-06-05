@@ -25,10 +25,24 @@ export default function Analytics() {
 	const periodAtHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		setPeriodAt(event.target.valueAsNumber)
 		localStorage.setItem(periodAtName, event.target.valueAsNumber.toString())
+
+		if (
+			new Date(event.target.valueAsNumber).toISOString().substring(0, 10) ==
+			new Date(new Date().setDate(1)).toISOString().substring(0, 10)
+		) {
+			localStorage.removeItem(periodAtName)
+		}
 	}
 	const periodEndHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		setPeriodEnd(event.target.valueAsNumber)
 		localStorage.setItem(periodEndName, event.target.valueAsNumber.toString())
+
+		if (
+			new Date(event.target.valueAsNumber).toISOString().substring(0, 10) ==
+			new Date().toISOString().substring(0, 10)
+		) {
+			localStorage.removeItem(periodEndName)
+		}
 	}
 
 	// надо бы запоминать период при переходе по страницам
