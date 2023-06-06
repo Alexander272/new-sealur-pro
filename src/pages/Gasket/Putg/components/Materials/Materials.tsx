@@ -118,7 +118,7 @@ export const Materials: FC<Props> = () => {
 						</MenuItem>
 						{data?.data.putgTypes.map(f => (
 							<MenuItem key={f.id} value={f.code}>
-								{f.title}
+								{f.code} - {f.title}
 							</MenuItem>
 						))}
 					</Select>
@@ -141,13 +141,34 @@ export const Materials: FC<Props> = () => {
 						</MenuItem>
 						{data?.data.constructions.map(f => (
 							<MenuItem key={f.id} value={f.code}>
-								{f.title}
+								{f.code} - {f.title}
 							</MenuItem>
 						))}
 					</Select>
 
 					{materials ? (
 						<>
+							<Typography fontWeight='bold' mt={1}>
+								Материал армировки
+							</Typography>
+							<Select
+								value={material.reinforce?.materialId || 'not_selected'}
+								onChange={materialHandler('rotaryPlug')}
+								size='small'
+								sx={{
+									borderRadius: '12px',
+									width: '100%',
+								}}
+								disabled={!material.putgType?.hasReinforce || isFetching}
+							>
+								<MenuItem value='not_selected'>Выберите материал</MenuItem>
+								{materials.reinforce.map(m => (
+									<MenuItem key={m.id} value={m.materialId}>
+										{m.title}
+									</MenuItem>
+								))}
+							</Select>
+
 							<Typography fontWeight='bold' mt={1}>
 								Материал обтюраторов
 							</Typography>

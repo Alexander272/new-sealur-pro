@@ -37,7 +37,7 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				d2: s.sizes[0].d2,
 				d1: s.sizes[0]?.d1 || '',
 				h: s.sizes[0].h[0],
-				another: '',
+				// another: '',
 			}
 
 			dispatch(setSize(size))
@@ -61,7 +61,7 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 			d2: s.sizes[0].d2.replace(',', '.'),
 			d1: (s.sizes[0]?.d1 || '').replace(',', '.'),
 			h: s.sizes[0].h[0].replace(',', '.'),
-			another: '',
+			// another: '',
 		}
 
 		dispatch(setSize(size))
@@ -110,22 +110,6 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 
 		dispatch(setSizePn(sizePn))
 	}
-
-	// const thicknessHandler = (event: SelectChangeEvent<string>) => {
-	// 	const s = curSize?.sizes.find(s => s.pn.some(pn => pn.mpa === size.pn.mpa))
-	// 	if (!s) return
-
-	// 	const newThickness: any = {
-	// 		h: event.target.value,
-	// 	}
-
-	// 	if (event.target.value !== 'another') {
-	// 		const idx = s.h.findIndex(h => h === event.target.value)
-	// 		newThickness.h = s.h[idx]
-	// 	}
-
-	// 	dispatch(setSizeThickness(newThickness))
-	// }
 
 	const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		const temp = event.target.value.replace(',', '.')
@@ -185,7 +169,7 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 			</Select>
 
 			<Typography fontWeight='bold' mt={1}>
-				Толщина прокладки по каркасу
+				Толщина прокладки
 			</Typography>
 			{/* <Stack direction='row' spacing={1} alignItems='flex-start'> */}
 			{/* <Select

@@ -111,7 +111,7 @@ export const AnotherSize: FC<Props> = () => {
 				</>
 			)}
 
-			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
+			<Typography fontWeight='bold'>Толщина прокладки</Typography>
 			<Input
 				name='thickness'
 				value={size.h}

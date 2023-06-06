@@ -205,27 +205,29 @@ export const Result: FC<Props> = () => {
 				} else {
 					return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${sizes}-${h}${coating}${jumper}${materials} ${designationDesign} ${main.standard?.standard.title}`
 				}
+			} else {
+				return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}(${sizes}, ${main.standard?.standard.title}) ТУ 5728-006-93978201-2008`
 			}
-			//* ГОСТ 15180-86
-			if (main.standard?.standard.id == '79ef2110-5c48-4b43-be3e-816be1459fb7') {
-				return ``
-			}
-			//* ГОСТ 28759.6-2022
-			if (main.standard?.standard.id == 'f7ae1f5e-4dee-45d8-952c-3ab46d235002') {
-				return ``
-			}
-			//* ASME B 16.21
-			if (main.standard?.standard.id == '2f4150f0-9ab7-409a-815e-6bcc60cb5d86') {
-				return ``
-			}
-			//* DIN 2690
-			if (main.standard?.standard.id == '892b44dd-3afe-4bad-a07e-28123204ed66') {
-				return ``
-			}
-			//* EN 1514-1
-			if (main.standard?.standard.id == '6acf5aa4-41a5-4ecf-a576-09ec89ef885f') {
-				return ``
-			}
+			// //* ГОСТ 15180-86
+			// if (main.standard?.standard.id == '79ef2110-5c48-4b43-be3e-816be1459fb7') {
+			// 	return ``
+			// }
+			// //* ГОСТ 28759.6-2022
+			// if (main.standard?.standard.id == 'f7ae1f5e-4dee-45d8-952c-3ab46d235002') {
+			// 	return ``
+			// }
+			// //* ASME B 16.21
+			// if (main.standard?.standard.id == '2f4150f0-9ab7-409a-815e-6bcc60cb5d86') {
+			// 	return ``
+			// }
+			// //* DIN 2690
+			// if (main.standard?.standard.id == '892b44dd-3afe-4bad-a07e-28123204ed66') {
+			// 	return ``
+			// }
+			// //* EN 1514-1
+			// if (main.standard?.standard.id == '6acf5aa4-41a5-4ecf-a576-09ec89ef885f') {
+			// 	return ``
+			// }
 		}
 		const form = main.configuration?.code == 'oval' ? 'О' : 'П'
 

@@ -34,7 +34,7 @@ export const Design: FC<Props> = () => {
 	const design = useAppSelector(state => state.putg.design)
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
-	const mountings = useAppSelector(state => state.putg.mountings)
+	// const mountings = useAppSelector(state => state.putg.mountings)
 	const drawing = useAppSelector(state => state.putg.drawing)
 	const hasDesignError = useAppSelector(state => state.putg.hasDesignError)
 	const orderId = useAppSelector(state => state.card.orderId)
@@ -154,29 +154,6 @@ export const Design: FC<Props> = () => {
 				{!isError && data ? (
 					<>
 						<Typography fontWeight='bold'>Конструктивные элементы</Typography>
-						<Stack direction='row' spacing={2}>
-							<Checkbox
-								id='jumper'
-								name='jumper'
-								label='Перемычка'
-								checked={design.jumper.hasJumper}
-								disabled={!data?.data.data.hasJumper || isFetching}
-								onChange={jumperHandler}
-							/>
-
-							{design.jumper.hasJumper && (
-								<>
-									<JumperSelect value={design.jumper.code} onSelect={jumperSelectHandler} />
-									<Input
-										value={design.jumper.width}
-										onChange={jumperWidthHandler}
-										placeholder='Ширина перемычки'
-										disabled={isFetching}
-										size='small'
-									/>
-								</>
-							)}
-						</Stack>
 
 						<Checkbox
 							id='holes'
@@ -207,6 +184,30 @@ export const Design: FC<Props> = () => {
 
 						<Stack direction='row' spacing={2} marginBottom={3}>
 							<Checkbox
+								id='jumper'
+								name='jumper'
+								label='Перемычка'
+								checked={design.jumper.hasJumper}
+								disabled={!data?.data.data.hasJumper || isFetching}
+								onChange={jumperHandler}
+							/>
+
+							{design.jumper.hasJumper && (
+								<>
+									<JumperSelect value={design.jumper.code} onSelect={jumperSelectHandler} />
+									<Input
+										value={design.jumper.width}
+										onChange={jumperWidthHandler}
+										placeholder='Ширина перемычки'
+										disabled={isFetching}
+										size='small'
+									/>
+								</>
+							)}
+						</Stack>
+
+						{/* <Stack direction='row' spacing={2} marginBottom={3}>
+							<Checkbox
 								id='mounting'
 								name='mounting'
 								label='Крепление на вертикальном фланце'
@@ -235,7 +236,7 @@ export const Design: FC<Props> = () => {
 									))}
 								</Select>
 							)}
-						</Stack>
+						</Stack> */}
 
 						{role != 'manager' ? (
 							drawing ? (

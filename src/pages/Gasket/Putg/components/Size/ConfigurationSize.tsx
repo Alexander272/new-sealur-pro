@@ -1,11 +1,13 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent } from 'react'
 import { Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { setSizeMain, setSizeThickness, setUseDimensions } from '@/store/gaskets/putg'
+import { setHasRounding, setSizeMain, setSizeThickness, setUseDimensions } from '@/store/gaskets/putg'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
+import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { Input } from '@/components/Input/input.style'
 
 export default function ConfigurationSize() {
+	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
 	const useDimensions = useAppSelector(state => state.putg.size.useDimensions)
 	const size = useAppSelector(state => state.putg.size)
@@ -48,6 +50,10 @@ export default function ConfigurationSize() {
 		}
 	}
 
+	const roundingHandler = (event: ChangeEvent<HTMLInputElement>) => {
+		dispatch(setHasRounding(event.target.checked))
+	}
+
 	return (
 		<>
 			<Typography fontWeight='bold'>Размеры через</Typography>
@@ -77,8 +83,8 @@ export default function ConfigurationSize() {
 					<Typography fontWeight='bold'>A2, мм</Typography>
 					<Input
 						name='A2'
-						// value={size.d4}
-						// onChange={sizeHandler('d4')}
+						value={size.d3}
+						onChange={sizeHandler('d3')}
 						// error={sizeErr.d4Err || sizeErr.emptyD4}
 						// helperText={
 						// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
@@ -92,8 +98,8 @@ export default function ConfigurationSize() {
 			<Typography fontWeight='bold'>B1, мм</Typography>
 			<Input
 				name='B1'
-				value={!useDimensions ? size.d2 : size.d3}
-				onChange={!useDimensions ? sizeHandler('d2') : sizeHandler('d3')}
+				value={size.d2}
+				onChange={sizeHandler('d2')}
 				// error={sizeErr.d4Err || sizeErr.emptyD4}
 				// helperText={
 				// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
@@ -106,8 +112,8 @@ export default function ConfigurationSize() {
 					<Typography fontWeight='bold'>B2, мм</Typography>
 					<Input
 						name='B2'
-						// value={size.d4}
-						// onChange={sizeHandler('d4')}
+						value={size.d1}
+						onChange={sizeHandler('d1')}
 						// error={sizeErr.d4Err || sizeErr.emptyD4}
 						// helperText={
 						// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
@@ -133,7 +139,7 @@ export default function ConfigurationSize() {
 				</>
 			)}
 
-			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
+			<Typography fontWeight='bold'>Толщина прокладки</Typography>
 			<Input
 				name='thickness'
 				value={size.h}
@@ -147,7 +153,18 @@ export default function ConfigurationSize() {
 				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'
+				sx={{ marginBottom: 1 }}
 			/>
+
+			{main.configuration?.code == 'rectangular' && (
+				<Checkbox
+					id={'hasRounding'}
+					name={'hasRounding'}
+					checked={size.hasRounding || false}
+					onChange={roundingHandler}
+					label='Есть скругления'
+				/>
+			)}
 		</>
 	)
 }

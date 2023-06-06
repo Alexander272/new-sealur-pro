@@ -57,6 +57,7 @@ export interface IPutgState {
 		emptyDrawingHole: boolean
 		emptyDrawingJumper: boolean
 		emptyDrawingRemovable: boolean
+		emptyDrawingRounding: boolean
 	}
 
 	drawing?: IDrawing
@@ -92,6 +93,7 @@ const initialState: IPutgState = {
 		emptyDrawingHole: false,
 		emptyDrawingJumper: false,
 		emptyDrawingRemovable: false,
+		emptyDrawingRounding: false,
 	},
 
 	// стандарты, тип фланца и тип прокладки
@@ -113,8 +115,8 @@ const initialState: IPutgState = {
 		d1: '',
 		pn: { mpa: '', kg: '' },
 		h: '',
-		another: '',
 		useDimensions: false,
+		hasRounding: false,
 	},
 	// конструктивные элементы
 	design: {
@@ -216,6 +218,9 @@ export const putgSlice = createSlice({
 		// установка кода типа прокладки
 		setType: (state, action: PayloadAction<IPutgType>) => {
 			state.material.putgType = action.payload
+
+			if (!action.payload.hasReinforce) state.material.reinforce = undefined
+			else state.material.reinforce = state.materials?.reinforce[state.materials.reinforceDefaultIndex || 0]
 		},
 		// установка тип конструкции
 		setConstruction: (state, action: PayloadAction<IConstruction>) => {
@@ -257,7 +262,8 @@ export const putgSlice = createSlice({
 			state.hasDesignError =
 				state.designError.emptyDrawingJumper ||
 				state.designError.emptyDrawingHole ||
-				state.designError.emptyDrawingRemovable
+				state.designError.emptyDrawingRemovable ||
+				state.designError.emptyDrawingRounding
 		},
 		// установка перемычки и ее ширины
 		setDesignJumper: (
@@ -273,7 +279,11 @@ export const putgSlice = createSlice({
 			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
 
 			if (!state.design.jumper.hasJumper) state.designError.emptyDrawingJumper = false
-			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
+			state.hasDesignError =
+				state.designError.emptyDrawingJumper ||
+				state.designError.emptyDrawingHole ||
+				state.designError.emptyDrawingRemovable ||
+				state.designError.emptyDrawingRounding
 		},
 		// установка крепления
 		setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
@@ -291,17 +301,27 @@ export const putgSlice = createSlice({
 			}
 			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
 			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
-			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
+			state.hasDesignError =
+				state.designError.emptyDrawingJumper ||
+				state.designError.emptyDrawingHole ||
+				state.designError.emptyDrawingRemovable ||
+				state.designError.emptyDrawingRounding
 		},
 
 		// установка всех размеров
 		setSize: (state, action: PayloadAction<ISizeBlockPutg>) => {
 			state.size = action.payload
+			state.sizeError.emptyD1 = false
+			state.sizeError.emptyD2 = false
+			state.sizeError.emptyD3 = false
+			state.sizeError.emptyD4 = false
 			state.sizeError.emptySize = false
 			state.hasSizeError = false
 
 			if (!action.payload.h) {
 				state.size.h = '3.0'
+			} else {
+				state.size.h = action.payload.h.replace(',', '.')
 			}
 		},
 		// установка условного прохода
@@ -322,7 +342,7 @@ export const putgSlice = createSlice({
 			}
 			if (action.payload.thickness) {
 				state.size.h = action.payload.thickness.h
-				state.size.another = action.payload.thickness.another
+				// state.size.another = action.payload.thickness.another
 			}
 		},
 		// установка размеров прокладки
@@ -332,40 +352,45 @@ export const putgSlice = createSlice({
 			if (action.payload.d2 != undefined) state.size.d2 = action.payload.d2
 			if (action.payload.d1 != undefined) state.size.d1 = action.payload.d1
 
-			state.sizeError.d4Err = state.size.d4 != '' && action.payload.d3 != '' && +state.size.d4 <= +state.size.d3
-			state.sizeError.d3Err = state.size.d3 != '' && action.payload.d2 != '' && +state.size.d3 <= +state.size.d2
-			state.sizeError.d2Err = state.size.d2 != '' && action.payload.d1 != '' && +state.size.d2 <= +state.size.d1
+			// проверка на ошибки размеров доступна только для круглых прокладок
+			if (state.main.configuration?.code == 'round') {
+				state.sizeError.d4Err =
+					state.size.d4 != '' && action.payload.d3 != '' && +state.size.d4 <= +state.size.d3
+				state.sizeError.d3Err =
+					state.size.d3 != '' && action.payload.d2 != '' && +state.size.d3 <= +state.size.d2
+				state.sizeError.d2Err =
+					state.size.d2 != '' && action.payload.d1 != '' && +state.size.d2 <= +state.size.d1
 
-			state.sizeError.emptyD4 = !state.size.d4
-			state.sizeError.emptyD3 = !state.size.d3
-			state.sizeError.emptyD2 = !state.size.d2
-			state.sizeError.emptyD1 = !state.size.d1
+				state.sizeError.emptyD4 = !state.size.d4
+				state.sizeError.emptyD3 = !state.size.d3
+				state.sizeError.emptyD2 = !state.size.d2
+				state.sizeError.emptyD1 = !state.size.d1
 
-			const emptyD4 = (state.material.construction?.hasD4 || false) && state.sizeError.emptyD4
-			const emptyD3 = (state.material.construction?.hasD3 || false) && state.sizeError.emptyD3
-			const emptyD2 = (state.material.construction?.hasD2 || false) && state.sizeError.emptyD2
-			const emptyD1 = (state.material.construction?.hasD1 || false) && state.sizeError.emptyD1
-			state.sizeError.emptySize = emptyD4 || emptyD3 || emptyD2 || emptyD1
+				const emptyD4 = (state.material.construction?.hasD4 || false) && state.sizeError.emptyD4
+				const emptyD3 = (state.material.construction?.hasD3 || false) && state.sizeError.emptyD3
+				const emptyD2 = (state.material.construction?.hasD2 || false) && state.sizeError.emptyD2
+				const emptyD1 = (state.material.construction?.hasD1 || false) && state.sizeError.emptyD1
+				state.sizeError.emptySize = emptyD4 || emptyD3 || emptyD2 || emptyD1
 
-			state.hasSizeError =
-				state.sizeError.thickness ||
-				state.sizeError.d4Err ||
-				state.sizeError.d3Err ||
-				state.sizeError.d2Err ||
-				state.sizeError.emptySize
+				state.hasSizeError =
+					state.sizeError.thickness ||
+					state.sizeError.d4Err ||
+					state.sizeError.d3Err ||
+					state.sizeError.d2Err ||
+					state.sizeError.emptySize
+			}
 		},
 		// установка толщины
 		setSizeThickness: (state, action: PayloadAction<{ h?: string; another?: string }>) => {
-			if (action.payload.h != undefined) state.size.h = action.payload.h
-			if (action.payload.another != undefined) {
-				state.size.another = action.payload.another
+			if (action.payload.h != undefined) {
+				state.size.h = action.payload.h
 
 				let minThickness = state.material.putgType?.minThickness || -1
 				let maxThickness = state.material.putgType?.maxThickness || 99999
 
 				state.sizeError.thickness =
-					+action.payload.another.replaceAll(',', '.') < minThickness ||
-					+action.payload.another.replaceAll(',', '.') > maxThickness
+					+action.payload.h.replaceAll(',', '.') < minThickness ||
+					+action.payload.h.replaceAll(',', '.') > maxThickness
 
 				state.hasSizeError =
 					state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
@@ -379,6 +404,24 @@ export const putgSlice = createSlice({
 			state.size.d3 = ''
 			state.size.d2 = ''
 			state.size.d1 = ''
+
+			state.sizeError.emptyD1 = false
+			state.sizeError.emptyD2 = false
+			state.sizeError.emptyD3 = false
+			state.sizeError.emptyD4 = false
+			state.sizeError.emptySize = false
+			state.hasSizeError = false
+		},
+		// есть скругления (для прямоугольной)
+		setHasRounding: (state, action: PayloadAction<boolean>) => {
+			state.size.hasRounding = action.payload
+
+			state.designError.emptyDrawingRounding = !state.drawing && (state.size.hasRounding || false)
+			state.hasDesignError =
+				state.designError.emptyDrawingJumper ||
+				state.designError.emptyDrawingHole ||
+				state.designError.emptyDrawingRemovable ||
+				state.designError.emptyDrawingRounding
 		},
 
 		// установка доп. инфы
@@ -476,6 +519,7 @@ export const {
 	setSizeMain,
 	setSizeThickness,
 	setUseDimensions,
+	setHasRounding,
 
 	setInfo,
 	setAmount,

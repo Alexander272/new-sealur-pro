@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
+import { ListItemText, MenuItem, Select, SelectChangeEvent, Skeleton, Stack, Typography } from '@mui/material'
 import {
 	setConfigurations,
 	setFiller,
@@ -128,7 +128,32 @@ export const Main: FC<Props> = () => {
 								</MenuItem>
 								{standards?.map(s => (
 									<MenuItem key={s.id} value={s.id}>
-										{s.standard.title} {s.flangeStandard.title && '/'} {s.flangeStandard.title}
+										{/* <Stack direction={'row'} spacing={1}>
+											<Typography sx={{ flexBasis: '50%' }}>{s.standard.title}</Typography>
+											<Typography>{s.flangeStandard.title}</Typography>
+										</Stack> */}
+										<Typography
+											sx={{
+												display: 'flex',
+												overflow: 'hidden',
+												textOverflow: 'ellipsis',
+												width: '100%',
+												gap: '2%',
+											}}
+										>
+											<Typography variant='body1' component='span' sx={{ flexBasis: '54%' }}>
+												{s.standard.title}
+											</Typography>
+											<Typography
+												variant='body1'
+												component='span'
+												sx={{ flexBasis: '44%', overflow: 'hidden', textOverflow: 'ellipsis' }}
+											>
+												{s.flangeStandard.title}
+											</Typography>
+										</Typography>
+
+										{/* {s.standard.title} {s.flangeStandard.title && '/'} {s.flangeStandard.title} */}
 									</MenuItem>
 								))}
 							</Select>
