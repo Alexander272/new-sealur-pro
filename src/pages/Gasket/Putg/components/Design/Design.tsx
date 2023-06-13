@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useState } from 'react'
-import { Alert, MenuItem, Select, SelectChangeEvent, Snackbar, Stack, Typography } from '@mui/material'
+import { Alert, SelectChangeEvent, Snackbar, Stack, Typography } from '@mui/material'
 import type { IMainJumper } from '@/types/jumper'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetPutgQuery } from '@/store/api/putg'

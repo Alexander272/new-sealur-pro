@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { ListItemText, MenuItem, Select, SelectChangeEvent, Skeleton, Stack, Typography } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 import {
 	setConfigurations,
 	setFiller,
@@ -8,7 +8,6 @@ import {
 	setMainFlangeType,
 	setMainStandard,
 	setMaterials,
-	setMounting,
 	setStandards,
 } from '@/store/gaskets/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
@@ -52,9 +51,9 @@ export const Main: FC<Props> = () => {
 		if (base) {
 			if (base.data.configurations) dispatch(setConfigurations(base.data.configurations))
 			if (base.data.standards) dispatch(setStandards(base.data.standards))
-			if (base.data.mounting) dispatch(setMounting({ mountings: base.data.mounting, positionId }))
+			// if (base.data.mounting) dispatch(setMounting({ mountings: base.data.mounting, positionId }))
 
-			if (base.data.materials?.rotaryPlug) dispatch(setMaterials({ materials: base.data.materials, positionId }))
+			if (base.data.materials?.rotaryPlug) dispatch(setMaterials(base.data.materials))
 			if (base.data.flangeTypes) dispatch(setFlangeTypes({ types: base.data.flangeTypes, positionId }))
 			if (base?.data.fillers) dispatch(setFiller({ fillers: base.data.fillers || [], positionId }))
 		}
@@ -125,6 +124,28 @@ export const Main: FC<Props> = () => {
 							>
 								<MenuItem disabled value='not_selected'>
 									Выберите стандарт
+								</MenuItem>
+								<MenuItem disabled>
+									<Typography
+										sx={{
+											display: 'flex',
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											width: '100%',
+											gap: '2%',
+										}}
+									>
+										<Typography variant='body1' component='span' sx={{ flexBasis: '54%' }}>
+											Стандарт на прокладку
+										</Typography>
+										<Typography
+											variant='body1'
+											component='span'
+											sx={{ flexBasis: '44%', overflow: 'hidden', textOverflow: 'ellipsis' }}
+										>
+											Стандарт на фланец
+										</Typography>
+									</Typography>
 								</MenuItem>
 								{standards?.map(s => (
 									<MenuItem key={s.id} value={s.id}>

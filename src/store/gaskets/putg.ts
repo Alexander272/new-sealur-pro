@@ -173,23 +173,23 @@ export const putgSlice = createSlice({
 			}
 		},
 		// установка списка креплений
-		setMounting: (state, action: PayloadAction<{ mountings: IMounting[]; positionId?: string }>) => {
-			state.mountings = action.payload.mountings
-			if (action.payload.positionId === undefined) {
-				state.design.mounting.code = action.payload.mountings[0].title
-			}
-		},
+		// setMounting: (state, action: PayloadAction<{ mountings: IMounting[]; positionId?: string }>) => {
+		// 	state.mountings = action.payload.mountings
+		// 	if (action.payload.positionId === undefined) {
+		// 		state.design.mounting.code = action.payload.mountings[0].title
+		// 	}
+		// },
 		// установка списка материалов
-		setMaterials: (state, action: PayloadAction<{ materials: IPutgMaterial; positionId?: string }>) => {
-			state.materials = action.payload.materials
-			if (action.payload.positionId === undefined) {
-				state.material.rotaryPlug =
-					action.payload.materials.rotaryPlug[action.payload.materials.rotaryPlugDefaultIndex || 0]
-				state.material.innerRing =
-					action.payload.materials.innerRing[action.payload.materials.innerRingDefaultIndex || 0]
-				state.material.outerRing =
-					action.payload.materials.outerRing[action.payload.materials.outerRingDefaultIndex || 0]
-			}
+		setMaterials: (state, action: PayloadAction<IPutgMaterial>) => {
+			state.materials = action.payload
+			// if (action.payload.positionId === undefined) {
+			// 	state.material.rotaryPlug =
+			// 		action.payload.materials.rotaryPlug[action.payload.materials?.rotaryPlugDefaultIndex || 0]
+			// 	state.material.innerRing =
+			// 		action.payload.materials.innerRing[action.payload.materials?.innerRingDefaultIndex || 0]
+			// 	state.material.outerRing =
+			// 		action.payload.materials.outerRing[action.payload.materials?.outerRingDefaultIndex || 0]
+			// }
 		},
 
 		// установка конфигурации
@@ -218,22 +218,19 @@ export const putgSlice = createSlice({
 		// установка кода типа прокладки
 		setType: (state, action: PayloadAction<IPutgType>) => {
 			state.material.putgType = action.payload
-
-			if (!action.payload.hasReinforce) state.material.reinforce = undefined
-			else state.material.reinforce = state.materials?.reinforce[state.materials.reinforceDefaultIndex || 0]
 		},
 		// установка тип конструкции
 		setConstruction: (state, action: PayloadAction<IConstruction>) => {
 			state.material.construction = action.payload
 
 			if (!action.payload.hasRotaryPlug) state.material.rotaryPlug = undefined
-			else state.material.rotaryPlug = state.materials?.rotaryPlug[state.materials.rotaryPlugDefaultIndex || 0]
+			else state.material.rotaryPlug = state.materials?.rotaryPlug[state.materials?.rotaryPlugDefaultIndex || 0]
 
 			if (!action.payload.hasInnerRing) state.material.innerRing = undefined
-			else state.material.innerRing = state.materials?.innerRing[state.materials.innerRingDefaultIndex || 0]
+			else state.material.innerRing = state.materials?.innerRing[state.materials?.innerRingDefaultIndex || 0]
 
 			if (!action.payload.hasOuterRing) state.material.outerRing = undefined
-			else state.material.outerRing = state.materials?.outerRing[state.materials.outerRingDefaultIndex || 0]
+			else state.material.outerRing = state.materials?.outerRing[state.materials?.outerRingDefaultIndex || 0]
 		},
 		// установка материалов (обтюраторов или ограничителей)
 		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material: IMaterial }>) => {
@@ -498,7 +495,7 @@ export const {
 	setConfigurations,
 	setFiller,
 	setFlangeTypes,
-	setMounting,
+	// setMounting,
 	setMaterials,
 	setMainConfiguration,
 	setMainStandard,

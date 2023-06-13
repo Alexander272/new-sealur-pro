@@ -82,10 +82,32 @@ export const PutgImage: FC<Props> = ({ type, construction }) => {
 
 	return (
 		<CompositeImage>
-			<Image src={typeImages[(type?.typeCode as '200') || '200']} position='absolute' padding='0 4%' />
-			<Image src={constructionImage.ringUrl} isHidden={constructionImage.isHidden} padding='4.3% 0 0 0' />
+			<Image
+				width={466}
+				height={162}
+				src={typeImages[(type?.typeCode as '200') || '200']}
+				position='absolute'
+				padding='0 4%'
+				alt='gasket drawing'
+			/>
+			<Image
+				width={507}
+				height={113}
+				src={constructionImage.ringUrl}
+				isHidden={constructionImage.isHidden}
+				padding='4.3% 0 0 0'
+				alt='rings drawing'
+			/>
 			{constructionImage.rotaryUrl && (
-				<Image src={constructionImage.rotaryUrl} position='absolute' left='0' padding='4.3% 4% 0' />
+				<Image
+					width={466}
+					height={33}
+					src={constructionImage.rotaryUrl}
+					position='absolute'
+					left='0'
+					padding='4.3% 4% 0'
+					alt='rotary plug drawing'
+				/>
 			)}
 		</CompositeImage>
 	)

@@ -4,7 +4,7 @@ import { IHasMounting } from './mounting'
 import { PN } from './sizes'
 import { IFlangeStandard, IStandard } from './snp'
 
-export type TypeMaterial = 'reinforce' | 'innerRing' | 'rotaryPlug' | 'outerRing'
+export type TypeMaterial = 'innerRing' | 'rotaryPlug' | 'outerRing'
 
 export interface IPutgConfiguration {
 	id: string
@@ -70,15 +70,12 @@ export interface IPutgType {
 	maxThickness: number
 	description: string
 	typeCode: string
-	hasReinforce?: boolean
 }
 
 export interface IPutgMaterial {
-	reinforce: IMaterial[]
 	rotaryPlug: IMaterial[]
 	innerRing: IMaterial[]
 	outerRing: IMaterial[]
-	reinforceDefaultIndex?: number
 	rotaryPlugDefaultIndex?: number
 	innerRingDefaultIndex?: number
 	outerRingDefaultIndex?: number
@@ -94,7 +91,6 @@ export interface IMaterialBlockPutg {
 	filler?: IFiller
 	putgType?: IPutgType
 	construction?: IConstruction
-	reinforce?: IMaterial
 	rotaryPlug?: IMaterial
 	innerRing?: IMaterial
 	outerRing?: IMaterial
