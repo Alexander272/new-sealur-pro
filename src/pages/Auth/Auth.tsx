@@ -5,6 +5,7 @@ import Footer from '@/components/Footer/Footer'
 import { Container, Wrapper, Base } from './auth.style'
 import { SignIn } from './components/AuthForms/SignInForm'
 import { SignUp } from './components/AuthForms/SignUpForm'
+import Header from './components/Header/Header'
 
 export default function Auth() {
 	const [isSignUp, setIsSignUp] = useState(Boolean(localStorage.getItem('managerId')))
@@ -28,6 +29,7 @@ export default function Auth() {
 
 	return (
 		<Base>
+			<Header />
 			<Wrapper>
 				<Container signUp={isSignUp}>
 					<SignIn onChangeTab={changeTabHandler(false)} isOpen={!isSignUp} />

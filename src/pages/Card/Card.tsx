@@ -94,6 +94,7 @@ const Card: FC<Props> = () => {
 		if (position.type === 'Snp') {
 			const snp = {
 				amount: position.amount,
+				info: position.info,
 				data: position.snpData,
 			}
 
@@ -128,6 +129,7 @@ const Card: FC<Props> = () => {
 			return
 		}
 		setAlert({ type: 'success', open: true })
+		infoChanged.current = false
 	}
 
 	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {

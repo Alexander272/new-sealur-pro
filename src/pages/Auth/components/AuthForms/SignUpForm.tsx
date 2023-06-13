@@ -1,5 +1,6 @@
 import { Alert, Autocomplete, Button, FormControl, Snackbar, Stack, Typography } from '@mui/material'
 import { FC, FormEvent, SyntheticEvent, useCallback, useEffect, useState } from 'react'
+// import SearchIcon from '@mui/icons-material/Search'
 import { useInput } from '@/hooks/useInput'
 import { useDebounce } from '@/hooks/debounce'
 import { CompanyInfo, findCompany } from '@/services/dadata'
@@ -26,12 +27,14 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const [open, setOpen] = useState(false)
 	const [res, setRes] = useState<{ type: 'success' | 'error'; message: string }>({ type: 'success', message: '' })
 	const [companyError, setCompanyError] = useState(false)
+	const [compare, setCompare] = useState(true)
 
 	const name = useInput({ validation: 'empty' })
 	const position = useInput({ validation: 'empty' })
 	const email = useInput({ validation: 'email' })
-	const phone = useInput({ validation: 'empty', replace: 'phone' })
+	const phone = useInput({ replace: 'phone' })
 	const password = useInput({ validation: 'password' })
+	const confirm = useInput({ validation: 'empty' })
 
 	const companyValue = useDebounce(company, 500)
 
@@ -60,8 +63,15 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 		let phoneValid = phone.validate()
 		let emailValid = email.validate()
 		let passwordValid = password.validate()
+		let confirmValid = confirm.validate()
+		let passwordsCompare = password.value === confirm.value
 
-		if (!nameValid || !positionValid || !emailValid || !phoneValid || !passwordValid) {
+		if (!nameValid || !positionValid || !emailValid || !phoneValid || !passwordValid || !confirmValid) {
+			return
+		}
+
+		setCompare(passwordsCompare)
+		if (!passwordsCompare) {
 			return
 		}
 
@@ -87,14 +97,16 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			managerId: localStorage.getItem('managerId') || '',
 		}
 
-		const res = await signUp(user)
-		if (res.error) {
-			console.log(res.error)
-			handleClick('error', res.error)
-		} else {
-			handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
-		}
-		localStorage.removeItem('managerId')
+		// const res = await signUp(user)
+		// if (res.error) {
+		// 	console.log(res.error)
+		// 	handleClick('error', res.error)
+		// } else {
+		// 	handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
+		// }
+		// localStorage.removeItem('managerId')
+		console.log('sing up')
+
 		setLoading(false)
 	}
 
@@ -134,15 +146,18 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						getOptionLabel={option => (typeof option === 'string' ? option : option.value)}
 						autoComplete
 						includeInputInList
+						autoSelect
 						options={companyList}
+						// popupIcon={<SearchIcon />}
+						popupIcon={null}
 						onChange={selectCompanyHandler}
-						noOptionsText=''
+						noOptionsText='Ничего не найдено'
 						onInputChange={companyHandler}
 						renderInput={params => (
 							<Input
 								{...params}
 								name='company'
-								placeholder='Название организации'
+								placeholder='Название организации *'
 								size='small'
 								autoComplete='off'
 								error={companyError}
@@ -181,7 +196,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						name='position'
 						value={position.value}
 						onChange={position.onChange}
-						placeholder='Должность'
+						placeholder='Должность *'
 						size='small'
 						error={!position.valid}
 					/>
@@ -191,9 +206,10 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
 					<Input
 						name='email'
+						type='email'
 						value={email.value}
 						onChange={email.onChange}
-						placeholder='Email'
+						placeholder='Email *'
 						size='small'
 						error={!email.valid}
 					/>
@@ -218,7 +234,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						value={password.value}
 						onChange={password.onChange}
 						type='password'
-						placeholder='Пароль'
+						placeholder='Пароль *'
 						size='small'
 						error={!password.valid}
 					/>
@@ -232,6 +248,22 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 							]}
 						/>
 					)}
+				</FormControl>
+
+				<FormControl sx={{ marginBottom: 2 }}>
+					<Input
+						name='confirm'
+						value={confirm.value}
+						onChange={confirm.onChange}
+						type='password'
+						placeholder='Повторите пароль *'
+						size='small'
+						error={!confirm.valid || !compare}
+					/>
+					<VisiblePassword password={confirm.value} />
+					{!confirm.valid || !compare ? (
+						<ValidMessage iconRight='46px' messages={['Пароли должны совпадать']} />
+					) : null}
 				</FormControl>
 
 				<Typography color={'GrayText'} align='center' marginBottom={1} sx={{ fontSize: '0.75rem' }}>

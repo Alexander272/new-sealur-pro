@@ -36,6 +36,7 @@ export interface ISNPState {
 	size: ISizeBlockSnp
 	design: IDesignBlockSnp
 	amount: string
+	info: string
 
 	hasError: boolean
 	hasSizeError: boolean
@@ -135,6 +136,8 @@ const initialState: ISNPState = {
 			code: '',
 		},
 	},
+	// доп. информация к позиции
+	info: '',
 	// количество прокладок
 	amount: '',
 }
@@ -388,6 +391,10 @@ export const snpSlice = createSlice({
 			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
 
+		// установка доп. инфы
+		setInfo: (state, action: PayloadAction<string>) => {
+			state.info = action.payload
+		},
 		// установка количества
 		setAmount: (state, action: PayloadAction<string>) => {
 			state.amount = action.payload
@@ -445,6 +452,7 @@ export const snpSlice = createSlice({
 					design: IDesignBlockSnp
 				}
 				amount: string
+				info?: string
 			}>
 		) => {
 			state.main = action.payload.data.main
@@ -469,8 +477,11 @@ export const snpSlice = createSlice({
 					group: parts[parts.length - 3],
 				}
 				state.drawing = drawing
+			} else {
+				state.drawing = undefined
 			}
 
+			state.info = action.payload.info || ''
 			state.amount = action.payload.amount
 		},
 		// сброс выбранной позиции
@@ -505,6 +516,7 @@ export const {
 	setDesignJumper,
 	setDesignMounting,
 	setDesignDrawing,
+	setInfo,
 	setAmount,
 	setSnp,
 	clearSnp,

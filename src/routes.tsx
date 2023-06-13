@@ -21,7 +21,15 @@ const Manager = lazy(() => import('@/layout/Manager/Manager'))
 const ManagerOrders = lazy(() => import('@/pages/Manager/Orders/Orders'))
 const ManagerOrder = lazy(() => import('@/pages/Manager/Order/Order'))
 
+const Analytics = lazy(() => import('@/pages/Manager/Analytics/Analytics'))
+const AnalyticsUsers = lazy(() => import('@/pages/Manager/Analytics/Users/Users'))
+const AnalyticsOrders = lazy(() => import('@/pages/Manager/Analytics/Orders/Orders'))
+const AnalyticsCount = lazy(() => import('@/pages/Manager/Analytics/Count/Count'))
+const AnalyticsUser = lazy(() => import('@/pages/Manager/Analytics/User/User'))
+
 const Connect = lazy(() => import('@/pages/ConnectWithUs/ConnectWithUs'))
+
+const NotFound = lazy(() => import('@/pages/NotFound/NotFound'))
 
 export const AppRoutes = () => {
 	const { ready } = useRefresh()
@@ -38,9 +46,11 @@ export const AppRoutes = () => {
 					<Route path='/auth/recovery' element={<Recovery />} />
 					<Route path='/auth/recovery/:code' element={<RecoveryPassword />} />
 
-					<Route path='/connect' element={<Main />}>
+					<Route path='/connect' element={<Manager />}>
 						<Route index element={<Connect />} />
 					</Route>
+
+					<Route path='*' element={<NotFound />} />
 
 					<Route
 						path='/'
@@ -57,20 +67,7 @@ export const AppRoutes = () => {
 						</Route>
 
 						<Route path='/orders' element={<Orders />} />
-
-						{/* <Route path='/connect' element={<Connect />} /> */}
 					</Route>
-
-					{/* <Route
-						path='/orders'
-						element={
-							<RequireAuth>
-								<Manager />
-							</RequireAuth>
-						}
-					>
-						<Route index element={<Orders />} />
-					</Route> */}
 
 					<Route
 						path='/manager'
@@ -82,6 +79,12 @@ export const AppRoutes = () => {
 					>
 						<Route path='orders' element={<ManagerOrders />} />
 						<Route path='orders/:id' element={<ManagerOrder />} />
+
+						<Route path='analytics' element={<Analytics />} />
+						<Route path='analytics/users' element={<AnalyticsUsers />} />
+						<Route path='analytics/orders' element={<AnalyticsOrders />} />
+						<Route path='analytics/count' element={<AnalyticsCount />} />
+						<Route path='analytics/user' element={<AnalyticsUser />} />
 					</Route>
 				</Routes>
 			</Suspense>

@@ -1,5 +1,5 @@
-import { IFullOrder, IManagerOrder } from '@/types/order'
-import { IUser } from '@/types/user'
+import type { IFullOrder, IManagerOrder } from '@/types/order'
+import type { IUser } from '@/types/user'
 import { api } from './base'
 import { proUrl } from './snp'
 

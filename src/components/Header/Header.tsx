@@ -10,9 +10,11 @@ import { sendMetric } from '@/services/metrics'
 
 import Instruction from '@/assets/files/instruction.pdf'
 
-type Props = {}
+type Props = {
+	disableCard?: boolean
+}
 
-const Header: FC<Props> = () => {
+const Header: FC<Props> = ({ disableCard }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
 	const userId = useAppSelector(state => state.user.userId)
@@ -42,6 +44,11 @@ const Header: FC<Props> = () => {
 
 		if (role == 'manager') navigate('/manager/orders')
 		else navigate('/orders')
+	}
+
+	const analyticsHandler = () => {
+		handleClose()
+		navigate('/manager/analytics')
 	}
 
 	const signOutHandler = async () => {
@@ -95,11 +102,13 @@ const Header: FC<Props> = () => {
 								</Icon>
 							</Tooltip>
 
-							<Tooltip title='Заявка'>
-								<Icon onClick={basketHandler}>
-									<img src='/image/basket.svg' alt='Заявка' width='30' height='30' />
-								</Icon>
-							</Tooltip>
+							{!disableCard && (
+								<Tooltip title='Заявка'>
+									<Icon onClick={basketHandler}>
+										<img src='/image/basket.svg' alt='Заявка' width='30' height='30' />
+									</Icon>
+								</Tooltip>
+							)}
 
 							<Tooltip title='Профиль'>
 								<Icon onClick={handleClick}>
@@ -145,6 +154,14 @@ const Header: FC<Props> = () => {
 						</ListItemIcon>
 						Заказы
 					</MenuItem>
+					{role !== 'user' && role != 'manager' ? (
+						<MenuItem onClick={analyticsHandler} selected={false}>
+							<ListItemIcon>
+								<img height={24} width={18} src='/image/graph.svg' />
+							</ListItemIcon>
+							Отчет
+						</MenuItem>
+					) : null}
 					<Divider />
 					<MenuItem onClick={signOutHandler} selected={false}>
 						<ListItemIcon>

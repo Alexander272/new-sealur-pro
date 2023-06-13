@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { clearPutg, setAmount, setInfo } from '@/store/gaskets/putg'
+import { clearPutg, setAmount, setDesignDrawing, setInfo } from '@/store/gaskets/putg'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
 import type { Position } from '@/types/card'
 import { clearActive, toggle } from '@/store/card'
@@ -73,6 +73,7 @@ export const Result: FC<Props> = () => {
 			} else {
 				await create(position).unwrap()
 			}
+			dispatch(setDesignDrawing(null))
 		} catch (error) {
 			return
 		}
