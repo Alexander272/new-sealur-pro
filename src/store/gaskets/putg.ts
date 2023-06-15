@@ -58,6 +58,7 @@ export interface IPutgState {
 		emptyDrawingJumper: boolean
 		emptyDrawingRemovable: boolean
 		emptyDrawingRounding: boolean
+		emptyDrawingForm: boolean
 	}
 
 	drawing?: IDrawing
@@ -94,6 +95,7 @@ const initialState: IPutgState = {
 		emptyDrawingJumper: false,
 		emptyDrawingRemovable: false,
 		emptyDrawingRounding: false,
+		emptyDrawingForm: false,
 	},
 
 	// стандарты, тип фланца и тип прокладки
@@ -129,10 +131,10 @@ const initialState: IPutgState = {
 		hasHole: false,
 		hasCoating: false,
 		hasRemovable: false,
-		mounting: {
-			hasMounting: false,
-			code: '',
-		},
+		// mounting: {
+		// 	hasMounting: false,
+		// 	code: '',
+		// },
 	},
 	// доп. информация к позиции
 	info: '',
@@ -201,6 +203,15 @@ export const putgSlice = createSlice({
 			state.size.d2 = ''
 			state.size.d1 = ''
 			state.size.useDimensions = false
+
+			state.designError.emptyDrawingForm = action.payload.hasDrawing || false
+
+			state.hasDesignError =
+				state.designError.emptyDrawingJumper ||
+				state.designError.emptyDrawingHole ||
+				state.designError.emptyDrawingRemovable ||
+				state.designError.emptyDrawingRounding ||
+				state.designError.emptyDrawingForm
 		},
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<IPutgStandard>) => {
@@ -245,7 +256,9 @@ export const putgSlice = createSlice({
 			state.hasDesignError =
 				state.designError.emptyDrawingJumper ||
 				state.designError.emptyDrawingHole ||
-				state.designError.emptyDrawingRemovable
+				state.designError.emptyDrawingRemovable ||
+				state.designError.emptyDrawingRounding ||
+				state.designError.emptyDrawingForm
 		},
 		// самоклеящееся покрытие
 		setHasCoating: (state, action: PayloadAction<boolean>) => {
@@ -260,7 +273,8 @@ export const putgSlice = createSlice({
 				state.designError.emptyDrawingJumper ||
 				state.designError.emptyDrawingHole ||
 				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding
+				state.designError.emptyDrawingRounding ||
+				state.designError.emptyDrawingForm
 		},
 		// установка перемычки и ее ширины
 		setDesignJumper: (
@@ -280,13 +294,14 @@ export const putgSlice = createSlice({
 				state.designError.emptyDrawingJumper ||
 				state.designError.emptyDrawingHole ||
 				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding
+				state.designError.emptyDrawingRounding ||
+				state.designError.emptyDrawingForm
 		},
 		// установка крепления
-		setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
-			if (action.payload.hasMounting != undefined) state.design.mounting.hasMounting = action.payload.hasMounting
-			if (action.payload.code != undefined) state.design.mounting.code = action.payload.code
-		},
+		// setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
+		// 	if (action.payload.hasMounting != undefined) state.design.mounting.hasMounting = action.payload.hasMounting
+		// 	if (action.payload.code != undefined) state.design.mounting.code = action.payload.code
+		// },
 		// установка чертежа
 		setDesignDrawing: (state, action: PayloadAction<IDrawing | null>) => {
 			if (action.payload) {
@@ -302,7 +317,8 @@ export const putgSlice = createSlice({
 				state.designError.emptyDrawingJumper ||
 				state.designError.emptyDrawingHole ||
 				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding
+				state.designError.emptyDrawingRounding ||
+				state.designError.emptyDrawingForm
 		},
 
 		// установка всех размеров
@@ -418,7 +434,8 @@ export const putgSlice = createSlice({
 				state.designError.emptyDrawingJumper ||
 				state.designError.emptyDrawingHole ||
 				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding
+				state.designError.emptyDrawingRounding ||
+				state.designError.emptyDrawingForm
 		},
 
 		// установка доп. инфы
@@ -459,8 +476,8 @@ export const putgSlice = createSlice({
 			state.design.jumper.hasJumper = action.payload.data.design.jumper.hasJumper || false
 			state.design.jumper.code = action.payload.data.design.jumper.code
 			state.design.jumper.width = action.payload.data.design.jumper.width
-			state.design.mounting.hasMounting = action.payload.data.design.mounting.hasMounting || false
-			state.design.mounting.code = action.payload.data.design.mounting.code
+			// state.design.mounting.hasMounting = action.payload.data.design.mounting.hasMounting || false
+			// state.design.mounting.code = action.payload.data.design.mounting.code
 			state.design.drawing = action.payload.data.design.drawing
 
 			if (action.payload.data.design.drawing) {
@@ -508,7 +525,7 @@ export const {
 	setHasCoating,
 	setHasRemovable,
 	setDesignJumper,
-	setDesignMounting,
+	// setDesignMounting,
 	setDesignDrawing,
 
 	setSize,

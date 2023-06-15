@@ -19,7 +19,7 @@ type ItemProps = {
 
 export const Item = styled.div<ItemProps>`
 	border-radius: 40px;
-	color: ${props => (props.active ? '#fff' : props.disabled ? 'GrayText' : 'var(--primary-color)')};
+	color: ${props => (props.active ? '#fff' : props.disabled ? '#8298a9' : 'var(--primary-color)')};
 	cursor: pointer;
 	font-weight: 500;
 	padding: ${props => (props.size === 'middle' ? '5px 14px' : '5px 24px')};

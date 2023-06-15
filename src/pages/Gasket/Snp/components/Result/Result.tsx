@@ -76,15 +76,16 @@ export const Result: FC<Props> = () => {
 				await create(position).unwrap()
 				// dispatch(addPosition(position))
 			}
+			dispatch(setDesignDrawing(null))
 		} catch (error) {
 			return
 		}
 
-		dispatch(setDesignDrawing(null))
 		setAlert({ type: 'success', message: '', open: true })
 	}
 
 	const cancelHandler = () => {
+		dispatch(clearSnp())
 		dispatch(clearActive())
 	}
 
@@ -442,7 +443,13 @@ export const Result: FC<Props> = () => {
 			let fr = `-${materials.frame?.code}/`
 			let or = materials.outerRing?.code ? `-O.R. ${materials.outerRing?.code}` : ''
 
-			return `SWG-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${main.snpStandard.standard.title}`
+			let flange = ''
+			// != ASME B 16.5
+			if (main.snpStandard.flangeStandard.id != '7d832d51-7645-4394-94dc-261959d9e374') {
+				flange = `${main.snpStandard.flangeStandard.title} `
+			}
+
+			return `Gasket SWG-${main.snpType?.code}-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${flange}${main.snpStandard.standard.title}`
 		}
 		if (main.snpStandard?.standard.title === 'EN 12560-2') {
 			let fr = ''

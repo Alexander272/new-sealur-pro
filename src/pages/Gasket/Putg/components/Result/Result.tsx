@@ -121,8 +121,8 @@ export const Result: FC<Props> = () => {
 		let coating = ''
 		if (design.hasCoating) coating = ' с элементом для крепления на поверхности'
 
-		let mounting = ''
-		if (design.mounting.hasMounting) mounting = `, с фиксатором ${design.mounting.code}`
+		// let mounting = ''
+		// if (design.mounting.hasMounting) mounting = `, с фиксатором ${design.mounting.code}`
 
 		let hole = ''
 		if (design.hasHole) hole = `, с отверстиями (по чертежу)`
@@ -145,7 +145,7 @@ export const Result: FC<Props> = () => {
 
 		let sizes = `${d4 && d4 + 'x'}${d3}x${d2}${d1 && 'x' + d1}-${thickness}`
 
-		let res = `Прокладка ${form}из ${material.filler?.designation}, ${material.putgType?.description}, ${materials}, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"${coating}${mounting}${hole}${jumper}${removable}, с размерами ${sizes}`
+		let res = `Прокладка ${form}из ${material.filler?.designation}, ${material.putgType?.description}, ${materials}, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"${coating}${hole}${jumper}${removable}, с размерами ${sizes}`
 
 		return res
 	}
@@ -168,9 +168,9 @@ export const Result: FC<Props> = () => {
 		let coating = ''
 		if (design.hasCoating) coating = '/СК'
 
-		if (design.mounting.hasMounting) {
-			designationDesignParts.push(design.mounting.code)
-		}
+		// if (design.mounting.hasMounting) {
+		// 	designationDesignParts.push(design.mounting.code)
+		// }
 		if (design.hasRemovable) {
 			designationDesignParts.push('разъемная')
 		}
@@ -202,12 +202,21 @@ export const Result: FC<Props> = () => {
 			if (main.standard?.standard.id == '42dca821-6189-445c-877c-87ced7ddf556') {
 				// != нестандартные фланцы
 				if (main.standard.flangeStandard.id != '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7') {
-					return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}(${sizes}) ${main.standard?.standard.title}`
+					return `Прокладка ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}(${sizes}) ${main.standard?.standard.title}`
 				} else {
-					return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${sizes}-${h}${coating}${jumper}${materials} ${designationDesign} ${main.standard?.standard.title}`
+					return `Прокладка ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${sizes}-${h}${coating}${jumper}${materials} ${designationDesign} ${main.standard?.standard.title}`
 				}
 			} else {
-				return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}(${sizes}, ${main.standard?.standard.title}) ТУ 5728-006-93978201-2008`
+				let flange = ''
+				//  = ASME B 16.21 && != ASME B 16.5
+				if (
+					main.standard?.standard.id == '2f4150f0-9ab7-409a-815e-6bcc60cb5d86' &&
+					main.standard.flangeStandard.id != '7d832d51-7645-4394-94dc-261959d9e374'
+				) {
+					flange = `${main.standard.flangeStandard.title} `
+				}
+
+				return `Прокладка ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}(${sizes}, ${flange}${main.standard?.standard.title}) ТУ 5728-006-93978201-2008`
 			}
 			// //* ГОСТ 15180-86
 			// if (main.standard?.standard.id == '79ef2110-5c48-4b43-be3e-816be1459fb7') {

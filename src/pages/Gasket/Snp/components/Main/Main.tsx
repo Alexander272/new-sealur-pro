@@ -111,15 +111,24 @@ export const Main: FC<Props> = () => {
 
 	const renderTypes = () => {
 		const set = new Set<string>()
+		let flangeType = data?.data.flangeTypes[0]
 		data?.data.flangeTypes.forEach(f => {
 			f.types.forEach(t => set.add(t.title))
+			if (f.code == main.flangeTypeCode) flangeType = f
 		})
 
 		const types: string[] = []
 		set.forEach(t => types.push(t))
 
+		console.log(flangeType)
+
 		return types.map(t => (
-			<RadioItem key={t} value={t} active={t === main.snpType?.title}>
+			<RadioItem
+				key={t}
+				value={t}
+				active={t === main.snpType?.title}
+				disabled={!flangeType?.types.some(type => type.title == t)}
+			>
 				{t}
 			</RadioItem>
 		))

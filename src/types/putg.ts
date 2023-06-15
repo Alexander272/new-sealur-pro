@@ -101,7 +101,7 @@ export interface IDesignBlockPutg {
 	hasHole?: boolean
 	hasCoating?: boolean
 	hasRemovable?: boolean
-	mounting: IHasMounting
+	// mounting: IHasMounting
 	drawing?: string
 }
 

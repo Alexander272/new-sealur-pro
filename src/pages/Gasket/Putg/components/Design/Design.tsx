@@ -3,14 +3,7 @@ import { Alert, SelectChangeEvent, Snackbar, Stack, Typography } from '@mui/mate
 import type { IMainJumper } from '@/types/jumper'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetPutgQuery } from '@/store/api/putg'
-import {
-	setDesignDrawing,
-	setDesignJumper,
-	setDesignMounting,
-	setHasCoating,
-	setHasHole,
-	setHasRemovable,
-} from '@/store/gaskets/putg'
+import { setDesignDrawing, setDesignJumper, setHasCoating, setHasHole, setHasRemovable } from '@/store/gaskets/putg'
 import { CreateFile, DeleteFile } from '@/services/file'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { JumperSelect } from '@/components/Jumper/Jumper'
@@ -64,9 +57,9 @@ export const Design: FC<Props> = () => {
 	const removableHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		dispatch(setHasRemovable(event.target.checked))
 	}
-	const mountingHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		dispatch(setDesignMounting({ hasMounting: event.target.checked }))
-	}
+	// const mountingHandler = (event: ChangeEvent<HTMLInputElement>) => {
+	// 	dispatch(setDesignMounting({ hasMounting: event.target.checked }))
+	// }
 
 	const jumperSelectHandler = (jumper: IMainJumper) => {
 		dispatch(setDesignJumper({ code: jumper.code, hasDrawing: jumper.hasDrawing }))
@@ -80,9 +73,9 @@ export const Design: FC<Props> = () => {
 		}
 	}
 
-	const mountingTitleHandler = (event: SelectChangeEvent<string>) => {
-		dispatch(setDesignMounting({ code: event.target.value }))
-	}
+	// const mountingTitleHandler = (event: SelectChangeEvent<string>) => {
+	// 	dispatch(setDesignMounting({ code: event.target.value }))
+	// }
 
 	const uploadFile = async (event: ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files
