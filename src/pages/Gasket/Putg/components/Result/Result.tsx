@@ -207,16 +207,18 @@ export const Result: FC<Props> = () => {
 					return `Прокладка ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${sizes}-${h}${coating}${jumper}${materials} ${designationDesign} ${main.standard?.standard.title}`
 				}
 			} else {
-				let flange = ''
+				let standard = ''
 				//  = ASME B 16.21 && != ASME B 16.5
 				if (
 					main.standard?.standard.id == '2f4150f0-9ab7-409a-815e-6bcc60cb5d86' &&
 					main.standard.flangeStandard.id != '7d832d51-7645-4394-94dc-261959d9e374'
 				) {
-					flange = `${main.standard.flangeStandard.title} `
+					standard = main.standard.flangeStandard.title
+				} else {
+					standard = main.standard?.standard.title || ''
 				}
 
-				return `Прокладка ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}(${sizes}, ${flange}${main.standard?.standard.title}) ТУ 5728-006-93978201-2008`
+				return `Прокладка ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${dn}-${pn}-${h}${coating}${jumper}${materials} ${designationDesign}(${sizes}, ${standard}) ТУ 5728-006-93978201-2008`
 			}
 			// //* ГОСТ 15180-86
 			// if (main.standard?.standard.id == '79ef2110-5c48-4b43-be3e-816be1459fb7') {

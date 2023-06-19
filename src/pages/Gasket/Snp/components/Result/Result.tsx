@@ -449,7 +449,7 @@ export const Result: FC<Props> = () => {
 				flange = `${main.snpStandard.flangeStandard.title} `
 			}
 
-			return `Gasket SWG-${main.snpType?.code}-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${flange}${main.snpStandard.standard.title}`
+			return `Прокладка СНП-${main.snpType?.code}-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${flange}${main.snpStandard.standard.title}`
 		}
 		if (main.snpStandard?.standard.title === 'EN 12560-2') {
 			let fr = ''

@@ -17,13 +17,21 @@ import { MainSkeleton } from '@/pages/Gasket/Skeletons/MainSkeleton'
 import FlangeA from '@/assets/snp/A.webp'
 import FlangeB from '@/assets/snp/B.webp'
 import FlangeV from '@/assets/snp/V.webp'
+import FlangeG from '@/assets/snp/G.webp'
+import FlangeD from '@/assets/snp/D.webp'
 
 const images = {
+	// А: FlangeA,
+	// Б: FlangeB,
+	// В: FlangeV,
+	// 'В (STG)': FlangeV,
+	// 'В (LTG)': FlangeV,
 	А: FlangeA,
-	Б: FlangeB,
-	В: FlangeV,
-	'В (STG)': FlangeV,
-	'В (LTG)': FlangeV,
+	'Б-А': FlangeB,
+	'Б-Б': FlangeB,
+	'Б-В': FlangeV,
+	Г: FlangeG,
+	Д: FlangeD,
 }
 
 type Props = {}
@@ -206,11 +214,17 @@ export const Main: FC<Props> = () => {
 			) : null}
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
-				{main.flangeTypeCode == 'not_selected' ? (
+				{main.snpType?.title == 'not_selected' ? (
 					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
 				) : (
 					<Image
-						src={images[main.flangeTypeCode as 'А']}
+						src={
+							images[
+								`${main.flangeTypeCode == 'Б' ? main.flangeTypeCode + '-' : ''}${
+									main.snpType?.title
+								}` as 'А'
+							]
+						}
 						alt='flange drawing'
 						maxWidth={'450px'}
 						width={450}

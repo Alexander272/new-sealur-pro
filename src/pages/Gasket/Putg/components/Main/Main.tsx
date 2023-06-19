@@ -122,10 +122,10 @@ export const Main: FC<Props> = () => {
 								size='small'
 								sx={{ borderRadius: '12px' }}
 							>
-								<MenuItem disabled value='not_selected'>
+								{/* <MenuItem disabled value='not_selected'>
 									Выберите стандарт
-								</MenuItem>
-								<MenuItem disabled>
+								</MenuItem> */}
+								<MenuItem disabled value='not_selected'>
 									<Typography
 										sx={{
 											display: 'flex',
@@ -149,10 +149,6 @@ export const Main: FC<Props> = () => {
 								</MenuItem>
 								{standards?.map(s => (
 									<MenuItem key={s.id} value={s.id}>
-										{/* <Stack direction={'row'} spacing={1}>
-											<Typography sx={{ flexBasis: '50%' }}>{s.standard.title}</Typography>
-											<Typography>{s.flangeStandard.title}</Typography>
-										</Stack> */}
 										<Typography
 											sx={{
 												display: 'flex',
@@ -162,7 +158,11 @@ export const Main: FC<Props> = () => {
 												gap: '2%',
 											}}
 										>
-											<Typography variant='body1' component='span' sx={{ flexBasis: '54%' }}>
+											<Typography
+												variant='body1'
+												component='span'
+												sx={{ flexBasis: '54%', overflow: 'hidden', textOverflow: 'ellipsis' }}
+											>
 												{s.standard.title}
 											</Typography>
 											<Typography
