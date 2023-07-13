@@ -248,7 +248,7 @@ export const Result: FC<Props> = () => {
 			designationDesign = `(${designationDesignParts.join(', ')}) `
 		}
 
-		return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${sizes}-${h}${coating}${jumper}${materials} ${designationDesign} ${main.standard?.standard.title}`
+		return `ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${material.construction?.code}-${sizes}-${h}${coating}${jumper}${materials} ${designationDesign} ТУ 5728-006-93978201-2008`
 	}
 
 	if (!isReady) return <ResultSkeleton />

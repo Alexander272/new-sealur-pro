@@ -18,6 +18,7 @@ export const AnotherSize: FC<Props> = () => {
 
 		if (event.target.value === '' || !isNaN(+temp)) {
 			let value: number | string
+			if (+temp > 10000) return
 
 			if (temp[temp.length - 1] == '.') value = temp
 			else value = Math.trunc(+temp * 10) / 10
@@ -33,6 +34,7 @@ export const AnotherSize: FC<Props> = () => {
 
 		if (event.target.value === '' || !isNaN(+temp)) {
 			let value: number | string
+			if (+temp > 10) return
 
 			if (temp[temp.length - 1] == '.') value = temp
 			else value = Math.trunc(+temp * 10) / 10
@@ -69,9 +71,12 @@ export const AnotherSize: FC<Props> = () => {
 						name='d3'
 						value={size.d3}
 						onChange={sizeHandler('d3')}
-						error={sizeErr.d3Err || sizeErr.emptyD3}
+						error={sizeErr.maxSize || sizeErr.minWidth || sizeErr.d3Err || sizeErr.emptyD3}
 						helperText={
-							(sizeErr.d3Err && 'D3 должен быть больше, чем D2') || (sizeErr.emptyD3 && 'размер не задан')
+							(sizeErr.maxSize && 'Прокладка слишком большая для выбранной конструкции') ||
+							(sizeErr.minWidth && 'Поле прокладки слишком маленькое') ||
+							(sizeErr.d3Err && 'D3 должен быть больше, чем D2') ||
+							(sizeErr.emptyD3 && 'размер не задан')
 						}
 						inputProps={{ inputMode: 'decimal' }}
 						size='small'
@@ -86,9 +91,11 @@ export const AnotherSize: FC<Props> = () => {
 						name='d2'
 						value={size.d2}
 						onChange={sizeHandler('d2')}
-						error={sizeErr.d2Err || sizeErr.emptyD2}
+						error={sizeErr.minWidth || sizeErr.d2Err || sizeErr.emptyD2}
 						helperText={
-							(sizeErr.d2Err && 'D2 должен быть больше, чем D1') || (sizeErr.emptyD2 && 'размер не задан')
+							(sizeErr.minWidth && 'Поле прокладки слишком маленькое') ||
+							(sizeErr.d2Err && 'D2 должен быть больше, чем D1') ||
+							(sizeErr.emptyD2 && 'размер не задан')
 						}
 						inputProps={{ inputMode: 'decimal' }}
 						size='small'

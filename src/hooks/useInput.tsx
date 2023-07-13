@@ -150,5 +150,7 @@ export const useInput = (props?: Props) => {
 		return isValid
 	}
 
-	return { value, onChange, valid, validate }
+	const clear = () => setValue('')
+
+	return { value, onChange, valid, validate, clear }
 }

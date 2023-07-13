@@ -52,6 +52,9 @@ export interface IPutgState {
 		emptyD3: boolean
 		emptyD2: boolean
 		emptyD1: boolean
+
+		minWidth: boolean
+		maxSize: boolean
 	}
 	designError: {
 		emptyDrawingHole: boolean
@@ -89,6 +92,9 @@ const initialState: IPutgState = {
 		emptyD3: false,
 		emptyD2: false,
 		emptyD1: false,
+
+		minWidth: false,
+		maxSize: false,
 	},
 	designError: {
 		emptyDrawingHole: false,
@@ -204,14 +210,18 @@ export const putgSlice = createSlice({
 			state.size.d1 = ''
 			state.size.useDimensions = false
 
+			state.sizeError.emptyD1 = false
+			state.sizeError.emptyD2 = false
+			state.sizeError.emptyD3 = false
+			state.sizeError.emptyD4 = false
+			state.sizeError.emptySize = false
+			state.sizeError.minWidth = false
+			state.sizeError.maxSize = false
+			state.hasSizeError = false
+
 			state.designError.emptyDrawingForm = action.payload.hasDrawing || false
 
-			state.hasDesignError =
-				state.designError.emptyDrawingJumper ||
-				state.designError.emptyDrawingHole ||
-				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding ||
-				state.designError.emptyDrawingForm
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<IPutgStandard>) => {
@@ -242,6 +252,45 @@ export const putgSlice = createSlice({
 
 			if (!action.payload.hasOuterRing) state.material.outerRing = undefined
 			else state.material.outerRing = state.materials?.outerRing[state.materials?.outerRingDefaultIndex || 0]
+
+			let hasError = true
+			const range = state.material.construction?.widthRange || []
+			for (let i = 0; i < range.length; i++) {
+				const r = range[i]
+
+				if (state.main.configuration?.code == 'round') {
+					if ((+state.size.d3 - +state.size.d2) / 2 >= r.width) {
+						hasError = false
+						if (+state.size.d3 <= r.maxD3) break
+					}
+				} else {
+					if (state.size.useDimensions) {
+						if (
+							(+state.size.d4 - +state.size.d3) / 2 >= r.width &&
+							(+state.size.d2 - +state.size.d1) / 2 >= r.width
+						) {
+							hasError = false
+							if (+state.size.d4 < r.maxD3) break
+						} else if (
+							state.size.d4 == '' ||
+							state.size.d2 == '' ||
+							state.size.d3 == '' ||
+							state.size.d1 == ''
+						)
+							hasError = false
+					} else {
+						if (+state.size.d1 >= r.width) {
+							hasError = false
+							if (+state.size.d3 < r.maxD3) break
+						} else if (state.size.d1 == '') hasError = false
+					}
+				}
+			}
+
+			state.sizeError.minWidth = hasError
+			if (range.length && state.main.configuration?.code == 'round')
+				state.sizeError.maxSize = range[range.length - 1].maxD3 <= +state.size.d3
+			if (state.main.configuration?.code != 'round') state.sizeError.maxSize = 1500 <= +state.size.d3
 		},
 		// установка материалов (обтюраторов или ограничителей)
 		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material: IMaterial }>) => {
@@ -253,12 +302,7 @@ export const putgSlice = createSlice({
 			state.design.hasHole = action.payload
 			state.designError.emptyDrawingHole = !state.drawing && action.payload
 
-			state.hasDesignError =
-				state.designError.emptyDrawingJumper ||
-				state.designError.emptyDrawingHole ||
-				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding ||
-				state.designError.emptyDrawingForm
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 		// самоклеящееся покрытие
 		setHasCoating: (state, action: PayloadAction<boolean>) => {
@@ -269,12 +313,7 @@ export const putgSlice = createSlice({
 			state.design.hasRemovable = action.payload
 			state.designError.emptyDrawingRemovable = !state.drawing && action.payload
 
-			state.hasDesignError =
-				state.designError.emptyDrawingJumper ||
-				state.designError.emptyDrawingHole ||
-				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding ||
-				state.designError.emptyDrawingForm
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 		// установка перемычки и ее ширины
 		setDesignJumper: (
@@ -290,12 +329,7 @@ export const putgSlice = createSlice({
 			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
 
 			if (!state.design.jumper.hasJumper) state.designError.emptyDrawingJumper = false
-			state.hasDesignError =
-				state.designError.emptyDrawingJumper ||
-				state.designError.emptyDrawingHole ||
-				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding ||
-				state.designError.emptyDrawingForm
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 		// установка крепления
 		// setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
@@ -313,12 +347,7 @@ export const putgSlice = createSlice({
 			}
 			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
 			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
-			state.hasDesignError =
-				state.designError.emptyDrawingJumper ||
-				state.designError.emptyDrawingHole ||
-				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding ||
-				state.designError.emptyDrawingForm
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 
 		// установка всех размеров
@@ -329,6 +358,8 @@ export const putgSlice = createSlice({
 			state.sizeError.emptyD3 = false
 			state.sizeError.emptyD4 = false
 			state.sizeError.emptySize = false
+			state.sizeError.minWidth = false
+			state.sizeError.maxSize = false
 			state.hasSizeError = false
 
 			if (!action.payload.h) {
@@ -336,6 +367,12 @@ export const putgSlice = createSlice({
 			} else {
 				state.size.h = action.payload.h.replace(',', '.')
 			}
+
+			if (+state.size.d3 >= 2000) {
+				state.design.hasRemovable = true
+				state.designError.emptyDrawingRemovable = !state.drawing
+			}
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 		// установка условного прохода
 		setSizePn: (
@@ -357,6 +394,12 @@ export const putgSlice = createSlice({
 				state.size.h = action.payload.thickness.h
 				// state.size.another = action.payload.thickness.another
 			}
+
+			if (+state.size.d3 >= 2000) {
+				state.design.hasRemovable = true
+				state.designError.emptyDrawingRemovable = !state.drawing
+			}
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 		// установка размеров прокладки
 		setSizeMain: (state, action: PayloadAction<{ d4?: string; d3?: string; d2?: string; d1?: string }>) => {
@@ -374,24 +417,90 @@ export const putgSlice = createSlice({
 				state.sizeError.d2Err =
 					state.size.d2 != '' && action.payload.d1 != '' && +state.size.d2 <= +state.size.d1
 
-				state.sizeError.emptyD4 = !state.size.d4
-				state.sizeError.emptyD3 = !state.size.d3
-				state.sizeError.emptyD2 = !state.size.d2
-				state.sizeError.emptyD1 = !state.size.d1
+				state.sizeError.emptyD4 = (state.material.construction?.hasD4 || false) && !state.size.d4
+				state.sizeError.emptyD3 = (state.material.construction?.hasD3 || false) && !state.size.d3
+				state.sizeError.emptyD2 = (state.material.construction?.hasD2 || false) && !state.size.d2
+				state.sizeError.emptyD1 = (state.material.construction?.hasD1 || false) && !state.size.d1
 
-				const emptyD4 = (state.material.construction?.hasD4 || false) && state.sizeError.emptyD4
-				const emptyD3 = (state.material.construction?.hasD3 || false) && state.sizeError.emptyD3
-				const emptyD2 = (state.material.construction?.hasD2 || false) && state.sizeError.emptyD2
-				const emptyD1 = (state.material.construction?.hasD1 || false) && state.sizeError.emptyD1
-				state.sizeError.emptySize = emptyD4 || emptyD3 || emptyD2 || emptyD1
+				state.sizeError.emptySize =
+					state.sizeError.emptyD4 ||
+					state.sizeError.emptyD3 ||
+					state.sizeError.emptyD2 ||
+					state.sizeError.emptyD1
+			} else {
+				if (state.size.useDimensions) {
+					state.sizeError.d4Err =
+						state.size.d4 != '' &&
+						(state.size.d3 != '' || state.size.d2 != '') &&
+						(+state.size.d4 <= +state.size.d3 || +state.size.d4 <= +state.size.d2)
 
-				state.hasSizeError =
-					state.sizeError.thickness ||
-					state.sizeError.d4Err ||
-					state.sizeError.d3Err ||
-					state.sizeError.d2Err ||
-					state.sizeError.emptySize
+					state.sizeError.emptySize =
+						state.sizeError.emptyD4 ||
+						state.sizeError.emptyD3 ||
+						state.sizeError.emptyD2 ||
+						state.sizeError.emptyD1
+				} else {
+					state.sizeError.d3Err =
+						state.size.d3 != '' && state.size.d2 != '' && +state.size.d3 <= +state.size.d2
+
+					state.sizeError.emptyD3 = !state.size.d3
+					state.sizeError.emptyD2 = !state.size.d2
+
+					state.sizeError.emptySize = state.sizeError.emptyD3 || state.sizeError.emptyD2
+				}
 			}
+
+			// проверка на минимальную ширину поля
+			let hasError = true
+			const range = state.material.construction?.widthRange || []
+			for (let i = 0; i < range.length; i++) {
+				const r = range[i]
+
+				if (state.main.configuration?.code == 'round') {
+					console.log(r.width, (+state.size.d3 - +state.size.d2) / 2 >= r.width)
+
+					if ((+state.size.d3 - +state.size.d2) / 2 >= r.width) {
+						hasError = false
+						if (+state.size.d3 <= r.maxD3) break
+					}
+				} else {
+					if (state.size.useDimensions) {
+						if (
+							(+state.size.d4 - +state.size.d3) / 2 > r.width &&
+							(+state.size.d2 - +state.size.d1) / 2 > r.width
+						) {
+							hasError = false
+							if (+state.size.d4 < r.maxD3) break
+						} else if (
+							state.size.d4 == '' ||
+							state.size.d2 == '' ||
+							state.size.d3 == '' ||
+							state.size.d1 == ''
+						)
+							hasError = false
+					} else {
+						if (+state.size.d1 > r.width) {
+							hasError = false
+							if (+state.size.d3 < r.maxD3) break
+						} else if (state.size.d1 == '') hasError = false
+					}
+				}
+			}
+
+			state.sizeError.minWidth = hasError
+			// проверка на максимальный размер
+			if (range.length && state.main.configuration?.code == 'round')
+				state.sizeError.maxSize = range[range.length - 1].maxD3 <= +state.size.d3
+			if (state.main.configuration?.code != 'round') state.sizeError.maxSize = 1500 <= +state.size.d3
+
+			// при размере больше 2000 прокладка должна быть разъемной
+			if (+state.size.d3 >= 2000) {
+				state.design.hasRemovable = true
+				state.designError.emptyDrawingRemovable = !state.drawing
+			}
+
+			state.hasSizeError = Object.values(state.sizeError).some(v => v)
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 		// установка толщины
 		setSizeThickness: (state, action: PayloadAction<{ h?: string; another?: string }>) => {
@@ -405,8 +514,7 @@ export const putgSlice = createSlice({
 					+action.payload.h.replaceAll(',', '.') < minThickness ||
 					+action.payload.h.replaceAll(',', '.') > maxThickness
 
-				state.hasSizeError =
-					state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
+				state.hasSizeError = Object.values(state.sizeError).some(v => v)
 			}
 		},
 		// Размеры задаются через Габариты?
@@ -423,6 +531,8 @@ export const putgSlice = createSlice({
 			state.sizeError.emptyD3 = false
 			state.sizeError.emptyD4 = false
 			state.sizeError.emptySize = false
+			state.sizeError.minWidth = false
+			state.sizeError.maxSize = false
 			state.hasSizeError = false
 		},
 		// есть скругления (для прямоугольной)
@@ -430,12 +540,7 @@ export const putgSlice = createSlice({
 			state.size.hasRounding = action.payload
 
 			state.designError.emptyDrawingRounding = !state.drawing && (state.size.hasRounding || false)
-			state.hasDesignError =
-				state.designError.emptyDrawingJumper ||
-				state.designError.emptyDrawingHole ||
-				state.designError.emptyDrawingRemovable ||
-				state.designError.emptyDrawingRounding ||
-				state.designError.emptyDrawingForm
+			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 
 		// установка доп. инфы

@@ -97,15 +97,17 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			managerId: localStorage.getItem('managerId') || '',
 		}
 
-		// const res = await signUp(user)
-		// if (res.error) {
-		// 	console.log(res.error)
-		// 	handleClick('error', res.error)
-		// } else {
-		// 	handleClick('success', 'Для активации учетной записи перейдите по ссылке, отправленной вам в письме')
-		// }
-		// localStorage.removeItem('managerId')
-		console.log('sing up')
+		const res = await signUp(user)
+		if (res.error) {
+			console.log(res.error)
+			handleClick('error', res.error)
+		} else {
+			handleClick(
+				'success',
+				'Для активации учетной записи в течение часа перейдите по ссылке, отправленной вам в письме'
+			)
+		}
+		localStorage.removeItem('managerId')
 
 		setLoading(false)
 	}

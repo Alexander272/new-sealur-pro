@@ -128,7 +128,7 @@ export const Main: FC<Props> = () => {
 		const types: string[] = []
 		set.forEach(t => types.push(t))
 
-		console.log(flangeType)
+		// console.log(flangeType)
 
 		return types.map(t => (
 			<RadioItem
@@ -174,12 +174,63 @@ export const Main: FC<Props> = () => {
 							sx={{ borderRadius: '12px' }}
 							disabled={Boolean(positionId) || isFetching || isFetchingStandards}
 						>
-							<MenuItem disabled value='not_selected'>
+							{/* <MenuItem disabled value='not_selected'>
 								Выберите стандарт
 							</MenuItem>
 							{standards?.data.map(s => (
 								<MenuItem key={s.id} value={s.id}>
 									{s.standard.title} {s.flangeStandard.title && '/'} {s.flangeStandard.title}
+								</MenuItem>
+							))} */}
+
+							<MenuItem disabled value='not_selected'>
+								<Typography
+									sx={{
+										display: 'flex',
+										overflow: 'hidden',
+										textOverflow: 'ellipsis',
+										width: '100%',
+										gap: '2%',
+									}}
+								>
+									<Typography variant='body1' component='span' sx={{ flexBasis: '50%' }}>
+										Стандарт на прокладку
+									</Typography>
+									<Typography
+										variant='body1'
+										component='span'
+										sx={{ flexBasis: '50%', overflow: 'hidden', textOverflow: 'ellipsis' }}
+									>
+										Стандарт на фланец
+									</Typography>
+								</Typography>
+							</MenuItem>
+							{standards?.data.map(s => (
+								<MenuItem key={s.id} value={s.id}>
+									<Typography
+										sx={{
+											display: 'flex',
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											width: '100%',
+											gap: '2%',
+										}}
+									>
+										<Typography
+											variant='body1'
+											component='span'
+											sx={{ flexBasis: '50%', overflow: 'hidden', textOverflow: 'ellipsis' }}
+										>
+											{s.standard.title}
+										</Typography>
+										<Typography
+											variant='body1'
+											component='span'
+											sx={{ flexBasis: '50%', overflow: 'hidden', textOverflow: 'ellipsis' }}
+										>
+											{s.flangeStandard.title}
+										</Typography>
+									</Typography>
 								</MenuItem>
 							))}
 						</Select>

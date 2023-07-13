@@ -56,6 +56,8 @@ export default function ConnectWithUs() {
 			handleClick('error', res.error)
 		} else {
 			handleClick('success', 'Письмо оправлено')
+			subject.clear()
+			message.clear()
 		}
 		setLoading(false)
 	}

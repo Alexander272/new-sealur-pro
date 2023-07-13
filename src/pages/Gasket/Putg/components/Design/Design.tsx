@@ -27,6 +27,7 @@ export const Design: FC<Props> = () => {
 	const design = useAppSelector(state => state.putg.design)
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
+	const sizes = useAppSelector(state => state.putg.size)
 	// const mountings = useAppSelector(state => state.putg.mountings)
 	const drawing = useAppSelector(state => state.putg.drawing)
 	const hasDesignError = useAppSelector(state => state.putg.hasDesignError)
@@ -44,6 +45,17 @@ export const Design: FC<Props> = () => {
 		},
 		{ skip: !material.filler || !main.flangeType?.id }
 	)
+
+	const jumperInRange = () => {
+		if (!material.construction) return false
+
+		if (+sizes.d2 >= material.construction.jumperRange[0] && material.construction.jumperRange[1] == -1) return true
+		if (+sizes.d2 >= material.construction.jumperRange[0] && +sizes.d2 < material.construction.jumperRange[1])
+			return true
+
+		return false
+	}
+	let jumperDisable = !jumperInRange()
 
 	const jumperHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		dispatch(setDesignJumper({ hasJumper: event.target.checked }))
@@ -171,7 +183,7 @@ export const Design: FC<Props> = () => {
 							name='removable'
 							label='Разъемная'
 							checked={design.hasRemovable}
-							disabled={!data?.data.data.hasRemovable || isFetching}
+							disabled={!data?.data.data.hasRemovable || isFetching || +sizes.d3 >= 2000}
 							onChange={removableHandler}
 						/>
 
@@ -181,7 +193,7 @@ export const Design: FC<Props> = () => {
 								name='jumper'
 								label='Перемычка'
 								checked={design.jumper.hasJumper}
-								disabled={!data?.data.data.hasJumper || isFetching}
+								disabled={!data?.data.data.hasJumper || isFetching || jumperDisable}
 								onChange={jumperHandler}
 							/>
 

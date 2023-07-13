@@ -12,6 +12,7 @@ type Props = {}
 export const Materials: FC<Props> = () => {
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
+	const size = useAppSelector(state => state.putg.size)
 	const positionId = useAppSelector(state => state.card.activePosition?.id)
 
 	const materials = useAppSelector(state => state.putg.materials)
@@ -140,7 +141,7 @@ export const Materials: FC<Props> = () => {
 							Выберите тип конструкции
 						</MenuItem>
 						{data?.data.constructions.map(f => (
-							<MenuItem key={f.id} value={f.code}>
+							<MenuItem key={f.id} value={f.code} disabled={(f.minSize || 0) > +size.d2}>
 								{f.code} - {f.title}
 							</MenuItem>
 						))}

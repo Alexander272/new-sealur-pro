@@ -25,6 +25,7 @@ export default function ConfigurationSize() {
 
 		if (event.target.value === '' || !isNaN(+temp)) {
 			let value: number | string
+			if (+temp > 10000) return
 
 			if (temp[temp.length - 1] == '.') value = temp
 			else value = Math.trunc(+temp * 10) / 10
@@ -40,6 +41,7 @@ export default function ConfigurationSize() {
 
 		if (event.target.value === '' || !isNaN(+temp)) {
 			let value: number | string
+			if (+temp > 10) return
 
 			if (temp[temp.length - 1] == '.') value = temp
 			else value = Math.trunc(+temp * 10) / 10
@@ -75,6 +77,19 @@ export default function ConfigurationSize() {
 				// helperText={
 				// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
 				// }
+				error={
+					(!useDimensions ? sizeErr.d3Err || sizeErr.emptyD3 : sizeErr.d4Err || sizeErr.emptyD4) ||
+					sizeErr.maxSize ||
+					sizeErr.minWidth
+				}
+				helperText={
+					(!useDimensions
+						? (sizeErr.d3Err && 'A1 должен быть больше, чем B1') || (sizeErr.emptyD3 && 'размер не задан')
+						: (sizeErr.d4Err && 'A1 должен быть больше, чем A2 и B1') ||
+						  (sizeErr.emptyD4 && 'размер не задан')) ||
+					(sizeErr.maxSize && 'Прокладка слишком большая') ||
+					(sizeErr.minWidth && 'Поле прокладки слишком маленькое')
+				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'
 			/>
@@ -85,10 +100,11 @@ export default function ConfigurationSize() {
 						name='A2'
 						value={size.d3}
 						onChange={sizeHandler('d3')}
-						// error={sizeErr.d4Err || sizeErr.emptyD4}
-						// helperText={
-						// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
-						// }
+						error={sizeErr.minWidth || sizeErr.emptyD3}
+						helperText={
+							(sizeErr.minWidth && 'Поле прокладки слишком маленькое') ||
+							(sizeErr.emptyD3 && 'размер не задан')
+						}
 						inputProps={{ inputMode: 'decimal' }}
 						size='small'
 					/>
@@ -104,6 +120,12 @@ export default function ConfigurationSize() {
 				// helperText={
 				// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
 				// }
+				error={sizeErr.minWidth || sizeErr.d2Err || sizeErr.emptyD2}
+				helperText={
+					(sizeErr.minWidth && 'Поле прокладки слишком маленькое') ||
+					(sizeErr.d2Err && 'B1 должен быть больше, чем B2') ||
+					(sizeErr.emptyD2 && 'размер не задан')
+				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'
 			/>
@@ -114,10 +136,11 @@ export default function ConfigurationSize() {
 						name='B2'
 						value={size.d1}
 						onChange={sizeHandler('d1')}
-						// error={sizeErr.d4Err || sizeErr.emptyD4}
-						// helperText={
-						// 	(sizeErr.d4Err && 'D4 должен быть больше, чем D3') || (sizeErr.emptyD4 && 'размер не задан')
-						// }
+						error={sizeErr.minWidth || sizeErr.emptyD1}
+						helperText={
+							(sizeErr.minWidth && 'Поле прокладки слишком маленькое') ||
+							(sizeErr.emptyD1 && 'размер не задан')
+						}
 						inputProps={{ inputMode: 'decimal' }}
 						size='small'
 					/>
@@ -131,8 +154,11 @@ export default function ConfigurationSize() {
 						name='C'
 						value={size.d1}
 						onChange={sizeHandler('d1')}
-						error={sizeErr.emptyD1}
-						helperText={sizeErr.emptyD1 && 'размер не задан'}
+						error={sizeErr.minWidth || sizeErr.emptyD1}
+						helperText={
+							(sizeErr.minWidth && 'Поле прокладки слишком маленькое') ||
+							(sizeErr.emptyD1 && 'размер не задан')
+						}
 						inputProps={{ inputMode: 'decimal' }}
 						size='small'
 					/>

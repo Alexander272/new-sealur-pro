@@ -42,24 +42,19 @@ export const AnotherSize: FC<Props> = () => {
 	}, [])
 
 	const sizeHandler = (name: 'd4' | 'd3' | 'd2' | 'd1') => (event: React.ChangeEvent<HTMLInputElement>) => {
-		const regex = /^[0-9.,\b]+$/
 		const temp = event.target.value.replace(',', '.')
 
-		if (isNaN(+temp)) return
+		if (event.target.value === '' || !isNaN(+temp)) {
+			let value: number | string
+			if (+temp > 10000) return
 
-		if (event.target.value === '' || regex.test(event.target.value)) {
-			let value: number | string = Math.round(+temp * 10) / 10
 			if (temp[temp.length - 1] == '.') value = temp
+			else value = Math.trunc(+temp * 10) / 10
+
 			if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeMain({ [name]: value.toString().replace('.', ',') }))
+			dispatch(setSizeMain({ [name]: value.toString() }))
 		}
-
-		// if (event.target.value === '' || regex.test(event.target.value)) {
-		// 	let value: number | string = +event.target.value
-		// 	if (event.target.value === '') value = event.target.value
-		// 	dispatch(setSizeMain({ [name]: value.toString() }))
-		// }
 	}
 
 	const thicknessHandler = (event: SelectChangeEvent<string>) => {
@@ -78,17 +73,18 @@ export const AnotherSize: FC<Props> = () => {
 		dispatch(setSizeThickness(newThickness))
 	}
 	const anotherThicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		const regex = /^[0-9.,\b]+$/
 		const temp = event.target.value.replace(',', '.')
 
-		if (isNaN(+temp)) return
+		if (event.target.value === '' || !isNaN(+temp)) {
+			let value: number | string
+			if (+temp > 50) return
 
-		if (event.target.value === '' || regex.test(event.target.value)) {
-			let value: number | string = Math.round(+temp * 10) / 10
 			if (temp[temp.length - 1] == '.') value = temp
+			else value = Math.trunc(+temp * 10) / 10
+
 			if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeThickness({ another: value.toString().replace('.', ',') }))
+			dispatch(setSizeThickness({ h: value.toString() }))
 		}
 	}
 

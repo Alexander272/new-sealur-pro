@@ -35,6 +35,14 @@ export interface IConstruction {
 	hasInnerRing: boolean
 	hasOuterRing: boolean
 	description: string
+	jumperRange: number[]
+	widthRange?: IWidthRange[]
+	minSize?: number
+}
+
+export interface IWidthRange {
+	maxD3: number
+	width: number
 }
 
 export interface IFiller {

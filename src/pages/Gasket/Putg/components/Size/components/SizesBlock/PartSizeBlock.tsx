@@ -11,7 +11,6 @@ export const PartSizeBlock: FC<Props> = () => {
 		<Container>
 			{sizes.useDimensions && (
 				<>
-					{/* //TODO отметить где какие размеры (А1,А2 и тд) */}
 					<Size top={'87%'} left='55%'>
 						{sizes.d4?.replace('.', ',')} <Description>(A1)</Description>
 					</Size>
