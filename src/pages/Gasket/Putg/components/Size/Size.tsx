@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Skeleton, Typography } from '@mui/material'
 import { useGetPutgSizeQuery } from '@/store/api/putg'
 import { setIsReady } from '@/store/gaskets/putg'
@@ -15,6 +15,7 @@ import ConfigurationSize from './ConfigurationSize'
 
 import ovalImage from '@/assets/putg/ov.webp'
 import rectangularImage from '@/assets/putg/pr.webp'
+import { IPutgSize } from '@/types/sizes'
 
 const images = {
 	oval: ovalImage,
@@ -24,6 +25,8 @@ const images = {
 type Props = {}
 
 export const Size: FC<Props> = () => {
+	const [sizes, setSizes] = useState<IPutgSize[]>([])
+
 	const material = useAppSelector(state => state.putg.material)
 	const main = useAppSelector(state => state.putg.main)
 
@@ -45,6 +48,23 @@ export const Size: FC<Props> = () => {
 				main.configuration?.code != 'round',
 		}
 	)
+
+	useEffect(() => {
+		if (data) {
+			const equal = data.data?.sizes?.every((element, index) => {
+				const x1 = { ...element }
+				const x2 = { ...sizes[index] }
+				x1.id = ''
+				x2.id = ''
+
+				return JSON.stringify(x1) == JSON.stringify(x2)
+			})
+
+			if (!sizes.length || sizes.length !== data.data?.sizes?.length || !equal) {
+				setSizes(data.data?.sizes || [])
+			}
+		}
+	}, [data])
 
 	useEffect(() => {
 		if (!isUninitialized) dispatch(setIsReady(true))
@@ -73,8 +93,8 @@ export const Size: FC<Props> = () => {
 
 			{!isError && !isLoading ? (
 				<Column width={40}>
-					{data?.data.sizes ? (
-						<StandardSize sizes={data.data.sizes} isFetching={isFetching} />
+					{data?.data.sizes && sizes.length ? (
+						<StandardSize sizes={sizes} isFetching={isFetching} />
 					) : (
 						<>
 							{main.configuration?.code !== 'round' && <ConfigurationSize />}

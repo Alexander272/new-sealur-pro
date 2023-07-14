@@ -204,6 +204,10 @@ export const putgSlice = createSlice({
 		setMainConfiguration: (state, action: PayloadAction<IPutgConfiguration>) => {
 			state.main.configuration = action.payload
 
+			if (action.payload.code != 'round') {
+				state.main.standard = state.standards[state.standards.length - 1]
+			}
+
 			state.size.d4 = ''
 			state.size.d3 = ''
 			state.size.d2 = ''
@@ -239,6 +243,15 @@ export const putgSlice = createSlice({
 		// установка кода типа прокладки
 		setType: (state, action: PayloadAction<IPutgType>) => {
 			state.material.putgType = action.payload
+
+			let minThickness = state.material.putgType?.minThickness || -1
+			let maxThickness = state.material.putgType?.maxThickness || 99999
+
+			state.sizeError.thickness =
+				state.size.h != '' &&
+				(+state.size.h.replaceAll(',', '.') < minThickness || +state.size.h.replaceAll(',', '.') > maxThickness)
+
+			state.hasSizeError = Object.values(state.sizeError).some(v => v)
 		},
 		// установка тип конструкции
 		setConstruction: (state, action: PayloadAction<IConstruction>) => {

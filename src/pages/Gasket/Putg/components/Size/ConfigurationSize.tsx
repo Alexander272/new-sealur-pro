@@ -1,5 +1,5 @@
 import { ChangeEvent } from 'react'
-import { Typography } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setHasRounding, setSizeMain, setSizeThickness, setUseDimensions } from '@/store/gaskets/putg'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
@@ -36,20 +36,23 @@ export default function ConfigurationSize() {
 		}
 	}
 
-	const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		const temp = event.target.value.replace(',', '.')
+	// const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
+	// 	const temp = event.target.value.replace(',', '.')
 
-		if (event.target.value === '' || !isNaN(+temp)) {
-			let value: number | string
-			if (+temp > 10) return
+	// 	if (event.target.value === '' || !isNaN(+temp)) {
+	// 		let value: number | string
+	// 		if (+temp > 10) return
 
-			if (temp[temp.length - 1] == '.') value = temp
-			else value = Math.trunc(+temp * 10) / 10
+	// 		if (temp[temp.length - 1] == '.') value = temp
+	// 		else value = Math.trunc(+temp * 10) / 10
 
-			if (event.target.value === '') value = event.target.value
+	// 		if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeThickness({ h: value.toString() }))
-		}
+	// 		dispatch(setSizeThickness({ h: value.toString() }))
+	// 	}
+	// }
+	const thicknessHandler = (event: SelectChangeEvent<string>) => {
+		dispatch(setSizeThickness({ h: event.target.value }))
 	}
 
 	const roundingHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -166,7 +169,7 @@ export default function ConfigurationSize() {
 			)}
 
 			<Typography fontWeight='bold'>Толщина прокладки</Typography>
-			<Input
+			{/* <Input
 				name='thickness'
 				value={size.h}
 				onChange={thicknessHandler}
@@ -180,7 +183,20 @@ export default function ConfigurationSize() {
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'
 				sx={{ marginBottom: 1 }}
-			/>
+			/> */}
+			<Select
+				value={size.h || '2.0'}
+				onChange={thicknessHandler}
+				size='small'
+				sx={{ borderRadius: '12px', width: '100%' }}
+			>
+				<MenuItem value={'1.0'}>1,0</MenuItem>
+				<MenuItem value={'1.5'}>1,5</MenuItem>
+				<MenuItem value={'2.0'}>2,0</MenuItem>
+				<MenuItem value={'3.0'}>3,0</MenuItem>
+				<MenuItem value={'4.0'}>4,0</MenuItem>
+				<MenuItem value={'5.0'}>5,0</MenuItem>
+			</Select>
 
 			{main.configuration?.code == 'rectangular' && (
 				<Checkbox

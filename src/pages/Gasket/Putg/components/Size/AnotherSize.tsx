@@ -1,5 +1,5 @@
-import { ChangeEvent, FC } from 'react'
-import { Typography } from '@mui/material'
+import { FC } from 'react'
+import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setSizeMain, setSizeThickness } from '@/store/gaskets/putg'
 import { Input } from '@/components/Input/input.style'
@@ -29,20 +29,23 @@ export const AnotherSize: FC<Props> = () => {
 		}
 	}
 
-	const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		const temp = event.target.value.replace(',', '.')
+	// const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
+	// 	const temp = event.target.value.replace(',', '.')
 
-		if (event.target.value === '' || !isNaN(+temp)) {
-			let value: number | string
-			if (+temp > 10) return
+	// 	if (event.target.value === '' || !isNaN(+temp)) {
+	// 		let value: number | string
+	// 		if (+temp > 10) return
 
-			if (temp[temp.length - 1] == '.') value = temp
-			else value = Math.trunc(+temp * 10) / 10
+	// 		if (temp[temp.length - 1] == '.') value = temp
+	// 		else value = Math.trunc(+temp * 10) / 10
 
-			if (event.target.value === '') value = event.target.value
+	// 		if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeThickness({ h: value.toString() }))
-		}
+	// 		dispatch(setSizeThickness({ h: value.toString() }))
+	// 	}
+	// }
+	const thicknessHandler = (event: SelectChangeEvent<string>) => {
+		dispatch(setSizeThickness({ h: event.target.value }))
 	}
 
 	return (
@@ -119,7 +122,20 @@ export const AnotherSize: FC<Props> = () => {
 			)}
 
 			<Typography fontWeight='bold'>Толщина прокладки</Typography>
-			<Input
+			<Select
+				value={size.h || '2.0'}
+				onChange={thicknessHandler}
+				size='small'
+				sx={{ borderRadius: '12px', width: '100%' }}
+			>
+				<MenuItem value={'1.0'}>1,0</MenuItem>
+				<MenuItem value={'1.5'}>1,5</MenuItem>
+				<MenuItem value={'2.0'}>2,0</MenuItem>
+				<MenuItem value={'3.0'}>3,0</MenuItem>
+				<MenuItem value={'4.0'}>4,0</MenuItem>
+				<MenuItem value={'5.0'}>5,0</MenuItem>
+			</Select>
+			{/* <Input
 				name='thickness'
 				value={size.h}
 				onChange={thicknessHandler}
@@ -132,7 +148,7 @@ export const AnotherSize: FC<Props> = () => {
 				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'
-			/>
+			/> */}
 		</>
 	)
 }

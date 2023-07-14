@@ -13,6 +13,7 @@ export const Container = styled.div`
 export type SizesProps = {
 	top?: string
 	left?: string
+	hasRotate?: boolean
 }
 export const Size = styled.p<SizesProps>`
 	position: absolute;
@@ -20,6 +21,7 @@ export const Size = styled.p<SizesProps>`
 	margin: 0;
 	top: ${props => (props.top ? props.top : '0')};
 	left: ${props => (props.left ? props.left : 'auto')};
+	transform: ${props => props.hasRotate && 'rotate(-90deg)'};
 	text-align: center;
 `
 

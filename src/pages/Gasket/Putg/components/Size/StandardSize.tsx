@@ -28,7 +28,7 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 		if (cardIndex === undefined) {
 			const s = sizes[0]
 
-			const size: ISizeBlockPutg = {
+			const newSize: ISizeBlockPutg = {
 				dn: s.dn,
 				dnMm: s.dnMm || '',
 				pn: s.sizes[0].pn[0],
@@ -40,7 +40,7 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				// another: '',
 			}
 
-			dispatch(setSize(size))
+			dispatch(setSize(newSize))
 			setCurSize(s)
 		} else {
 			const s = sizes.find(s => s.dn === size.dn)
@@ -111,19 +111,22 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 		dispatch(setSizePn(sizePn))
 	}
 
-	const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		const temp = event.target.value.replace(',', '.')
+	// const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
+	// 	const temp = event.target.value.replace(',', '.')
 
-		if (event.target.value === '' || !isNaN(+temp)) {
-			let value: number | string
+	// 	if (event.target.value === '' || !isNaN(+temp)) {
+	// 		let value: number | string
 
-			if (temp[temp.length - 1] == '.') value = temp
-			else value = Math.trunc(+temp * 10) / 10
+	// 		if (temp[temp.length - 1] == '.') value = temp
+	// 		else value = Math.trunc(+temp * 10) / 10
 
-			if (event.target.value === '') value = event.target.value
+	// 		if (event.target.value === '') value = event.target.value
 
-			dispatch(setSizeThickness({ h: value.toString() }))
-		}
+	// 		dispatch(setSizeThickness({ h: value.toString() }))
+	// 	}
+	// }
+	const thicknessHandler = (event: SelectChangeEvent<string>) => {
+		dispatch(setSizeThickness({ h: event.target.value }))
 	}
 
 	return (
@@ -172,25 +175,20 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				Толщина прокладки
 			</Typography>
 			{/* <Stack direction='row' spacing={1} alignItems='flex-start'> */}
-			{/* <Select
-				value={size.h || 'another'}
+			<Select
+				value={size.h || '2.0'}
 				onChange={thicknessHandler}
 				size='small'
 				sx={{ borderRadius: '12px', width: '100%' }}
 			>
-				{curSize?.sizes.map(s => {
-					if (s.pn.some(pn => pn.mpa == size.pn.mpa)) {
-						return s.h.map(h => (
-							<MenuItem key={h} value={h}>
-								{h}
-							</MenuItem>
-						))
-					} else {
-						return null
-					}
-				})}
-			</Select> */}
-			<Input
+				<MenuItem value={'1.0'}>1,0</MenuItem>
+				<MenuItem value={'1.5'}>1,5</MenuItem>
+				<MenuItem value={'2.0'}>2,0</MenuItem>
+				<MenuItem value={'3.0'}>3,0</MenuItem>
+				<MenuItem value={'4.0'}>4,0</MenuItem>
+				<MenuItem value={'5.0'}>5,0</MenuItem>
+			</Select>
+			{/* <Input
 				name='thickness'
 				value={size.h}
 				onChange={thicknessHandler}
@@ -204,7 +202,7 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'
-			/>
+			/> */}
 		</>
 	)
 }
