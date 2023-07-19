@@ -128,7 +128,7 @@ export const Design: FC<Props> = () => {
 
 	if (!isReady) {
 		return (
-			<AsideContainer rowStart={6} rowEnd={9}>
+			<AsideContainer>
 				<DesignSkeleton />
 			</AsideContainer>
 		)
@@ -137,7 +137,7 @@ export const Design: FC<Props> = () => {
 	return (
 		<>
 			{loading ? <Loader background='fill' /> : null}
-			<AsideContainer rowStart={6} rowEnd={9}>
+			<AsideContainer>
 				<Snackbar
 					open={alert.open}
 					autoHideDuration={6000}

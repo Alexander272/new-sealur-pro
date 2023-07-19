@@ -1,5 +1,5 @@
-import { FC } from 'react'
-import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { ChangeEvent, FC } from 'react'
+import { Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setSizeMain, setSizeThickness } from '@/store/gaskets/putg'
 import { Input } from '@/components/Input/input.style'
@@ -8,6 +8,7 @@ type Props = {}
 
 export const AnotherSize: FC<Props> = () => {
 	const material = useAppSelector(state => state.putg.material)
+	const minThickness = useAppSelector(state => state.putg.minThickness)
 	const size = useAppSelector(state => state.putg.size)
 	const sizeErr = useAppSelector(state => state.putg.sizeError)
 
@@ -29,24 +30,24 @@ export const AnotherSize: FC<Props> = () => {
 		}
 	}
 
-	// const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-	// 	const temp = event.target.value.replace(',', '.')
+	const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
+		const temp = event.target.value.replace(',', '.')
 
-	// 	if (event.target.value === '' || !isNaN(+temp)) {
-	// 		let value: number | string
-	// 		if (+temp > 10) return
+		if (event.target.value === '' || !isNaN(+temp)) {
+			let value: number | string
+			if (+temp > 10) return
 
-	// 		if (temp[temp.length - 1] == '.') value = temp
-	// 		else value = Math.trunc(+temp * 10) / 10
+			if (temp[temp.length - 1] == '.') value = temp
+			else value = Math.trunc(+temp * 10) / 10
 
-	// 		if (event.target.value === '') value = event.target.value
+			if (event.target.value === '') value = event.target.value
 
-	// 		dispatch(setSizeThickness({ h: value.toString() }))
-	// 	}
-	// }
-	const thicknessHandler = (event: SelectChangeEvent<string>) => {
-		dispatch(setSizeThickness({ h: event.target.value }))
+			dispatch(setSizeThickness({ h: value.toString() }))
+		}
 	}
+	// const thicknessHandler = (event: SelectChangeEvent<string>) => {
+	// 	dispatch(setSizeThickness({ h: event.target.value }))
+	// }
 
 	return (
 		<>
@@ -122,7 +123,7 @@ export const AnotherSize: FC<Props> = () => {
 			)}
 
 			<Typography fontWeight='bold'>Толщина прокладки</Typography>
-			<Select
+			{/* <Select
 				value={size.h || '2.0'}
 				onChange={thicknessHandler}
 				size='small'
@@ -134,21 +135,21 @@ export const AnotherSize: FC<Props> = () => {
 				<MenuItem value={'3.0'}>3,0</MenuItem>
 				<MenuItem value={'4.0'}>4,0</MenuItem>
 				<MenuItem value={'5.0'}>5,0</MenuItem>
-			</Select>
-			{/* <Input
+			</Select> */}
+			<Input
 				name='thickness'
 				value={size.h}
 				onChange={thicknessHandler}
 				error={sizeErr.thickness}
 				helperText={
 					sizeErr.thickness &&
-					`толщина должна быть ≥ ${material.putgType?.minThickness.toFixed(
-						1
-					)} и ≤ ${material.putgType?.maxThickness.toFixed(1)}`
+					`толщина должна быть ≥ ${
+						minThickness.toFixed(1) || material.putgType?.minThickness.toFixed(1)
+					} и ≤ ${material.putgType?.maxThickness.toFixed(1)}`
 				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'
-			/> */}
+			/>
 		</>
 	)
 }

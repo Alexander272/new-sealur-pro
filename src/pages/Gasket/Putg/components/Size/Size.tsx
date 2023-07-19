@@ -51,18 +51,20 @@ export const Size: FC<Props> = () => {
 
 	useEffect(() => {
 		if (data) {
-			const equal = data.data?.sizes?.every((element, index) => {
-				const x1 = { ...element }
-				const x2 = { ...sizes[index] }
-				x1.id = ''
-				x2.id = ''
+			// const equal = data.data?.sizes?.every((element, index) => {
+			// 	const x1 = { ...element }
+			// 	const x2 = { ...sizes[index] }
+			// 	x1.id = ''
+			// 	x2.id = ''
 
-				return JSON.stringify(x1) == JSON.stringify(x2)
-			})
+			// 	return JSON.stringify(x1) == JSON.stringify(x2)
+			// })
 
-			if (!sizes.length || sizes.length !== data.data?.sizes?.length || !equal) {
-				setSizes(data.data?.sizes || [])
-			}
+			// if (!sizes.length || sizes.length !== data.data?.sizes?.length || !equal) {
+			// 	setSizes(data.data?.sizes || [])
+			// }
+
+			setSizes(data.data?.sizes || [])
 		}
 	}, [data])
 
@@ -72,7 +74,7 @@ export const Size: FC<Props> = () => {
 
 	if (!isReady)
 		return (
-			<SizeContainer rowStart={5} rowEnd={9}>
+			<SizeContainer>
 				<SizeSkeleton />
 				<Column width={55}>
 					<Skeleton animation='wave' />
@@ -82,7 +84,7 @@ export const Size: FC<Props> = () => {
 		)
 
 	return (
-		<SizeContainer rowStart={5} rowEnd={9}>
+		<SizeContainer>
 			{isError && (
 				<Column width={40}>
 					<Typography variant='h6' color={'error'} align='center'>

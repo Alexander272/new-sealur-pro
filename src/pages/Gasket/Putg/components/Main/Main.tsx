@@ -2,6 +2,7 @@ import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 import {
 	setConfigurations,
+	setConstruction,
 	setFiller,
 	setFlangeTypes,
 	setMainConfiguration,
@@ -9,9 +10,10 @@ import {
 	setMainStandard,
 	setMaterials,
 	setStandards,
+	setType,
 } from '@/store/gaskets/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { useGetPutgBaseQuery } from '@/store/api/putg'
+import { useGetPutgBaseQuery, useGetPutgQuery } from '@/store/api/putg'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Column, Image, MainContainer, PlugImage } from '@/pages/Gasket/gasket.style'
 import { MainSkeleton } from '@/pages/Gasket/Skeletons/MainSkeleton'
@@ -32,6 +34,7 @@ export const Main: FC<Props> = () => {
 	const isReady = useAppSelector(state => state.putg.isReady)
 
 	const main = useAppSelector(state => state.putg.main)
+	const material = useAppSelector(state => state.putg.material)
 
 	const standards = useAppSelector(state => state.putg.standards)
 	const configurations = useAppSelector(state => state.putg.configurations)
@@ -47,6 +50,19 @@ export const Main: FC<Props> = () => {
 		isFetching: isFetchingBase,
 	} = useGetPutgBaseQuery({ standardId: main.standard?.id || '', empty: !standards.length })
 
+	const {
+		data: putg,
+		isError: isErrorPutg,
+		isFetching: isFetchingPutg,
+	} = useGetPutgQuery(
+		{
+			fillerId: material.filler?.id || '',
+			baseId: material.filler?.baseId || '',
+			flangeTypeId: main.flangeType?.id || '',
+		},
+		{ skip: !material.filler || !main.flangeType?.id }
+	)
+
 	useEffect(() => {
 		if (base) {
 			if (base.data.configurations) dispatch(setConfigurations(base.data.configurations))
@@ -58,6 +74,13 @@ export const Main: FC<Props> = () => {
 			if (base?.data.fillers) dispatch(setFiller({ fillers: base.data.fillers || [], positionId }))
 		}
 	}, [base?.data])
+
+	useEffect(() => {
+		if (!positionId) {
+			if (putg?.data.putgTypes) dispatch(setType(putg.data.putgTypes[0]))
+			if (putg?.data.constructions) dispatch(setConstruction(putg.data.constructions[0]))
+		}
+	}, [putg])
 
 	const gasketHandler = (type: string) => {
 		const configuration = configurations.find(s => s.code === type)
@@ -77,9 +100,21 @@ export const Main: FC<Props> = () => {
 		dispatch(setMainFlangeType(flangeType))
 	}
 
+	const typeHandler = (event: SelectChangeEvent<string>) => {
+		const type = putg?.data.putgTypes.find(s => s.code === event.target.value)
+		if (!type) return
+		dispatch(setType(type))
+	}
+
+	const constructionHandler = (event: SelectChangeEvent<string>) => {
+		const construction = putg?.data.constructions.find(s => s.code === event.target.value)
+		if (!construction) return
+		dispatch(setConstruction(construction))
+	}
+
 	if (!isReady) {
 		return (
-			<MainContainer rowEnd={5}>
+			<MainContainer>
 				<MainSkeleton />
 				<Column>
 					<Skeleton animation='wave' />
@@ -90,8 +125,8 @@ export const Main: FC<Props> = () => {
 	}
 
 	return (
-		<MainContainer rowEnd={5}>
-			{isErrorBase && (
+		<MainContainer>
+			{(isErrorBase || isErrorPutg) && (
 				<Column>
 					<Typography variant='h6' color={'error'} align='center'>
 						Не удалось загрузить стандарты на фланец или конфигурации
@@ -197,6 +232,52 @@ export const Main: FC<Props> = () => {
 						{flangeTypes.map(f => (
 							<MenuItem key={f.id} value={f.code}>
 								{f.title}
+							</MenuItem>
+						))}
+					</Select>
+
+					<Typography fontWeight='bold' mt={1}>
+						Тип прокладки
+					</Typography>
+					<Select
+						value={material.putgType?.code || 'not_selected'}
+						onChange={typeHandler}
+						disabled={isFetchingPutg}
+						size='small'
+						sx={{
+							borderRadius: '12px',
+							width: '100%',
+						}}
+					>
+						<MenuItem disabled value='not_selected'>
+							Выберите тип прокладки
+						</MenuItem>
+						{putg?.data.putgTypes.map(f => (
+							<MenuItem key={f.id} value={f.code}>
+								{f.code} - {f.title}
+							</MenuItem>
+						))}
+					</Select>
+
+					<Typography fontWeight='bold' mt={1}>
+						Тип конструкции
+					</Typography>
+					<Select
+						value={material.construction?.code || 'not_selected'}
+						onChange={constructionHandler}
+						disabled={isFetchingPutg}
+						size='small'
+						sx={{
+							borderRadius: '12px',
+							width: '100%',
+						}}
+					>
+						<MenuItem disabled value='not_selected'>
+							Выберите тип конструкции
+						</MenuItem>
+						{putg?.data.constructions.map(f => (
+							<MenuItem key={f.id} value={f.code}>
+								{f.code} - {f.title}
 							</MenuItem>
 						))}
 					</Select>

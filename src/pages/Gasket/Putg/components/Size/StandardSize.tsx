@@ -15,6 +15,7 @@ type Props = {
 export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 	const main = useAppSelector(state => state.putg.main)
 	const material = useAppSelector(state => state.putg.material)
+	const minThickness = useAppSelector(state => state.putg.minThickness)
 	const size = useAppSelector(state => state.putg.size)
 	const sizeErr = useAppSelector(state => state.putg.sizeError)
 
@@ -111,23 +112,23 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 		dispatch(setSizePn(sizePn))
 	}
 
-	// const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
-	// 	const temp = event.target.value.replace(',', '.')
+	const thicknessHandler = (event: ChangeEvent<HTMLInputElement>) => {
+		const temp = event.target.value.replace(',', '.')
 
-	// 	if (event.target.value === '' || !isNaN(+temp)) {
-	// 		let value: number | string
+		if (event.target.value === '' || !isNaN(+temp)) {
+			let value: number | string
 
-	// 		if (temp[temp.length - 1] == '.') value = temp
-	// 		else value = Math.trunc(+temp * 10) / 10
+			if (temp[temp.length - 1] == '.') value = temp
+			else value = Math.trunc(+temp * 10) / 10
 
-	// 		if (event.target.value === '') value = event.target.value
+			if (event.target.value === '') value = event.target.value
 
-	// 		dispatch(setSizeThickness({ h: value.toString() }))
-	// 	}
-	// }
-	const thicknessHandler = (event: SelectChangeEvent<string>) => {
-		dispatch(setSizeThickness({ h: event.target.value }))
+			dispatch(setSizeThickness({ h: value.toString() }))
+		}
 	}
+	// const thicknessHandler = (event: SelectChangeEvent<string>) => {
+	// 	dispatch(setSizeThickness({ h: event.target.value }))
+	// }
 
 	return (
 		<>
@@ -175,7 +176,7 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				Толщина прокладки
 			</Typography>
 			{/* <Stack direction='row' spacing={1} alignItems='flex-start'> */}
-			<Select
+			{/* <Select
 				value={size.h || '2.0'}
 				onChange={thicknessHandler}
 				size='small'
@@ -187,8 +188,8 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				<MenuItem value={'3.0'}>3,0</MenuItem>
 				<MenuItem value={'4.0'}>4,0</MenuItem>
 				<MenuItem value={'5.0'}>5,0</MenuItem>
-			</Select>
-			{/* <Input
+			</Select> */}
+			<Input
 				name='thickness'
 				value={size.h}
 				onChange={thicknessHandler}
@@ -196,13 +197,13 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				error={sizeErr.thickness}
 				helperText={
 					sizeErr.thickness &&
-					`толщина должна быть ≥ ${material.putgType?.minThickness.toFixed(
-						1
-					)} и ≤ ${material.putgType?.maxThickness.toFixed(1)}`
+					`толщина должна быть ≥ ${
+						minThickness.toFixed(1) || material.putgType?.minThickness.toFixed(1)
+					} и ≤ ${material.putgType?.maxThickness.toFixed(1)}`
 				}
 				inputProps={{ inputMode: 'decimal' }}
 				size='small'
-			/> */}
+			/>
 		</>
 	)
 }

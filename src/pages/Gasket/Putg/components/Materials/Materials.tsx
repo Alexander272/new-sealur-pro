@@ -31,12 +31,12 @@ export const Materials: FC<Props> = () => {
 		{ skip: !material.filler || !main.flangeType?.id }
 	)
 
-	useEffect(() => {
-		if (!positionId) {
-			if (data?.data.putgTypes) dispatch(setType(data.data.putgTypes[0]))
-			if (data?.data.constructions) dispatch(setConstruction(data.data.constructions[0]))
-		}
-	}, [data])
+	// useEffect(() => {
+	// 	if (!positionId) {
+	// 		if (data?.data.putgTypes) dispatch(setType(data.data.putgTypes[0]))
+	// 		if (data?.data.constructions) dispatch(setConstruction(data.data.constructions[0]))
+	// 	}
+	// }, [data])
 
 	const fillerHandler = (event: SelectChangeEvent<string>) => {
 		const filler = fillers.find(s => s.id === event.target.value)
@@ -44,17 +44,17 @@ export const Materials: FC<Props> = () => {
 		dispatch(setMaterialFiller(filler))
 	}
 
-	const typeHandler = (event: SelectChangeEvent<string>) => {
-		const type = data?.data.putgTypes.find(s => s.code === event.target.value)
-		if (!type) return
-		dispatch(setType(type))
-	}
+	// const typeHandler = (event: SelectChangeEvent<string>) => {
+	// 	const type = data?.data.putgTypes.find(s => s.code === event.target.value)
+	// 	if (!type) return
+	// 	dispatch(setType(type))
+	// }
 
-	const constructionHandler = (event: SelectChangeEvent<string>) => {
-		const construction = data?.data.constructions.find(s => s.code === event.target.value)
-		if (!construction) return
-		dispatch(setConstruction(construction))
-	}
+	// const constructionHandler = (event: SelectChangeEvent<string>) => {
+	// 	const construction = data?.data.constructions.find(s => s.code === event.target.value)
+	// 	if (!construction) return
+	// 	dispatch(setConstruction(construction))
+	// }
 
 	const materialHandler = (type: TypeMaterial) => (event: SelectChangeEvent<string>) => {
 		const material = materials?.[type].find(m => m.materialId === event.target.value)
@@ -64,14 +64,14 @@ export const Materials: FC<Props> = () => {
 
 	if (!isReady) {
 		return (
-			<AsideContainer rowStart={1} rowEnd={6}>
+			<AsideContainer>
 				<MaterialSkeleton />
 			</AsideContainer>
 		)
 	}
 
 	return (
-		<AsideContainer rowStart={1} rowEnd={6}>
+		<AsideContainer>
 			{isError && (
 				<Typography variant='h6' color={'error'} align='center'>
 					Не удалось загрузить материалы
@@ -101,7 +101,7 @@ export const Materials: FC<Props> = () => {
 						))}
 					</Select>
 
-					<Typography fontWeight='bold' mt={1}>
+					{/* <Typography fontWeight='bold' mt={1}>
 						Тип прокладки
 					</Typography>
 					<Select
@@ -145,7 +145,7 @@ export const Materials: FC<Props> = () => {
 								{f.code} - {f.title}
 							</MenuItem>
 						))}
-					</Select>
+					</Select> */}
 
 					{materials ? (
 						<>

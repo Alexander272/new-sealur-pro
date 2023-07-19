@@ -63,6 +63,7 @@ export interface IPutgState {
 		emptyDrawingRounding: boolean
 		emptyDrawingForm: boolean
 	}
+	minThickness: number
 
 	drawing?: IDrawing
 }
@@ -103,6 +104,7 @@ const initialState: IPutgState = {
 		emptyDrawingRounding: false,
 		emptyDrawingForm: false,
 	},
+	minThickness: 0,
 
 	// стандарты, тип фланца и тип прокладки
 	main: {},
@@ -244,7 +246,7 @@ export const putgSlice = createSlice({
 		setType: (state, action: PayloadAction<IPutgType>) => {
 			state.material.putgType = action.payload
 
-			let minThickness = state.material.putgType?.minThickness || -1
+			let minThickness = state.minThickness || state.material.putgType?.minThickness || -1
 			let maxThickness = state.material.putgType?.maxThickness || 99999
 
 			state.sizeError.thickness =
@@ -304,6 +306,14 @@ export const putgSlice = createSlice({
 			if (range.length && state.main.configuration?.code == 'round')
 				state.sizeError.maxSize = range[range.length - 1].maxD3 <= +state.size.d3
 			if (state.main.configuration?.code != 'round') state.sizeError.maxSize = 1500 <= +state.size.d3
+
+			if (
+				state.material.construction.code == '042' ||
+				state.material.construction.code == '043' ||
+				state.material.construction.code == '044'
+			) {
+				state.minThickness = 2.0
+			} else state.minThickness = 0
 		},
 		// установка материалов (обтюраторов или ограничителей)
 		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material: IMaterial }>) => {
@@ -520,7 +530,7 @@ export const putgSlice = createSlice({
 			if (action.payload.h != undefined) {
 				state.size.h = action.payload.h
 
-				let minThickness = state.material.putgType?.minThickness || -1
+				let minThickness = state.minThickness || state.material.putgType?.minThickness || -1
 				let maxThickness = state.material.putgType?.maxThickness || 99999
 
 				state.sizeError.thickness =
