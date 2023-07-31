@@ -43,6 +43,7 @@ const Header: FC<Props> = ({ disableCard }) => {
 		handleClose()
 
 		if (role == 'manager') navigate('/manager/orders')
+		else if (role == 'root' || role == 'cco') navigate('/manager/orders/last')
 		else navigate('/orders')
 	}
 

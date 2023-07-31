@@ -27,6 +27,8 @@ const AnalyticsOrders = lazy(() => import('@/pages/Manager/Analytics/Orders/Orde
 const AnalyticsCount = lazy(() => import('@/pages/Manager/Analytics/Count/Count'))
 const AnalyticsUser = lazy(() => import('@/pages/Manager/Analytics/User/User'))
 
+const LastOrders = lazy(() => import('@/pages/Manager/LastOrders/LastOrders'))
+
 const Connect = lazy(() => import('@/pages/ConnectWithUs/ConnectWithUs'))
 
 const NotFound = lazy(() => import('@/pages/NotFound/NotFound'))
@@ -85,6 +87,8 @@ export const AppRoutes = () => {
 						<Route path='analytics/orders' element={<AnalyticsOrders />} />
 						<Route path='analytics/count' element={<AnalyticsCount />} />
 						<Route path='analytics/user' element={<AnalyticsUser />} />
+
+						<Route path='orders/last' element={<LastOrders />} />
 					</Route>
 				</Routes>
 			</Suspense>

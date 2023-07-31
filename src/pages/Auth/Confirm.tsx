@@ -22,7 +22,7 @@ export default function Confirm() {
 			dispatch(setUser(res.data.data))
 			navigate('/', { replace: true })
 		} else {
-			setError('Не удалось активировать аккаунт')
+			setError('Не удалось активировать аккаунт. Срок действия ссылки истек')
 		}
 	}, [])
 

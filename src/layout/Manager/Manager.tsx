@@ -12,7 +12,9 @@ export default function Main() {
 			<Suspense fallback={<Loader />}>
 				<Header disableCard />
 				<Wrapper>
-					<Outlet />
+					<Suspense fallback={<Loader />}>
+						<Outlet />
+					</Suspense>
 				</Wrapper>
 			</Suspense>
 		</>

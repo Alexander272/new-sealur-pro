@@ -82,6 +82,16 @@ export const analyticApi = api.injectEndpoints({
 			}),
 		}),
 
+		// получение последних заявок
+		getLastOrders: builder.query<{ data: { orders: IAnalyticFullOrder[] } }, null>({
+			query: () => `${proUrl}/orders/last`,
+		}),
+
+		// получение заявки по номеру
+		getOrderByNumber: builder.query<{ data: IAnalyticFullOrder }, string>({
+			query: number => `${proUrl}/orders/number/${number}`,
+		}),
+
 		getOrdersCount: builder.query<OrderCountResponse, null>({
 			query: () => `${proUrl}/orders/analytics/count`,
 		}),
@@ -95,4 +105,6 @@ export const {
 	useGetAnalyticsOrdersQuery,
 	useGetUserDataQuery,
 	useGetOrdersCountQuery,
+	useGetLastOrdersQuery,
+	useGetOrderByNumberQuery,
 } = analyticApi
