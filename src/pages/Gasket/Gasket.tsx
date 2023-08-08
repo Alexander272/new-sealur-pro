@@ -7,8 +7,8 @@ import { clearActive } from '@/store/card'
 import { GasketSkeleton } from './GasketSkeleton'
 
 const gasketRoute = '/'
-export const snpRoute = '/snp'
-export const putgRoute = '/putg'
+export const snpRoute = gasketRoute + 'snp'
+export const putgRoute = gasketRoute + 'putg'
 
 export default function Gasket() {
 	const navigate = useNavigate()
@@ -17,7 +17,7 @@ export default function Gasket() {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		if (location.pathname == gasketRoute) navigate(snpRoute)
+		if (location.pathname == gasketRoute) navigate(snpRoute, { replace: true })
 	}, [location.pathname])
 
 	const navigateHandler = (path: string) => {
