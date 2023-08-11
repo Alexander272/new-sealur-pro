@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useRef } from 'react'
 import { Box, Menu, Typography } from '@mui/material'
-import { Steps } from '@/types/rings'
+import type { Steps } from '@/types/rings'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { toggleActiveStep } from '@/store/rings/ring'
 

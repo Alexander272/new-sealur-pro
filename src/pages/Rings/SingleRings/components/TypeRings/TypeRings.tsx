@@ -32,18 +32,11 @@ export const TypeRings = () => {
 			label={
 				(ringType?.hasRotaryPlug ? (construction || '00') + '-' : '') +
 				(ringType?.code || 'Х') +
-				(ringType?.hasDensity ? '-' + (density || 'Х') : '')
+				(ringType?.hasDensity ? '-' + (density?.code || 'Х') : '')
 			}
 			stepName='typeStep'
 		>
-			<Stack
-				direction={'row'}
-				divider={<Divider orientation='vertical' flexItem />}
-				spacing={1}
-				mr={2}
-				ml={2}
-				overflow={'hidden'}
-			>
+			<Stack direction={'row'} divider={<Divider orientation='vertical' flexItem />} spacing={1} mr={2} ml={2}>
 				{ringType?.hasRotaryPlug && (
 					<Constructions
 						constructionsData={data?.data.constructions.constructions[ringType.id].constructions || []}

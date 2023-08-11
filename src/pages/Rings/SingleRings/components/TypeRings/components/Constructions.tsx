@@ -16,6 +16,7 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 	const [selected, setSelected] = useState<IRingConstruction | null>(null)
 
 	const construction = useAppSelector(state => state.ring.construction)
+	const density = useAppSelector(state => state.ring.density)
 
 	const dispatch = useAppDispatch()
 
@@ -56,9 +57,9 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 						onMouseLeave={leaveHandler}
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
+						disabled={!density?.hasRotaryPlug && !r.withoutRotaryPlug}
 					>
 						{r.code}
-						{/* - {r.title} */}
 					</ListItemButton>
 				))}
 			</List>
@@ -98,9 +99,7 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 				}}
 				onClose={closeHandler}
 				disableRestoreFocus
-				sx={{
-					pointerEvents: 'none',
-				}}
+				sx={{ pointerEvents: 'none' }}
 			>
 				<Stack direction={'row'} spacing={2} margin={2} maxWidth={450} alignItems={'center'}>
 					<Box display={'flex'} maxWidth={80}>

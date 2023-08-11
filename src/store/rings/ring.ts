@@ -1,4 +1,4 @@
-import { IRingType, IStep, Steps } from '@/types/rings'
+import type { IRingDensity, IRingType, IStep, Steps } from '@/types/rings'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 type RingState = {
@@ -8,7 +8,7 @@ type RingState = {
 	modifyingStep: IStep
 
 	ringType: IRingType | null
-	density: string | null
+	density: IRingDensity | null
 	construction: string | null
 
 	sizes: string | null
@@ -31,7 +31,7 @@ const initialState: RingState = {
 		complete: false,
 		required: true,
 		error: false,
-		nextStep: 'materialStep',
+		nextStep: null,
 	},
 	materialStep: {
 		active: false,
@@ -105,8 +105,10 @@ export const ringSlice = createSlice({
 		setConstruction: (state, action: PayloadAction<string>) => {
 			state.construction = action.payload
 		},
-		setDensity: (state, action: PayloadAction<string>) => {
+		setDensity: (state, action: PayloadAction<IRingDensity>) => {
 			state.density = action.payload
+			state.construction = null
+			state.typeStep.complete = false
 		},
 
 		setSize: (state, action: PayloadAction<string>) => {

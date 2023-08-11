@@ -6,7 +6,6 @@ export interface IRingType {
 	hasRotaryPlug?: boolean
 	hasDensity?: boolean
 	hasThickness?: boolean
-	//TODO поправить materialType на список доступных групп материалов
 	materialType: string
 	image: string
 }
@@ -17,6 +16,7 @@ export interface IRingConstruction {
 	title: string
 	description?: string
 	image: string
+	withoutRotaryPlug?: boolean
 }
 
 export interface IRingDensity {

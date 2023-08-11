@@ -17,7 +17,7 @@ export const Density: FC<Props> = ({ densityData }) => {
 		const { index } = (event.target as HTMLDivElement).dataset
 		if (!index) return
 
-		dispatch(setDensity(densityData[+index].code))
+		dispatch(setDensity(densityData[+index]))
 	}
 
 	return (
@@ -27,7 +27,7 @@ export const Density: FC<Props> = ({ densityData }) => {
 				{densityData.map((r, i) => (
 					<ListItemButton
 						key={r.id}
-						selected={density == r.code}
+						selected={density?.id == r.id}
 						onClick={selectDensity}
 						data-index={i}
 						sx={{ borderRadius: '12px' }}

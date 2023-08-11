@@ -9,11 +9,7 @@ export default function SingleRings() {
 	return (
 		<>
 			<PageTitle>Кольца уплотнительные</PageTitle>
-			{/* <Content>
-				<Main />
-				<Size />
-				<Materials />
-			</Content> */}
+
 			<Stack direction={'row'} mt={6} mb={4} alignItems={'center'} justifyContent={'center'} fontSize={'1.12rem'}>
 				Кольцо
 				<TypeRings />

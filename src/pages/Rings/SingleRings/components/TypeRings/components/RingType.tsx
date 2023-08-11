@@ -96,9 +96,7 @@ export const RingType: FC<Props> = ({ ringData }) => {
 				}}
 				onClose={closeHandler}
 				disableRestoreFocus
-				sx={{
-					pointerEvents: 'none',
-				}}
+				sx={{ pointerEvents: 'none' }}
 			>
 				<Stack direction={'row'} spacing={2} margin={2} maxWidth={450} alignItems={'center'}>
 					{/* <Box display={'flex'} maxWidth={80}>

@@ -1,9 +1,9 @@
-import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { Step } from '../Step/Step'
-import { useGetMaterialsQuery } from '@/store/api/rings'
 import { MouseEvent, useEffect } from 'react'
-import { setMaterial } from '@/store/rings/ring'
 import { List, ListItemButton, ListSubheader } from '@mui/material'
+import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
+import { useGetMaterialsQuery } from '@/store/api/rings'
+import { setMaterial } from '@/store/rings/ring'
+import { Step } from '../Step/Step'
 
 export const Material = () => {
 	const ringType = useAppSelector(state => state.ring.ringType)
