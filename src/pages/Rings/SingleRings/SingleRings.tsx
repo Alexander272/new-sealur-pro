@@ -1,14 +1,9 @@
-// import { Content, PageTitle } from '../rings.style'
-
 import { Stack } from '@mui/material'
-import { Main } from './components/Main/Main'
-import { Size } from './components/Size/Size'
-import { Materials } from './components/Materials/Materials'
 import { TypeRings } from './components/TypeRings/TypeRings'
 import { Sizes } from './components/Sizes/Sizes'
 import { Material } from './components/Material/Material'
 import { Modifying } from './components/Modifying/Modifying'
-import { Content, PageTitle } from '@/pages/Gasket/gasket.style'
+import { PageTitle } from '@/pages/Gasket/gasket.style'
 
 export default function SingleRings() {
 	return (
@@ -19,7 +14,7 @@ export default function SingleRings() {
 				<Size />
 				<Materials />
 			</Content> */}
-			<Stack direction={'row'} mt={6} mb={4} alignItems={'center'} justifyContent={'center'}>
+			<Stack direction={'row'} mt={6} mb={4} alignItems={'center'} justifyContent={'center'} fontSize={'1.12rem'}>
 				Кольцо
 				<TypeRings />
 				–<Sizes />
