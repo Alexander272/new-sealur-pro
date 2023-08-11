@@ -11,6 +11,9 @@ type RingState = {
 	density: string | null
 	construction: string | null
 
+	sizes: string | null
+	thickness: string | null
+
 	material: string | null
 	modifying: string | null
 }
@@ -45,9 +48,21 @@ const initialState: RingState = {
 		nextStep: null,
 	},
 
-	ringType: null,
+	ringType: {
+		id: '',
+		title: '',
+		code: '',
+		materialType: '',
+		image: '',
+		// hasDensity: true,
+		// hasRotaryPlug: true,
+		hasThickness: true,
+	},
 	density: null,
 	construction: null,
+
+	sizes: null,
+	thickness: null,
 
 	material: null,
 	modifying: null,
@@ -84,12 +99,21 @@ export const ringSlice = createSlice({
 			state.density = null
 			state.construction = null
 			state.typeStep.complete = false
+
+			if (!action.payload?.hasThickness) state.thickness = null
 		},
 		setConstruction: (state, action: PayloadAction<string>) => {
 			state.construction = action.payload
 		},
 		setDensity: (state, action: PayloadAction<string>) => {
 			state.density = action.payload
+		},
+
+		setSize: (state, action: PayloadAction<string>) => {
+			state.sizes = action.payload
+		},
+		setThickness: (state, action: PayloadAction<string>) => {
+			state.thickness = action.payload
 		},
 
 		setMaterial: (state, action: PayloadAction<string>) => {
@@ -109,6 +133,8 @@ export const {
 	setRingType,
 	setConstruction,
 	setDensity,
+	setSize,
+	setThickness,
 	setMaterial,
 	setModifying,
 } = ringSlice.actions

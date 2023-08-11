@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react'
 import { List, ListItemButton, ListSubheader } from '@mui/material'
 import { useGetModifyingQuery } from '@/store/api/rings'
-import { setModifying } from '@/store/rings/ring'
+import { setModifying, setStep } from '@/store/rings/ring'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { Step } from '../Step/Step'
 
@@ -18,6 +18,8 @@ export const Modifying = () => {
 
 		if (index == '-1') dispatch(setModifying(null))
 		else dispatch(setModifying(data.data.modifying[+index].code))
+
+		dispatch(setStep({ step: 'modifyingStep', active: false, complete: index != '-1' }))
 	}
 
 	return (
