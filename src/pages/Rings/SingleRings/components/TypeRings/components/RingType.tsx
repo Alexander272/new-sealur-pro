@@ -45,7 +45,7 @@ export const RingType: FC<Props> = ({ ringData }) => {
 
 	return (
 		<>
-			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto' }}>
+			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
 				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>Исполнение</ListSubheader>
 				{ringData.map((r, i) => (
 					<ListItemButton
@@ -99,9 +99,9 @@ export const RingType: FC<Props> = ({ ringData }) => {
 				sx={{ pointerEvents: 'none' }}
 			>
 				<Stack direction={'row'} spacing={2} margin={2} maxWidth={450} alignItems={'center'}>
-					{/* <Box display={'flex'} maxWidth={80}>
+					<Box display={'flex'} maxWidth={100}>
 						<Image src={selected?.image} alt={selected?.code} />
-					</Box> */}
+					</Box>
 					{/* <Typography align='justify'>{selected?.title}</Typography> */}
 				</Stack>
 			</Popover>

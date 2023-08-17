@@ -24,8 +24,17 @@ export const Modifying = () => {
 
 	return (
 		<Step label={modifying || 'Х'} stepName='modifyingStep'>
-			<List sx={{ width: 200, marginRight: 2, marginLeft: 2 }}>
-				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold', lineHeight: '22px' }}>
+			<List sx={{ width: 200, marginRight: 2, marginLeft: 2, paddingTop: 0 }}>
+				<ListSubheader
+					sx={{
+						color: '#000',
+						fontSize: '1rem',
+						fontWeight: 'bold',
+						lineHeight: '24px',
+						marginTop: 1.5,
+						marginBottom: 1.5,
+					}}
+				>
 					Модифицирующие добавки
 				</ListSubheader>
 

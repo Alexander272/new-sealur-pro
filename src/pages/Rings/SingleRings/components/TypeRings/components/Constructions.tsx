@@ -46,7 +46,7 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 
 	return (
 		<>
-			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto' }}>
+			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
 				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>Конструкция</ListSubheader>
 				{constructionsData.map((r, i) => (
 					<ListItemButton

@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { Stack, Typography } from '@mui/material'
 import { useDebounce } from '@/hooks/debounce'
-import { useAppDispatch } from '@/hooks/useStore'
+import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setSize, setThickness } from '@/store/rings/ring'
 import { Input } from '@/components/Input/input.style'
 
@@ -10,9 +10,12 @@ type Props = {
 }
 
 export const CustomSize: FC<Props> = ({ hasThickness }) => {
-	const [d3, setD3] = useState('')
-	const [d2, setD2] = useState('')
-	const [h, setH] = useState('')
+	const size = useAppSelector(state => state.ring.sizes)
+	const thickness = useAppSelector(state => state.ring.thickness)
+
+	const [d3, setD3] = useState(size?.split('×')[0] || '')
+	const [d2, setD2] = useState(size?.split('×')[1] || '')
+	const [h, setH] = useState(thickness || '')
 
 	const D3 = useDebounce(d3, 500)
 	const D2 = useDebounce(d2, 500)

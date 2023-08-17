@@ -1,4 +1,4 @@
-import type { IRing, IRingMaterial, IRingModifying } from '@/types/rings'
+import type { IRing, IRingMaterial, IRingModifying, IRingSize } from '@/types/rings'
 import { api } from './base'
 import { proUrl } from './snp'
 
@@ -18,8 +18,13 @@ export const ringApi = api.injectEndpoints({
 		getModifying: builder.query<{ data: { modifying: IRingModifying[] } }, null>({
 			query: () => `${proUrl}/ring-modifying`,
 		}),
+
+		// получение размеров
+		getSize: builder.query<{ data: { Size: IRingSize[] } }, null>({
+			query: () => `${proUrl}/ring-sizes`,
+		}),
 	}),
 	overrideExisting: false,
 })
 
-export const { useGetRingQuery, useGetMaterialsQuery, useGetModifyingQuery } = ringApi
+export const { useGetRingQuery, useGetMaterialsQuery, useGetModifyingQuery, useGetSizeQuery } = ringApi

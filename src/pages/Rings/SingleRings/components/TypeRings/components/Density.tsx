@@ -22,7 +22,7 @@ export const Density: FC<Props> = ({ densityData }) => {
 
 	return (
 		<>
-			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto' }}>
+			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
 				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>Плотность</ListSubheader>
 				{densityData.map((r, i) => (
 					<ListItemButton

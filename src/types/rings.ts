@@ -54,6 +54,13 @@ export interface IRingModifying {
 	description: string
 }
 
+export interface IRingSize {
+	id: string
+	outer: number
+	inner: number
+	thickness: number
+}
+
 export type Steps = 'typeStep' | 'sizeStep' | 'materialStep' | 'modifyingStep'
 
 export interface IStep {

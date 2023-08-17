@@ -30,7 +30,9 @@ export const Material = () => {
 
 	return (
 		<Step label={material || 'ХХХ'} stepName='materialStep'>
-			<List sx={{ width: 200, marginRight: 2, marginLeft: 2, maxHeight: '450px', overflow: 'auto' }}>
+			<List
+				sx={{ width: 200, marginRight: 2, marginLeft: 2, maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}
+			>
 				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>Материал</ListSubheader>
 				{data?.data.materials.map((r, i) => (
 					<ListItemButton
