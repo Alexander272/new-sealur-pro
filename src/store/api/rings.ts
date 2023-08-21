@@ -20,7 +20,7 @@ export const ringApi = api.injectEndpoints({
 		}),
 
 		// получение размеров
-		getSize: builder.query<{ data: { Size: IRingSize[] } }, null>({
+		getSize: builder.query<{ data: { sizes: IRingSize[] } }, null>({
 			query: () => `${proUrl}/ring-sizes`,
 		}),
 	}),

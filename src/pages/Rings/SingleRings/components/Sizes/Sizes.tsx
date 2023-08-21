@@ -22,7 +22,7 @@ export const Sizes = () => {
 		if (!data) return
 
 		if (ringType?.code != 'П' && ringType?.code != 'К') {
-			setSizes(data?.data.Size)
+			setSizes(data?.data.sizes)
 		} else {
 			setSizes([])
 		}
@@ -42,8 +42,8 @@ export const Sizes = () => {
 			label={(size || '00×00') + (!ringType?.hasThickness ? '' : '×' + (thickness || '0'))}
 			stepName={'sizeStep'}
 		>
-			{sizes.length && <ListSize sizes={sizes} hasThickness={ringType?.hasThickness} />}
-			{!sizes.length && <CustomSize hasThickness={ringType?.hasThickness} />}
+			{sizes.length ? <ListSize sizes={sizes} hasThickness={ringType?.hasThickness} /> : null}
+			{!sizes.length ? <CustomSize hasThickness={ringType?.hasThickness} /> : null}
 		</Step>
 	)
 }

@@ -45,12 +45,14 @@ export interface IRingMaterial {
 	id: string
 	type: string
 	title: string
+	description?: string
 	isDefault: boolean
 }
 
 export interface IRingModifying {
 	id: string
 	code: string
+	title: string
 	description: string
 }
 

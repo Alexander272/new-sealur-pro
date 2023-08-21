@@ -39,12 +39,10 @@ export const Material = () => {
 						key={r.id}
 						selected={material == r.title}
 						onClick={selectMaterial}
-						// onMouseEnter={hoverHandler}
-						// onMouseLeave={leaveHandler}
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
 					>
-						{r.title}
+						{r.title} {r.description && `(${r.description})`}
 					</ListItemButton>
 				))}
 			</List>
