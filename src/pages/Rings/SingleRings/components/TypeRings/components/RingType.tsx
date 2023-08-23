@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useRef, useState } from 'react'
-import { Box, List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
+import { Box, Divider, List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import type { IRingType } from '@/types/rings'
 import { Image } from '@/pages/Gasket/gasket.style'
@@ -46,7 +46,20 @@ export const RingType: FC<Props> = ({ ringData }) => {
 	return (
 		<>
 			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
-				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>Исполнение</ListSubheader>
+				<ListSubheader
+					sx={{
+						color: '#000',
+						fontSize: '1rem',
+						fontWeight: 'bold',
+						lineHeight: '24px',
+						marginTop: 1,
+						marginBottom: 1,
+					}}
+				>
+					Исполнение
+				</ListSubheader>
+				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
+
 				{ringData.map((r, i) => (
 					<ListItemButton
 						key={r.id}
@@ -98,11 +111,11 @@ export const RingType: FC<Props> = ({ ringData }) => {
 				disableRestoreFocus
 				sx={{ pointerEvents: 'none' }}
 			>
-				<Stack direction={'row'} spacing={2} margin={2} maxWidth={450} alignItems={'center'}>
-					<Box display={'flex'} maxWidth={100}>
+				<Stack direction={'row'} spacing={2} margin={2} maxWidth={500} alignItems={'center'}>
+					<Box display={'flex'} maxWidth={100} width={'100%'}>
 						<Image src={selected?.image} alt={selected?.code} />
 					</Box>
-					{/* <Typography align='justify'>{selected?.title}</Typography> */}
+					<Typography align='justify'>{selected?.description}</Typography>
 				</Stack>
 			</Popover>
 		</>

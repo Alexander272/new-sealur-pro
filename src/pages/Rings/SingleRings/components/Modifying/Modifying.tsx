@@ -1,5 +1,5 @@
 import { MouseEvent, useRef, useState } from 'react'
-import { List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
+import { Divider, List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
 import { useGetModifyingQuery } from '@/store/api/rings'
 import { setModifying, setStep } from '@/store/rings/ring'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
@@ -46,19 +46,29 @@ export const Modifying = () => {
 
 	return (
 		<Step label={modifying || 'Х'} stepName='modifyingStep'>
-			<List sx={{ width: 200, marginRight: 2, marginLeft: 2, paddingTop: 0 }}>
+			<List
+				sx={{
+					maxWidth: 350,
+					marginRight: 2,
+					marginLeft: 2,
+					maxHeight: '450px',
+					overflow: 'auto',
+					paddingTop: 0,
+				}}
+			>
 				<ListSubheader
 					sx={{
 						color: '#000',
 						fontSize: '1rem',
 						fontWeight: 'bold',
 						lineHeight: '24px',
-						marginTop: 1.5,
-						marginBottom: 1.5,
+						marginTop: 1,
+						marginBottom: 1,
 					}}
 				>
 					Модифицирующие добавки
 				</ListSubheader>
+				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
 
 				<ListItemButton
 					selected={modifying == null}
@@ -79,7 +89,7 @@ export const Modifying = () => {
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
 					>
-						{r.title}
+						{r.code} - {r.title}
 					</ListItemButton>
 				))}
 			</List>

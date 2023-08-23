@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useRef, useState } from 'react'
-import { Box, List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
+import { Box, Divider, List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
 import type { IRingConstruction } from '@/types/rings'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setConstruction } from '@/store/rings/ring'
@@ -47,7 +47,20 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 	return (
 		<>
 			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
-				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>Конструкция</ListSubheader>
+				<ListSubheader
+					sx={{
+						color: '#000',
+						fontSize: '1rem',
+						fontWeight: 'bold',
+						lineHeight: '24px',
+						marginTop: 1,
+						marginBottom: 1,
+					}}
+				>
+					Конструкция
+				</ListSubheader>
+				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
+
 				{constructionsData.map((r, i) => (
 					<ListItemButton
 						key={r.id}
@@ -57,7 +70,7 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 						onMouseLeave={leaveHandler}
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
-						disabled={!density?.hasRotaryPlug && !r.withoutRotaryPlug}
+						disabled={!density?.code || (!density?.hasRotaryPlug && !r.withoutRotaryPlug)}
 					>
 						{r.code}
 					</ListItemButton>
@@ -101,7 +114,7 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 				sx={{ pointerEvents: 'none' }}
 			>
 				<Stack direction={'row'} spacing={2} margin={2} maxWidth={450} alignItems={'center'}>
-					<Box display={'flex'} maxWidth={80}>
+					<Box display={'flex'} maxWidth={80} width={'100%'}>
 						<Image src={selected?.image} alt={selected?.code} />
 					</Box>
 					<Typography align='justify'>{selected?.title}</Typography>

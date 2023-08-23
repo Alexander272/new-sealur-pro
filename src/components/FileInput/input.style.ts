@@ -88,6 +88,7 @@ export const Danger = styled.p`
 	outline: none;
 	transition: all 0.3s ease-in-out;
 	color: #000;
+	margin: 0;
 	margin-left: 10px;
 	border: 2px solid rgba(237, 17, 17, 0.5);
 

@@ -29,7 +29,11 @@ export const Sizes = () => {
 	}, [data, ringType])
 
 	useEffect(() => {
-		let ok = !size?.includes('00') && Boolean(size)
+		if (!size) return
+
+		const s = size.split('×')
+
+		let ok = Boolean(size) && s[0] != '00' && s[1] != '00'
 		ok = ok && (!ringType?.hasThickness || (Boolean(thickness) && thickness != '0'))
 
 		if (ok) {

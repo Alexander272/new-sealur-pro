@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setSize, setThickness } from '@/store/rings/ring'
 import type { IRingSize } from '@/types/rings'
 import { Input } from '@/components/Input/input.style'
+import { useDebounce } from '@/hooks/debounce'
 
 type Props = {
 	sizes: IRingSize[]
@@ -18,6 +19,8 @@ export const ListSize: FC<Props> = ({ sizes, hasThickness }) => {
 	const [curSize, setCurSize] = useState<IRingSize | null>(null)
 	const [h, setH] = useState(thickness || '')
 
+	const thick = useDebounce(h, 500)
+
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
@@ -26,11 +29,16 @@ export const ListSize: FC<Props> = ({ sizes, hasThickness }) => {
 		setCurSize(s)
 	}, [])
 
+	useEffect(() => {
+		dispatch(setThickness(thick || '0'))
+	}, [thick])
+
 	const selectSizeHandler = (_event: React.SyntheticEvent<Element, Event>, value: IRingSize | null) => {
 		setCurSize(value)
 		setH(value?.thickness.toString() || '0')
 
-		dispatch(setSize(`${value?.outer}×${value?.inner}`))
+		if (!value) dispatch(setSize(''))
+		else dispatch(setSize(`${value.outer}×${value.inner}`))
 		dispatch(setThickness(value?.thickness.toString() || '0'))
 	}
 

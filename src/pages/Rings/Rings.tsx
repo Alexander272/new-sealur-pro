@@ -26,6 +26,8 @@ export default function Rings() {
 
 	return (
 		<Container>
+			{/* //TODO выпадающий список с продукцией (меню с группировкой) */}
+
 			{/* // tabs с переключением типа колец */}
 			<RadioGroup onChange={navigateHandler}>
 				<RadioItem size='large' value={singleRoute} active={location.pathname == singleRoute}>

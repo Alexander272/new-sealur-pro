@@ -1,3 +1,4 @@
+import type { IDrawing } from '@/types/drawing'
 import type { IRingDensity, IRingType, IStep, Steps } from '@/types/rings'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
@@ -16,6 +17,11 @@ type RingState = {
 
 	material: string | null
 	modifying: string | null
+
+	drawing: IDrawing | null
+
+	amount: string
+	info: string
 }
 
 const initialState: RingState = {
@@ -57,6 +63,7 @@ const initialState: RingState = {
 		// hasDensity: true,
 		// hasRotaryPlug: true,
 		hasThickness: true,
+		designation: '',
 	},
 	density: null,
 	construction: null,
@@ -66,6 +73,13 @@ const initialState: RingState = {
 
 	material: null,
 	modifying: null,
+
+	drawing: null,
+
+	// доп. информация к позиции
+	info: '',
+	// количество прокладок
+	amount: '',
 }
 
 export const ringSlice = createSlice({
@@ -125,6 +139,20 @@ export const ringSlice = createSlice({
 		setModifying: (state, action: PayloadAction<string | null>) => {
 			state.modifying = action.payload
 		},
+
+		// установка чертежа
+		setDrawing: (state, action: PayloadAction<IDrawing | null>) => {
+			state.drawing = action.payload
+		},
+
+		// установка доп. инфы
+		setInfo: (state, action: PayloadAction<string>) => {
+			state.info = action.payload
+		},
+		// установка количества
+		setAmount: (state, action: PayloadAction<string>) => {
+			state.amount = action.payload
+		},
 	},
 })
 
@@ -139,6 +167,9 @@ export const {
 	setThickness,
 	setMaterial,
 	setModifying,
+	setDrawing,
+	setInfo,
+	setAmount,
 } = ringSlice.actions
 
 export default ringSlice.reducer

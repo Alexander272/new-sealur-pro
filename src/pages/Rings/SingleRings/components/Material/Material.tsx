@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect } from 'react'
-import { List, ListItemButton, ListSubheader } from '@mui/material'
+import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetMaterialsQuery } from '@/store/api/rings'
 import { setMaterial } from '@/store/rings/ring'
@@ -31,9 +31,30 @@ export const Material = () => {
 	return (
 		<Step label={material || 'ХХХ'} stepName='materialStep'>
 			<List
-				sx={{ width: 200, marginRight: 2, marginLeft: 2, maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}
+				sx={{
+					minWidth: 250,
+					maxWidth: 350,
+					marginRight: 2,
+					marginLeft: 2,
+					maxHeight: '450px',
+					overflow: 'auto',
+					paddingTop: 0,
+				}}
 			>
-				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>Материал</ListSubheader>
+				<ListSubheader
+					sx={{
+						color: '#000',
+						fontSize: '1rem',
+						fontWeight: 'bold',
+						lineHeight: '24px',
+						marginTop: 1,
+						marginBottom: 1,
+					}}
+				>
+					Материал
+				</ListSubheader>
+				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
+
 				{data?.data.materials.map((r, i) => (
 					<ListItemButton
 						key={r.id}

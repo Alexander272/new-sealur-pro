@@ -1,5 +1,5 @@
 import { FC, MouseEvent } from 'react'
-import { List, ListItemButton, ListSubheader } from '@mui/material'
+import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import type { IRingDensity } from '@/types/rings'
 import { setDensity } from '@/store/rings/ring'
@@ -22,8 +22,21 @@ export const Density: FC<Props> = ({ densityData }) => {
 
 	return (
 		<>
-			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
-				<ListSubheader sx={{ color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>Плотность</ListSubheader>
+			<List sx={{ maxWidth: '250px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
+				<ListSubheader
+					sx={{
+						color: '#000',
+						fontSize: '1rem',
+						fontWeight: 'bold',
+						lineHeight: '24px',
+						marginTop: 1,
+						marginBottom: 1,
+					}}
+				>
+					Плотность
+				</ListSubheader>
+				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
+
 				{densityData.map((r, i) => (
 					<ListItemButton
 						key={r.id}

@@ -8,6 +8,7 @@ export interface IRingType {
 	hasThickness?: boolean
 	materialType: string
 	image: string
+	designation: string
 }
 
 export interface IRingConstruction {
@@ -47,6 +48,7 @@ export interface IRingMaterial {
 	title: string
 	description?: string
 	isDefault: boolean
+	designation: string
 }
 
 export interface IRingModifying {
@@ -54,6 +56,7 @@ export interface IRingModifying {
 	code: string
 	title: string
 	description: string
+	designation: string
 }
 
 export interface IRingSize {
