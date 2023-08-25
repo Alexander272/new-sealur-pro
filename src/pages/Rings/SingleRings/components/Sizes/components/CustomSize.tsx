@@ -17,9 +17,9 @@ export const CustomSize: FC<Props> = ({ hasThickness }) => {
 	const [d2, setD2] = useState(size?.split('×')[1] != '00' ? size?.split('×')[1] || '' : '')
 	const [h, setH] = useState(thickness || '')
 
-	const D3 = useDebounce(d3, 500)
-	const D2 = useDebounce(d2, 500)
-	const thick = useDebounce(h, 500)
+	const D3 = useDebounce(d3, 1000)
+	const D2 = useDebounce(d2, 1000)
+	const thick = useDebounce(h, 1000)
 
 	const dispatch = useAppDispatch()
 

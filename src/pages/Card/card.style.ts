@@ -72,6 +72,28 @@ export const Position = styled.p<PositionProps>`
 	}
 `
 
+export const OpenButton = styled.div<ContainerProps>`
+	transform: ${props => (props.open ? 'rotate(0deg)' : 'rotate(180deg)')};
+	transform: 'rotate(180deg)';
+	position: absolute;
+	left: ${props => (props.open ? '0' : 'inherit')};
+	right: ${props => (props.open ? 'inherit' : '-5px')};
+	/* bottom: 180px; */
+	border-radius: 0 70px 70px 0;
+	background-color: var(--secondary-color);
+	/* font-size: 1.8rem; */
+	/* padding: 8px 16px 8px 0; */
+	font-size: 1.4rem;
+	padding: 8px 8px 8px 0;
+	color: var(--primary-color);
+	cursor: pointer;
+	z-index: 5;
+
+	height: 100%;
+	display: flex;
+	align-items: center;
+`
+
 type ButtonProps = {}
 export const CircleButton = styled.div<ContainerProps>`
 	transform: ${props => (props.open ? 'rotate(0deg)' : 'rotate(180deg)')};

@@ -49,7 +49,19 @@ export const Result = () => {
 		}
 	}, [ringType, construction])
 
-	if (!ringType?.code) return null
+	if (!ringType?.code)
+		return (
+			<Box
+				width={'100%'}
+				maxWidth={850}
+				mb={2}
+				// ml={'auto'}
+				// mr={'auto'}
+				padding={'12px 20px'}
+				borderRadius={'12px'}
+				boxShadow={'0px 0px 4px 0px #2626262b'}
+			></Box>
+		)
 
 	const infoHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		dispatch(setInfo(event.target.value))
@@ -98,8 +110,8 @@ export const Result = () => {
 			width={'100%'}
 			maxWidth={850}
 			mb={2}
-			ml={'auto'}
-			mr={'auto'}
+			// ml={'auto'}
+			// mr={'auto'}
 			padding={'12px 20px'}
 			borderRadius={'12px'}
 			boxShadow={'0px 0px 4px 0px #2626262b'}
@@ -127,7 +139,7 @@ export const Result = () => {
 					onChange={infoHandler}
 					size='small'
 					multiline
-					sx={{ width: '100%', maxWidth: '600px' }}
+					sx={{ width: '100%', maxWidth: '500px' }}
 				/>
 			</Stack>
 

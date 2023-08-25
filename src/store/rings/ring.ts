@@ -110,9 +110,14 @@ export const ringSlice = createSlice({
 
 		setRingType: (state, action: PayloadAction<IRingType | null>) => {
 			state.ringType = action.payload
+
 			state.density = null
 			state.construction = null
 			state.typeStep.complete = false
+
+			state.sizes = null
+			state.thickness = null
+			state.sizeStep.complete = false
 
 			if (!action.payload?.hasThickness) state.thickness = null
 		},

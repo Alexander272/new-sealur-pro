@@ -4,16 +4,37 @@ import { Sizes } from './components/Sizes/Sizes'
 import { Material } from './components/Material/Material'
 import { Modifying } from './components/Modifying/Modifying'
 import { Drawing } from './components/Drawing/Drawing'
-import { PageTitle } from '@/pages/Gasket/gasket.style'
 import { Design } from './components/Design/Design'
 import { Result } from './components/Result/Result'
+import { PageTitle } from '@/pages/Gasket/gasket.style'
+
+/*
+	//группы в списке выделить жирным
+	на пустой странице вывести список с группами
+
+	//при смене исполнения стирать размеры
+
+	//где чертеж перенести вправо (заменить точку на запятую)
+
+	//отрытие корзины сделать по всей ширине
+
+	? добавить возможность ввести размеры вручную
+*/
 
 export default function SingleRings() {
 	return (
 		<>
 			<PageTitle>Кольца уплотнительные</PageTitle>
 
-			<Stack direction={'row'} mt={6} mb={4} alignItems={'center'} justifyContent={'center'} fontSize={'1.12rem'}>
+			<Stack
+				direction={'row'}
+				mt={5}
+				// mb={4}
+				mb={2}
+				alignItems={'center'}
+				justifyContent={'center'}
+				fontSize={'1.12rem'}
+			>
 				Кольцо
 				<TypeRings />
 				–<Sizes />
@@ -23,9 +44,15 @@ export default function SingleRings() {
 				<Typography fontSize={'inherit'}>ТУ 5728-001-93978201-2008</Typography>
 			</Stack>
 
-			<Design />
+			<Stack direction={'row'} spacing={2} width={'100%'} maxWidth={1200} ml={'auto'} mr={'auto'}>
+				<Stack width={'65%'}>
+					<Result />
+				</Stack>
 
-			<Result />
+				<Stack width={'35%'}>
+					<Design />
+				</Stack>
+			</Stack>
 		</>
 	)
 }

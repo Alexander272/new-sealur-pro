@@ -2,7 +2,7 @@ import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Box, Button, Menu, MenuItem } from '@mui/material'
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { GasketRoute, PutgRoute, RingsRoute, SnpRoute } from '@/routes'
+import { GasketRoute, PutgRoute, RingRoute, RingsRoute, SnpRoute } from '@/routes'
 import { MenuLink } from './production.style'
 
 export const Products = () => {
@@ -77,7 +77,7 @@ export const Products = () => {
 				<MenuLink to={GasketRoute}>
 					<MenuItem
 						selected={location.pathname == GasketRoute}
-						sx={{ margin: '0 8px', borderRadius: '12px' }}
+						sx={{ margin: '0 8px', borderRadius: '12px', fontWeight: 'bold' }}
 					>
 						Фланцевые прокладки
 					</MenuItem>
@@ -100,8 +100,19 @@ export const Products = () => {
 				</MenuLink>
 
 				<MenuLink to={RingsRoute}>
-					<MenuItem selected={location.pathname == RingsRoute} sx={{ margin: '0 8px', borderRadius: '12px' }}>
-						Сальниковые кольца
+					<MenuItem
+						selected={location.pathname == RingsRoute}
+						sx={{ margin: '0 8px', borderRadius: '12px', fontWeight: 'bold' }}
+					>
+						Сальниковые кольца и комплекты
+					</MenuItem>
+				</MenuLink>
+				<MenuLink to={RingRoute}>
+					<MenuItem
+						selected={location.pathname == RingRoute}
+						sx={{ margin: '0 8px', borderRadius: '12px', paddingLeft: 4 }}
+					>
+						Кольца
 					</MenuItem>
 				</MenuLink>
 			</Menu>

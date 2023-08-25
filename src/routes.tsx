@@ -12,6 +12,8 @@ const Recovery = lazy(() => import('@/pages/Auth/Recovery/Recovery'))
 const RecoveryPassword = lazy(() => import('@/pages/Auth/Recovery/RecoveryPassword'))
 const Confirm = lazy(() => import('@/pages/Auth/Confirm'))
 
+const Home = lazy(() => import('@/pages/Home/Home'))
+
 const ProGasket = lazy(() => import('@/pages/Gasket/Gasket'))
 const ProSnp = lazy(() => import('@/pages/Gasket/Snp/Snp'))
 const ProPutg = lazy(() => import('@/pages/Gasket/Putg/Putg'))
@@ -73,6 +75,8 @@ export const AppRoutes = () => {
 							</RequireAuth>
 						}
 					>
+						<Route index element={<Home />} />
+
 						<Route path='/gaskets' element={<ProGasket />}>
 							{/* <Route index element={<ProSnp />} /> */}
 							<Route path='snp' element={<ProSnp />} />

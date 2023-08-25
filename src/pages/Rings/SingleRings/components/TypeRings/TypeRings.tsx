@@ -30,7 +30,7 @@ export const TypeRings = () => {
 	return (
 		<Step
 			label={
-				(ringType?.hasRotaryPlug ? (construction || '00') + '-' : '') +
+				(ringType?.hasRotaryPlug ? (construction || 'ХХ') + '-' : '') +
 				(ringType?.code || 'Х') +
 				(ringType?.hasDensity ? '-' + (density?.code || 'Х') : '')
 			}

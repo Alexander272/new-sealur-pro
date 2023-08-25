@@ -19,7 +19,7 @@ export const ListSize: FC<Props> = ({ sizes, hasThickness }) => {
 	const [curSize, setCurSize] = useState<IRingSize | null>(null)
 	const [h, setH] = useState(thickness || '')
 
-	const thick = useDebounce(h, 500)
+	const thick = useDebounce(h, 1000)
 
 	const dispatch = useAppDispatch()
 
