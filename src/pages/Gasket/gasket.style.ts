@@ -35,7 +35,7 @@ export const PageTitle = styled.h3`
 	margin-top: -30px;
 	/* margin-left: 5px; */
 
-	@media screen and (max-width: 1000px) {
+	@media screen and (max-width: 1300px) {
 		margin-top: 10px;
 	}
 `

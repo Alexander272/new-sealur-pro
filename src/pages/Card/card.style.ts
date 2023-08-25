@@ -7,6 +7,8 @@ export const Container = styled.div<ContainerProps>`
 	width: ${props => (props.open ? '100%' : '0px')};
 	transition: width 0.3s ease-in-out;
 	margin: 10px 0;
+	/* margin-left: auto; */
+	/* height: calc(100vh - 170px); */
 
 	@media screen and (max-width: 1600px) {
 		position: fixed;

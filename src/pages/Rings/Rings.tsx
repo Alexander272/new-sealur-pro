@@ -1,13 +1,13 @@
 import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Stack } from '@mui/material'
 import { useAppDispatch } from '@/hooks/useStore'
+import { clearActive } from '@/store/card'
+import { RingRoute, RingsRoute } from '@/routes'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
-import { RingsSkeleton } from './RingsSkeleton'
 import { Container } from '@/pages/Gasket/gasket.style'
-
-const ringsRoute = '/rings'
-export const singleRoute = ringsRoute + '/single'
-// export const putgRoute = gasketRoute + 'putg'
+import { Products } from '@/components/Products/Products'
+import { RingsSkeleton } from './RingsSkeleton'
 
 export default function Rings() {
 	const navigate = useNavigate()
@@ -16,27 +16,29 @@ export default function Rings() {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		if (location.pathname == ringsRoute) navigate(singleRoute, { replace: true })
+		if (location.pathname == RingsRoute) navigate(RingRoute, { replace: true })
 	}, [location.pathname])
 
 	const navigateHandler = (path: string) => {
-		//  dispatch(clearActive())
-		// 	navigate(path)
+		dispatch(clearActive())
+		navigate(path)
 	}
 
 	return (
 		<Container>
-			{/* //TODO выпадающий список с продукцией (меню с группировкой) */}
+			<Stack
+				direction={{ xs: 'column', sm: 'row' }}
+				spacing={{ xs: 1, sm: 6 }}
+				alignItems={{ sm: 'flex-start', xs: 'center' }}
+			>
+				<Products />
 
-			{/* // tabs с переключением типа колец */}
-			<RadioGroup onChange={navigateHandler}>
-				<RadioItem size='large' value={singleRoute} active={location.pathname == singleRoute}>
-					Кольца
-				</RadioItem>
-				{/* <RadioItem size='large' value={putgRoute} active={location.pathname == putgRoute}>
-					ПУТГ
-				</RadioItem> */}
-			</RadioGroup>
+				<RadioGroup onChange={navigateHandler}>
+					<RadioItem size='large' value={RingRoute} active={location.pathname == RingRoute}>
+						Кольца
+					</RadioItem>
+				</RadioGroup>
+			</Stack>
 
 			<Suspense fallback={<RingsSkeleton />}>
 				<Outlet />

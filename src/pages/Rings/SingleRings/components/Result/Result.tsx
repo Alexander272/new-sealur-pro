@@ -2,7 +2,8 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetMaterialsQuery, useGetModifyingQuery, useGetRingQuery } from '@/store/api/rings'
-import { setAmount, setInfo } from '@/store/rings/ring'
+import { clearRing, setAmount, setInfo } from '@/store/rings/ring'
+import { clearActive } from '@/store/card'
 import { Image } from '@/pages/Gasket/gasket.style'
 import { Input } from '@/components/Input/input.style'
 
@@ -26,6 +27,10 @@ export const Result = () => {
 
 	const material = useAppSelector(state => state.ring.material)
 	const modifying = useAppSelector(state => state.ring.modifying)
+
+	const typeStep = useAppSelector(state => state.ring.typeStep)
+	const sizeStep = useAppSelector(state => state.ring.sizeStep)
+	const materialStep = useAppSelector(state => state.ring.materialStep)
 
 	const dispatch = useAppDispatch()
 
@@ -57,6 +62,11 @@ export const Result = () => {
 			if (event.target.value === '') value = event.target.value
 			dispatch(setAmount(value.toString()))
 		}
+	}
+
+	const cancelHandler = () => {
+		dispatch(clearRing())
+		dispatch(clearActive())
 	}
 
 	const renderDescription = () => {
@@ -94,8 +104,10 @@ export const Result = () => {
 			borderRadius={'12px'}
 			boxShadow={'0px 0px 4px 0px #2626262b'}
 		>
-			<Stack direction={'row'} spacing={2}>
-				<Box maxWidth={150}>{ringType?.image && <Image src={image} alt={ringType?.code} />}</Box>
+			<Stack direction={'row'} spacing={2} mb={2}>
+				<Box maxWidth={150} width={'100%'}>
+					{ringType?.image && <Image src={image} alt={ringType?.code} />}
+				</Box>
 				<Box>
 					<Typography fontWeight={'bold'}>Описание:</Typography>
 					<Typography textAlign='justify'>{renderDescription()}</Typography>
@@ -112,7 +124,7 @@ export const Result = () => {
 				<Typography fontWeight='bold'>Доп. информация:</Typography>
 				<Input
 					value={info}
-					// onChange={infoHandler}
+					onChange={infoHandler}
 					size='small'
 					multiline
 					sx={{ width: '100%', maxWidth: '600px' }}
@@ -136,7 +148,7 @@ export const Result = () => {
 					<Stack direction={'row'} spacing={2}>
 						{cardIndex !== undefined && (
 							<Button
-								// onClick={cancelHandler}
+								onClick={cancelHandler}
 								variant='outlined'
 								color='secondary'
 								sx={{ borderRadius: '12px', padding: '6px 20px' }}
@@ -146,7 +158,7 @@ export const Result = () => {
 						)}
 
 						<Button
-							// disabled={!amount || hasSizeError || hasDesignError}
+							disabled={!amount || typeStep.error || sizeStep.error || materialStep.error}
 							// onClick={savePosition}
 							variant='contained'
 							sx={{ borderRadius: '12px', padding: '6px 20px' }}

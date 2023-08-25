@@ -15,7 +15,7 @@ import {
 import { sendMetric } from '@/services/metrics'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
-import { putgRoute, snpRoute } from '../Gasket/Gasket'
+import { PutgRoute, SnpRoute } from '@/routes'
 import { CardContainer, CircleButton, Container, Item, Position, Positions } from './card.style'
 
 type Props = {}
@@ -99,7 +99,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setSnp(snp))
-			navigate(snpRoute)
+			navigate(SnpRoute)
 		}
 		if (position.type === 'Putg') {
 			const putg = {
@@ -109,7 +109,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setPutg(putg))
-			navigate(putgRoute)
+			navigate(PutgRoute)
 		}
 	}
 

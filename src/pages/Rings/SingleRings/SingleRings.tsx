@@ -26,10 +26,6 @@ export default function SingleRings() {
 			<Design />
 
 			<Result />
-
-			{/* //TODO поле доп. информации */}
-
-			{/* //TODO количество и кнопка добавить */}
 		</>
 	)
 }

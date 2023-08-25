@@ -1,14 +1,13 @@
 import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
-import { Container } from './gasket.style'
+import { Stack } from '@mui/material'
 import { useAppDispatch } from '@/hooks/useStore'
 import { clearActive } from '@/store/card'
+import { GasketRoute, PutgRoute, SnpRoute } from '@/routes'
+import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
+import { Products } from '@/components/Products/Products'
 import { GasketSkeleton } from './GasketSkeleton'
-
-const gasketRoute = '/'
-export const snpRoute = gasketRoute + 'snp'
-export const putgRoute = gasketRoute + 'putg'
+import { Container } from './gasket.style'
 
 export default function Gasket() {
 	const navigate = useNavigate()
@@ -17,7 +16,7 @@ export default function Gasket() {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		if (location.pathname == gasketRoute) navigate(snpRoute, { replace: true })
+		if (location.pathname == GasketRoute) navigate(SnpRoute, { replace: true })
 	}, [location.pathname])
 
 	const navigateHandler = (path: string) => {
@@ -27,15 +26,22 @@ export default function Gasket() {
 
 	return (
 		<Container>
-			{/* // tabs с переключением типа прокладки */}
-			<RadioGroup onChange={navigateHandler}>
-				<RadioItem size='large' value={snpRoute} active={location.pathname == snpRoute}>
-					СНП
-				</RadioItem>
-				<RadioItem size='large' value={putgRoute} active={location.pathname == putgRoute}>
-					ПУТГ
-				</RadioItem>
-			</RadioGroup>
+			<Stack
+				direction={{ xs: 'column', sm: 'row' }}
+				spacing={{ xs: 1, sm: 6 }}
+				alignItems={{ sm: 'flex-start', xs: 'center' }}
+			>
+				<Products />
+
+				<RadioGroup onChange={navigateHandler}>
+					<RadioItem size='large' value={SnpRoute} active={location.pathname == SnpRoute}>
+						СНП
+					</RadioItem>
+					<RadioItem size='large' value={PutgRoute} active={location.pathname == PutgRoute}>
+						ПУТГ
+					</RadioItem>
+				</RadioGroup>
+			</Stack>
 
 			{/* <Content> */}
 			<Suspense fallback={<GasketSkeleton />}>

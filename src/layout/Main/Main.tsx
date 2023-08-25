@@ -18,6 +18,7 @@ export default function Main() {
 					<Suspense fallback={<Loader />}>
 						<Outlet />
 					</Suspense>
+
 					<Suspense fallback={<></>}>
 						<Card />
 					</Suspense>

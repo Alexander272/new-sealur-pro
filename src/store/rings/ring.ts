@@ -126,15 +126,18 @@ export const ringSlice = createSlice({
 		},
 
 		setSize: (state, action: PayloadAction<string>) => {
+			// TODO ставить шагу ошибку если размеры нулевые
 			state.sizes = action.payload
 		},
 		setThickness: (state, action: PayloadAction<string>) => {
+			// TODO ставить шагу ошибку если размеры нулевые
 			state.thickness = action.payload
 		},
 
 		setMaterial: (state, action: PayloadAction<string>) => {
 			state.material = action.payload
 			state.materialStep.complete = true
+			state.materialStep.error = false
 		},
 		setModifying: (state, action: PayloadAction<string | null>) => {
 			state.modifying = action.payload
@@ -153,6 +156,11 @@ export const ringSlice = createSlice({
 		setAmount: (state, action: PayloadAction<string>) => {
 			state.amount = action.payload
 		},
+
+		// сброс выбранной позиции
+		clearRing: state => {
+			state.drawing = null
+		},
 	},
 })
 
@@ -170,6 +178,7 @@ export const {
 	setDrawing,
 	setInfo,
 	setAmount,
+	clearRing,
 } = ringSlice.actions
 
 export default ringSlice.reducer

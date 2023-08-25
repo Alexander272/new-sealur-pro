@@ -37,6 +37,13 @@ const Connect = lazy(() => import('@/pages/ConnectWithUs/ConnectWithUs'))
 
 const NotFound = lazy(() => import('@/pages/NotFound/NotFound'))
 
+export const GasketRoute = '/gaskets'
+export const SnpRoute = '/gaskets/snp'
+export const PutgRoute = '/gaskets/putg'
+
+export const RingsRoute = '/rings'
+export const RingRoute = '/rings/single'
+
 export const AppRoutes = () => {
 	const { ready } = useRefresh()
 
@@ -66,7 +73,7 @@ export const AppRoutes = () => {
 							</RequireAuth>
 						}
 					>
-						<Route path='/' element={<ProGasket />}>
+						<Route path='/gaskets' element={<ProGasket />}>
 							{/* <Route index element={<ProSnp />} /> */}
 							<Route path='snp' element={<ProSnp />} />
 							<Route path='putg' element={<ProPutg />} />

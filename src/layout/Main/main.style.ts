@@ -17,4 +17,5 @@ export const Wrapper = styled.div`
 	/* flex-direction: column; */
 	user-select: none;
 	position: relative;
+	justify-content: flex-end;
 `
