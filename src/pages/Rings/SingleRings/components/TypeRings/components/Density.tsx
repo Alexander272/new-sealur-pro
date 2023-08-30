@@ -10,6 +10,7 @@ type Props = {
 
 export const Density: FC<Props> = ({ densityData }) => {
 	const density = useAppSelector(state => state.ring.density)
+	const construction = useAppSelector(state => state.ring.construction)
 
 	const dispatch = useAppDispatch()
 
@@ -44,6 +45,7 @@ export const Density: FC<Props> = ({ densityData }) => {
 						onClick={selectDensity}
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
+						disabled={Boolean(construction?.code) && !r.hasRotaryPlug && !construction?.withoutRotaryPlug}
 					>
 						{r.code} - {r.title}
 					</ListItemButton>

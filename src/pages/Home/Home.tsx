@@ -28,7 +28,7 @@ export default function Home() {
 	return (
 		<Box display={'flex'} justifyContent={'center'} ml={'auto'} mr={'auto'}>
 			<Box>
-				<Typography fontWeight={'bold'} fontSize={'1.2rem'} textAlign={'center'}>
+				<Typography fontWeight={'bold'} fontSize={'1.2rem'} textAlign={'center'} mb={2}>
 					Продукция
 				</Typography>
 

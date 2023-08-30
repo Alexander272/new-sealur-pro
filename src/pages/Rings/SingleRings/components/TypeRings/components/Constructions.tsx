@@ -41,7 +41,7 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 		const { index } = (event.target as HTMLDivElement).dataset
 		if (!index) return
 
-		dispatch(setConstruction(constructionsData[+index].code))
+		dispatch(setConstruction(constructionsData[+index]))
 	}
 
 	return (
@@ -64,13 +64,13 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 				{constructionsData.map((r, i) => (
 					<ListItemButton
 						key={r.id}
-						selected={construction == r.code}
+						selected={construction?.code == r.code}
 						onClick={selectConstruction}
 						onMouseEnter={hoverHandler}
 						onMouseLeave={leaveHandler}
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
-						disabled={!density?.code || (!density?.hasRotaryPlug && !r.withoutRotaryPlug)}
+						disabled={Boolean(density?.code) && !density?.hasRotaryPlug && !r.withoutRotaryPlug}
 					>
 						{r.code}
 					</ListItemButton>

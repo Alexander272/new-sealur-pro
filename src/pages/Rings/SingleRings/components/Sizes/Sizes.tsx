@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setStep } from '@/store/rings/ring'
 import { useGetSizeQuery } from '@/store/api/rings'
+import type { IRingSize } from '@/types/rings'
 import { Step } from '../Step/Step'
 import { CustomSize } from './components/CustomSize'
-import { IRingSize } from '@/types/rings'
-import { ListSize } from './components/ListSize'
 
 export const Sizes = () => {
 	const [sizes, setSizes] = useState<IRingSize[]>([])
@@ -33,11 +32,13 @@ export const Sizes = () => {
 
 		const s = size.split('×')
 
-		let ok = Boolean(size) && s[0] != '00' && s[1] != '00'
+		let ok = Boolean(size) && +s[0] != 0 && +s[1] != 0
 		ok = ok && (!ringType?.hasThickness || (Boolean(thickness) && thickness != '0'))
 
 		if (ok) {
-			dispatch(setStep({ step: 'sizeStep', active: false, complete: true }))
+			dispatch(setStep({ step: 'sizeStep', active: true, complete: true }))
+		} else {
+			dispatch(setStep({ step: 'sizeStep', active: true, complete: false }))
 		}
 	}, [size, thickness])
 
@@ -46,8 +47,9 @@ export const Sizes = () => {
 			label={(size || '00×00') + (!ringType?.hasThickness ? '' : '×' + (thickness || '0'))}
 			stepName={'sizeStep'}
 		>
-			{sizes.length ? <ListSize sizes={sizes} hasThickness={ringType?.hasThickness} /> : null}
-			{!sizes.length ? <CustomSize hasThickness={ringType?.hasThickness} /> : null}
+			<CustomSize sizes={sizes} hasThickness={ringType?.hasThickness} />
+			{/* {sizes.length ? <ListSize sizes={sizes} hasThickness={ringType?.hasThickness} /> : null}
+			{!sizes.length ? <CustomSize sizes={sizes} hasThickness={ringType?.hasThickness} /> : null} */}
 		</Step>
 	)
 }

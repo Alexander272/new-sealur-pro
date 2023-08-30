@@ -12,12 +12,13 @@ export const List: FC<Props> = ({ list }) => {
 		<>
 			<ListLink to={list.route}>
 				<Box
-					overflow={'hidden'}
-					position={'relative'}
+					// overflow={'hidden'}
+					// position={'relative'}
 					display={'flex'}
-					paddingTop={1}
-					paddingBottom={1}
+					// padding={1}
+					padding={'8px 16px'}
 					borderRadius={'12px'}
+					sx={{ transition: 'all .3s ease-in-out', ':hover': { backgroundColor: '#062e9314' } }}
 				>
 					{/* <Box
 						position={'absolute'}
@@ -28,17 +29,36 @@ export const List: FC<Props> = ({ list }) => {
 						sx={{ background: 'var(--primary-color)' }}
 					/> */}
 
-					<Typography ml={2}>{list.title}</Typography>
+					<Typography fontWeight={'bold'} ml={2}>
+						{list.title}
+					</Typography>
 				</Box>
 			</ListLink>
 
 			{list.children && (
 				<Box ml={3}>
 					{list.children.map(l => (
-						<List key={l.route} list={l} />
+						<ItemList key={l.route} list={l} />
 					))}
 				</Box>
 			)}
 		</>
+	)
+}
+
+export const ItemList: FC<Props> = ({ list }) => {
+	return (
+		<ListLink to={list.route}>
+			<Box
+				// overflow={'hidden'}
+				// position={'relative'}
+				display={'flex'}
+				padding={'8px 16px'}
+				borderRadius={'12px'}
+				sx={{ transition: 'all .3s ease-in-out', ':hover': { backgroundColor: '#062e9314' } }}
+			>
+				<Typography ml={2}>{list.title}</Typography>
+			</Box>
+		</ListLink>
 	)
 }

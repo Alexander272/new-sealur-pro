@@ -1,5 +1,5 @@
 import type { IDrawing } from '@/types/drawing'
-import type { IRingDensity, IRingType, IStep, Steps } from '@/types/rings'
+import type { IRingConstruction, IRingDensity, IRingType, IStep, Steps } from '@/types/rings'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 type RingState = {
@@ -10,10 +10,13 @@ type RingState = {
 
 	ringType: IRingType | null
 	density: IRingDensity | null
-	construction: string | null
+	construction: IRingConstruction | null
 
 	sizes: string | null
 	thickness: string | null
+
+	sizeError: boolean
+	thicknessError: boolean
 
 	material: string | null
 	modifying: string | null
@@ -71,6 +74,9 @@ const initialState: RingState = {
 	sizes: null,
 	thickness: null,
 
+	sizeError: false,
+	thicknessError: false,
+
 	material: null,
 	modifying: null,
 
@@ -121,28 +127,33 @@ export const ringSlice = createSlice({
 
 			if (!action.payload?.hasThickness) state.thickness = null
 		},
-		setConstruction: (state, action: PayloadAction<string>) => {
+		setConstruction: (state, action: PayloadAction<IRingConstruction>) => {
 			state.construction = action.payload
 		},
 		setDensity: (state, action: PayloadAction<IRingDensity>) => {
 			state.density = action.payload
-			state.construction = null
-			state.typeStep.complete = false
+			// state.construction = null
+			// state.typeStep.complete = false
 		},
 
 		setSize: (state, action: PayloadAction<string>) => {
-			// TODO ставить шагу ошибку если размеры нулевые
 			state.sizes = action.payload
+
+			const s = action.payload.split('×')
+			state.sizeError = +s[0] < +s[1]
 		},
 		setThickness: (state, action: PayloadAction<string>) => {
-			// TODO ставить шагу ошибку если размеры нулевые
 			state.thickness = action.payload
+
+			if (action.payload) {
+				state.thicknessError = +action.payload < 1.5
+			}
 		},
 
 		setMaterial: (state, action: PayloadAction<string>) => {
 			state.material = action.payload
-			state.materialStep.complete = true
-			state.materialStep.error = false
+			// state.materialStep.complete = true
+			// state.materialStep.error = false
 		},
 		setModifying: (state, action: PayloadAction<string | null>) => {
 			state.modifying = action.payload

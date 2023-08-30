@@ -1,4 +1,15 @@
-import { Alert, Box, Button, Collapse, FormControl, IconButton, Snackbar, Stack, Typography } from '@mui/material'
+import {
+	Alert,
+	Box,
+	Button,
+	Collapse,
+	FormControl,
+	IconButton,
+	Slide,
+	Snackbar,
+	Stack,
+	Typography,
+} from '@mui/material'
 import { ChangeEvent, FC, MouseEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
@@ -154,7 +165,99 @@ const Card: FC<Props> = () => {
 				</Alert>
 			</Snackbar>
 
-			{/* Возможно стоит использовать Slide, а не Collapse*/}
+			{/* //TODO Возможно стоит использовать Slide, а не Collapse*/}
+
+			{/* <Stack direction={'row'} overflow={'hidden'}>
+				<OpenButton onClick={toggleHandler} open={open}>
+					➔
+				</OpenButton>
+				<Slide direction='left' in={open}>
+					<Box
+						width={500}
+						boxShadow={'0px 0px 4px 0px #2626262b'}
+						borderRadius={'0 12px 12px 0'}
+						sx={{ backgroundColor: 'var(--theme-bg-color)' }}
+					>
+						<Typography variant='h5' sx={{ marginBottom: 1 }}>
+							Заявка
+						</Typography>
+
+						{isError && (
+							<Typography variant='h6' color={'error'}>
+								Не удалось загрузить содержание заявки
+							</Typography>
+						)}
+
+						{isLoadingData || isLoading || isLoadingDelete ? <Loader background='fill' /> : null}
+
+						<Positions onClick={selectHandler}>
+							{positions.map((p, idx) => (
+								<Item key={p.id}>
+									<Position data-index={idx} active={positionId == p.id}>
+										<Typography
+											component='span'
+											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
+										>
+											{idx + 1}.
+										</Typography>{' '}
+										<Typography
+											component='span'
+											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
+										>
+											{p.title}
+										</Typography>{' '}
+										-{' '}
+										<Typography
+											component='span'
+											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
+										>
+											{p.amount} шт.
+										</Typography>
+									</Position>
+									<IconButton
+										data-id={p.id}
+										sx={{
+											lineHeight: '14px',
+											position: 'absolute',
+											right: '0px',
+											top: '50%',
+											transform: 'translateY(-50%)',
+										}}
+									>
+										&times;
+									</IconButton>
+								</Item>
+							))}
+						</Positions>
+
+						<CircleButton onClick={toggleHandler} open={open}>
+							➜
+						</CircleButton>
+
+						<FormControl sx={{ marginTop: 'auto', marginBottom: '10px' }}>
+							<Input
+								value={info}
+								onChange={infoHandler}
+								label='Дополнительная информация'
+								size='small'
+								multiline
+								rows={4}
+							/>
+						</FormControl>
+
+						{positions.length ? (
+							<Button
+								onClick={sendHandler}
+								variant='contained'
+								sx={{ borderRadius: '12px', marginTop: '10px' }}
+							>
+								Отправить заявку
+							</Button>
+						) : null}
+					</Box>
+				</Slide>
+			</Stack> */}
+
 			{/* <Collapse orientation='horizontal' in={open} collapsedSize={'4px'}>
 				<Stack direction={'row'}>
 					<OpenButton onClick={toggleHandler} open={open}>
@@ -303,7 +406,7 @@ const Card: FC<Props> = () => {
 						</Positions>
 
 						<CircleButton onClick={toggleHandler} open={open}>
-							{/* ➔*/}➜
+							{/* ➔ */}➜
 						</CircleButton>
 
 						<FormControl sx={{ marginTop: 'auto', marginBottom: '10px' }}>

@@ -2,7 +2,7 @@ import { MouseEvent, useEffect } from 'react'
 import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetMaterialsQuery } from '@/store/api/rings'
-import { setMaterial } from '@/store/rings/ring'
+import { setMaterial, setStep } from '@/store/rings/ring'
 import { Step } from '../Step/Step'
 
 export const Material = () => {
@@ -26,6 +26,7 @@ export const Material = () => {
 		if (!index || !data) return
 
 		dispatch(setMaterial(data.data.materials[+index].title))
+		dispatch(setStep({ step: 'materialStep', active: false, complete: true }))
 	}
 
 	return (

@@ -41,7 +41,7 @@ export const Result = () => {
 	useEffect(() => {
 		if (ringType?.hasRotaryPlug && construction) {
 			const c = rings?.data.constructions.constructions[ringType.id].constructions.find(
-				c => construction == c.code
+				c => construction.code == c.code
 			)
 			setImage(c?.image || '')
 		} else {
@@ -86,7 +86,7 @@ export const Result = () => {
 
 		if (ringType?.hasRotaryPlug) {
 			const c = rings?.data.constructions.constructions[ringType.id].constructions.find(
-				c => construction == c.code
+				c => construction?.code == c.code
 			)
 			designation = designation.replace('@construction', c?.title || '')
 		}
@@ -133,14 +133,10 @@ export const Result = () => {
 				justifyContent={'space-between'}
 				marginBottom={2}
 			>
-				<Typography fontWeight='bold'>Доп. информация:</Typography>
-				<Input
-					value={info}
-					onChange={infoHandler}
-					size='small'
-					multiline
-					sx={{ width: '100%', maxWidth: '500px' }}
-				/>
+				<Typography fontWeight='bold' sx={{ textWrap: 'nowrap' }}>
+					Доп. информация:
+				</Typography>
+				<Input value={info} onChange={infoHandler} size='small' multiline sx={{ width: '100%' }} />
 			</Stack>
 
 			<Stack

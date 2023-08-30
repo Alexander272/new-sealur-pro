@@ -39,13 +39,14 @@ export const RingType: FC<Props> = ({ ringData }) => {
 	const selectRingType = (event: MouseEvent<HTMLDivElement>) => {
 		const { index } = (event.target as HTMLDivElement).dataset
 		if (!index) return
+		if (ringType?.id == ringData[+index].id) return
 
 		dispatch(setRingType(ringData[+index]))
 	}
 
 	return (
 		<>
-			<List sx={{ maxWidth: '200px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
+			<List sx={{ maxWidth: '230px', maxHeight: '450px', overflow: 'auto', paddingTop: 0 }}>
 				<ListSubheader
 					sx={{
 						color: '#000',
@@ -70,7 +71,7 @@ export const RingType: FC<Props> = ({ ringData }) => {
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
 					>
-						{r.title}
+						{r.code} - {r.title}
 					</ListItemButton>
 				))}
 			</List>
