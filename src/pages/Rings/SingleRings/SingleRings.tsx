@@ -9,18 +9,11 @@ import { Result } from './components/Result/Result'
 import { PageTitle } from '@/pages/Gasket/gasket.style'
 
 /*
-	//группы в списке выделить жирным
-	//на пустой странице вывести список с группами
+	Добавить описание к набивке
 
-	//при смене исполнения стирать размеры
+	//Исправить ситуацию когда ошибки размеров не дают ошибку
 
-	//где чертеж перенести вправо (заменить точку на запятую)
-
-	//отрытие корзины сделать по всей ширине
-
-	//добавить возможность ввести размеры вручную
-
-	TODO разблокировать конструкции и сделать связь с плотностью
+	написать сохранение колец и вывод их в файл
 */
 
 export default function SingleRings() {
@@ -37,7 +30,7 @@ export default function SingleRings() {
 				justifyContent={'center'}
 				fontSize={'1.12rem'}
 			>
-				Кольцо
+				<Typography fontSize={'inherit'}>Кольцо</Typography>
 				<TypeRings />
 				–<Sizes />
 				–<Material />

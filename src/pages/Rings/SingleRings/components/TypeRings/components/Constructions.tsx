@@ -1,9 +1,9 @@
 import { FC, MouseEvent, useRef, useState } from 'react'
-import { Box, Divider, List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
+import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import type { IRingConstruction } from '@/types/rings'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setConstruction } from '@/store/rings/ring'
-import { Image } from '@/pages/Gasket/gasket.style'
+import { RingTooltip } from '../../RingTooltip/RingTooltip'
 
 type Props = {
 	constructionsData: IRingConstruction[]
@@ -77,7 +77,16 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 				))}
 			</List>
 
-			<Popover
+			{selected && (
+				<RingTooltip
+					open={open}
+					anchor={anchor.current}
+					image={selected?.image}
+					description={selected?.title}
+				/>
+			)}
+
+			{/* <Popover
 				open={open}
 				anchorEl={anchor.current}
 				anchorOrigin={{
@@ -109,7 +118,7 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 						},
 					},
 				}}
-				onClose={closeHandler}
+				// onClose={closeHandler}
 				disableRestoreFocus
 				sx={{ pointerEvents: 'none' }}
 			>
@@ -119,7 +128,7 @@ export const Constructions: FC<Props> = ({ constructionsData }) => {
 					</Box>
 					<Typography align='justify'>{selected?.title}</Typography>
 				</Stack>
-			</Popover>
+			</Popover> */}
 		</>
 	)
 }

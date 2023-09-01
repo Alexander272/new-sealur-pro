@@ -1,10 +1,11 @@
 import { MouseEvent, useRef, useState } from 'react'
-import { Divider, List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
+import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { useGetModifyingQuery } from '@/store/api/rings'
 import { setModifying, setStep } from '@/store/rings/ring'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import type { IRingModifying } from '@/types/rings'
 import { Step } from '../Step/Step'
+import { RingTooltip } from '../RingTooltip/RingTooltip'
 
 export const Modifying = () => {
 	const anchor = useRef<HTMLDivElement | null>(null)
@@ -94,7 +95,9 @@ export const Modifying = () => {
 				))}
 			</List>
 
-			<Popover
+			{selected && <RingTooltip open={open} anchor={anchor.current} description={selected?.description} />}
+
+			{/* <Popover
 				open={open}
 				anchorEl={anchor.current}
 				anchorOrigin={{
@@ -133,7 +136,7 @@ export const Modifying = () => {
 				<Stack direction={'row'} spacing={2} margin={2} maxWidth={450} alignItems={'center'}>
 					<Typography align='justify'>{selected?.description}</Typography>
 				</Stack>
-			</Popover>
+			</Popover> */}
 		</Step>
 	)
 }

@@ -1,5 +1,5 @@
 import type { IDrawing } from '@/types/drawing'
-import type { IRingConstruction, IRingDensity, IRingType, IStep, Steps } from '@/types/rings'
+import type { IRingConstruction, IRingData, IRingDensity, IRingType, IStep, Steps } from '@/types/rings'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 type RingState = {
@@ -84,7 +84,7 @@ const initialState: RingState = {
 
 	// доп. информация к позиции
 	info: '',
-	// количество прокладок
+	// количество колец
 	amount: '',
 }
 
@@ -97,12 +97,14 @@ export const ringSlice = createSlice({
 			state.typeStep.complete = action.payload.complete
 			state.typeStep.error = false
 		},
-		setStep: (state, action: PayloadAction<{ step: Steps; active: boolean; complete: boolean }>) => {
-			state[action.payload.step].active = action.payload.active
+		setStep: (state, action: PayloadAction<{ step: Steps; active?: boolean; complete: boolean }>) => {
+			if (action.payload.active != undefined) state[action.payload.step].active = action.payload.active
 			state[action.payload.step].complete = action.payload.complete
 			state[action.payload.step].error = false
 			if (state[action.payload.step].nextStep != null) {
-				state[state[action.payload.step].nextStep as Steps].active = true
+				if (!state[state[action.payload.step].nextStep as Steps].complete) {
+					state[state[action.payload.step].nextStep as Steps].active = true
+				}
 			}
 		},
 		toggleActiveStep: (state, action: PayloadAction<Steps>) => {
@@ -152,8 +154,8 @@ export const ringSlice = createSlice({
 
 		setMaterial: (state, action: PayloadAction<string>) => {
 			state.material = action.payload
-			// state.materialStep.complete = true
-			// state.materialStep.error = false
+			state.materialStep.complete = true
+			state.materialStep.error = false
 		},
 		setModifying: (state, action: PayloadAction<string | null>) => {
 			state.modifying = action.payload
@@ -173,6 +175,43 @@ export const ringSlice = createSlice({
 			state.amount = action.payload
 		},
 
+		// выбор кольца (для редактирования)
+		setRing: (state, action: PayloadAction<IRingData>) => {
+			state.ringType = action.payload.ringData.ringType
+			state.construction = action.payload.ringData.construction
+			state.density = action.payload.ringData.density
+
+			state.typeStep.complete = true
+			state.typeStep.active = false
+			state.typeStep.error = false
+
+			state.sizes = action.payload.ringData.size
+			state.thickness = action.payload.ringData.thickness
+
+			state.sizeStep.complete = true
+			state.sizeStep.active = false
+			state.sizeStep.error = false
+
+			state.material = action.payload.ringData.material
+			state.modifying = action.payload.ringData.modifying || null
+
+			if (action.payload.ringData.drawing) {
+				const parts = action.payload.ringData.drawing.split('/')
+				const drawing: IDrawing = {
+					id: parts[parts.length - 2],
+					name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
+					origName: parts[parts.length - 1],
+					link: action.payload.ringData.drawing,
+					group: parts[parts.length - 3],
+				}
+				state.drawing = drawing
+			} else {
+				state.drawing = null
+			}
+
+			state.info = action.payload.info || ''
+			state.amount = action.payload.amount
+		},
 		// сброс выбранной позиции
 		clearRing: state => {
 			state.drawing = null
@@ -194,6 +233,7 @@ export const {
 	setDrawing,
 	setInfo,
 	setAmount,
+	setRing,
 	clearRing,
 } = ringSlice.actions
 

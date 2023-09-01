@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useDebounce } from '@/hooks/debounce'
 import { clearSnp, setSnp } from '@/store/gaskets/snp'
 import { clearPutg, setPutg } from '@/store/gaskets/putg'
+import { setRing } from '@/store/rings/ring'
 import { clearActive, setActive, setInfo, setOrder, toggle } from '@/store/card'
 import {
 	useDeletePositionMutation,
@@ -24,9 +25,10 @@ import {
 	useSaveOrderMutation,
 } from '@/store/api/order'
 import { sendMetric } from '@/services/metrics'
+import type { IRingData } from '@/types/rings'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
-import { PutgRoute, SnpRoute } from '@/routes'
+import { PutgRoute, RingRoute, SnpRoute } from '@/routes'
 import { CardContainer, CircleButton, Container, Item, OpenButton, Position, Positions } from './card.style'
 
 type Props = {}
@@ -121,6 +123,16 @@ const Card: FC<Props> = () => {
 
 			dispatch(setPutg(putg))
 			navigate(PutgRoute)
+		}
+		if (position.type === 'Ring') {
+			const ring: IRingData = {
+				amount: position.amount,
+				info: position.info,
+				ringData: position.ringData,
+			}
+
+			dispatch(setRing(ring))
+			navigate(RingRoute)
 		}
 	}
 

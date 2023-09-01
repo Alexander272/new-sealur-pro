@@ -1,9 +1,9 @@
 import { FC, MouseEvent, useRef, useState } from 'react'
-import { Box, Divider, List, ListItemButton, ListSubheader, Popover, Stack, Typography } from '@mui/material'
+import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import type { IRingType } from '@/types/rings'
-import { Image } from '@/pages/Gasket/gasket.style'
 import { setRingType } from '@/store/rings/ring'
+import { RingTooltip } from '../../RingTooltip/RingTooltip'
 
 type Props = {
 	ringData: IRingType[]
@@ -76,7 +76,16 @@ export const RingType: FC<Props> = ({ ringData }) => {
 				))}
 			</List>
 
-			<Popover
+			{selected && (
+				<RingTooltip
+					open={open}
+					anchor={anchor.current}
+					image={selected?.image}
+					description={selected?.description}
+				/>
+			)}
+
+			{/* <Popover
 				open={open}
 				anchorEl={anchor.current}
 				anchorOrigin={{
@@ -118,7 +127,7 @@ export const RingType: FC<Props> = ({ ringData }) => {
 					</Box>
 					<Typography align='justify'>{selected?.description}</Typography>
 				</Stack>
-			</Popover>
+			</Popover> */}
 		</>
 	)
 }

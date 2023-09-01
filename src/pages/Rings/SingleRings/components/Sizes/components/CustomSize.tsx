@@ -1,8 +1,8 @@
-import { ChangeEvent, FC, MouseEvent, useEffect, useState } from 'react'
+import { ChangeEvent, FC, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react'
 import { Box, List, ListItemButton, Stack, Typography } from '@mui/material'
 import { useDebounce } from '@/hooks/debounce'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { setSize, setThickness } from '@/store/rings/ring'
+import { setSize, setThickness, toggleActiveStep } from '@/store/rings/ring'
 import type { IRingSize } from '@/types/rings'
 import { Input } from '@/components/Input/input.style'
 
@@ -23,6 +23,9 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 	const [h, setH] = useState<string>(thickness || '')
 
 	const [hasForm, setHasForm] = useState(true)
+
+	const d2Ref = useRef<HTMLInputElement | null>(null)
+	const hRef = useRef<HTMLInputElement | null>(null)
 
 	const D3 = useDebounce(d3, 500)
 	const D2 = useDebounce(d2, 500)
@@ -49,40 +52,6 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 	useEffect(() => {
 		if (thick != '') dispatch(setThickness(thick || '0'))
 	}, [thick])
-
-	// useEffect(() => {
-	// 	if (!d3 || !d2) return
-
-	// 	const foundSize = sizes.find(s => s.outer.toString() == d3 && s.inner.toString() == d2)
-
-	// 	if (foundSize) {
-	// 		setHasForm(true)
-	// 		setH(foundSize.thickness.toString())
-	// 	} else {
-	// 		setHasForm(false)
-	// 		setH(Math.ceil((+d3 - +d2) / 2).toString())
-	// 	}
-	// }, [d3, d2])
-
-	// console.log(
-	// 	'filters',
-	// 	// желательно убрать вариант (d3 + 1 && d2 + 1) и (d3 - 1 && d2 - 1)
-	// 	sizes.filter(
-	// 		s =>
-	// 			((s.outer <= +d3 + 1 && s.outer >= +d3 - 1) || s.outer == +d3) &&
-	// 			((s.inner <= +d2 + 1 && s.inner >= +d2 - 1) || s.inner == +d2)
-	// 	)
-	// )
-	// console.log(
-	// 	'filters short',
-	// 	// желательно убрать вариант (d3 + 1 && d2 + 1) и (d3 - 1 && d2 - 1)
-	// 	// sizes.filter(s => s.outer + 1 >= +d3 && s.outer - 1 <= +d3 && s.inner + 1 >= +d2 && s.inner - 1 <= +d2)
-	// 	// sizes.filter(
-	// 	// 	s =>
-	// 	// 		(s.outer + 1 >= +d3 && s.outer - 1 <= +d3 && Math.trunc(s.inner) == +d2) ||
-	// 	// 		(s.inner + 1 >= +d2 && s.inner - 1 <= +d2 && Math.trunc(s.outer) == +d3)
-	// 	// )
-	// )
 
 	const selectSizeHandler = (event: MouseEvent<HTMLDivElement>) => {
 		const { size } = (event.target as HTMLDivElement).dataset
@@ -111,16 +80,37 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 		}
 	}
 
+	const keyHandler = (type: 'd3' | 'd2' | 'h') => (event: KeyboardEvent<HTMLInputElement>) => {
+		if (type != 'h' && event.code == 'Tab') {
+			event.stopPropagation()
+		}
+
+		if (event.code == 'Enter') {
+			if (type == 'd3') {
+				;(d2Ref.current?.firstChild as HTMLLabelElement).focus()
+			}
+			if (type == 'd2') {
+				if (hasThickness) {
+					;(hRef.current?.firstChild as HTMLLabelElement).focus()
+				} else dispatch(toggleActiveStep('sizeStep'))
+			}
+			if (type == 'h') {
+				dispatch(toggleActiveStep('sizeStep'))
+			}
+		}
+	}
+
 	return (
 		<Box margin={1}>
 			<Stack direction={'row'} spacing={1} mb={1} maxWidth={'550px'} width={'100%'}>
 				<Input
 					value={d3}
 					onChange={sizeHandler('d3')}
+					onKeyDown={keyHandler('d3')}
 					name='ring_d3'
 					label='Нар. диаметр, мм'
 					size='small'
-					autoFocus
+					// tabIndex={1}
 					error={sizeError}
 					helperText={sizeError && 'Нар. диаметр должен быть > Вн. диаметра'}
 				/>
@@ -128,9 +118,12 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 				<Input
 					value={d2}
 					onChange={sizeHandler('d2')}
+					onKeyDown={keyHandler('d2')}
+					ref={d2Ref}
 					name='ring_d2'
 					label='Вн. диаметр, мм'
 					size='small'
+					// tabIndex={1}
 					error={sizeError}
 					helperText={sizeError && 'Нар. диаметр должен быть > Вн. диаметра'}
 				/>
@@ -141,9 +134,12 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 						<Input
 							value={h}
 							onChange={sizeHandler('h')}
+							onKeyDown={keyHandler('h')}
+							ref={hRef}
 							name='ring_h'
 							label='Высота, мм'
 							size='small'
+							// tabIndex={1}
 							error={thicknessError}
 							helperText={thicknessError && 'Высота кольца должна быть ≥ 1,5 мм'}
 						/>
@@ -152,7 +148,7 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 			</Stack>
 
 			<Box>
-				{!hasForm && (
+				{!hasForm && sizes.length ? (
 					<>
 						<Typography maxWidth={'550px'} align='justify' padding={1}>
 							По указанным размерам пресс-формы нет, рекомендуем выбрать из нижеперечисленных, либо в счет
@@ -177,7 +173,7 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 								))}
 						</List>
 					</>
-				)}
+				) : null}
 			</Box>
 		</Box>
 	)

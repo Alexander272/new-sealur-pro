@@ -13,6 +13,9 @@ export const Sizes = () => {
 	const size = useAppSelector(state => state.ring.sizes)
 	const thickness = useAppSelector(state => state.ring.thickness)
 
+	const sizeError = useAppSelector(state => state.ring.sizeError)
+	const thickError = useAppSelector(state => state.ring.thicknessError)
+
 	const { data } = useGetSizeQuery(null)
 
 	const dispatch = useAppDispatch()
@@ -34,11 +37,12 @@ export const Sizes = () => {
 
 		let ok = Boolean(size) && +s[0] != 0 && +s[1] != 0
 		ok = ok && (!ringType?.hasThickness || (Boolean(thickness) && thickness != '0'))
+		ok = ok && !sizeError && !thickError
 
 		if (ok) {
-			dispatch(setStep({ step: 'sizeStep', active: true, complete: true }))
+			dispatch(setStep({ step: 'sizeStep', complete: true }))
 		} else {
-			dispatch(setStep({ step: 'sizeStep', active: true, complete: false }))
+			dispatch(setStep({ step: 'sizeStep', complete: false }))
 		}
 	}, [size, thickness])
 

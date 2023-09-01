@@ -1,9 +1,12 @@
 import { IDesignBlockPutg, IMainBlockPutg, IMaterialBlockPutg, ISizeBlockPutg } from './putg'
+import { IRingConstruction, IRingDensity, IRingType } from './rings'
 import { IDesignBlockSnp, IMainSnp, IMaterialBlockSnp, ISizeBlockSnp } from './snp'
 
 export type SnpType = 'Snp'
 export type PutgType = 'Putg'
 export type PutgmType = 'Putgm'
+export type RingType = 'Ring'
+export type RingsKitType = 'RingsKit'
 
 export type PositionBase<Type, ExtraProps> = {
 	id: string
@@ -29,10 +32,39 @@ export type PositionPutg = PositionBase<
 	}
 >
 
-export type Position = PositionSnp | PositionPutg
+export type PositionRing = PositionBase<
+	RingType,
+	{
+		ringData: {
+			// typeId: string
+			// typeCode: string
+			// densityId: string
+			// densityCode: string
+			// constructionCode: string
+			// constructionWRP: boolean
+			// constructionBaseCode: string
+			// size: string
+			// thickness: string
+			// material: string
+			// modifying: string
+			// drawing: string
+
+			ringType: IRingType
+			density: IRingDensity
+			construction: IRingConstruction
+			size: string
+			thickness: string
+			material: string
+			modifying?: string
+			drawing?: string
+		}
+	}
+>
+
+export type Position = PositionSnp | PositionPutg | PositionRing
 
 export interface IActivePosition {
 	index: number
 	id: string
-	type: SnpType | PutgType
+	type: SnpType | PutgType | RingType
 }

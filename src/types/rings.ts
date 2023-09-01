@@ -1,3 +1,21 @@
+export interface IRingData {
+	amount: string
+	info?: string
+	ringData: {
+		ringType: IRingType
+		density: IRingDensity
+		construction: IRingConstruction
+
+		size: string
+		thickness: string
+
+		material: string
+		modifying?: string
+
+		drawing?: string
+	}
+}
+
 export interface IRingType {
 	id: string
 	title: string
@@ -18,6 +36,7 @@ export interface IRingConstruction {
 	description?: string
 	image: string
 	withoutRotaryPlug?: boolean
+	baseCode: string
 }
 
 export interface IRingDensity {

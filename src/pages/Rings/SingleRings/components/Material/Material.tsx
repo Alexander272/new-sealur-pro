@@ -1,17 +1,27 @@
-import { MouseEvent, useEffect } from 'react'
+import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetMaterialsQuery } from '@/store/api/rings'
 import { setMaterial, setStep } from '@/store/rings/ring'
+import type { IRingMaterial } from '@/types/rings'
 import { Step } from '../Step/Step'
+import { RingTooltip } from '../RingTooltip/RingTooltip'
 
 export const Material = () => {
+	const anchor = useRef<HTMLDivElement | null>(null)
+	const [open, setOpen] = useState(false)
+
+	const [selected, setSelected] = useState<IRingMaterial | null>(null)
+
 	const ringType = useAppSelector(state => state.ring.ringType)
 	const material = useAppSelector(state => state.ring.material)
 
 	const dispatch = useAppDispatch()
 
 	const { data } = useGetMaterialsQuery(ringType?.materialType || '', { skip: !ringType?.materialType })
+
+	const openHandler = () => setOpen(true)
+	const closeHandler = () => setOpen(false)
 
 	useEffect(() => {
 		if (data) {
@@ -20,6 +30,19 @@ export const Material = () => {
 			dispatch(setMaterial(def?.title || ''))
 		}
 	}, [data])
+
+	const hoverHandler = (event: MouseEvent<HTMLDivElement>) => {
+		const { index } = (event.target as HTMLDivElement).dataset
+		if (!index) return
+
+		anchor.current = event.target as HTMLDivElement
+		setSelected(data?.data.materials[+index] || null)
+
+		openHandler()
+	}
+	const leaveHandler = () => {
+		closeHandler()
+	}
 
 	const selectMaterial = (event: MouseEvent<HTMLDivElement>) => {
 		const { index } = (event.target as HTMLDivElement).dataset
@@ -61,13 +84,19 @@ export const Material = () => {
 						key={r.id}
 						selected={material == r.title}
 						onClick={selectMaterial}
+						onMouseEnter={hoverHandler}
+						onMouseLeave={leaveHandler}
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
 					>
-						{r.title} {r.description && `(${r.description})`}
+						{r.title} {r.description && r.type != 'padding' ? `(${r.description})` : ''}
 					</ListItemButton>
 				))}
 			</List>
+
+			{selected && selected.type == 'padding' && selected.description ? (
+				<RingTooltip open={open} anchor={anchor.current} description={selected?.description} />
+			) : null}
 		</Step>
 	)
 }
