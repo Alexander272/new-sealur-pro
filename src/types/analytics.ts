@@ -1,5 +1,3 @@
-import { IUser } from './user'
-
 export interface IAnalytics {
 	ordersCount: number
 	usersCountRegister: number

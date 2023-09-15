@@ -63,7 +63,7 @@ export const NavLink = styled(Link)`
 `
 
 export const Icon = styled.div`
-	margin-left: 20px;
+	margin-right: 20px;
 	height: 100%;
 	width: 32px;
 	display: flex;

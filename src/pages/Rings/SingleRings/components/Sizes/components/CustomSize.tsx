@@ -45,8 +45,10 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 			dispatch(setThickness(foundSize.thickness.toString()))
 		} else {
 			setHasForm(false)
-			setH(Math.ceil((+d3 - +d2) / 2).toString())
-			dispatch(setThickness(Math.ceil((+d3 - +d2) / 2).toString()))
+			if (hasThickness) {
+				setH(Math.ceil((+d3 - +d2) / 2).toString())
+				dispatch(setThickness(Math.ceil((+d3 - +d2) / 2).toString()))
+			}
 		}
 	}, [D3, D2])
 	useEffect(() => {
@@ -85,7 +87,7 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 			event.stopPropagation()
 		}
 
-		if (event.code == 'Enter') {
+		if (event.code == 'Enter' || event.code == 'NumpadEnter') {
 			if (type == 'd3') {
 				;(d2Ref.current?.firstChild as HTMLLabelElement).focus()
 			}

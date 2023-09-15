@@ -133,6 +133,8 @@ export default function Analytics() {
 		)
 	}
 
+	//TODO Выводить число компаний
+	//TODO Выводить данные о путг и кольцах
 	return (
 		<Container>
 			{isLoading && <Loader background='fill' />}

@@ -6,10 +6,10 @@ import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/ap
 import { clearRing, setAmount, setDrawing, setInfo } from '@/store/rings/ring'
 import { clearActive } from '@/store/card'
 import type { Position } from '@/types/card'
+import type { IRingConstruction, IRingDensity } from '@/types/rings'
 import { Image } from '@/pages/Gasket/gasket.style'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
-import { IRingConstruction, IRingDensity } from '@/types/rings'
 
 type Alert = { type: 'error' | 'success'; message: string; open: boolean }
 
