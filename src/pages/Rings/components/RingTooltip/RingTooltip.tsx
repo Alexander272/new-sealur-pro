@@ -11,6 +11,8 @@ type Props = {
 }
 
 export const RingTooltip: FC<Props> = ({ open, anchor, image, imageMaxWidth, description }) => {
+	if (anchor == null) return null
+
 	return (
 		<Popover
 			open={open}
@@ -53,7 +55,15 @@ export const RingTooltip: FC<Props> = ({ open, anchor, image, imageMaxWidth, des
 						<Image src={image} />
 					</Box>
 				)}
-				{description && <Typography align='justify'>{description}</Typography>}
+				{description && (
+					<Box>
+						{description.split('\\n').map((d, i) => (
+							<Typography key={i} align='justify' mb={0.5}>
+								{d}
+							</Typography>
+						))}
+					</Box>
+				)}
 			</Stack>
 		</Popover>
 	)

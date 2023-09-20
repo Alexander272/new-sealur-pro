@@ -432,15 +432,16 @@ const Card: FC<Props> = () => {
 							/>
 						</FormControl>
 
-						{positions.length ? (
-							<Button
-								onClick={sendHandler}
-								variant='contained'
-								sx={{ borderRadius: '12px', marginTop: '10px' }}
-							>
-								Отправить заявку
-							</Button>
-						) : null}
+						{/* {positions.length ? ( */}
+						<Button
+							onClick={sendHandler}
+							variant='contained'
+							disabled={!positions.length || role != 'user'}
+							sx={{ borderRadius: '12px', marginTop: '10px' }}
+						>
+							Отправить заявку
+						</Button>
+						{/* ) : null} */}
 					</>
 				)}
 			</CardContainer>

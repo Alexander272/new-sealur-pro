@@ -1,21 +1,23 @@
 import { useEffect } from 'react'
 import { Divider, Stack } from '@mui/material'
-import { useGetRingQuery } from '@/store/api/rings'
-import { setStep } from '@/store/rings/ring'
+import { useGetRingSingleQuery } from '@/store/api/rings'
+import { setStep, toggleActiveStep } from '@/store/rings/ring'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { Constructions } from './components/Constructions'
 import { Density } from './components/Density'
 import { RingType } from './components/RingType'
-import { Step } from '../Step/Step'
+import { Step } from '../../../components/Step/Step'
 
 export const TypeRings = () => {
 	const ringType = useAppSelector(state => state.ring.ringType)
 	const construction = useAppSelector(state => state.ring.construction)
 	const density = useAppSelector(state => state.ring.density)
 
+	const step = useAppSelector(state => state.ring.typeStep)
+
 	const dispatch = useAppDispatch()
 
-	const { data } = useGetRingQuery(null)
+	const { data } = useGetRingSingleQuery(null)
 
 	useEffect(() => {
 		let ok = Boolean(ringType?.id)
@@ -27,6 +29,8 @@ export const TypeRings = () => {
 		}
 	}, [ringType, construction, density])
 
+	const toggleHandler = () => dispatch(toggleActiveStep('typeStep'))
+
 	return (
 		<Step
 			label={
@@ -34,7 +38,8 @@ export const TypeRings = () => {
 				(ringType?.code || 'Х') +
 				(ringType?.hasDensity ? '-' + (density?.code || 'Х') : '')
 			}
-			stepName='typeStep'
+			step={step}
+			toggle={toggleHandler}
 		>
 			<Stack direction={'row'} divider={<Divider orientation='vertical' flexItem />} spacing={1} mr={2} ml={2}>
 				{ringType?.hasRotaryPlug && (

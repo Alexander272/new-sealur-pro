@@ -19,6 +19,7 @@ const ProSnp = lazy(() => import('@/pages/Gasket/Snp/Snp'))
 const ProPutg = lazy(() => import('@/pages/Gasket/Putg/Putg'))
 const Rings = lazy(() => import('@/pages/Rings/Rings'))
 const SingleRings = lazy(() => import('@/pages/Rings/SingleRings/SingleRings'))
+const RingsKit = lazy(() => import('@/pages/Rings/RingsKit/RingsKit'))
 
 const Orders = lazy(() => import('@/pages/Orders/Orders'))
 
@@ -45,6 +46,7 @@ export const PutgRoute = '/gaskets/putg'
 
 export const RingsRoute = '/rings'
 export const RingRoute = '/rings/single'
+export const RingsKitRoute = '/rings/kit'
 
 export const AppRoutes = () => {
 	const { ready } = useRefresh()
@@ -85,6 +87,7 @@ export const AppRoutes = () => {
 
 						<Route path='rings' element={<Rings />}>
 							<Route path='single' element={<SingleRings />} />
+							<Route path='kit' element={<RingsKit />} />
 						</Route>
 
 						<Route path='/orders' element={<Orders />} />

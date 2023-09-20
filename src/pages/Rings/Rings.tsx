@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Stack } from '@mui/material'
 import { useAppDispatch } from '@/hooks/useStore'
 import { clearActive } from '@/store/card'
-import { RingRoute, RingsRoute } from '@/routes'
+import { RingRoute, RingsKitRoute, RingsRoute } from '@/routes'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Container } from '@/pages/Gasket/gasket.style'
 import { Products } from '@/components/Products/Products'
@@ -36,6 +36,9 @@ export default function Rings() {
 				<RadioGroup onChange={navigateHandler}>
 					<RadioItem size='large' value={RingRoute} active={location.pathname == RingRoute}>
 						Кольца
+					</RadioItem>
+					<RadioItem size='large' value={RingsKitRoute} active={location.pathname == RingsKitRoute}>
+						Комплекты
 					</RadioItem>
 				</RadioGroup>
 			</Stack>

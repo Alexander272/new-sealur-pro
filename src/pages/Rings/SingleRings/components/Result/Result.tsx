@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { useGetMaterialsQuery, useGetModifyingQuery, useGetRingQuery } from '@/store/api/rings'
+import { useGetMaterialsQuery, useGetModifyingQuery, useGetRingSingleQuery } from '@/store/api/rings'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
 import { clearRing, setAmount, setDrawing, setInfo } from '@/store/rings/ring'
 import { clearActive } from '@/store/card'
@@ -46,7 +46,7 @@ export const Result = () => {
 	const [create, { error: createError, isLoading }] = useCreatePositionMutation()
 	const [update, { error: updateError, isLoading: isLoadingUpdate }] = useUpdatePositionMutation()
 
-	const { data: rings } = useGetRingQuery(null)
+	const { data: rings } = useGetRingSingleQuery(null)
 	const { data: materials } = useGetMaterialsQuery(ringType?.materialType || '', { skip: !ringType?.materialType })
 	const { data: mods } = useGetModifyingQuery(null)
 
@@ -238,29 +238,27 @@ export const Result = () => {
 					<Input value={amount} onChange={amountHandler} size='small' />
 				</Stack>
 
-				{role == 'user' && (
-					<Stack direction={'row'} spacing={2}>
-						{cardIndex !== undefined && (
-							<Button
-								onClick={cancelHandler}
-								variant='outlined'
-								color='secondary'
-								sx={{ borderRadius: '12px', padding: '6px 20px' }}
-							>
-								Отменить
-							</Button>
-						)}
-
+				<Stack direction={'row'} spacing={2}>
+					{cardIndex !== undefined && (
 						<Button
-							disabled={!amount || typeStep.error || sizeStep.error || materialStep.error}
-							onClick={savePosition}
-							variant='contained'
+							onClick={cancelHandler}
+							variant='outlined'
+							color='secondary'
 							sx={{ borderRadius: '12px', padding: '6px 20px' }}
 						>
-							{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
+							Отменить
 						</Button>
-					</Stack>
-				)}
+					)}
+
+					<Button
+						disabled={!amount || typeStep.error || sizeStep.error || materialStep.error || role != 'user'}
+						onClick={savePosition}
+						variant='contained'
+						sx={{ borderRadius: '12px', padding: '6px 20px' }}
+					>
+						{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
+					</Button>
+				</Stack>
 			</Stack>
 		</Box>
 	)

@@ -1,21 +1,21 @@
 import { FC, MouseEvent, useRef, useState } from 'react'
 import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import type { IRingType } from '@/types/rings'
-import { setRingType } from '@/store/rings/ring'
+import type { IKitType } from '@/types/ringsKit'
+import { setKitType } from '@/store/rings/kit'
 import { RingTooltip } from '@/pages/Rings/components/RingTooltip/RingTooltip'
 
 type Props = {
-	ringData: IRingType[]
+	types: IKitType[]
 }
 
-export const RingType: FC<Props> = ({ ringData }) => {
+export const Type: FC<Props> = ({ types }) => {
 	const anchor = useRef<HTMLDivElement | null>(null)
 	const [open, setOpen] = useState(false)
 
-	const [selected, setSelected] = useState<IRingType | null>(null)
+	const [selected, setSelected] = useState<IKitType | null>(null)
 
-	const ringType = useAppSelector(state => state.ring.ringType)
+	const typeId = useAppSelector(state => state.kit.typeId)
 
 	const dispatch = useAppDispatch()
 
@@ -27,7 +27,7 @@ export const RingType: FC<Props> = ({ ringData }) => {
 		if (!index) return
 
 		anchor.current = event.target as HTMLDivElement
-		setSelected(ringData[+index])
+		setSelected(types[+index])
 
 		openHandler()
 	}
@@ -39,9 +39,9 @@ export const RingType: FC<Props> = ({ ringData }) => {
 	const selectRingType = (event: MouseEvent<HTMLDivElement>) => {
 		const { index } = (event.target as HTMLDivElement).dataset
 		if (!index) return
-		if (ringType?.id == ringData[+index].id) return
+		if (typeId == types[+index].id) return
 
-		dispatch(setRingType(ringData[+index]))
+		dispatch(setKitType(types[+index]))
 	}
 
 	return (
@@ -61,17 +61,17 @@ export const RingType: FC<Props> = ({ ringData }) => {
 				</ListSubheader>
 				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
 
-				{ringData.map((r, i) => (
+				{types.map((r, i) => (
 					<ListItemButton
 						key={r.id}
-						selected={ringType?.id == r.id}
+						selected={typeId == r.id}
 						onClick={selectRingType}
 						onMouseEnter={hoverHandler}
 						onMouseLeave={leaveHandler}
 						data-index={i}
 						sx={{ borderRadius: '12px' }}
 					>
-						{r.code} - {r.title}
+						{r.code}
 					</ListItemButton>
 				))}
 			</List>
@@ -81,53 +81,9 @@ export const RingType: FC<Props> = ({ ringData }) => {
 					open={open}
 					anchor={anchor.current}
 					image={selected?.image}
-					description={selected?.description}
+					description={selected?.title}
 				/>
 			)}
-
-			{/* <Popover
-				open={open}
-				anchorEl={anchor.current}
-				anchorOrigin={{
-					vertical: 'center',
-					horizontal: 'right',
-				}}
-				transformOrigin={{
-					vertical: 'center',
-					horizontal: 'left',
-				}}
-				slotProps={{
-					paper: {
-						elevation: 0,
-						sx: {
-							overflow: 'visible',
-							filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-							'&:before': {
-								content: '""',
-								display: 'block',
-								position: 'absolute',
-								top: '50%',
-								left: 0,
-								width: 10,
-								height: 10,
-								bgcolor: 'background.paper',
-								transform: 'translate(-50%, -50%) rotate(45deg)',
-								zIndex: 0,
-							},
-						},
-					},
-				}}
-				onClose={closeHandler}
-				disableRestoreFocus
-				sx={{ pointerEvents: 'none' }}
-			>
-				<Stack direction={'row'} spacing={2} margin={2} maxWidth={500} alignItems={'center'}>
-					<Box display={'flex'} maxWidth={100} width={'100%'}>
-						<Image src={selected?.image} alt={selected?.code} />
-					</Box>
-					<Typography align='justify'>{selected?.description}</Typography>
-				</Stack>
-			</Popover> */}
 		</>
 	)
 }

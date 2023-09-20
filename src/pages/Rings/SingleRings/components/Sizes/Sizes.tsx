@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { setStep } from '@/store/rings/ring'
+import { setStep, toggleActiveStep } from '@/store/rings/ring'
 import { useGetSizeQuery } from '@/store/api/rings'
 import type { IRingSize } from '@/types/rings'
-import { Step } from '../Step/Step'
+import { Step } from '../../../components/Step/Step'
 import { CustomSize } from './components/CustomSize'
 
 export const Sizes = () => {
@@ -15,6 +15,8 @@ export const Sizes = () => {
 
 	const sizeError = useAppSelector(state => state.ring.sizeError)
 	const thickError = useAppSelector(state => state.ring.thicknessError)
+
+	const step = useAppSelector(state => state.ring.sizeStep)
 
 	const { data } = useGetSizeQuery(null)
 
@@ -46,10 +48,13 @@ export const Sizes = () => {
 		}
 	}, [size, thickness])
 
+	const toggleHandler = () => dispatch(toggleActiveStep('sizeStep'))
+
 	return (
 		<Step
 			label={(size || '00×00') + (!ringType?.hasThickness ? '' : '×' + (thickness || '0'))}
-			stepName={'sizeStep'}
+			step={step}
+			toggle={toggleHandler}
 		>
 			<CustomSize sizes={sizes} hasThickness={ringType?.hasThickness} />
 			{/* {sizes.length ? <ListSize sizes={sizes} hasThickness={ringType?.hasThickness} /> : null}

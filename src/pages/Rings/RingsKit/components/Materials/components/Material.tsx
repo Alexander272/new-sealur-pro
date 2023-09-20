@@ -1,44 +1,33 @@
-import { MouseEvent, useEffect, useRef, useState } from 'react'
-import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
-import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { useGetMaterialsQuery } from '@/store/api/rings'
-import { setMaterial, setStep, toggleActiveStep } from '@/store/rings/ring'
+import { FC, MouseEvent, useRef, useState } from 'react'
 import type { IRingMaterial } from '@/types/rings'
-import { Step } from '../../../components/Step/Step'
-import { RingTooltip } from '../../../components/RingTooltip/RingTooltip'
+import { useAppDispatch } from '@/hooks/useStore'
+import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
+import { RingTooltip } from '@/pages/Rings/components/RingTooltip/RingTooltip'
 
-export const Material = () => {
+type Props = {
+	materials: IRingMaterial[]
+	material: string
+	position: 'first' | 'second'
+	onSelect: (title: string, position: 'first' | 'second') => void
+}
+
+export const Material: FC<Props> = ({ materials, material, position, onSelect }) => {
 	const anchor = useRef<HTMLDivElement | null>(null)
 	const [open, setOpen] = useState(false)
 
 	const [selected, setSelected] = useState<IRingMaterial | null>(null)
 
-	const ringType = useAppSelector(state => state.ring.ringType)
-	const material = useAppSelector(state => state.ring.material)
-
-	const step = useAppSelector(state => state.ring.materialStep)
-
 	const dispatch = useAppDispatch()
-
-	const { data } = useGetMaterialsQuery(ringType?.materialType || '', { skip: !ringType?.materialType })
 
 	const openHandler = () => setOpen(true)
 	const closeHandler = () => setOpen(false)
-
-	useEffect(() => {
-		if (data) {
-			const def = data.data.materials.find(m => m.isDefault)
-
-			dispatch(setMaterial(def?.title || ''))
-		}
-	}, [data])
 
 	const hoverHandler = (event: MouseEvent<HTMLDivElement>) => {
 		const { index } = (event.target as HTMLDivElement).dataset
 		if (!index) return
 
 		anchor.current = event.target as HTMLDivElement
-		setSelected(data?.data.materials[+index] || null)
+		setSelected(materials[+index] || null)
 
 		openHandler()
 	}
@@ -48,23 +37,20 @@ export const Material = () => {
 
 	const selectMaterial = (event: MouseEvent<HTMLDivElement>) => {
 		const { index } = (event.target as HTMLDivElement).dataset
-		if (!index || !data) return
+		if (!index) return
 
-		dispatch(setMaterial(data.data.materials[+index].title))
-		dispatch(setStep({ step: 'materialStep', active: false, complete: true }))
-		closeHandler()
+		onSelect(materials[+index].title, position)
+
+		// dispatch(setMaterial(materials[+index].title))
+		// dispatch(setStep({ step: 'materialStep', active: false, complete: true }))
 	}
 
-	const toggleHandler = () => dispatch(toggleActiveStep('materialStep'))
-
 	return (
-		<Step label={material || 'ХХХ'} step={step} toggle={toggleHandler}>
+		<>
 			<List
 				sx={{
 					minWidth: 250,
-					maxWidth: 350,
-					marginRight: 2,
-					marginLeft: 2,
+					maxWidth: 370,
 					maxHeight: '450px',
 					overflow: 'auto',
 					paddingTop: 0,
@@ -84,7 +70,7 @@ export const Material = () => {
 				</ListSubheader>
 				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
 
-				{data?.data.materials.map((r, i) => (
+				{materials.map((r, i) => (
 					<ListItemButton
 						key={r.id}
 						selected={material == r.title}
@@ -102,6 +88,6 @@ export const Material = () => {
 			{selected && selected.type == 'padding' && selected.description ? (
 				<RingTooltip open={open} anchor={anchor.current} description={selected?.description} />
 			) : null}
-		</Step>
+		</>
 	)
 }

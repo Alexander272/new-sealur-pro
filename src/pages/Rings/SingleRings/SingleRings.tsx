@@ -4,17 +4,9 @@ import { Sizes } from './components/Sizes/Sizes'
 import { Material } from './components/Material/Material'
 import { Modifying } from './components/Modifying/Modifying'
 import { Drawing } from './components/Drawing/Drawing'
-import { Design } from './components/Design/Design'
+import { Design } from '../components/Design/Design'
 import { Result } from './components/Result/Result'
 import { PageTitle } from '@/pages/Gasket/gasket.style'
-
-/*
-	Добавить описание к набивке
-
-	//Исправить ситуацию когда ошибки размеров не дают ошибку
-
-	написать сохранение колец и вывод их в файл
-*/
 
 export default function SingleRings() {
 	return (

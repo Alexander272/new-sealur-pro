@@ -86,6 +86,10 @@ select {
     --main-container-bg: #f0f0f7;
     --danger-color: rgb(207, 25, 25);
 
+    --gray-color: #999;
+
+    --red-bg: #ff2d2d73;
+
     --border-white: #e5e4e9;
     --primary-color: #05287f;
     --secondary-color: #eaeefc;

@@ -1,5 +1,5 @@
-import { Box, Typography } from '@mui/material'
-import { GasketRoute, PutgRoute, RingRoute, RingsRoute, SnpRoute } from '@/routes'
+import { Box, Divider, Typography } from '@mui/material'
+import { GasketRoute, PutgRoute, RingRoute, RingsKitRoute, RingsRoute, SnpRoute } from '@/routes'
 import { List } from './components/List'
 
 export type ListItem = {
@@ -20,7 +20,10 @@ const list: ListItem[] = [
 	{
 		title: 'Сальниковые кольца и комплекты',
 		route: RingsRoute,
-		children: [{ title: 'Кольца', route: RingRoute }],
+		children: [
+			{ title: 'Кольца', route: RingRoute },
+			{ title: 'Комплекты колец', route: RingsKitRoute },
+		],
 	},
 ]
 
@@ -28,9 +31,19 @@ export default function Home() {
 	return (
 		<Box display={'flex'} justifyContent={'center'} ml={'auto'} mr={'auto'}>
 			<Box>
-				<Typography fontWeight={'bold'} fontSize={'1.2rem'} textAlign={'center'} mb={2}>
+				<Typography fontWeight={'bold'} fontSize={'1.2rem'} textAlign={'center'} color={'primary'}>
 					Продукция
 				</Typography>
+				<Divider
+					sx={{
+						width: '20%',
+						border: '1px solid var(--primary-color)',
+						marginBottom: 2,
+						marginLeft: '30%',
+						// ml: 'auto',
+						// mr: 'auto',
+					}}
+				/>
 
 				{list.map(l => (
 					<List key={l.route} list={l} />

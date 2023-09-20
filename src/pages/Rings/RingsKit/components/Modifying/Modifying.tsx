@@ -1,7 +1,7 @@
 import { MouseEvent, useRef, useState } from 'react'
 import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { useGetModifyingQuery } from '@/store/api/rings'
-import { setModifying, setStep, toggleActiveStep } from '@/store/rings/ring'
+import { setModifying, setStep, toggleActiveStep } from '@/store/rings/kit'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import type { IRingModifying } from '@/types/rings'
 import { Step } from '../../../components/Step/Step'
@@ -13,9 +13,9 @@ export const Modifying = () => {
 
 	const [selected, setSelected] = useState<IRingModifying | null>(null)
 
-	const modifying = useAppSelector(state => state.ring.modifying)
+	const modifying = useAppSelector(state => state.kit.modifying)
 
-	const step = useAppSelector(state => state.ring.modifyingStep)
+	const step = useAppSelector(state => state.kit.modifyingStep)
 
 	const dispatch = useAppDispatch()
 
@@ -47,6 +47,7 @@ export const Modifying = () => {
 		else dispatch(setModifying(data.data.modifying[+index].code))
 
 		dispatch(setStep({ step: 'modifyingStep', active: false, complete: index != '-1' }))
+
 		closeHandler()
 	}
 
@@ -101,47 +102,6 @@ export const Modifying = () => {
 			</List>
 
 			{selected && <RingTooltip open={open} anchor={anchor.current} description={selected?.description} />}
-
-			{/* <Popover
-				open={open}
-				anchorEl={anchor.current}
-				anchorOrigin={{
-					vertical: 'center',
-					horizontal: 'right',
-				}}
-				transformOrigin={{
-					vertical: 'center',
-					horizontal: 'left',
-				}}
-				slotProps={{
-					paper: {
-						elevation: 0,
-						sx: {
-							overflow: 'visible',
-							filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-							'&:before': {
-								content: '""',
-								display: 'block',
-								position: 'absolute',
-								top: '50%',
-								left: 0,
-								width: 10,
-								height: 10,
-								bgcolor: 'background.paper',
-								transform: 'translate(-50%, -50%) rotate(45deg)',
-								zIndex: 0,
-							},
-						},
-					},
-				}}
-				onClose={closeHandler}
-				disableRestoreFocus
-				sx={{ pointerEvents: 'none' }}
-			>
-				<Stack direction={'row'} spacing={2} margin={2} maxWidth={450} alignItems={'center'}>
-					<Typography align='justify'>{selected?.description}</Typography>
-				</Stack>
-			</Popover> */}
 		</Step>
 	)
 }

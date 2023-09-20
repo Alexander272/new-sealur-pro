@@ -4,24 +4,33 @@ import type { Steps } from '@/types/rings'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { toggleActiveStep } from '@/store/rings/ring'
 
-type Props = {
-	label: string
-	stepName: Steps
+interface IStep {
+	active: boolean
+	complete: boolean
+	required: boolean
+	error: boolean
 }
 
-export const Step: FC<PropsWithChildren<Props>> = ({ children, label, stepName }) => {
+type Props = {
+	label: string
+	step: IStep
+	toggle: () => void
+	// stepName: Steps
+}
+
+export const Step: FC<PropsWithChildren<Props>> = ({ children, label, step, toggle }) => {
 	const anchor = useRef<HTMLDivElement | null>(null)
 
-	const step = useAppSelector(state => state.ring[stepName])
+	// const step = useAppSelector(state => state.ring[stepName])
 
-	const dispatch = useAppDispatch()
+	// const dispatch = useAppDispatch()
 
-	const toggleHandler = () => dispatch(toggleActiveStep(stepName))
+	// const toggleHandler = () => dispatch(toggleActiveStep(stepName))
 
 	return (
 		<>
 			<Box
-				onClick={toggleHandler}
+				onClick={toggle}
 				ref={anchor}
 				padding={'6px 8px'}
 				ml={'4px'}
@@ -42,7 +51,7 @@ export const Step: FC<PropsWithChildren<Props>> = ({ children, label, stepName }
 
 			<Menu
 				open={anchor.current != null && step.active}
-				onClose={toggleHandler}
+				onClose={toggle}
 				anchorEl={anchor.current}
 				transformOrigin={{ horizontal: 'center', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
