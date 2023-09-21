@@ -1,11 +1,13 @@
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 export const Container = styled.div<ContainerProps>`
 	position: relative;
 	display: flex;
 	max-width: 500px;
-	width: ${props => (props.open ? '100%' : '0px')};
-	transition: width 0.3s ease-in-out;
+	/* width: ${props => (props.open ? '100%' : '0px')}; */
+	width: ${props => (props.open ? '100%' : '27px')};
+	overflow: hidden;
+	transition: width 0.4s ease-in-out;
 	margin: 10px 0;
 	/* margin-left: auto; */
 	/* height: calc(100vh - 170px); */
@@ -23,25 +25,25 @@ export const Container = styled.div<ContainerProps>`
 type ContainerProps = {
 	open?: boolean
 }
-export const CardContainer = styled.div<ContainerProps>`
-	flex-grow: 1;
-	padding: ${props => (props.open ? '10px 20px' : '0')};
-	border-radius: 12px;
-	background-color: var(--theme-bg-color);
-	box-shadow: 0px 0px 4px 0px #2626262b;
-	/* width: ${props => (props.open ? '500px' : '0px')}; */
-	/* overflow: hidden; */
-	display: flex;
-	flex-direction: column;
-	position: relative;
-	/* transition: width 0.2s ease-in-out; */
+// export const CardContainer = styled.div<ContainerProps>`
+// 	flex-grow: 1;
+// 	padding: ${props => (props.open ? '10px 20px' : '0')};
+// 	border-radius: 12px;
+// 	background-color: var(--theme-bg-color);
+// 	box-shadow: 0px 0px 4px 0px #2626262b;
+// 	/* width: ${props => (props.open ? '500px' : '0px')}; */
+// 	/* overflow: hidden; */
+// 	display: flex;
+// 	flex-direction: column;
+// 	position: relative;
+// 	/* transition: width 0.2s ease-in-out; */
 
-	/* @media screen and (max-width: 1400px) {
-		position: absolute;
-		right: 0;
-		height: calc(100% - 20px);
-	} */
-`
+// 	/* @media screen and (max-width: 1400px) {
+// 		position: absolute;
+// 		right: 0;
+// 		height: calc(100% - 20px);
+// 	} */
+// `
 
 export const Positions = styled.div`
 	max-height: 600px;
@@ -72,40 +74,51 @@ export const Position = styled.p<PositionProps>`
 	}
 `
 
-export const OpenButton = styled.div<ContainerProps>`
-	transform: ${props => (props.open ? 'rotate(0deg)' : 'rotate(180deg)')};
-	transform: 'rotate(180deg)';
-	position: absolute;
-	left: ${props => (props.open ? '0' : 'inherit')};
-	right: ${props => (props.open ? 'inherit' : '-5px')};
-	/* bottom: 180px; */
-	border-radius: 0 70px 70px 0;
-	background-color: var(--secondary-color);
-	/* font-size: 1.8rem; */
-	/* padding: 8px 16px 8px 0; */
-	font-size: 1.4rem;
-	padding: 8px 8px 8px 0;
-	color: var(--primary-color);
-	cursor: pointer;
-	z-index: 5;
+// export const OpenButton = styled.div<ContainerProps>`
+// 	transform: ${props => (props.open ? 'rotate(0deg)' : 'rotate(180deg)')};
+// 	/* transform: 'rotate(180deg)'; */
+// 	position: absolute;
+// 	left: ${props => (props.open ? '0' : 'inherit')};
+// 	right: ${props => (props.open ? 'inherit' : '-5px')};
+// 	/* bottom: 180px; */
+// 	border-radius: 0 70px 70px 0;
+// 	background-color: var(--secondary-color);
+// 	/* font-size: 1.8rem; */
+// 	/* padding: 8px 16px 8px 0; */
+// 	padding: 8px 8px 8px 0;
 
-	height: 100%;
-	display: flex;
-	align-items: center;
-`
+// 	/* position: absolute; */
+// 	/* left: -20px; */
+// 	/* right: ${props => (props.open ? 'inherit' : '-5px')}; */
+// 	/* bottom: 180px; */
+// 	/* border-radius: 70px 0px 0px 70px; */
+// 	/* background-color: var(--secondary-color); */
+// 	/* font-size: 1.8rem; */
+// 	/* padding: 8px 16px 8px 0; */
+// 	/* padding: 8px 0px 8px 8px; */
 
-type ButtonProps = {}
-export const CircleButton = styled.div<ContainerProps>`
-	transform: ${props => (props.open ? 'rotate(0deg)' : 'rotate(180deg)')};
-	position: absolute;
-	left: ${props => (props.open ? '0' : 'inherit')};
-	right: ${props => (props.open ? 'inherit' : '-5px')};
-	bottom: 180px;
-	border-radius: 0 70px 70px 0;
-	background-color: var(--secondary-color);
-	font-size: 1.8rem;
-	padding: 8px 16px 8px 0;
-	color: var(--primary-color);
-	cursor: pointer;
-	z-index: 5;
-`
+// 	font-size: 1.4rem;
+// 	color: var(--primary-color);
+// 	cursor: pointer;
+// 	z-index: 5;
+
+// 	height: 100%;
+// 	display: flex;
+// 	align-items: center;
+// `
+
+// type ButtonProps = {}
+// export const CircleButton = styled.div<ContainerProps>`
+// 	transform: ${props => (props.open ? 'rotate(0deg)' : 'rotate(180deg)')};
+// 	position: absolute;
+// 	left: ${props => (props.open ? '0' : 'inherit')};
+// 	right: ${props => (props.open ? 'inherit' : '-5px')};
+// 	bottom: 180px;
+// 	border-radius: 0 70px 70px 0;
+// 	background-color: var(--secondary-color);
+// 	font-size: 1.8rem;
+// 	padding: 8px 16px 8px 0;
+// 	color: var(--primary-color);
+// 	cursor: pointer;
+// 	z-index: 5;
+// `

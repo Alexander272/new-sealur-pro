@@ -81,6 +81,7 @@ export const Constructions: FC<Props> = ({ constructions }) => {
 					anchor={anchor.current}
 					image={selected?.image}
 					description={selected?.title}
+					hasIndent
 				/>
 			)}
 		</>

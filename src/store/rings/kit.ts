@@ -132,6 +132,9 @@ export const kitSlice = createSlice({
 
 			if (!action.payload?.hasThickness) state.thickness = null
 		},
+		setCount: (state, action: PayloadAction<string>) => {
+			state.count = action.payload
+		},
 
 		setMaterials: (state, action: PayloadAction<string>) => {
 			state.materials = action.payload
@@ -140,6 +143,20 @@ export const kitSlice = createSlice({
 		},
 		setModifying: (state, action: PayloadAction<string | null>) => {
 			state.modifying = action.payload
+		},
+
+		setSize: (state, action: PayloadAction<string>) => {
+			state.sizes = action.payload
+
+			const s = action.payload.split('×')
+			state.sizeError = +s[0] < +s[1]
+		},
+		setThickness: (state, action: PayloadAction<string>) => {
+			state.thickness = action.payload
+
+			// if (action.payload) {
+			// 	state.thicknessError = +action.payload < 1.5
+			// }
 		},
 
 		// установка чертежа
@@ -163,6 +180,9 @@ export const {
 	toggleActiveStep,
 	setKitType,
 	setConstruction,
+	setCount,
+	setSize,
+	setThickness,
 	setMaterials,
 	setModifying,
 	setDrawing,

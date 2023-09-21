@@ -1,15 +1,4 @@
-import {
-	Alert,
-	Box,
-	Button,
-	Collapse,
-	FormControl,
-	IconButton,
-	Slide,
-	Snackbar,
-	Stack,
-	Typography,
-} from '@mui/material'
+import { Alert, Box, Button, FormControl, IconButton, Snackbar, Stack, Typography } from '@mui/material'
 import { ChangeEvent, FC, MouseEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
@@ -26,10 +15,10 @@ import {
 } from '@/store/api/order'
 import { sendMetric } from '@/services/metrics'
 import type { IRingData } from '@/types/rings'
+import { PutgRoute, RingRoute, SnpRoute } from '@/routes'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
-import { PutgRoute, RingRoute, SnpRoute } from '@/routes'
-import { CardContainer, CircleButton, Container, Item, OpenButton, Position, Positions } from './card.style'
+import { Container, Item, Position, Positions } from './card.style'
 
 type Props = {}
 
@@ -177,280 +166,90 @@ const Card: FC<Props> = () => {
 				</Alert>
 			</Snackbar>
 
-			{/* //TODO Возможно стоит использовать Slide, а не Collapse*/}
-
-			{/* <Stack direction={'row'} overflow={'hidden'}>
-				<OpenButton onClick={toggleHandler} open={open}>
-					➔
-				</OpenButton>
-				<Slide direction='left' in={open}>
-					<Box
-						width={500}
-						boxShadow={'0px 0px 4px 0px #2626262b'}
-						borderRadius={'0 12px 12px 0'}
-						sx={{ backgroundColor: 'var(--theme-bg-color)' }}
+			<Stack direction={'row'}>
+				<Box
+					onClick={toggleHandler}
+					display={'flex'}
+					justifyContent={'center'}
+					alignItems={'center'}
+					paddingY={1}
+					paddingX={0.5}
+					borderRadius={'70px 0 0 70px'}
+					sx={{ backgroundColor: 'var(--secondary-color)', cursor: 'pointer' }}
+				>
+					<Typography
+						fontSize={'1.4rem'}
+						color={'primary'}
+						sx={{ transform: open ? 'rotate(0deg)' : 'rotate(180deg)' }}
 					>
-						<Typography variant='h5' sx={{ marginBottom: 1 }}>
-							Заявка
+						➜
+					</Typography>
+				</Box>
+				<Stack
+					width={'calc(500px - 27px)'}
+					paddingY={1}
+					paddingX={2}
+					borderTop={'1px solid #f0f0f0'}
+					borderBottom={'1px solid #f0f0f0'}
+					sx={{ backgroundColor: 'var(--theme-bg-color)' }}
+				>
+					<Typography variant='h5' sx={{ marginBottom: 1 }}>
+						Заявка
+					</Typography>
+
+					{isError && (
+						<Typography variant='h6' color={'error'}>
+							Не удалось загрузить содержание заявки
 						</Typography>
+					)}
 
-						{isError && (
-							<Typography variant='h6' color={'error'}>
-								Не удалось загрузить содержание заявки
-							</Typography>
-						)}
+					{isLoadingData || isLoading || isLoadingDelete ? <Loader background='fill' /> : null}
 
-						{isLoadingData || isLoading || isLoadingDelete ? <Loader background='fill' /> : null}
+					<Positions onClick={selectHandler}>
+						{positions.map((p, idx) => (
+							<Item key={p.id}>
+								<Position data-index={idx} active={positionId == p.id}>
+									<Typography component='span' sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}>
+										{idx + 1}. {p.title} - {p.amount} шт.
+									</Typography>
+								</Position>
+								<IconButton
+									data-id={p.id}
+									sx={{
+										lineHeight: '14px',
+										position: 'absolute',
+										right: '0px',
+										top: '50%',
+										transform: 'translateY(-50%)',
+									}}
+								>
+									&times;
+								</IconButton>
+							</Item>
+						))}
+					</Positions>
 
-						<Positions onClick={selectHandler}>
-							{positions.map((p, idx) => (
-								<Item key={p.id}>
-									<Position data-index={idx} active={positionId == p.id}>
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{idx + 1}.
-										</Typography>{' '}
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{p.title}
-										</Typography>{' '}
-										-{' '}
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{p.amount} шт.
-										</Typography>
-									</Position>
-									<IconButton
-										data-id={p.id}
-										sx={{
-											lineHeight: '14px',
-											position: 'absolute',
-											right: '0px',
-											top: '50%',
-											transform: 'translateY(-50%)',
-										}}
-									>
-										&times;
-									</IconButton>
-								</Item>
-							))}
-						</Positions>
+					<FormControl sx={{ marginTop: 'auto', marginBottom: '10px' }}>
+						<Input
+							value={info}
+							onChange={infoHandler}
+							label='Дополнительная информация'
+							size='small'
+							multiline
+							rows={4}
+						/>
+					</FormControl>
 
-						<CircleButton onClick={toggleHandler} open={open}>
-							➜
-						</CircleButton>
-
-						<FormControl sx={{ marginTop: 'auto', marginBottom: '10px' }}>
-							<Input
-								value={info}
-								onChange={infoHandler}
-								label='Дополнительная информация'
-								size='small'
-								multiline
-								rows={4}
-							/>
-						</FormControl>
-
-						{positions.length ? (
-							<Button
-								onClick={sendHandler}
-								variant='contained'
-								sx={{ borderRadius: '12px', marginTop: '10px' }}
-							>
-								Отправить заявку
-							</Button>
-						) : null}
-					</Box>
-				</Slide>
-			</Stack> */}
-
-			{/* <Collapse orientation='horizontal' in={open} collapsedSize={'4px'}>
-				<Stack direction={'row'}>
-					<OpenButton onClick={toggleHandler} open={open}>
-						➔
-					</OpenButton>
-
-					<Box
-						width={500}
-						boxShadow={'0px 0px 4px 0px #2626262b'}
-						borderRadius={'0 12px 12px 0'}
-						sx={{ backgroundColor: 'var(--theme-bg-color)' }}
+					<Button
+						onClick={sendHandler}
+						variant='contained'
+						disabled={!positions.length || role != 'user'}
+						sx={{ borderRadius: '12px', marginTop: '10px' }}
 					>
-						<Typography variant='h5' sx={{ marginBottom: 1 }}>
-							Заявка
-						</Typography>
-
-						{isError && (
-							<Typography variant='h6' color={'error'}>
-								Не удалось загрузить содержание заявки
-							</Typography>
-						)}
-
-						{isLoadingData || isLoading || isLoadingDelete ? <Loader background='fill' /> : null}
-
-						<Positions onClick={selectHandler}>
-							{positions.map((p, idx) => (
-								<Item key={p.id}>
-									<Position data-index={idx} active={positionId == p.id}>
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{idx + 1}.
-										</Typography>{' '}
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{p.title}
-										</Typography>{' '}
-										-{' '}
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{p.amount} шт.
-										</Typography>
-									</Position>
-									<IconButton
-										data-id={p.id}
-										sx={{
-											lineHeight: '14px',
-											position: 'absolute',
-											right: '0px',
-											top: '50%',
-											transform: 'translateY(-50%)',
-										}}
-									>
-										&times;
-									</IconButton>
-								</Item>
-							))}
-						</Positions>
-
-						<CircleButton onClick={toggleHandler} open={open}>
-							➜
-						</CircleButton> 
-
-						<FormControl sx={{ marginTop: 'auto', marginBottom: '10px' }}>
-							<Input
-								value={info}
-								onChange={infoHandler}
-								label='Дополнительная информация'
-								size='small'
-								multiline
-								rows={4}
-							/>
-						</FormControl>
-
-						{positions.length ? (
-							<Button
-								onClick={sendHandler}
-								variant='contained'
-								sx={{ borderRadius: '12px', marginTop: '10px' }}
-							>
-								Отправить заявку
-							</Button>
-						) : null}
-					</Box>
+						Отправить заявку
+					</Button>
 				</Stack>
-			</Collapse> */}
-
-			<CardContainer open={open}>
-				{open && (
-					<>
-						<Typography variant='h5' sx={{ marginBottom: 1 }}>
-							Заявка
-						</Typography>
-
-						{isError && (
-							<Typography variant='h6' color={'error'}>
-								Не удалось загрузить содержание заявки
-							</Typography>
-						)}
-
-						{isLoadingData || isLoading || isLoadingDelete ? <Loader background='fill' /> : null}
-
-						<Positions onClick={selectHandler}>
-							{positions.map((p, idx) => (
-								<Item key={p.id}>
-									<Position data-index={idx} active={positionId == p.id}>
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{idx + 1}.
-										</Typography>{' '}
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{p.title}
-										</Typography>{' '}
-										-{' '}
-										<Typography
-											component='span'
-											sx={{ pointerEvents: 'none', fontWeight: 'inherit' }}
-										>
-											{p.amount} шт.
-										</Typography>
-									</Position>
-									<IconButton
-										data-id={p.id}
-										sx={{
-											lineHeight: '14px',
-											position: 'absolute',
-											right: '0px',
-											top: '50%',
-											transform: 'translateY(-50%)',
-										}}
-									>
-										&times;
-									</IconButton>
-								</Item>
-							))}
-						</Positions>
-
-						<CircleButton onClick={toggleHandler} open={open}>
-							{/* ➔ */}➜
-						</CircleButton>
-
-						<FormControl sx={{ marginTop: 'auto', marginBottom: '10px' }}>
-							<Input
-								value={info}
-								onChange={infoHandler}
-								label='Дополнительная информация'
-								size='small'
-								multiline
-								rows={4}
-							/>
-						</FormControl>
-
-						{/* {positions.length ? ( */}
-						<Button
-							onClick={sendHandler}
-							variant='contained'
-							disabled={!positions.length || role != 'user'}
-							sx={{ borderRadius: '12px', marginTop: '10px' }}
-						>
-							Отправить заявку
-						</Button>
-						{/* ) : null} */}
-					</>
-				)}
-			</CardContainer>
-
-			{!open && (
-				<OpenButton onClick={toggleHandler} open={open}>
-					➔
-				</OpenButton>
-			)}
+			</Stack>
 		</Container>
 	)
 }

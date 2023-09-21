@@ -1,15 +1,19 @@
-import { ChangeEvent, useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { ChangeEvent, FC, useState } from 'react'
+import { Alert, Box, Snackbar, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setDrawing } from '@/store/rings/ring'
 import { CreateFile, DeleteFile } from '@/services/file'
 import { FileDownload } from '@/components/FileInput/FileDownload'
 import { FileInput } from '@/components/FileInput/FileInput'
 
-type Alert = { type: 'create' | 'delete'; open: boolean; message?: string }
+type AlertType = { type: 'create' | 'delete'; open: boolean; message?: string }
 
-export const Design = () => {
-	const [alert, setAlert] = useState<Alert>({ type: 'create', open: false })
+type Props = {
+	title: string
+}
+
+export const Design: FC<Props> = ({ title }) => {
+	const [alert, setAlert] = useState<AlertType>({ type: 'create', open: false })
 	const [loading, setLoading] = useState(false)
 
 	const role = useAppSelector(state => state.user.roleCode)
@@ -49,6 +53,13 @@ export const Design = () => {
 		}
 	}
 
+	const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+		if (reason === 'clickaway') {
+			return
+		}
+		setAlert({ type: 'create', open: false })
+	}
+
 	return (
 		<Box
 			display={'flex'}
@@ -63,9 +74,20 @@ export const Design = () => {
 			borderRadius={'12px'}
 			boxShadow={'0px 0px 4px 0px #2626262b'}
 		>
+			<Snackbar
+				open={alert.open}
+				autoHideDuration={6000}
+				onClose={handleClose}
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+			>
+				<Alert onClose={handleClose} severity={'error'} sx={{ width: '100%' }}>
+					{alert.type == 'create' && 'Не удалось добавить чертеж. ' + (alert.message || '')}
+					{alert.type == 'delete' && 'Не удалось удалить чертеж.'}
+				</Alert>
+			</Snackbar>
+
 			<Typography mb={1} textAlign={'justify'}>
-				Если кольцо не прямоугольного сечения (например, конусное) или с отличающейся от предложенных
-				плотностей, прикрепите чертеж.
+				{title}
 			</Typography>
 
 			{role == 'user' ? (

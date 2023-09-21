@@ -1,10 +1,11 @@
 import { ChangeEvent, FC, useEffect, useState } from 'react'
-import { Alert, Button, IconButton, Snackbar, Stack, Typography } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { Position } from '@/types/card'
 import { clearActive, toggle } from '@/store/card'
 import { setInfo, clearSnp, setAmount, setDesignDrawing } from '@/store/gaskets/snp'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
+import { Alert, PositionAlert } from '@/components/PositionAlert/PositionAlert'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
 import { ResultContainer } from '@/pages/Gasket/gasket.style'
@@ -12,11 +13,9 @@ import { ResultSkeleton } from '@/pages/Gasket/Skeletons/ResultSkeleton'
 
 type Props = {}
 
-type Alert = { type: 'error' | 'success'; message: string; open: boolean }
-
 // блок с выводом результата
 export const Result: FC<Props> = () => {
-	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', open: false })
+	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', method: 'create', open: false })
 
 	const isReady = useAppSelector(state => state.snp.isReady)
 
@@ -44,7 +43,12 @@ export const Result: FC<Props> = () => {
 	useEffect(() => {
 		//TODO стоит наверное разделить это на 2 части
 		if (updateError || createError)
-			setAlert({ type: 'error', message: (updateError || (createError as any)).data.message, open: true })
+			setAlert({
+				type: 'error',
+				message: (updateError || (createError as any)).data.message,
+				method: updateError ? 'update' : 'create',
+				open: true,
+			})
 	}, [createError, updateError])
 
 	const savePosition = async () => {
@@ -81,7 +85,7 @@ export const Result: FC<Props> = () => {
 			return
 		}
 
-		setAlert({ type: 'success', message: '', open: true })
+		setAlert({ type: 'success', message: '', method: cardIndex !== undefined ? 'update' : 'create', open: true })
 	}
 
 	const cancelHandler = () => {
@@ -103,11 +107,7 @@ export const Result: FC<Props> = () => {
 	}
 
 	const closeHandler = () => {
-		setAlert({ type: 'success', message: '', open: false })
-	}
-	const openCardHandler = () => {
-		dispatch(toggle({ open: true }))
-		setAlert({ type: 'success', message: '', open: false })
+		setAlert({ type: 'success', message: '', method: 'create', open: false })
 	}
 
 	// костыль
@@ -519,6 +519,8 @@ export const Result: FC<Props> = () => {
 
 	return (
 		<ResultContainer>
+			<PositionAlert alert={alert} onClose={closeHandler} />
+
 			<Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0, sm: 2 }} marginBottom={2}>
 				<Typography fontWeight='bold'>Описание:</Typography>
 				<Typography textAlign='justify'>{renderDescription()}</Typography>
@@ -563,63 +565,28 @@ export const Result: FC<Props> = () => {
 					<Input value={amount} onChange={amountHandler} size='small' />
 				</Stack>
 
-				{role == 'user' && (
-					<Stack direction={'row'} spacing={2}>
-						{cardIndex !== undefined && (
-							<Button
-								onClick={cancelHandler}
-								variant='outlined'
-								color='secondary'
-								sx={{ borderRadius: '12px', padding: '6px 20px' }}
-							>
-								Отменить
-							</Button>
-						)}
-
+				<Stack direction={'row'} spacing={2}>
+					{cardIndex !== undefined && (
 						<Button
-							disabled={!amount || hasSizeError || hasDesignError}
-							onClick={savePosition}
-							variant='contained'
+							onClick={cancelHandler}
+							variant='outlined'
+							color='secondary'
 							sx={{ borderRadius: '12px', padding: '6px 20px' }}
 						>
-							{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
+							Отменить
 						</Button>
-					</Stack>
-				)}
-			</Stack>
+					)}
 
-			<Snackbar
-				open={alert.open}
-				// autoHideDuration={6000}
-				onClose={closeHandler}
-				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-			>
-				<Alert
-					onClose={closeHandler}
-					severity={alert.type}
-					action={
-						alert.type == 'success' ? (
-							<IconButton
-								color='inherit'
-								size='small'
-								sx={{ lineHeight: '18px' }}
-								onClick={openCardHandler}
-							>
-								➜
-							</IconButton>
-						) : (
-							<IconButton color='inherit' size='small' sx={{ lineHeight: '18px' }} onClick={closeHandler}>
-								&times;
-							</IconButton>
-						)
-					}
-					sx={{ width: '100%' }}
-				>
-					{alert.type == 'error' && createError ? 'Не удалось добавить позицию. ' + alert.message : ''}
-					{alert.type == 'error' && updateError ? 'Не удалось обновить позицию' : ''}
-					{alert.type == 'success' && <>Позиция {cardIndex !== undefined ? 'изменена' : 'добавлена'}</>}
-				</Alert>
-			</Snackbar>
+					<Button
+						disabled={!amount || hasSizeError || hasDesignError || role != 'user'}
+						onClick={savePosition}
+						variant='contained'
+						sx={{ borderRadius: '12px', padding: '6px 20px' }}
+					>
+						{cardIndex !== undefined ? 'Изменить в заявке' : 'Добавить  в заявку'}
+					</Button>
+				</Stack>
+			</Stack>
 		</ResultContainer>
 	)
 }

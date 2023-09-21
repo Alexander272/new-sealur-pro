@@ -36,10 +36,11 @@ export default function Home() {
 				</Typography>
 				<Divider
 					sx={{
-						width: '20%',
+						width: '40%',
 						border: '1px solid var(--primary-color)',
 						marginBottom: 2,
 						marginLeft: '30%',
+						marginRight: '30%',
 						// ml: 'auto',
 						// mr: 'auto',
 					}}

@@ -2,7 +2,7 @@ import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Box, Button, Menu, MenuItem } from '@mui/material'
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { GasketRoute, PutgRoute, RingRoute, RingsRoute, SnpRoute } from '@/routes'
+import { GasketRoute, PutgRoute, RingRoute, RingsKitRoute, RingsRoute, SnpRoute } from '@/routes'
 import { MenuLink } from './production.style'
 
 export const Products = () => {
@@ -113,6 +113,14 @@ export const Products = () => {
 						sx={{ margin: '0 8px', borderRadius: '12px', paddingLeft: 4 }}
 					>
 						Кольца
+					</MenuItem>
+				</MenuLink>
+				<MenuLink to={RingsKitRoute}>
+					<MenuItem
+						selected={location.pathname == RingsKitRoute}
+						sx={{ margin: '0 8px', borderRadius: '12px', paddingLeft: 4 }}
+					>
+						Комплекты колец
 					</MenuItem>
 				</MenuLink>
 			</Menu>

@@ -37,7 +37,7 @@ export default function SingleRings() {
 				</Stack>
 
 				<Stack width={'35%'}>
-					<Design />
+					<Design title='Если кольцо не прямоугольного сечения (например, конусное) или с отличающейся от предложенных плотностей, прикрепите чертеж.' />
 				</Stack>
 			</Stack>
 		</>

@@ -1,6 +1,6 @@
 import { Stack, Typography } from '@mui/material'
 import { PageTitle } from '../rings.style'
-// import { Design } from '../components/Design/Design'
+import { Design } from '../components/Design/Design'
 import { KitType } from './components/Type/KitType'
 import { Count } from './components/Count/Count'
 import { Sizes } from './components/Sizes/Sizes'
@@ -35,7 +35,9 @@ export default function RingsKit() {
 			<Stack direction={'row'} spacing={2} width={'100%'} maxWidth={1200} ml={'auto'} mr={'auto'}>
 				<Stack width={'65%'}></Stack>
 
-				<Stack width={'35%'}>{/* <Design /> */}</Stack>
+				<Stack width={'35%'}>
+					<Design title='' />
+				</Stack>
 			</Stack>
 		</>
 	)

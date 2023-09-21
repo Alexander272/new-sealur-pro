@@ -8,9 +8,10 @@ type Props = {
 	image?: string
 	imageMaxWidth?: number
 	description?: string
+	hasIndent?: boolean
 }
 
-export const RingTooltip: FC<Props> = ({ open, anchor, image, imageMaxWidth, description }) => {
+export const RingTooltip: FC<Props> = ({ open, anchor, image, imageMaxWidth, description, hasIndent }) => {
 	if (anchor == null) return null
 
 	return (
@@ -58,7 +59,7 @@ export const RingTooltip: FC<Props> = ({ open, anchor, image, imageMaxWidth, des
 				{description && (
 					<Box>
 						{description.split('\\n').map((d, i) => (
-							<Typography key={i} align='justify' mb={0.5}>
+							<Typography key={i} align='justify' mb={1} sx={{ textIndent: hasIndent ? '12px' : 0 }}>
 								{d}
 							</Typography>
 						))}

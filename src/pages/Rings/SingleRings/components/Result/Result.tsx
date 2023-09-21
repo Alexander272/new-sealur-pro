@@ -4,18 +4,17 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetMaterialsQuery, useGetModifyingQuery, useGetRingSingleQuery } from '@/store/api/rings'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
 import { clearRing, setAmount, setDrawing, setInfo } from '@/store/rings/ring'
-import { clearActive } from '@/store/card'
+import { clearActive, toggle } from '@/store/card'
 import type { Position } from '@/types/card'
 import type { IRingConstruction, IRingDensity } from '@/types/rings'
-import { Image } from '@/pages/Gasket/gasket.style'
 import { Loader } from '@/components/Loader/Loader'
+import { Image } from '@/pages/Gasket/gasket.style'
 import { Input } from '@/components/Input/input.style'
-
-type Alert = { type: 'error' | 'success'; message: string; open: boolean }
+import { Alert, PositionAlert } from '@/components/PositionAlert/PositionAlert'
 
 export const Result = () => {
 	const [image, setImage] = useState('')
-	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', open: false })
+	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', method: 'create', open: false })
 
 	const role = useAppSelector(state => state.user.roleCode)
 
@@ -53,7 +52,12 @@ export const Result = () => {
 	useEffect(() => {
 		//TODO стоит наверное разделить это на 2 части
 		if (updateError || createError)
-			setAlert({ type: 'error', message: (updateError || (createError as any)).data.message, open: true })
+			setAlert({
+				type: 'error',
+				message: (updateError || (createError as any)).data.message,
+				method: updateError ? 'update' : 'create',
+				open: true,
+			})
 	}, [createError, updateError])
 
 	useEffect(() => {
@@ -82,7 +86,7 @@ export const Result = () => {
 		)
 
 	const savePosition = async () => {
-		if (!sizes || !thickness || !material) return
+		if (!sizes || !material) return
 
 		let title = 'Кольцо '
 		title += ringType?.hasRotaryPlug ? construction?.code + '-' : ''
@@ -119,14 +123,12 @@ export const Result = () => {
 				construction:
 					construction || ({ code: '', baseCode: '', withoutRotaryPlug: false } as IRingConstruction),
 				size: sizes,
-				thickness: thickness,
+				thickness: thickness || '',
 				material: material,
 				modifying: modifying || '',
 				drawing: drawing?.link || '',
 			},
 		}
-
-		console.log(title)
 
 		try {
 			if (cardIndex !== undefined) {
@@ -143,7 +145,11 @@ export const Result = () => {
 			return
 		}
 
-		setAlert({ type: 'success', message: '', open: true })
+		setAlert({ type: 'success', message: '', method: cardIndex !== undefined ? 'update' : 'create', open: true })
+	}
+
+	const closeHandler = () => {
+		setAlert({ type: 'success', message: '', method: 'create', open: false })
 	}
 
 	const infoHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -203,6 +209,8 @@ export const Result = () => {
 			boxShadow={'0px 0px 4px 0px #2626262b'}
 		>
 			{isLoading || isLoadingUpdate ? <Loader background='fill' /> : null}
+
+			<PositionAlert alert={alert} onClose={closeHandler} />
 
 			<Stack direction={'row'} spacing={2} mb={2}>
 				<Box maxWidth={150} width={'100%'}>

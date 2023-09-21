@@ -5,7 +5,7 @@ export const RingsSkeleton = () => {
 	return (
 		<>
 			<PageTitle>
-				<Skeleton animation='wave' sx={{ width: '50%', margin: 'auto' }} />
+				<Skeleton animation='wave' sx={{ width: '40%', margin: 'auto' }} />
 			</PageTitle>
 
 			<Content></Content>
