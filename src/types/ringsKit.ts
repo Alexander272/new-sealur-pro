@@ -5,7 +5,7 @@ export interface IRingsKit {
 	// 		[id: string]: { constructions: IKitConstructions[] }
 	// 	}
 	// }
-	constructionGroups: {
+	constructionMap: {
 		[id: string]: { constructions: IKitConstructions[] }
 	}
 }
@@ -31,6 +31,15 @@ export interface IKitConstructions {
 	materialTypes: string
 	hasThickness?: boolean
 	defaultCount: string
+	defaultMaterials: string
+	enabledMaterials?: string[]
+}
+
+export interface IKitSize {
+	id: string
+	outer: number
+	inner: number
+	thickness: number
 }
 
 export type Steps = 'typeStep' | 'countStep' | 'sizeStep' | 'materialStep' | 'modifyingStep'

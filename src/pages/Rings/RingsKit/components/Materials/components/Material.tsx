@@ -5,13 +5,14 @@ import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
 import { RingTooltip } from '@/pages/Rings/components/RingTooltip/RingTooltip'
 
 type Props = {
+	label: string
 	materials: IRingMaterial[]
 	material: string
 	position: 'first' | 'second'
 	onSelect: (title: string, position: 'first' | 'second') => void
 }
 
-export const Material: FC<Props> = ({ materials, material, position, onSelect }) => {
+export const Material: FC<Props> = ({ label, materials, material, position, onSelect }) => {
 	const anchor = useRef<HTMLDivElement | null>(null)
 	const [open, setOpen] = useState(false)
 
@@ -66,7 +67,7 @@ export const Material: FC<Props> = ({ materials, material, position, onSelect })
 						marginBottom: 1,
 					}}
 				>
-					Материал
+					Материал {label}
 				</ListSubheader>
 				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
 

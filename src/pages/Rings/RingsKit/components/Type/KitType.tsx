@@ -16,7 +16,7 @@ export const KitType = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data } = useGetRingsKitQuery(null)
+	const { data, isLoading, isError } = useGetRingsKitQuery(null)
 
 	useEffect(() => {
 		let ok = Boolean(typeId)
@@ -30,14 +30,33 @@ export const KitType = () => {
 	const toggleHandler = () => dispatch(toggleActiveStep('typeStep'))
 
 	return (
-		<Step label={(type || 'ХХХ') + '-' + (construction?.code || 'XX')} step={step} toggle={toggleHandler}>
-			<Stack direction={'row'} divider={<Divider orientation='vertical' flexItem />} spacing={1} mr={2} ml={2}>
-				<Type types={data?.data.ringsKitTypes || []} />
+		<Step
+			label={(type || 'ХХХ') + '-' + (construction?.code || 'XX')}
+			step={step}
+			disabled={isLoading}
+			toggle={toggleHandler}
+		>
+			{isError && (
+				<Typography paddingX={2} variant='h6' color={'error'} align='center'>
+					Не удалось загрузить данные
+				</Typography>
+			)}
 
-				{typeId != '' && (
-					<Constructions constructions={data?.data?.constructionGroups[typeId]?.constructions || []} />
-				)}
-			</Stack>
+			{!isError && (
+				<Stack
+					direction={'row'}
+					divider={<Divider orientation='vertical' flexItem />}
+					spacing={1}
+					mr={2}
+					ml={2}
+				>
+					<Type types={data?.data.ringsKitTypes || []} />
+
+					{typeId != '' && (
+						<Constructions constructions={data?.data?.constructionMap[typeId]?.constructions || []} />
+					)}
+				</Stack>
+			)}
 		</Step>
 	)
 }

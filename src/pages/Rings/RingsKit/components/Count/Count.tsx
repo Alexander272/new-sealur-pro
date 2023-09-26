@@ -90,6 +90,7 @@ export const Count = () => {
 							onKeyDown={keyHandler}
 							name='end_rings'
 							label={titles[0]}
+							autoFocus
 							size='small'
 							// error={sizeError}
 							// helperText={sizeError && 'Нар. диаметр должен быть > Вн. диаметра'}
@@ -128,6 +129,7 @@ export const Count = () => {
 						name='only_base_ring'
 						label={titles[2]}
 						size='small'
+						autoFocus
 						// error={sizeError}
 						// helperText={sizeError && 'Нар. диаметр должен быть > Вн. диаметра'}
 					/>

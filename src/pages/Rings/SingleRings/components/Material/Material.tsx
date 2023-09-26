@@ -1,11 +1,11 @@
 import { MouseEvent, useEffect, useRef, useState } from 'react'
-import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
+import { Divider, List, ListItemButton, ListSubheader, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useGetMaterialsQuery } from '@/store/api/rings'
 import { setMaterial, setStep, toggleActiveStep } from '@/store/rings/ring'
 import type { IRingMaterial } from '@/types/rings'
-import { Step } from '../../../components/Step/Step'
-import { RingTooltip } from '../../../components/RingTooltip/RingTooltip'
+import { Step } from '@/pages/Rings/components/Step/Step'
+import { RingTooltip } from '@/pages/Rings/components/RingTooltip/RingTooltip'
 
 export const Material = () => {
 	const anchor = useRef<HTMLDivElement | null>(null)
@@ -20,7 +20,10 @@ export const Material = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data } = useGetMaterialsQuery(ringType?.materialType || '', { skip: !ringType?.materialType })
+	//TODO обработать ошибки
+	const { data, isLoading, isError } = useGetMaterialsQuery(ringType?.materialType || '', {
+		skip: !ringType?.materialType,
+	})
 
 	const openHandler = () => setOpen(true)
 	const closeHandler = () => setOpen(false)
@@ -58,46 +61,54 @@ export const Material = () => {
 	const toggleHandler = () => dispatch(toggleActiveStep('materialStep'))
 
 	return (
-		<Step label={material || 'ХХХ'} step={step} toggle={toggleHandler}>
-			<List
-				sx={{
-					minWidth: 250,
-					maxWidth: 350,
-					marginRight: 2,
-					marginLeft: 2,
-					maxHeight: '450px',
-					overflow: 'auto',
-					paddingTop: 0,
-				}}
-			>
-				<ListSubheader
+		<Step label={material || 'ХХХ'} step={step} disabled={isLoading} toggle={toggleHandler}>
+			{isError && (
+				<Typography paddingX={2} variant='h6' color={'error'} align='center'>
+					Не удалось загрузить данные
+				</Typography>
+			)}
+
+			{!isError && (
+				<List
 					sx={{
-						color: '#000',
-						fontSize: '1rem',
-						fontWeight: 'bold',
-						lineHeight: '24px',
-						marginTop: 1,
-						marginBottom: 1,
+						minWidth: 250,
+						maxWidth: 350,
+						marginRight: 2,
+						marginLeft: 2,
+						maxHeight: '450px',
+						overflow: 'auto',
+						paddingTop: 0,
 					}}
 				>
-					Материал
-				</ListSubheader>
-				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
-
-				{data?.data.materials.map((r, i) => (
-					<ListItemButton
-						key={r.id}
-						selected={material == r.title}
-						onClick={selectMaterial}
-						onMouseEnter={hoverHandler}
-						onMouseLeave={leaveHandler}
-						data-index={i}
-						sx={{ borderRadius: '12px' }}
+					<ListSubheader
+						sx={{
+							color: '#000',
+							fontSize: '1rem',
+							fontWeight: 'bold',
+							lineHeight: '24px',
+							marginTop: 1,
+							marginBottom: 1,
+						}}
 					>
-						{r.title} {r.description && r.type != 'padding' ? `(${r.description})` : ''}
-					</ListItemButton>
-				))}
-			</List>
+						Материал
+					</ListSubheader>
+					<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
+
+					{data?.data.materials.map((r, i) => (
+						<ListItemButton
+							key={r.id}
+							selected={material == r.title}
+							onClick={selectMaterial}
+							onMouseEnter={hoverHandler}
+							onMouseLeave={leaveHandler}
+							data-index={i}
+							sx={{ borderRadius: '12px' }}
+						>
+							{r.title} {r.description && r.type != 'padding' ? `(${r.description})` : ''}
+						</ListItemButton>
+					))}
+				</List>
+			)}
 
 			{selected && selected.type == 'padding' && selected.description ? (
 				<RingTooltip open={open} anchor={anchor.current} description={selected?.description} />

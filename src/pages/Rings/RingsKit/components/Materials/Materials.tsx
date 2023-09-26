@@ -1,10 +1,10 @@
-import { Divider, Stack } from '@mui/material'
+// import { useEffect } from 'react'
+import { Divider, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setMaterials, toggleActiveStep } from '@/store/rings/kit'
+import { useGetMaterialsQuery } from '@/store/api/rings'
 import { Step } from '@/pages/Rings/components/Step/Step'
 import { Material } from './components/Material'
-import { useGetMaterialsQuery } from '@/store/api/rings'
-import { useEffect } from 'react'
 
 export const Materials = () => {
 	const construction = useAppSelector(state => state.kit.construction)
@@ -16,17 +16,41 @@ export const Materials = () => {
 
 	const mats = construction?.materialTypes.split('/') || []
 
-	const { data: fMats } = useGetMaterialsQuery(mats[0] || '', { skip: !mats[0] })
-	const { data: sMats } = useGetMaterialsQuery(mats[1] || '', { skip: !mats[1] })
+	const {
+		data: fMats,
+		isLoading: fLoading,
+		isError: fError,
+	} = useGetMaterialsQuery(mats[0] || '', { skip: !mats[0] })
+	const {
+		data: sMats,
+		isLoading: sLoading,
+		isError: sError,
+	} = useGetMaterialsQuery(mats[1] || '', { skip: !mats[1] })
 
-	useEffect(() => {
-		if (fMats) {
-			const fDef = fMats.data.materials.find(m => m.isDefault)
-			const sDef = sMats?.data.materials.find(m => m.isDefault)
+	const splitIndex = construction?.enabledMaterials?.findIndex(v => v == ';') || -1
 
-			dispatch(setMaterials((fDef?.title || '') + (sDef ? '/' + sDef.title : '')))
-		}
-	}, [fMats, sMats])
+	const fEnabledMats =
+		splitIndex > -1 ? construction?.enabledMaterials?.slice(0, splitIndex) : construction?.enabledMaterials
+	const sEnabledMats =
+		splitIndex > -1
+			? construction?.enabledMaterials?.slice(splitIndex + 1, construction.enabledMaterials.length)
+			: []
+
+	const fFiltersMats = fEnabledMats?.length
+		? fMats?.data.materials.filter(m => fEnabledMats.includes(m.title))
+		: fMats?.data.materials
+	const sFilersMats = sEnabledMats?.length
+		? sMats?.data.materials.filter(m => sEnabledMats.includes(m.title))
+		: sMats?.data.materials
+
+	// useEffect(() => {
+	// 	if (fMats) {
+	// 		const fDef = fMats.data.materials.find(m => m.isDefault)
+	// 		const sDef = sMats?.data.materials.find(m => m.isDefault)
+
+	// 		dispatch(setMaterials((fDef?.title || '') + (sDef ? '/' + sDef.title : '')))
+	// 	}
+	// }, [fMats, sMats])
 
 	const toggleHandler = () => dispatch(toggleActiveStep('materialStep'))
 
@@ -41,23 +65,39 @@ export const Materials = () => {
 	}
 
 	return (
-		<Step label={materials || 'ХХХ/ХХХ'} step={step} toggle={toggleHandler}>
-			<Stack direction={'row'} divider={<Divider orientation='vertical' flexItem />} spacing={1} mr={2} ml={2}>
-				<Material
-					materials={fMats?.data.materials || []}
-					material={materials?.split('/')[0] || ''}
-					position='first'
-					onSelect={selectMaterial}
-				/>
-				{sMats && (
+		<Step label={materials || 'ХХХ/ХХХ'} step={step} disabled={fLoading || sLoading} toggle={toggleHandler}>
+			{fError || sError ? (
+				<Typography paddingX={2} variant='h6' color={'error'} align='center'>
+					Не удалось загрузить данные
+				</Typography>
+			) : null}
+
+			{!fError && !sError ? (
+				<Stack
+					direction={'row'}
+					divider={<Divider orientation='vertical' flexItem />}
+					spacing={1}
+					mr={2}
+					ml={2}
+				>
 					<Material
-						materials={sMats?.data.materials || []}
-						material={materials?.split('/')[1] || ''}
-						position='second'
+						label={!sMats ? 'основных колец' : 'замыкающих колец'}
+						materials={fFiltersMats || []}
+						material={materials?.split('/')[0] || ''}
+						position='first'
 						onSelect={selectMaterial}
 					/>
-				)}
-			</Stack>
+					{sMats && (
+						<Material
+							label='основных колец'
+							materials={sFilersMats || []}
+							material={materials?.split('/')[1] || ''}
+							position='second'
+							onSelect={selectMaterial}
+						/>
+					)}
+				</Stack>
+			) : null}
 		</Step>
 	)
 }

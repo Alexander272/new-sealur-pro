@@ -49,15 +49,21 @@ export interface IRingDensity {
 
 export interface IRing {
 	ringTypes: IRingType[]
-	density: {
-		density: {
-			[id: string]: { density: IRingDensity[] }
-		}
+	// density: {
+	// 	density: {
+	// 		[id: string]: { density: IRingDensity[] }
+	// 	}
+	// }
+	// constructions: {
+	// 	constructions: {
+	// 		[id: string]: { constructions: IRingConstruction[] }
+	// 	}
+	// }
+	densityMap: {
+		[id: string]: { density: IRingDensity[] }
 	}
-	constructions: {
-		constructions: {
-			[id: string]: { constructions: IRingConstruction[] }
-		}
+	constructionsMap: {
+		[id: string]: { constructions: IRingConstruction[] }
 	}
 }
 

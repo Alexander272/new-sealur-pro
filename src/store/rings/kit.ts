@@ -129,6 +129,8 @@ export const kitSlice = createSlice({
 
 			state.countStep.complete = true
 			state.count = action.payload.defaultCount
+			state.materialStep.complete = true
+			state.materials = action.payload.defaultMaterials
 
 			if (!action.payload?.hasThickness) state.thickness = null
 		},

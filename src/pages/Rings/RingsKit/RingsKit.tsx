@@ -7,6 +7,7 @@ import { Sizes } from './components/Sizes/Sizes'
 import { Materials } from './components/Materials/Materials'
 import { Modifying } from './components/Modifying/Modifying'
 import { Drawing } from '../SingleRings/components/Drawing/Drawing'
+import { Result } from './components/Result/Result'
 
 export default function RingsKit() {
 	return (
@@ -33,7 +34,9 @@ export default function RingsKit() {
 			</Stack>
 
 			<Stack direction={'row'} spacing={2} width={'100%'} maxWidth={1200} ml={'auto'} mr={'auto'}>
-				<Stack width={'65%'}></Stack>
+				<Stack width={'65%'}>
+					<Result />
+				</Stack>
 
 				<Stack width={'35%'}>
 					<Design title='' />

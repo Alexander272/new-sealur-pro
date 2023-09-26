@@ -1,5 +1,5 @@
 import type { IRing, IRingMaterial, IRingModifying, IRingSize } from '@/types/rings'
-import type { IRingsKit } from '@/types/ringsKit'
+import type { IKitSize, IRingsKit } from '@/types/ringsKit'
 import { api } from './base'
 import { proUrl } from './snp'
 
@@ -24,9 +24,17 @@ export const ringApi = api.injectEndpoints({
 			query: () => `${proUrl}/ring-modifying`,
 		}),
 
-		// получение размеров
-		getSize: builder.query<{ data: { sizes: IRingSize[] } }, null>({
-			query: () => `${proUrl}/ring-sizes`,
+		// получение размеров для колец
+		getSizeSingle: builder.query<{ data: { sizes: IRingSize[] } }, null>({
+			query: () => `${proUrl}/ring-sizes/single`,
+		}),
+		// получение размеров для комплектов
+		getSizeKit: builder.query<{ data: { sizes: IKitSize[] } }, string>({
+			query: constructionId => ({
+				url: `${proUrl}/ring-sizes/kit`,
+				method: 'GET',
+				params: new URLSearchParams([['constructionId', constructionId]]),
+			}),
 		}),
 	}),
 	overrideExisting: false,
@@ -37,5 +45,6 @@ export const {
 	useGetRingsKitQuery,
 	useGetMaterialsQuery,
 	useGetModifyingQuery,
-	useGetSizeQuery,
+	useGetSizeSingleQuery,
+	useGetSizeKitQuery,
 } = ringApi

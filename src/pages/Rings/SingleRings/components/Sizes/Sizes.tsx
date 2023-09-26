@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { setStep, toggleActiveStep } from '@/store/rings/ring'
-import { useGetSizeQuery } from '@/store/api/rings'
+import { useGetSizeSingleQuery } from '@/store/api/rings'
 import type { IRingSize } from '@/types/rings'
-import { Step } from '../../../components/Step/Step'
+import { Step } from '@/pages/Rings/components/Step/Step'
 import { CustomSize } from './components/CustomSize'
+import { Typography } from '@mui/material'
 
 export const Sizes = () => {
 	const [sizes, setSizes] = useState<IRingSize[]>([])
@@ -18,7 +19,7 @@ export const Sizes = () => {
 
 	const step = useAppSelector(state => state.ring.sizeStep)
 
-	const { data } = useGetSizeQuery(null)
+	const { data, isLoading, isError } = useGetSizeSingleQuery(null)
 
 	const dispatch = useAppDispatch()
 
@@ -54,9 +55,15 @@ export const Sizes = () => {
 		<Step
 			label={(size || '00×00') + (!ringType?.hasThickness ? '' : '×' + (thickness || '0'))}
 			step={step}
+			disabled={isLoading}
 			toggle={toggleHandler}
 		>
 			<CustomSize sizes={sizes} hasThickness={ringType?.hasThickness} />
+			{isError && (
+				<Typography paddingX={2} variant='h6' color={'error'} align='center'>
+					Не удалось загрузить данные
+				</Typography>
+			)}
 			{/* {sizes.length ? <ListSize sizes={sizes} hasThickness={ringType?.hasThickness} /> : null}
 			{!sizes.length ? <CustomSize sizes={sizes} hasThickness={ringType?.hasThickness} /> : null} */}
 		</Step>

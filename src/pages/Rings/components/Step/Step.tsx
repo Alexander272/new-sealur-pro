@@ -14,11 +14,12 @@ interface IStep {
 type Props = {
 	label: string
 	step: IStep
+	disabled?: boolean
 	toggle: () => void
 	// stepName: Steps
 }
 
-export const Step: FC<PropsWithChildren<Props>> = ({ children, label, step, toggle }) => {
+export const Step: FC<PropsWithChildren<Props>> = ({ children, label, step, disabled, toggle }) => {
 	const anchor = useRef<HTMLDivElement | null>(null)
 
 	// const step = useAppSelector(state => state.ring[stepName])
@@ -27,10 +28,15 @@ export const Step: FC<PropsWithChildren<Props>> = ({ children, label, step, togg
 
 	// const toggleHandler = () => dispatch(toggleActiveStep(stepName))
 
+	const toggleHandler = () => {
+		if (disabled) return
+		toggle()
+	}
+
 	return (
 		<>
 			<Box
-				onClick={toggle}
+				onClick={toggleHandler}
 				ref={anchor}
 				padding={'6px 8px'}
 				ml={'4px'}
@@ -51,7 +57,7 @@ export const Step: FC<PropsWithChildren<Props>> = ({ children, label, step, togg
 
 			<Menu
 				open={anchor.current != null && step.active}
-				onClose={toggle}
+				onClose={toggleHandler}
 				anchorEl={anchor.current}
 				transformOrigin={{ horizontal: 'center', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}

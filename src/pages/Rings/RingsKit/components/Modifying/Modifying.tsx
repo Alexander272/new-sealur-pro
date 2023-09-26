@@ -1,5 +1,5 @@
 import { MouseEvent, useRef, useState } from 'react'
-import { Divider, List, ListItemButton, ListSubheader } from '@mui/material'
+import { Divider, List, ListItemButton, ListSubheader, Typography } from '@mui/material'
 import { useGetModifyingQuery } from '@/store/api/rings'
 import { setModifying, setStep, toggleActiveStep } from '@/store/rings/kit'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
@@ -19,7 +19,7 @@ export const Modifying = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data } = useGetModifyingQuery(null)
+	const { data, isLoading, isError } = useGetModifyingQuery(null)
 
 	const openHandler = () => setOpen(true)
 	const closeHandler = () => setOpen(false)
@@ -52,54 +52,62 @@ export const Modifying = () => {
 	}
 
 	return (
-		<Step label={modifying || 'Х'} step={step} toggle={toggleHandler}>
-			<List
-				sx={{
-					maxWidth: 350,
-					marginRight: 2,
-					marginLeft: 2,
-					maxHeight: '450px',
-					overflow: 'auto',
-					paddingTop: 0,
-				}}
-			>
-				<ListSubheader
+		<Step label={modifying || 'Х'} step={step} disabled={isLoading} toggle={toggleHandler}>
+			{isError && (
+				<Typography paddingX={2} variant='h6' color={'error'} align='center'>
+					Не удалось загрузить данные
+				</Typography>
+			)}
+
+			{!isError && (
+				<List
 					sx={{
-						color: '#000',
-						fontSize: '1rem',
-						fontWeight: 'bold',
-						lineHeight: '24px',
-						marginTop: 1,
-						marginBottom: 1,
+						maxWidth: 350,
+						marginRight: 2,
+						marginLeft: 2,
+						maxHeight: '450px',
+						overflow: 'auto',
+						paddingTop: 0,
 					}}
 				>
-					Модифицирующие добавки
-				</ListSubheader>
-				<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
+					<ListSubheader
+						sx={{
+							color: '#000',
+							fontSize: '1rem',
+							fontWeight: 'bold',
+							lineHeight: '24px',
+							marginTop: 1,
+							marginBottom: 1,
+						}}
+					>
+						Модифицирующие добавки
+					</ListSubheader>
+					<Divider sx={{ marginBottom: 1, marginRight: 1, marginLeft: 1 }} />
 
-				<ListItemButton
-					selected={modifying == null}
-					onClick={selectMaterial}
-					data-index={-1}
-					sx={{ borderRadius: '12px' }}
-				>
-					Без добавок
-				</ListItemButton>
-
-				{data?.data.modifying.map((r, i) => (
 					<ListItemButton
-						key={r.id}
-						selected={modifying == r.code}
+						selected={modifying == null}
 						onClick={selectMaterial}
-						onMouseEnter={hoverHandler}
-						onMouseLeave={leaveHandler}
-						data-index={i}
+						data-index={-1}
 						sx={{ borderRadius: '12px' }}
 					>
-						{r.code} - {r.title}
+						Без добавок
 					</ListItemButton>
-				))}
-			</List>
+
+					{data?.data.modifying.map((r, i) => (
+						<ListItemButton
+							key={r.id}
+							selected={modifying == r.code}
+							onClick={selectMaterial}
+							onMouseEnter={hoverHandler}
+							onMouseLeave={leaveHandler}
+							data-index={i}
+							sx={{ borderRadius: '12px' }}
+						>
+							{r.code} - {r.title}
+						</ListItemButton>
+					))}
+				</List>
+			)}
 
 			{selected && <RingTooltip open={open} anchor={anchor.current} description={selected?.description} />}
 		</Step>

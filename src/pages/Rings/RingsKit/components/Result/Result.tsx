@@ -1,19 +1,17 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { useGetMaterialsQuery, useGetModifyingQuery, useGetRingSingleQuery } from '@/store/api/rings'
+import { useGetMaterialsQuery, useGetModifyingQuery, useGetRingsKitQuery } from '@/store/api/rings'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
-import { clearRing, setAmount, setDrawing, setInfo } from '@/store/rings/ring'
+import { setAmount, setInfo } from '@/store/rings/kit'
 import { clearActive, toggle } from '@/store/card'
 import type { Position } from '@/types/card'
-import type { IRingConstruction, IRingDensity } from '@/types/rings'
 import { Loader } from '@/components/Loader/Loader'
 import { Image } from '@/pages/Gasket/gasket.style'
 import { Input } from '@/components/Input/input.style'
 import { Alert, PositionAlert } from '@/components/PositionAlert/PositionAlert'
 
 export const Result = () => {
-	const [image, setImage] = useState('')
 	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', method: 'create', open: false })
 
 	const role = useAppSelector(state => state.user.roleCode)
@@ -22,32 +20,32 @@ export const Result = () => {
 	const orderId = useAppSelector(state => state.card.orderId)
 	const cardIndex = useAppSelector(state => state.card.activePosition?.index)
 
-	const amount = useAppSelector(state => state.ring.amount)
-	const info = useAppSelector(state => state.ring.info)
+	const amount = useAppSelector(state => state.kit.amount)
+	const info = useAppSelector(state => state.kit.info)
 
-	const ringType = useAppSelector(state => state.ring.ringType)
-	const construction = useAppSelector(state => state.ring.construction)
-	const density = useAppSelector(state => state.ring.density)
+	const type = useAppSelector(state => state.kit.type)
+	const construction = useAppSelector(state => state.kit.construction)
 
-	const sizes = useAppSelector(state => state.ring.sizes)
-	const thickness = useAppSelector(state => state.ring.thickness)
+	const sizes = useAppSelector(state => state.kit.sizes)
+	const thickness = useAppSelector(state => state.kit.thickness)
 
-	const material = useAppSelector(state => state.ring.material)
-	const modifying = useAppSelector(state => state.ring.modifying)
-	const drawing = useAppSelector(state => state.ring.drawing)
+	const materials = useAppSelector(state => state.kit.materials)
+	const modifying = useAppSelector(state => state.kit.modifying)
+	const drawing = useAppSelector(state => state.kit.drawing)
 
-	const typeStep = useAppSelector(state => state.ring.typeStep)
-	const sizeStep = useAppSelector(state => state.ring.sizeStep)
-	const materialStep = useAppSelector(state => state.ring.materialStep)
+	const typeStep = useAppSelector(state => state.kit.typeStep)
+	const sizeStep = useAppSelector(state => state.kit.sizeStep)
+	const materialStep = useAppSelector(state => state.kit.materialStep)
 
 	const dispatch = useAppDispatch()
 
 	const [create, { error: createError, isLoading }] = useCreatePositionMutation()
 	const [update, { error: updateError, isLoading: isLoadingUpdate }] = useUpdatePositionMutation()
 
-	const { data: rings } = useGetRingSingleQuery(null)
-	const { data: materials } = useGetMaterialsQuery(ringType?.materialType || '', { skip: !ringType?.materialType })
-	const { data: mods } = useGetModifyingQuery(null)
+	//TODO обработать ошибки
+	const { data: kit } = useGetRingsKitQuery(null)
+	// const { data: materials } = useGetMaterialsQuery(ringType?.materialType || '', { skip: !ringType?.materialType })
+	// const { data: mods } = useGetModifyingQuery(null)
 
 	useEffect(() => {
 		//TODO стоит наверное разделить это на 2 части
@@ -60,16 +58,16 @@ export const Result = () => {
 			})
 	}, [createError, updateError])
 
-	useEffect(() => {
-		if (ringType?.hasRotaryPlug && construction) {
-			const c = rings?.data.constructionsMap[ringType.id].constructions.find(c => construction.code == c.code)
-			setImage(c?.image || '')
-		} else {
-			setImage(ringType?.image || '')
-		}
-	}, [ringType, construction])
+	// useEffect(() => {
+	// 	if (ringType?.hasRotaryPlug && construction) {
+	// 		const c = rings?.data.constructionsMap[ringType.id].constructions.find(c => construction.code == c.code)
+	// 		setImage(c?.image || '')
+	// 	} else {
+	// 		setImage(ringType?.image || '')
+	// 	}
+	// }, [ringType, construction])
 
-	if (!ringType?.code)
+	if (!type)
 		return (
 			<Box
 				width={'100%'}
@@ -84,66 +82,66 @@ export const Result = () => {
 		)
 
 	const savePosition = async () => {
-		if (!sizes || !material) return
+		if (!sizes || !materials) return
 
-		let title = 'Кольцо '
-		title += ringType?.hasRotaryPlug ? construction?.code + '-' : ''
-		title += ringType?.code
-		title += ringType?.hasDensity ? '-' + density?.code : ''
+		// let title = 'Кольцо '
+		// title += ringType?.hasRotaryPlug ? construction?.code + '-' : ''
+		// title += ringType?.code
+		// title += ringType?.hasDensity ? '-' + density?.code : ''
 
-		title += '-' + sizes
-		title += ringType?.hasThickness ? '×' + thickness : ''
+		// title += '-' + sizes
+		// title += ringType?.hasThickness ? '×' + thickness : ''
 
-		title += '-' + material
-		title += modifying ? '-' + modifying : ''
+		// title += '-' + material
+		// title += modifying ? '-' + modifying : ''
 
-		title += drawing ? ' (черт.)' : ''
-		title += ' ТУ 5728-001-93978201-2008'
+		// title += drawing ? ' (черт.)' : ''
+		// title += ' ТУ 5728-001-93978201-2008'
 
-		const position: Position = {
-			id: Date.now().toString() + (positions.length + 1),
-			orderId: orderId,
-			count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
-			title: title,
-			amount: amount,
-			info: info,
-			type: 'Ring',
-			ringData: {
-				// typeId: ringType.id,
-				// typeCode: ringType.code,
-				// densityId: density.id,
-				// densityCode: density.code,
-				// constructionCode: construction.code,
-				// constructionWRP: construction.withoutRotaryPlug || false,
-				// constructionBaseCode: construction.baseCode,
-				ringType,
-				density: density || ({ id: '', code: '' } as IRingDensity),
-				construction:
-					construction || ({ code: '', baseCode: '', withoutRotaryPlug: false } as IRingConstruction),
-				size: sizes,
-				thickness: thickness || '',
-				material: material,
-				modifying: modifying || '',
-				drawing: drawing?.link || '',
-			},
-		}
+		// const position: Position = {
+		// 	id: Date.now().toString() + (positions.length + 1),
+		// 	orderId: orderId,
+		// 	count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
+		// 	title: title,
+		// 	amount: amount,
+		// 	info: info,
+		// 	type: 'Ring',
+		// 	ringData: {
+		// 		// typeId: ringType.id,
+		// 		// typeCode: ringType.code,
+		// 		// densityId: density.id,
+		// 		// densityCode: density.code,
+		// 		// constructionCode: construction.code,
+		// 		// constructionWRP: construction.withoutRotaryPlug || false,
+		// 		// constructionBaseCode: construction.baseCode,
+		// 		ringType,
+		// 		density: density || ({ id: '', code: '' } as IRingDensity),
+		// 		construction:
+		// 			construction || ({ code: '', baseCode: '', withoutRotaryPlug: false } as IRingConstruction),
+		// 		size: sizes,
+		// 		thickness: thickness || '',
+		// 		material: material,
+		// 		modifying: modifying || '',
+		// 		drawing: drawing?.link || '',
+		// 	},
+		// }
 
-		try {
-			if (cardIndex !== undefined) {
-				position.id = positions[cardIndex].id
-				position.count = positions[cardIndex].count
-				await update(position).unwrap()
-				dispatch(clearRing())
-				dispatch(clearActive())
-			} else {
-				await create(position).unwrap()
-			}
-			dispatch(setDrawing(null))
-		} catch (error) {
-			return
-		}
+		// try {
+		// 	if (cardIndex !== undefined) {
+		// 		position.id = positions[cardIndex].id
+		// 		position.count = positions[cardIndex].count
+		// 		await update(position).unwrap()
+		// 		dispatch(clearRing())
+		// 		dispatch(clearActive())
+		// 	} else {
+		// 		await create(position).unwrap()
+		// 	}
+		// 	dispatch(setDrawing(null))
+		// } catch (error) {
+		// 	return
+		// }
 
-		setAlert({ type: 'success', message: '', method: cardIndex !== undefined ? 'update' : 'create', open: true })
+		// setAlert({ type: 'success', message: '', method: cardIndex !== undefined ? 'update' : 'create', open: true })
 	}
 
 	const closeHandler = () => {
@@ -164,31 +162,31 @@ export const Result = () => {
 	}
 
 	const cancelHandler = () => {
-		dispatch(clearRing())
+		// dispatch(clearRing())
 		dispatch(clearActive())
 	}
 
 	const renderDescription = () => {
-		let designation = ringType.designation || ''
+		let designation = kit?.data.ringsKitTypes.find(t => t.code == type)?.title || ''
 
-		if (ringType?.hasRotaryPlug) {
-			const c = rings?.data.constructionsMap[ringType.id].constructions.find(c => construction?.code == c.code)
-			designation = designation.replace('@construction', c?.title || '')
-		}
+		// if (ringType?.hasRotaryPlug) {
+		// 	const c = rings?.data.constructionsMap[ringType.id].constructions.find(c => construction?.code == c.code)
+		// 	designation = designation.replace('@construction', c?.title || '')
+		// }
 
-		designation = designation.replace('@density', density?.code || '')
-		designation = designation.replace(
-			'@sizes',
-			`${sizes}${Boolean(thickness) && thickness != '0' ? '×' + thickness : ''}`
-		)
+		// designation = designation.replace('@density', density?.code || '')
+		// designation = designation.replace(
+		// 	'@sizes',
+		// 	`${sizes}${Boolean(thickness) && thickness != '0' ? '×' + thickness : ''}`
+		// )
 
-		const m = materials?.data.materials.find(m => m.title == material)
-		designation = designation.replace('@material', m?.designation || '')
+		// const m = materials?.data.materials.find(m => m.title == material)
+		// designation = designation.replace('@material', m?.designation || '')
 
-		if (modifying) {
-			const m = mods?.data.modifying.find(m => m.code == modifying)
-			designation += `, ${m?.designation}`
-		}
+		// if (modifying) {
+		// 	const m = mods?.data.modifying.find(m => m.code == modifying)
+		// 	designation += `, ${m?.designation}`
+		// }
 
 		return designation
 	}
@@ -209,9 +207,11 @@ export const Result = () => {
 			<PositionAlert alert={alert} onClose={closeHandler} />
 
 			<Stack direction={'row'} spacing={2} mb={2}>
-				<Box maxWidth={150} width={'100%'}>
-					{ringType?.image && <Image src={image} alt={ringType?.code} />}
-				</Box>
+				{construction?.image && (
+					<Box maxWidth={150} width={'100%'}>
+						<Image src={construction.image} alt={construction?.code} />
+					</Box>
+				)}
 				<Box>
 					<Typography fontWeight={'bold'}>Описание:</Typography>
 					<Typography textAlign='justify'>{renderDescription()}</Typography>

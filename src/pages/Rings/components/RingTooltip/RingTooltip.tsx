@@ -57,13 +57,13 @@ export const RingTooltip: FC<Props> = ({ open, anchor, image, imageMaxWidth, des
 					</Box>
 				)}
 				{description && (
-					<Box>
+					<Stack spacing={1}>
 						{description.split('\\n').map((d, i) => (
-							<Typography key={i} align='justify' mb={1} sx={{ textIndent: hasIndent ? '12px' : 0 }}>
+							<Typography key={i} align='justify' sx={{ textIndent: hasIndent ? '12px' : 0 }}>
 								{d}
 							</Typography>
 						))}
-					</Box>
+					</Stack>
 				)}
 			</Stack>
 		</Popover>

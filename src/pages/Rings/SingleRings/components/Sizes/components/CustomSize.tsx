@@ -112,6 +112,7 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 					name='ring_d3'
 					label='Нар. диаметр, мм'
 					size='small'
+					autoFocus
 					// tabIndex={1}
 					error={sizeError}
 					helperText={sizeError && 'Нар. диаметр должен быть > Вн. диаметра'}
