@@ -39,6 +39,8 @@ export const Count = () => {
 	}, [count])
 
 	useEffect(() => {
+		if (end == '') return
+
 		const c = construction?.defaultCount.split('×').length || 1
 		dispatch(setCount(`${end || 0}${c > 2 ? `×${mar || 0}` : ''}${c > 1 ? `×${base || 0}` : ''}`))
 	}, [base, mar, end])
@@ -92,8 +94,6 @@ export const Count = () => {
 							label={titles[0]}
 							autoFocus
 							size='small'
-							// error={sizeError}
-							// helperText={sizeError && 'Нар. диаметр должен быть > Вн. диаметра'}
 						/>
 						{(construction?.defaultCount.split('×').length || 1) > 2 && (
 							<>
@@ -117,8 +117,6 @@ export const Count = () => {
 							name='base_rings'
 							label={titles[2]}
 							size='small'
-							// error={sizeError}
-							// helperText={sizeError && 'Нар. диаметр должен быть > Вн. диаметра'}
 						/>
 					</>
 				) : (
@@ -130,8 +128,6 @@ export const Count = () => {
 						label={titles[2]}
 						size='small'
 						autoFocus
-						// error={sizeError}
-						// helperText={sizeError && 'Нар. диаметр должен быть > Вн. диаметра'}
 					/>
 				)}
 			</Stack>

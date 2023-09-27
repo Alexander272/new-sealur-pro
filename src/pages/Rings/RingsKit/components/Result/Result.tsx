@@ -25,6 +25,7 @@ export const Result = () => {
 
 	const type = useAppSelector(state => state.kit.type)
 	const construction = useAppSelector(state => state.kit.construction)
+	const count = useAppSelector(state => state.kit.count)
 
 	const sizes = useAppSelector(state => state.kit.sizes)
 	const thickness = useAppSelector(state => state.kit.thickness)
@@ -42,10 +43,8 @@ export const Result = () => {
 	const [create, { error: createError, isLoading }] = useCreatePositionMutation()
 	const [update, { error: updateError, isLoading: isLoadingUpdate }] = useUpdatePositionMutation()
 
-	//TODO обработать ошибки
 	const { data: kit } = useGetRingsKitQuery(null)
-	// const { data: materials } = useGetMaterialsQuery(ringType?.materialType || '', { skip: !ringType?.materialType })
-	// const { data: mods } = useGetModifyingQuery(null)
+	const { data: mods } = useGetModifyingQuery(null)
 
 	useEffect(() => {
 		//TODO стоит наверное разделить это на 2 части
@@ -57,15 +56,6 @@ export const Result = () => {
 				open: true,
 			})
 	}, [createError, updateError])
-
-	// useEffect(() => {
-	// 	if (ringType?.hasRotaryPlug && construction) {
-	// 		const c = rings?.data.constructionsMap[ringType.id].constructions.find(c => construction.code == c.code)
-	// 		setImage(c?.image || '')
-	// 	} else {
-	// 		setImage(ringType?.image || '')
-	// 	}
-	// }, [ringType, construction])
 
 	if (!type)
 		return (
@@ -169,24 +159,15 @@ export const Result = () => {
 	const renderDescription = () => {
 		let designation = kit?.data.ringsKitTypes.find(t => t.code == type)?.title || ''
 
-		// if (ringType?.hasRotaryPlug) {
-		// 	const c = rings?.data.constructionsMap[ringType.id].constructions.find(c => construction?.code == c.code)
-		// 	designation = designation.replace('@construction', c?.title || '')
-		// }
+		designation += ` ${type}-${construction?.code}-${count},`
 
-		// designation = designation.replace('@density', density?.code || '')
-		// designation = designation.replace(
-		// 	'@sizes',
-		// 	`${sizes}${Boolean(thickness) && thickness != '0' ? '×' + thickness : ''}`
-		// )
+		designation += sizes ? ` размером ${sizes} мм` : ''
+		if (construction?.hasThickness) designation += thickness ? `, высота комплекта ${thickness} мм` : ''
 
-		// const m = materials?.data.materials.find(m => m.title == material)
-		// designation = designation.replace('@material', m?.designation || '')
-
-		// if (modifying) {
-		// 	const m = mods?.data.modifying.find(m => m.code == modifying)
-		// 	designation += `, ${m?.designation}`
-		// }
+		if (modifying) {
+			const m = mods?.data.modifying.find(m => m.code == modifying)
+			designation += `, ${m?.designation}`
+		}
 
 		return designation
 	}

@@ -243,13 +243,17 @@ export const Design: FC<Props> = () => {
 							)}
 						</Stack> */}
 
-						{role != 'manager' ? (
-							drawing ? (
-								<FileDownload text={drawing.origName} link={drawing.link} onDelete={deleteFile} />
-							) : (
-								<FileInput name='drawing' id='file' label={'Прикрепить чертеж'} onChange={uploadFile} />
-							)
-						) : null}
+						{drawing ? (
+							<FileDownload text={drawing.origName} link={drawing.link} onDelete={deleteFile} />
+						) : (
+							<FileInput
+								name='drawing'
+								id='file'
+								label={'Прикрепить чертеж'}
+								disabled={role != 'user'}
+								onChange={uploadFile}
+							/>
+						)}
 					</>
 				) : null}
 

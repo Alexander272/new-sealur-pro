@@ -1,4 +1,5 @@
-import styled from 'styled-components'
+// import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 export const Field = styled.div`
 	position: relative;
@@ -16,7 +17,10 @@ export const Input = styled.input`
 	z-index: -1;
 `
 
-export const Label = styled.label`
+type LabelProps = {
+	disabled?: boolean
+}
+export const Label = styled.label<LabelProps>`
 	font-family: var(--body-font);
 	letter-spacing: 1px;
 	flex-grow: 1;
@@ -31,11 +35,13 @@ export const Label = styled.label`
 	padding: 6px 30px;
 	outline: none;
 	transition: all 0.3s ease-in-out;
-	color: #000;
+	color: ${props => (props.disabled ? '#626262' : '#000')};
 	border: 2px solid rgba(7, 55, 177, 0.5);
+	border-color: ${props => props.disabled && '#707172ad'};
 
 	&:hover {
 		border-color: rgba(7, 55, 177, 1);
+		border-color: ${props => props.disabled && '#707172ad'};
 	}
 `
 

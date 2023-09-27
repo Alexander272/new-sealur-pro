@@ -23,6 +23,8 @@ export const Sizes = () => {
 	const d2Ref = useRef<HTMLInputElement | null>(null)
 	const hRef = useRef<HTMLInputElement | null>(null)
 
+	const listRef = useRef<HTMLUListElement>(null)
+
 	const D3 = useDebounce(d3, 500)
 	const D2 = useDebounce(d2, 500)
 	const thick = useDebounce(h, 500)
@@ -41,8 +43,9 @@ export const Sizes = () => {
 	}, [thickness])
 
 	useEffect(() => {
-		dispatch(setSize(`${D3 || '00'}×${D2 || '00'}`))
+		if (D3 == '' || D2 == '') return
 
+		dispatch(setSize(`${D3 || '00'}×${D2 || '00'}`))
 		if (construction?.hasThickness && thick != '') {
 			dispatch(setThickness(thick))
 		}
@@ -56,6 +59,16 @@ export const Sizes = () => {
 			dispatch(setStep({ step: 'sizeStep', complete: false }))
 		}
 	}, [D3, D2, thick])
+
+	useEffect(() => {
+		let idx = data?.data?.sizes?.findIndex(s => s.outer == +d3)
+
+		if (idx == -1) idx = data?.data?.sizes?.findIndex(s => s.outer >= +d3 - 3)
+		if (idx == undefined || idx == -1) return
+
+		const child = listRef.current?.children[idx]
+		listRef.current?.scroll({ top: (child as HTMLLIElement).offsetTop, behavior: 'smooth' })
+	}, [d3])
 
 	const toggleHandler = () => dispatch(toggleActiveStep('sizeStep'))
 
@@ -111,6 +124,8 @@ export const Sizes = () => {
 		}
 	}
 
+	const closeStep = () => dispatch(toggleActiveStep('sizeStep'))
+
 	return (
 		<Step
 			label={(size || '00×00') + (!construction?.hasThickness ? '' : '×' + (thickness || '0'))}
@@ -118,7 +133,7 @@ export const Sizes = () => {
 			disabled={isLoading}
 			toggle={toggleHandler}
 		>
-			<Stack spacing={2} m={1}>
+			<Stack spacing={1} m={1}>
 				<Stack direction={'row'} spacing={1} maxWidth={'550px'} width={'100%'}>
 					<Input
 						value={d3}
@@ -169,21 +184,27 @@ export const Sizes = () => {
 				)}
 
 				{data?.data?.sizes?.length ? (
-					<List sx={{ maxHeight: 400, overflow: 'auto' }}>
-						{data.data.sizes
-							.filter(s => d3 == '' || s.outer.toString().includes(d3))
-							.map(s => (
-								<ListItemButton
-									key={s.id}
-									sx={{ borderRadius: '12px' }}
-									data-size={`${s.outer}×${s.inner}×${s.thickness}`}
-									selected={`${s.outer}×${s.inner}×${s.thickness}` == `${d3}×${d2}×${h}`}
-									onClick={selectSizeHandler}
-								>
-									{s.outer}×{s.inner}×{s.thickness}
-								</ListItemButton>
-							))}
-					</List>
+					<>
+						<Typography maxWidth={'550px'} align='justify' paddingX={2} paddingTop={1}>
+							Стандартные размеры
+						</Typography>
+						<List ref={listRef} sx={{ maxHeight: 400, overflow: 'auto' }}>
+							{data.data.sizes
+								// .filter(s => d3 == '' || s.outer.toString().includes(d3))
+								.map(s => (
+									<ListItemButton
+										key={s.id}
+										sx={{ borderRadius: '12px' }}
+										data-size={`${s.outer}×${s.inner}×${s.thickness}`}
+										selected={`${s.outer}×${s.inner}×${s.thickness}` == `${d3}×${d2}×${h}`}
+										onClick={selectSizeHandler}
+										onDoubleClick={closeStep}
+									>
+										{s.outer}×{s.inner}×{s.thickness}
+									</ListItemButton>
+								))}
+						</List>
+					</>
 				) : null}
 			</Stack>
 		</Step>
