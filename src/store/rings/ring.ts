@@ -195,6 +195,10 @@ export const ringSlice = createSlice({
 			state.material = action.payload.ringData.material
 			state.modifying = action.payload.ringData.modifying || null
 
+			state.materialStep.complete = true
+			state.materialStep.active = false
+			state.materialStep.error = false
+
 			if (action.payload.ringData.drawing) {
 				const parts = action.payload.ringData.drawing.split('/')
 				const drawing: IDrawing = {

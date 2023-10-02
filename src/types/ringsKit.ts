@@ -10,6 +10,27 @@ export interface IRingsKit {
 	}
 }
 
+export interface IKitData {
+	amount: string
+	info?: string
+	kitData: IRingsKitData
+}
+
+export interface IRingsKitData {
+	typeId: string
+	type: string
+	construction: IKitConstructions
+	count: string
+
+	size: string
+	thickness: string
+
+	material: string
+	modifying?: string
+
+	drawing?: string
+}
+
 export interface IKitType {
 	id: string
 	title: string

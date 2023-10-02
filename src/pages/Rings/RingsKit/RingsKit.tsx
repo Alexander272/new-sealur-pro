@@ -39,7 +39,7 @@ export default function RingsKit() {
 				</Stack>
 
 				<Stack width={'35%'}>
-					<Design title='' />
+					<Design title='Если кольца в комплекте не прямоугольного сечения (например, конусные), прикрепите чертеж.' />
 				</Stack>
 			</Stack>
 		</>

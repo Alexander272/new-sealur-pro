@@ -1,15 +1,15 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { useGetMaterialsQuery, useGetModifyingQuery, useGetRingsKitQuery } from '@/store/api/rings'
+import { useGetModifyingQuery, useGetRingsKitQuery } from '@/store/api/rings'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/store/api/order'
-import { setAmount, setInfo } from '@/store/rings/kit'
+import { clearKit, setAmount, setDrawing, setInfo } from '@/store/rings/kit'
 import { clearActive, toggle } from '@/store/card'
 import type { Position } from '@/types/card'
+import { Alert, PositionAlert } from '@/components/PositionAlert/PositionAlert'
 import { Loader } from '@/components/Loader/Loader'
 import { Image } from '@/pages/Gasket/gasket.style'
 import { Input } from '@/components/Input/input.style'
-import { Alert, PositionAlert } from '@/components/PositionAlert/PositionAlert'
 
 export const Result = () => {
 	const [alert, setAlert] = useState<Alert>({ type: 'success', message: '', method: 'create', open: false })
@@ -23,6 +23,7 @@ export const Result = () => {
 	const amount = useAppSelector(state => state.kit.amount)
 	const info = useAppSelector(state => state.kit.info)
 
+	const typeId = useAppSelector(state => state.kit.typeId)
 	const type = useAppSelector(state => state.kit.type)
 	const construction = useAppSelector(state => state.kit.construction)
 	const count = useAppSelector(state => state.kit.count)
@@ -63,8 +64,6 @@ export const Result = () => {
 				width={'100%'}
 				maxWidth={850}
 				mb={2}
-				// ml={'auto'}
-				// mr={'auto'}
 				padding={'12px 20px'}
 				borderRadius={'12px'}
 				boxShadow={'0px 0px 4px 0px #2626262b'}
@@ -72,66 +71,59 @@ export const Result = () => {
 		)
 
 	const savePosition = async () => {
-		if (!sizes || !materials) return
+		if (!construction || !sizes || !materials) return
 
-		// let title = 'Кольцо '
-		// title += ringType?.hasRotaryPlug ? construction?.code + '-' : ''
-		// title += ringType?.code
-		// title += ringType?.hasDensity ? '-' + density?.code : ''
+		let title = 'Комплект '
+		title += type
+		title += '-' + construction?.code
+		title += '-' + count
 
-		// title += '-' + sizes
-		// title += ringType?.hasThickness ? '×' + thickness : ''
+		title += '-' + sizes
+		title += construction?.hasThickness ? '×' + thickness : ''
 
-		// title += '-' + material
-		// title += modifying ? '-' + modifying : ''
+		title += '-' + materials
+		title += modifying ? '-' + modifying : ''
 
-		// title += drawing ? ' (черт.)' : ''
-		// title += ' ТУ 5728-001-93978201-2008'
+		title += drawing ? ' (черт.)' : ''
+		title += ' ТУ 5728-001-93978201-2008'
 
-		// const position: Position = {
-		// 	id: Date.now().toString() + (positions.length + 1),
-		// 	orderId: orderId,
-		// 	count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
-		// 	title: title,
-		// 	amount: amount,
-		// 	info: info,
-		// 	type: 'Ring',
-		// 	ringData: {
-		// 		// typeId: ringType.id,
-		// 		// typeCode: ringType.code,
-		// 		// densityId: density.id,
-		// 		// densityCode: density.code,
-		// 		// constructionCode: construction.code,
-		// 		// constructionWRP: construction.withoutRotaryPlug || false,
-		// 		// constructionBaseCode: construction.baseCode,
-		// 		ringType,
-		// 		density: density || ({ id: '', code: '' } as IRingDensity),
-		// 		construction:
-		// 			construction || ({ code: '', baseCode: '', withoutRotaryPlug: false } as IRingConstruction),
-		// 		size: sizes,
-		// 		thickness: thickness || '',
-		// 		material: material,
-		// 		modifying: modifying || '',
-		// 		drawing: drawing?.link || '',
-		// 	},
-		// }
+		const position: Position = {
+			id: Date.now().toString() + (positions.length + 1),
+			orderId: orderId,
+			count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
+			title: title,
+			amount: amount,
+			info: info,
+			type: 'RingsKit',
+			kitData: {
+				typeId: typeId,
+				type: type,
+				construction: construction,
+				count: count,
+				size: sizes,
+				thickness: thickness || '',
+				material: materials,
+				modifying: modifying || '',
+				drawing: drawing?.link || '',
+			},
+		}
 
-		// try {
-		// 	if (cardIndex !== undefined) {
-		// 		position.id = positions[cardIndex].id
-		// 		position.count = positions[cardIndex].count
-		// 		await update(position).unwrap()
-		// 		dispatch(clearRing())
-		// 		dispatch(clearActive())
-		// 	} else {
-		// 		await create(position).unwrap()
-		// 	}
-		// 	dispatch(setDrawing(null))
-		// } catch (error) {
-		// 	return
-		// }
+		try {
+			if (cardIndex !== undefined) {
+				position.id = positions[cardIndex].id
+				position.count = positions[cardIndex].count
+				await update(position).unwrap()
+				dispatch(clearKit())
+				dispatch(clearActive())
+			} else {
+				await create(position).unwrap()
+			}
+			dispatch(setDrawing(null))
+		} catch (error) {
+			return
+		}
 
-		// setAlert({ type: 'success', message: '', method: cardIndex !== undefined ? 'update' : 'create', open: true })
+		setAlert({ type: 'success', message: '', method: cardIndex !== undefined ? 'update' : 'create', open: true })
 	}
 
 	const closeHandler = () => {
@@ -152,7 +144,7 @@ export const Result = () => {
 	}
 
 	const cancelHandler = () => {
-		// dispatch(clearRing())
+		dispatch(clearKit())
 		dispatch(clearActive())
 	}
 
@@ -177,8 +169,6 @@ export const Result = () => {
 			width={'100%'}
 			maxWidth={850}
 			mb={2}
-			// ml={'auto'}
-			// mr={'auto'}
 			padding={'12px 20px'}
 			borderRadius={'12px'}
 			boxShadow={'0px 0px 4px 0px #2626262b'}

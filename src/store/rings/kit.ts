@@ -1,5 +1,5 @@
 import type { IDrawing } from '@/types/drawing'
-import type { IStep, IKitConstructions, Steps, IKitType } from '@/types/ringsKit'
+import type { IStep, IKitConstructions, Steps, IKitType, IRingsKit, IKitData } from '@/types/ringsKit'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 type KitState = {
@@ -174,6 +174,57 @@ export const kitSlice = createSlice({
 		setAmount: (state, action: PayloadAction<string>) => {
 			state.amount = action.payload
 		},
+
+		// выбор кольца (для редактирования)
+		setKit: (state, action: PayloadAction<IKitData>) => {
+			state.type = action.payload.kitData.type
+			state.typeId = action.payload.kitData.typeId
+			state.construction = action.payload.kitData.construction
+			state.count = action.payload.kitData.count
+
+			state.typeStep.complete = true
+			state.typeStep.active = false
+			state.typeStep.error = false
+
+			state.countStep.complete = true
+			state.countStep.active = false
+			state.countStep.error = false
+
+			state.sizes = action.payload.kitData.size
+			state.thickness = action.payload.kitData.thickness
+
+			state.sizeStep.complete = true
+			state.sizeStep.active = false
+			state.sizeStep.error = false
+
+			state.materials = action.payload.kitData.material
+			state.modifying = action.payload.kitData.modifying || null
+
+			state.materialStep.complete = true
+			state.materialStep.active = false
+			state.materialStep.error = false
+
+			if (action.payload.kitData.drawing) {
+				const parts = action.payload.kitData.drawing.split('/')
+				const drawing: IDrawing = {
+					id: parts[parts.length - 2],
+					name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
+					origName: parts[parts.length - 1],
+					link: action.payload.kitData.drawing,
+					group: parts[parts.length - 3],
+				}
+				state.drawing = drawing
+			} else {
+				state.drawing = null
+			}
+
+			state.info = action.payload.info || ''
+			state.amount = action.payload.amount
+		},
+		// сброс выбранной позиции
+		clearKit: state => {
+			state.drawing = null
+		},
 	},
 })
 
@@ -190,6 +241,8 @@ export const {
 	setDrawing,
 	setInfo,
 	setAmount,
+	setKit,
+	clearKit,
 } = kitSlice.actions
 
 export default kitSlice.reducer

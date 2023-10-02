@@ -39,9 +39,9 @@ export const Count = () => {
 	}, [count])
 
 	useEffect(() => {
-		if (end == '') return
+		if (end == '' || !construction?.defaultCount) return
 
-		const c = construction?.defaultCount.split('×').length || 1
+		const c = construction?.defaultCount?.split('×').length || 1
 		dispatch(setCount(`${end || 0}${c > 2 ? `×${mar || 0}` : ''}${c > 1 ? `×${base || 0}` : ''}`))
 	}, [base, mar, end])
 
@@ -95,7 +95,7 @@ export const Count = () => {
 							autoFocus
 							size='small'
 						/>
-						{(construction?.defaultCount.split('×').length || 1) > 2 && (
+						{(construction?.defaultCount?.split('×').length || count.split('×').length) > 2 && (
 							<>
 								<Typography pt={1}>×</Typography>
 								<Input

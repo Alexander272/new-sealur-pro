@@ -111,6 +111,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 				<Button
 					type='submit'
 					variant='contained'
+					disabled={loading}
 					sx={{ borderRadius: '20px', fontSize: '1rem', fontWeight: 600, marginTop: 3 }}
 				>
 					Войти

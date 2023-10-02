@@ -1,5 +1,6 @@
 import { IDesignBlockPutg, IMainBlockPutg, IMaterialBlockPutg, ISizeBlockPutg } from './putg'
 import { IRingConstruction, IRingDensity, IRingType } from './rings'
+import { IRingsKitData } from './ringsKit'
 import { IDesignBlockSnp, IMainSnp, IMaterialBlockSnp, ISizeBlockSnp } from './snp'
 
 export type SnpType = 'Snp'
@@ -61,10 +62,17 @@ export type PositionRing = PositionBase<
 	}
 >
 
-export type Position = PositionSnp | PositionPutg | PositionRing
+export type PositionKit = PositionBase<
+	RingsKitType,
+	{
+		kitData: IRingsKitData
+	}
+>
+
+export type Position = PositionSnp | PositionPutg | PositionRing | PositionKit
 
 export interface IActivePosition {
 	index: number
 	id: string
-	type: SnpType | PutgType | RingType
+	type: SnpType | PutgType | RingType | RingsKitType
 }

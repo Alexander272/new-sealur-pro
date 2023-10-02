@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { useDebounce } from '@/hooks/debounce'
 import { clearSnp, setSnp } from '@/store/gaskets/snp'
 import { clearPutg, setPutg } from '@/store/gaskets/putg'
-import { setRing } from '@/store/rings/ring'
+import { clearRing, setRing } from '@/store/rings/ring'
 import { clearActive, setActive, setInfo, setOrder, toggle } from '@/store/card'
 import {
 	useDeletePositionMutation,
@@ -15,10 +15,12 @@ import {
 } from '@/store/api/order'
 import { sendMetric } from '@/services/metrics'
 import type { IRingData } from '@/types/rings'
-import { PutgRoute, RingRoute, SnpRoute } from '@/routes'
+import { PutgRoute, RingRoute, RingsKitRoute, SnpRoute } from '@/routes'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
 import { Container, Item, Position, Positions } from './card.style'
+import { clearKit, setKit } from '@/store/rings/kit'
+import { IKitData } from '@/types/ringsKit'
 
 type Props = {}
 
@@ -85,6 +87,8 @@ const Card: FC<Props> = () => {
 
 		dispatch(clearSnp())
 		dispatch(clearPutg())
+		dispatch(clearRing())
+		dispatch(clearKit())
 		// }
 	}
 
@@ -122,6 +126,16 @@ const Card: FC<Props> = () => {
 
 			dispatch(setRing(ring))
 			navigate(RingRoute)
+		}
+		if (position.type == 'RingsKit') {
+			const kit: IKitData = {
+				amount: position.amount,
+				info: position.info,
+				kitData: position.kitData,
+			}
+
+			dispatch(setKit(kit))
+			navigate(RingsKitRoute)
 		}
 	}
 
