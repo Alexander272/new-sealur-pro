@@ -179,7 +179,7 @@ export const Result = () => {
 
 			<Stack direction={'row'} spacing={2} mb={2}>
 				{construction?.image && (
-					<Box maxWidth={150} width={'100%'}>
+					<Box maxWidth={150} width={'100%'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
 						<Image src={construction.image} alt={construction?.code} />
 					</Box>
 				)}

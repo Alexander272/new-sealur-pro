@@ -1,12 +1,17 @@
 export interface IAnalytics {
 	ordersCount: number
+	companyCount: number
 	usersCountRegister: number
 	userCountLink: number
 	userCount: number
 	positionCount: number
-	snpPositionCount: number
-	newUserCount: number
-	newUserCountLink: number
+	snpPositionCount?: number
+	putgPositionCount?: number
+	ringPositionCount?: number
+	kitPositionCount?: number
+	newCompanyCount?: number
+	newUserCount?: number
+	newUserCountLink?: number
 	orders?: IAnalyticOrder[]
 }
 
@@ -21,7 +26,10 @@ export interface IAnalyticClient {
 	name: string
 	ordersCount: number
 	positionCount: number
-	snpPositionCount: number
+	snpPositionCount?: number
+	putgPositionCount?: number
+	ringPositionCount?: number
+	kitPositionCount?: number
 }
 
 export interface IUserParams {
@@ -81,13 +89,24 @@ export interface IOrderCount {
 	id: string
 	name: string
 	company: string
+
 	orderCount: number
-	snpOrderCount?: number
-	putgOrderCount?: number
 	positionCount: number
-	snpPositionCount?: number
-	putgPositionCount?: number
 	averagePosition: number
+
+	snpOrderCount?: number
+	snpPositionCount?: number
 	averageSnpPosition?: number
+
+	putgOrderCount?: number
+	putgPositionCount?: number
 	averagePutgPosition?: number
+
+	ringOrderCount?: number
+	ringPositionCount?: number
+	averageRingPosition?: number
+
+	kitOrderCount?: number
+	kitPositionCount?: number
+	averageKitPosition?: number
 }

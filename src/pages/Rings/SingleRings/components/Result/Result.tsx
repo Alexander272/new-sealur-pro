@@ -209,9 +209,11 @@ export const Result = () => {
 			<PositionAlert alert={alert} onClose={closeHandler} />
 
 			<Stack direction={'row'} spacing={2} mb={2}>
-				<Box maxWidth={150} width={'100%'}>
-					{ringType?.image && <Image src={image} alt={ringType?.code} />}
-				</Box>
+				{image && (
+					<Box maxWidth={150} width={'100%'}>
+						<Image src={image} alt={ringType?.code} />
+					</Box>
+				)}
 				<Box>
 					<Typography fontWeight={'bold'}>Описание:</Typography>
 					<Typography textAlign='justify'>{renderDescription()}</Typography>

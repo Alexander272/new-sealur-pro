@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react'
-import { Box, List, ListItemButton, Stack, Typography } from '@mui/material'
+import { Box, ListItemButton, Stack, Typography } from '@mui/material'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import { useDebounce } from '@/hooks/debounce'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
@@ -23,7 +23,7 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 	const [d2, setD2] = useState<string>(size?.split('×')[1] != '00' ? size?.split('×')[1] || '' : '')
 	const [h, setH] = useState<string>(thickness || '')
 
-	const [hasForm, setHasForm] = useState(true)
+	// const [hasForm, setHasForm] = useState(true)
 
 	const d2Ref = useRef<HTMLInputElement | null>(null)
 	const hRef = useRef<HTMLInputElement | null>(null)
@@ -43,11 +43,11 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 		const foundSize = sizes.find(s => s.outer.toString() == D3 && s.inner.toString() == D2)
 
 		if (foundSize) {
-			setHasForm(true)
+			// setHasForm(true)
 			setH(foundSize.thickness.toString())
 			dispatch(setThickness(foundSize.thickness.toString()))
 		} else {
-			setHasForm(false)
+			// setHasForm(false)
 			if (hasThickness) {
 				setH(Math.ceil((+d3 - +d2) / 2).toString())
 				dispatch(setThickness(Math.ceil((+d3 - +d2) / 2).toString()))

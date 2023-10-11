@@ -24,18 +24,18 @@ const CommonData: FC<DataProps> = ({ o }) => (
 	</>
 )
 
-const SnpHeader: FC = () => (
+const Header: FC<{ order: string; position: string; average: string }> = ({ order, position, average }) => (
 	<>
-		<TableCell align='center'>Кол-во заявок с СНП</TableCell>
-		<TableCell align='center'>Кол-во СНП</TableCell>
-		<TableCell align='center'>Среднее кол-во СНП в 1 заявке</TableCell>
+		<TableCell align='center'>Кол-во заявок с {order}</TableCell>
+		<TableCell align='center'>Кол-во {position}</TableCell>
+		<TableCell align='center'>Среднее кол-во {average} в 1 заявке</TableCell>
 	</>
 )
-const SnpData: FC<DataProps> = ({ o }) => (
+const Data: FC<{ order?: number; position?: number; average?: number }> = ({ order, position, average }) => (
 	<>
-		<TableCell align='center'>{o.snpOrderCount}</TableCell>
-		<TableCell align='center'>{o.snpPositionCount}</TableCell>
-		<TableCell align='center'>{o.averageSnpPosition}</TableCell>
+		<TableCell align='center'>{order || 0}</TableCell>
+		<TableCell align='center'>{position || 0}</TableCell>
+		<TableCell align='center'>{average || 0}</TableCell>
 	</>
 )
 
@@ -57,12 +57,23 @@ export default function OrderCount() {
 
 	const renderHeader = () => {
 		if (location.hash == '#common') return <CommonHeader />
-		if (location.hash == '#snp') return <SnpHeader />
+		if (location.hash == '#snp') return <Header order='СНП' position='СНП' average='СНП' />
+		if (location.hash == '#putg') return <Header order='ПУТГ' position='ПУТГ' average='ПУТГ' />
+		if (location.hash == '#ring') return <Header order='кольцами' position='колец' average='колец' />
+		if (location.hash == '#kit')
+			return <Header order='комплектами колец' position='комплектов колец' average='комплектов колец' />
 	}
 
 	const renderRow = (o: IOrderCount) => {
 		if (location.hash == '#common') return <CommonData o={o} />
-		if (location.hash == '#snp') return <SnpData o={o} />
+		if (location.hash == '#snp')
+			return <Data order={o.snpOrderCount} position={o.snpPositionCount} average={o.averageSnpPosition} />
+		if (location.hash == '#putg')
+			return <Data order={o.putgOrderCount} position={o.putgPositionCount} average={o.averagePutgPosition} />
+		if (location.hash == '#ring')
+			return <Data order={o.ringOrderCount} position={o.ringPositionCount} average={o.averageRingPosition} />
+		if (location.hash == '#kit')
+			return <Data order={o.kitOrderCount} position={o.kitPositionCount} average={o.averageKitPosition} />
 	}
 
 	return (

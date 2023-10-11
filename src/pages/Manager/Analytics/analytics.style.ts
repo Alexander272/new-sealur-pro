@@ -30,7 +30,7 @@ export const Period = styled.div`
 
 export const Info = styled.div`
 	width: 100%;
-	max-width: 1200px;
+	max-width: 1540px;
 	padding: 20px 30px;
 	border-radius: 12px;
 	background-color: var(--theme-bg-color);

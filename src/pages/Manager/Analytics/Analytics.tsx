@@ -67,6 +67,9 @@ export default function Analytics() {
 		let ordersCount = 0
 		let usersCount = 0
 		let snpPositionCount = 0
+		let putgPositionCount = 0
+		let ringPositionCount = 0
+		let kitPositionCount = 0
 
 		const rows = data?.data.orders?.map(o => {
 			let r = []
@@ -79,7 +82,10 @@ export default function Analytics() {
 			const clients = o.clients.map(c => {
 				usersCount += 1
 				ordersCount += c.ordersCount
-				snpPositionCount += c.snpPositionCount
+				snpPositionCount += c.snpPositionCount || 0
+				putgPositionCount += c.putgPositionCount || 0
+				ringPositionCount += c.ringPositionCount || 0
+				kitPositionCount += c.kitPositionCount || 0
 
 				return (
 					<TableRow
@@ -92,7 +98,10 @@ export default function Analytics() {
 							{c.name} <Question>?</Question>
 						</TableCell>
 						<TableCell align='center'>{c.ordersCount}</TableCell>
-						<TableCell align='center'>{c.snpPositionCount}</TableCell>
+						<TableCell align='center'>{c.snpPositionCount || 0}</TableCell>
+						<TableCell align='center'>{c.putgPositionCount || 0}</TableCell>
+						<TableCell align='center'>{c.ringPositionCount || 0}</TableCell>
+						<TableCell align='center'>{c.kitPositionCount || 0}</TableCell>
 					</TableRow>
 				)
 			})
@@ -112,11 +121,20 @@ export default function Analytics() {
 						<TableCell align='center' sx={{ fontWeight: 'bold' }}>
 							Клиент
 						</TableCell>
-						<TableCell align='center' sx={{ fontWeight: 'bold' }}>
+						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
 							Кол-во заявок
 						</TableCell>
-						<TableCell align='center' sx={{ fontWeight: 'bold' }}>
+						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
 							Кол-во СНП
+						</TableCell>
+						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
+							Кол-во ПУТГ
+						</TableCell>
+						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
+							Кол-во колец
+						</TableCell>
+						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
+							Кол-во комплектов колец
 						</TableCell>
 					</TableRow>
 				</TableHead>
@@ -127,6 +145,9 @@ export default function Analytics() {
 						<TableCell align='center'>{usersCount}</TableCell>
 						<TableCell align='center'>{ordersCount}</TableCell>
 						<TableCell align='center'>{snpPositionCount}</TableCell>
+						<TableCell align='center'>{putgPositionCount}</TableCell>
+						<TableCell align='center'>{ringPositionCount}</TableCell>
+						<TableCell align='center'>{kitPositionCount}</TableCell>
 					</TableRow>
 				</TableFooter>
 			</Table>
@@ -134,7 +155,6 @@ export default function Analytics() {
 	}
 
 	//TODO Выводить число компаний
-	//TODO Выводить данные о путг и кольцах
 	return (
 		<Container>
 			{isLoading && <Loader background='fill' />}
@@ -154,6 +174,12 @@ export default function Analytics() {
 					<BaseInfo>
 						<Table>
 							<TableBody>
+								<TableRow hover>
+									<TableCell>Всего компаний зарегистрировалось</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.companyCount}
+									</TableCell>
+								</TableRow>
 								<TableRow hover onClick={navigateUsers()} sx={{ cursor: 'pointer' }}>
 									<TableCell>Всего пользователей зарегистрировалось</TableCell>
 									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
@@ -187,7 +213,25 @@ export default function Analytics() {
 								<TableRow hover onClick={navigateOrderCount('snp')} sx={{ cursor: 'pointer' }}>
 									<TableCell>Всего СНП заказано</TableCell>
 									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-										{data?.data.snpPositionCount}
+										{new Intl.NumberFormat('ru').format(data?.data.snpPositionCount || 0)}
+									</TableCell>
+								</TableRow>
+								<TableRow hover onClick={navigateOrderCount('putg')} sx={{ cursor: 'pointer' }}>
+									<TableCell>Всего ПУТГ заказано</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{new Intl.NumberFormat('ru').format(data?.data.putgPositionCount || 0)}
+									</TableCell>
+								</TableRow>
+								<TableRow hover onClick={navigateOrderCount('ring')} sx={{ cursor: 'pointer' }}>
+									<TableCell>Всего колец заказано</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{new Intl.NumberFormat('ru').format(data?.data.ringPositionCount || 0)}
+									</TableCell>
+								</TableRow>
+								<TableRow hover onClick={navigateOrderCount('kit')} sx={{ cursor: 'pointer' }}>
+									<TableCell>Всего комплектов колец заказано</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{new Intl.NumberFormat('ru').format(data?.data.kitPositionCount || 0)}
 									</TableCell>
 								</TableRow>
 							</TableBody>
@@ -219,6 +263,16 @@ export default function Analytics() {
 
 						<Table>
 							<TableBody>
+								<TableRow
+									hover
+									// onClick={navigateUsers({ periodAt, periodEnd })}
+									// sx={{ cursor: 'pointer' }}
+								>
+									<TableCell>Компаний зарегистрировалось</TableCell>
+									<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+										{data?.data.newCompanyCount || 0}
+									</TableCell>
+								</TableRow>
 								<TableRow
 									hover
 									onClick={navigateUsers({ periodAt, periodEnd })}
