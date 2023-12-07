@@ -291,6 +291,14 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				{/* <MenuItem value='another'>другая</MenuItem> */}
 			</Select>
 
+			{(main.snpTypeId == '7b774b8a-790f-46f0-822c-3813c5fcdf30' ||
+				main.snpTypeId == '657ba250-6754-4511-b139-b1fcbcfe30fe') &&
+			+size.dn > 50 ? (
+				<Typography align='justify' sx={{ p: 1, color: 'var(--danger-color)', fontSize: '1.1rem' }}>
+					Для Dy свыше 50 рекомендуем выбирать тип СНП с внутренним ограничительным кольцом!
+				</Typography>
+			) : null}
+
 			{/* {size.h == 'another' || size.h == '' ? (
 					<Input
 						value={size.another}

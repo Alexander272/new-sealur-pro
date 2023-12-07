@@ -31,7 +31,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 		let emailValid = email.validate()
 		let passwordValid = password.validate()
 
-		if (!emailValid || !passwordValid) return
+		if (!emailValid || !passwordValid || loading) return
 
 		setLoading(true)
 		const value: ISignIn = {
