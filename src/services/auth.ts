@@ -10,6 +10,7 @@ let options: any = {
 	},
 }
 
+//TODO переписать все эти сервисы на toolkit
 export const signIn = async (value: ISignIn) => {
 	options.body = JSON.stringify(value)
 	try {
