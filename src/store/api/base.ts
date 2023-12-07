@@ -9,7 +9,7 @@ export const api = createApi({
 	reducerPath: 'api',
 	baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
 	tagTypes: ['Api'],
-	endpoints: builder => ({}),
+	endpoints: () => ({}),
 })
 
 export const {} = api
