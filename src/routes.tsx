@@ -51,7 +51,8 @@ export const RingsKitRoute = '/rings/kit'
 export const AppRoutes = () => {
 	const { ready } = useRefresh()
 
-	if (!ready) return <></>
+	if (!ready) return <Loader />
+
 	return (
 		<BrowserRouter basename={'/'}>
 			<Suspense fallback={<Loader />}>

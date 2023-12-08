@@ -3,12 +3,11 @@ import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import { toggle } from '@/store/card'
-import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
-import { clearUser } from '@/store/user'
-import { signOut } from '@/services/auth'
 import { sendMetric } from '@/services/metrics'
+import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
 
 import Instruction from '@/assets/files/instruction.pdf'
+import { useSignOutMutation } from '@/store/api/auth'
 
 type Props = {
 	disableCard?: boolean
@@ -19,6 +18,8 @@ const Header: FC<Props> = ({ disableCard }) => {
 
 	const userId = useAppSelector(state => state.user.userId)
 	const role = useAppSelector(state => state.user.roleCode)
+
+	const [signOut] = useSignOutMutation()
 
 	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
@@ -52,18 +53,12 @@ const Header: FC<Props> = ({ disableCard }) => {
 		navigate('/manager/analytics')
 	}
 
-	const signOutHandler = async () => {
+	const signOutHandler = () => {
+		void signOut(null)
 		handleClose()
-
-		const res = await signOut()
-		if (res.error) {
-			//TODO обработать ошибку
-		}
-		dispatch(clearUser())
 	}
 
 	const readHandler = () => {
-		console.log('reading')
 		// TODO убрать коммент с метрики
 		// sendMetric('reachGoal', 'ReadInstruction')
 	}
@@ -72,21 +67,10 @@ const Header: FC<Props> = ({ disableCard }) => {
 		<Container>
 			<Content>
 				<LogoLink to='/'>
-					{/* <Logo width={192} height={192} loading='lazy' src='/logo192.webp' alt='logo' /> */}
-					{/* <span>Силур</span> */}
-					{/* <Logo width={340} height={100} loading='lazy' src='/logo.webp' alt='logo' /> */}
 					<Logo width={391} height={100} loading='lazy' src='/logo_2.webp' alt='logo' />
 				</LogoLink>
 
 				<Nav>
-					{/* <Tooltip title='Связаться с нами'>
-						<Icon>
-							<NavLink to='/connect'>
-								<img src='/image/email.svg' alt='Связаться с нами' />
-							</NavLink>
-						</Icon>
-					</Tooltip> */}
-
 					<Tooltip title='Инструкция'>
 						<Icon>
 							<BarLink href={Instruction} onClick={readHandler} target='_blank'>

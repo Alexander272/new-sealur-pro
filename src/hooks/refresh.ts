@@ -1,27 +1,19 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from './useStore'
+import { useEffect, useState } from 'react'
+import { useAppDispatch } from './useStore'
 import { setAuth } from '@/store/user'
-import { refresh } from '@/services/auth'
+import { useRefreshQuery } from '@/store/api/auth'
 
 export function useRefresh() {
-	const [loading, setLoading] = useState(false)
 	const [ready, setReady] = useState(false)
-	const userId = useAppSelector(state => state.user.userId)
 
 	const dispatch = useAppDispatch()
 
-	const refreshUser = useCallback(async () => {
-		setLoading(true)
-		const res = await refresh()
-		if (!res.error) dispatch(setAuth({ id: res.data.data.id, roleCode: res.data.data.roleCode }))
-		setReady(true)
-		setLoading(false)
-	}, [ready, userId])
+	const { data, isError } = useRefreshQuery(null)
 
 	useEffect(() => {
-		// if (loading) return
-		if (!ready && !userId && !loading) refreshUser()
-	}, [refreshUser])
+		if (!isError && data) dispatch(setAuth(data.data))
+		setReady(true)
+	}, [data, isError, dispatch])
 
 	return { ready }
 }

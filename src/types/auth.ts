@@ -17,3 +17,9 @@ export interface ISignUp {
 	password: string
 	managerId: string
 }
+
+export interface IFetchError {
+	data: {
+		message: string
+	}
+}

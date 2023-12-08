@@ -3,8 +3,8 @@ import { Alert, Button, FormControl, Snackbar } from '@mui/material'
 import { useInput } from '@/hooks/useInput'
 import { useAppDispatch } from '@/hooks/useStore'
 import { setUser } from '@/store/user'
-import { signIn } from '@/services/auth'
-import { ISignIn } from '@/types/auth'
+import { useSignInMutation } from '@/store/api/auth'
+import type { IFetchError, ISignIn } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
 import { Input, FormContent, SignInForm, Title, NavLink } from './forms.style'
 import { VisiblePassword } from '../VisiblePassword/VisiblePassword'
@@ -16,11 +16,12 @@ type Props = {
 
 // форма авторизации
 export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
-	const [loading, setLoading] = useState(false)
 	const [open, setOpen] = useState(false)
 	const [error, setError] = useState<string>('')
 
 	const dispatch = useAppDispatch()
+
+	const [signIn, { isLoading }] = useSignInMutation()
 
 	const email = useInput({ validation: 'email' })
 	const password = useInput({ validation: 'empty' })
@@ -31,24 +32,21 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 		let emailValid = email.validate()
 		let passwordValid = password.validate()
 
-		if (!emailValid || !passwordValid || loading) return
+		if (!emailValid || !passwordValid) return
 
-		setLoading(true)
 		const value: ISignIn = {
 			email: email.value,
 			password: password.value,
 		}
 
-		const res = await signIn(value)
-		if (res.error) {
-			console.log(res.error)
-			// показать ошибку
-			handleClick(res.error)
-		} else {
-			localStorage.removeItem('managerId')
-			dispatch(setUser(res.data.data))
+		try {
+			const payload = await signIn(value).unwrap()
+			dispatch(setUser(payload.data))
+		} catch (error) {
+			const fetchError = error as IFetchError
+			console.log(fetchError.data.message)
+			handleClick(fetchError.data.message)
 		}
-		setLoading(false)
 	}
 
 	const handleClick = (message: string) => {
@@ -77,7 +75,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 				</Alert>
 			</Snackbar>
 
-			{loading ? <Loader background='fill' /> : null}
+			{isLoading ? <Loader background='fill' /> : null}
 
 			<Title open={isOpen}>Вход</Title>
 
@@ -111,7 +109,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 				<Button
 					type='submit'
 					variant='contained'
-					disabled={loading}
+					disabled={isLoading}
 					sx={{ borderRadius: '20px', fontSize: '1rem', fontWeight: 600, marginTop: 3 }}
 				>
 					Войти

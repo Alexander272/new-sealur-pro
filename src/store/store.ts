@@ -6,6 +6,7 @@ import kitReducer from './rings/kit'
 import cardReducer from './card'
 import userReducer from './user'
 import { api, unauthenticatedMiddleware } from './api/base'
+import { dadataApi } from './api/dadata'
 
 export const store = configureStore({
 	reducer: {
@@ -16,8 +17,10 @@ export const store = configureStore({
 		card: cardReducer,
 		user: userReducer,
 		[api.reducerPath]: api.reducer,
+		[dadataApi.reducerPath]: dadataApi.reducer,
 	},
-	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware).concat(unauthenticatedMiddleware),
+	middleware: getDefaultMiddleware =>
+		getDefaultMiddleware().concat([api.middleware, dadataApi.middleware, unauthenticatedMiddleware]),
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

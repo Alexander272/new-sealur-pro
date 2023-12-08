@@ -1,10 +1,10 @@
-import { Loader } from '@/components/Loader/Loader'
-import { useAppDispatch } from '@/hooks/useStore'
-import { confirm } from '@/services/user'
-import { setUser } from '@/store/user'
-import { Typography } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { Typography } from '@mui/material'
+import { setUser } from '@/store/user'
+import { useConfirmMutation } from '@/store/api/user'
+import { useAppDispatch } from '@/hooks/useStore'
+import { Loader } from '@/components/Loader/Loader'
 import { Container, Wrapper } from './auth.style'
 
 // страница для подтверждения пользователя
@@ -14,14 +14,16 @@ export default function Confirm() {
 
 	const [error, setError] = useState('')
 
+	const [confirm] = useConfirmMutation()
+
 	const dispatch = useAppDispatch()
 
 	const confirmHandler = useCallback(async (code: string) => {
-		const res = await confirm(code)
-		if (!res.error) {
-			dispatch(setUser(res.data.data))
+		try {
+			const payload = await confirm(code).unwrap()
+			dispatch(setUser(payload.data))
 			navigate('/', { replace: true })
-		} else {
+		} catch {
 			setError('Не удалось активировать аккаунт. Срок действия ссылки истек')
 		}
 	}, [])

@@ -3,15 +3,17 @@ import { FormEvent, SyntheticEvent, useEffect, useState } from 'react'
 import TelegramIcon from '@mui/icons-material/Telegram'
 import { setUser } from '@/store/user'
 import { useGetUserQuery } from '@/store/api/user'
+import { useSendFeedbackMutation } from '@/store/api/feedback'
 import { useInput } from '@/hooks/useInput'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
-import { sendFeedback } from '@/services/feedback'
-import { Container, Form, Link, Links, LinksLine } from './connect.style'
+import type { IFetchError } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
+import { Container, Form, Link, Links, LinksLine } from './connect.style'
+
+import Privacy from '@/assets/files/privacy.pdf'
 
 export default function ConnectWithUs() {
-	const [loading, setLoading] = useState(false)
 	const [open, setOpen] = useState(false)
 	const [res, setRes] = useState<{ type: 'success' | 'error'; message: string }>({ type: 'success', message: '' })
 
@@ -21,6 +23,7 @@ export default function ConnectWithUs() {
 	const dispatch = useAppDispatch()
 
 	const { data } = useGetUserQuery(userId, { skip: !userId || Boolean(user) })
+	const [sendFeedback, { isLoading }] = useSendFeedbackMutation()
 
 	useEffect(() => {
 		if (data && !user) dispatch(setUser(data.data))
@@ -41,7 +44,6 @@ export default function ConnectWithUs() {
 
 		if (!subjectValid || !emailValid || !nameValid || !messageValid) return
 
-		setLoading(true)
 		const feedback = {
 			subject: subject.value,
 			email: email.value,
@@ -50,16 +52,15 @@ export default function ConnectWithUs() {
 			message: message.value,
 		}
 
-		const res = await sendFeedback(feedback)
-		if (res.error) {
-			console.log(res.error)
-			handleClick('error', res.error)
-		} else {
+		try {
+			await sendFeedback(feedback).unwrap()
 			handleClick('success', 'Письмо оправлено')
 			subject.clear()
 			message.clear()
+		} catch (error) {
+			const fetchError = error as IFetchError
+			handleClick('error', fetchError.data.message)
 		}
-		setLoading(false)
 	}
 
 	const handleClick = (type: 'success' | 'error', message: string) => {
@@ -86,7 +87,7 @@ export default function ConnectWithUs() {
 				</Alert>
 			</Snackbar>
 
-			{loading ? <Loader background='fill' /> : null}
+			{isLoading ? <Loader background='fill' /> : null}
 
 			<Form onSubmit={submitHandler}>
 				<Typography variant='h5' align='center'>
@@ -141,13 +142,8 @@ export default function ConnectWithUs() {
 				</FormControl>
 
 				<Typography color={'GrayText'} align='center' marginBottom={1} sx={{ fontSize: '0.75rem' }}>
-					{/* Нажимая кнопку "Зарегистрироваться" вы соглашаетесь на обработку персональных данных
-					и условиями	использования */}
 					Нажимая кнопку "Отправить" вы соглашаетесь с{' '}
-					<a
-						href='https://sealur.ru/wp-content/uploads/2020/03/politika-silur-v-otnoshenii-personalnyh-dannyh.pdf'
-						target='blank'
-					>
+					<a href={Privacy} target='blank'>
 						Политикой организации в отношении обработки персональных данных
 					</a>
 					.
@@ -156,6 +152,7 @@ export default function ConnectWithUs() {
 				<Button
 					type='submit'
 					variant='contained'
+					disabled={isLoading}
 					sx={{ borderRadius: '12px', fontSize: '1rem', fontWeight: 600 }}
 				>
 					Отправить

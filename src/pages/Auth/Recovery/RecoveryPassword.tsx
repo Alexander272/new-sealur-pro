@@ -1,31 +1,29 @@
 import { FormEvent, SyntheticEvent, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Alert, Button, FormControl, Snackbar, Typography } from '@mui/material'
+import { useSetPasswordMutation } from '@/store/api/user'
 import { useInput } from '@/hooks/useInput'
-import { recoveryPassword } from '@/services/user'
+import type { IFetchError } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
 import { Input, Title } from '../components/AuthForms/forms.style'
 import { ValidMessage } from '../components/ValidMessage/ValidMessage'
-import { Form } from './recovery.style'
-import { Container, Wrapper, Base } from '../auth.style'
 import { VisiblePassword } from '../components/VisiblePassword/VisiblePassword'
+import { Container, Wrapper, Base } from '../auth.style'
+import { Form } from './recovery.style'
 
 type Alert = { open: boolean; type: 'success' | 'error'; message: string }
 
 // страница для ввода нового пароля
 export default function RecoveryPassword() {
-	const [alert, setAlert] = useState<Alert>({
-		open: false,
-		type: 'success',
-		message: '',
-	})
-	const [loading, setLoading] = useState(false)
+	const [alert, setAlert] = useState<Alert>({ open: false, type: 'success', message: '' })
 	const [compare, setCompare] = useState(true)
 	const password = useInput({ validation: 'password' })
 	const confirm = useInput({ validation: 'empty' })
 
 	const navigate = useNavigate()
 	const { code } = useParams()
+
+	const [setPassword, { isLoading }] = useSetPasswordMutation()
 
 	const submitHandler = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
@@ -34,24 +32,22 @@ export default function RecoveryPassword() {
 		let confirmValid = confirm.validate()
 		let passwordsCompare = password.value === confirm.value
 
-		if (!passwordValid || !confirmValid) return
+		if (!passwordValid || !confirmValid || !code) return
 		if (!passwordsCompare) {
 			setCompare(passwordsCompare)
 			return
 		}
 
-		setLoading(true)
-		const res = await recoveryPassword(password.value, code || '')
-		if (res.error) {
-			console.log(res.error)
-			handleClick('error', res.error)
-		} else {
+		try {
+			await setPassword({ code, password: password.value }).unwrap()
 			handleClick('success', 'Пароль успешно изменен. Сейчас произойдет перенаправление на страницу авторизации')
 			setTimeout(() => {
 				navigate('/auth')
-			}, 6000)
+			}, 5000)
+		} catch (error) {
+			const fetchError = error as IFetchError
+			handleClick('error', fetchError.data.message)
 		}
-		setLoading(false)
 	}
 
 	const handleClick = (type: 'success' | 'error', message: string) => {
@@ -80,7 +76,7 @@ export default function RecoveryPassword() {
 							</Alert>
 						</Snackbar>
 
-						{loading ? <Loader background='fill' /> : null}
+						{isLoading ? <Loader background='fill' /> : null}
 
 						<Title open={true}>Восстановление пароля</Title>
 
@@ -127,6 +123,7 @@ export default function RecoveryPassword() {
 						<Button
 							type='submit'
 							variant='contained'
+							disabled={isLoading}
 							sx={{ borderRadius: '20px', fontSize: '1rem', fontWeight: 600, marginTop: 4 }}
 						>
 							Восстановить

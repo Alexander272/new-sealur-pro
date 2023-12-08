@@ -1,11 +1,11 @@
 import { Alert, Autocomplete, Button, FormControl, Snackbar, Stack, Typography } from '@mui/material'
-import { FC, FormEvent, SyntheticEvent, useCallback, useEffect, useState } from 'react'
-// import SearchIcon from '@mui/icons-material/Search'
+import { FC, FormEvent, SyntheticEvent, useState } from 'react'
+import SearchIcon from '@mui/icons-material/SearchOutlined'
 import { useInput } from '@/hooks/useInput'
 import { useDebounce } from '@/hooks/debounce'
-import { CompanyInfo, findCompany } from '@/services/dadata'
-import { signUp } from '@/services/auth'
-import { ISignUp } from '@/types/auth'
+import { useSignUpMutation } from '@/store/api/auth'
+import { type CompanyInfo, useFindCompanyQuery } from '@/store/api/dadata'
+import type { IFetchError, ISignUp } from '@/types/auth'
 import { Loader } from '@/components/Loader/Loader'
 import { FormContent, Input, SignUpForm, Title } from './forms.style'
 import { ValidMessage } from '../ValidMessage/ValidMessage'
@@ -20,10 +20,9 @@ type Props = {
 
 // форма регистрации
 export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
-	const [loading, setLoading] = useState(false)
 	const [company, setCompany] = useState('')
 	const [companyData, setCompanyData] = useState<CompanyInfo | null>(null)
-	const [companyList, setCompanyList] = useState<CompanyInfo[]>([])
+	// const [companyList, setCompanyList] = useState<CompanyInfo[]>([])
 	const [open, setOpen] = useState(false)
 	const [res, setRes] = useState<{ type: 'success' | 'error'; message: string }>({ type: 'success', message: '' })
 	const [companyError, setCompanyError] = useState(false)
@@ -38,19 +37,13 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 
 	const companyValue = useDebounce(company, 500)
 
-	useEffect(() => {
-		if (companyValue) find(companyValue)
-	}, [companyValue])
+	const [signUp, { isLoading }] = useSignUpMutation()
+	const { data } = useFindCompanyQuery(companyValue, { skip: !companyValue })
 
-	const find = useCallback(async (value: string) => {
-		const res = await findCompany(value)
-		if (!res.error) setCompanyList(res.data)
-	}, [])
-
-	const companyHandler = (event: any, newInputValue: string) => {
+	const companyHandler = (_event: any, newInputValue: string) => {
 		setCompany(newInputValue)
 	}
-	const selectCompanyHandler = (event: any, newValue: CompanyInfo | null) => {
+	const selectCompanyHandler = (_event: any, newValue: CompanyInfo | null) => {
 		setCompanyData(newValue)
 		if (newValue !== null) setCompany('')
 	}
@@ -80,7 +73,6 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			return
 		}
 		setCompanyError(false)
-		setLoading(true)
 
 		const user: ISignUp = {
 			company: companyData.value,
@@ -97,19 +89,19 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			managerId: localStorage.getItem('managerId') || '',
 		}
 
-		const res = await signUp(user)
-		if (res.error) {
-			console.log(res.error)
-			handleClick('error', res.error)
-		} else {
+		try {
+			await signUp(user).unwrap()
 			handleClick(
 				'success',
 				'Для активации учетной записи в течение часа перейдите по ссылке, отправленной вам в письме'
 			)
+		} catch (error) {
+			const fetchError = error as IFetchError
+			console.log(fetchError.data.message)
+			handleClick('error', fetchError.data.message)
 		}
-		localStorage.removeItem('managerId')
 
-		setLoading(false)
+		localStorage.removeItem('managerId')
 	}
 
 	const handleClick = (type: 'success' | 'error', message: string) => {
@@ -137,7 +129,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 				</Alert>
 			</Snackbar>
 
-			{loading ? <Loader background='fill' /> : null}
+			{isLoading ? <Loader background='fill' /> : null}
 
 			<Title open={isOpen}>Регистрация</Title>
 
@@ -149,9 +141,8 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 						autoComplete
 						includeInputInList
 						autoSelect
-						options={companyList}
-						// popupIcon={<SearchIcon />}
-						popupIcon={null}
+						options={data?.suggestions || []}
+						popupIcon={<SearchIcon />}
 						onChange={selectCompanyHandler}
 						noOptionsText='Ничего не найдено'
 						onInputChange={companyHandler}
@@ -177,6 +168,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 								</li>
 							)
 						}}
+						sx={{ '& .MuiAutocomplete-popupIndicator': { transform: 'none' } }}
 					/>
 					{/* {companyError && <ValidMessage messages={['Поле обязательно для заполнения.']} />} */}
 				</FormControl>
@@ -270,11 +262,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 
 				<Typography color={'GrayText'} align='center' marginBottom={1} sx={{ fontSize: '0.75rem' }}>
 					Нажимая кнопку "Зарегистрироваться" вы соглашаетесь с{' '}
-					<a
-						// href='https://sealur.ru/wp-content/uploads/2020/03/politika-silur-v-otnoshenii-personalnyh-dannyh.pdf'
-						href={Privacy}
-						target='blank'
-					>
+					<a href={Privacy} target='blank'>
 						Политикой организации в отношении обработки персональных данных
 					</a>
 					.
@@ -283,6 +271,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 				<Button
 					type='submit'
 					variant='contained'
+					disabled={isLoading}
 					sx={{ borderRadius: '20px', fontSize: '1rem', fontWeight: 600 }}
 				>
 					Зарегистрироваться
