@@ -295,7 +295,8 @@ export const StandardSize: FC<Props> = ({ sizes, isFetching }) => {
 				main.snpTypeId == '657ba250-6754-4511-b139-b1fcbcfe30fe') &&
 			+size.dn > 50 ? (
 				<Typography align='justify' sx={{ p: 1, color: 'var(--danger-color)', fontSize: '1.1rem' }}>
-					Для Dy свыше 50 рекомендуем выбирать тип СНП с внутренним ограничительным кольцом!
+					Данный тип СНП свыше Dy 50 не предусмотрен ГОСТ Р 52376-2005, настоятельно рекомендуем выбирать тип
+					с внутренним ограничительным кольцом!
 				</Typography>
 			) : null}
 

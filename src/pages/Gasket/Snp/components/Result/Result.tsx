@@ -436,7 +436,15 @@ export const Result: FC<Props> = () => {
 
 			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
 
-			return `Прокладка СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
+			let notSt = ''
+			if (
+				(main.snpTypeId == '7b774b8a-790f-46f0-822c-3813c5fcdf30' ||
+					main.snpTypeId == '657ba250-6754-4511-b139-b1fcbcfe30fe') &&
+				+size.dn > 50
+			)
+				notSt = ' (не стандартный тип СНП)'
+
+			return `Прокладка СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}${notSt}`
 		}
 		if (main.snpStandard?.standard.title === 'ASME B 16.20') {
 			let ir = materials.innerRing?.code ? `-I.R. ${materials.innerRing?.code}` : ''
