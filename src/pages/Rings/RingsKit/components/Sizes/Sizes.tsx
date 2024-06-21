@@ -13,6 +13,7 @@ export const Sizes = () => {
 	const thickness = useAppSelector(state => state.kit.thickness)
 
 	const sizeErr = useAppSelector(state => state.kit.sizeError)
+	const thicknessError = useAppSelector(state => state.kit.thicknessError)
 
 	const step = useAppSelector(state => state.kit.sizeStep)
 
@@ -52,13 +53,13 @@ export const Sizes = () => {
 
 		let ok = D3 != '0' && D3 != '' && D2 != '0' && D2 != ''
 		ok = ok && (!construction?.hasThickness || (Boolean(thick) && thick != '0'))
-		ok = ok && +D3 > +D2
+		ok = ok && +D3 > +D2 && !thicknessError
 		if (ok) {
 			dispatch(setStep({ step: 'sizeStep', complete: true }))
 		} else {
 			dispatch(setStep({ step: 'sizeStep', complete: false }))
 		}
-	}, [D3, D2, thick])
+	}, [D3, D2, thick, thicknessError])
 
 	useEffect(() => {
 		let idx = data?.data?.sizes?.findIndex(s => s.outer == +d3)
@@ -95,6 +96,7 @@ export const Sizes = () => {
 				if (temp[temp.length - 1] == '.') value = temp
 				else value = (Math.trunc(+temp * 10) / 10).toString()
 			}
+			if (+temp > 10000) return
 
 			if (name == 'kit_d3') setD3(value)
 			if (name == 'kit_d2') setD2(value)
@@ -170,8 +172,8 @@ export const Sizes = () => {
 								name='kit_h'
 								label='Высота, мм'
 								size='small'
-								// error={thicknessError}
-								// helperText={thicknessError && 'Высота кольца должна быть ≥ 1,5 мм'}
+								error={thicknessError}
+								helperText={thicknessError && 'Высота кольца должна быть < 250 мм'}
 							/>
 						</>
 					)}

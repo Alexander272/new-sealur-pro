@@ -27,6 +27,7 @@ export default function Auth() {
 		setIsSignUp(value)
 	}
 
+	console.log('auth page')
 	return (
 		<Base>
 			<Header />

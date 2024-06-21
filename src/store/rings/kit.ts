@@ -156,9 +156,9 @@ export const kitSlice = createSlice({
 		setThickness: (state, action: PayloadAction<string>) => {
 			state.thickness = action.payload
 
-			// if (action.payload) {
-			// 	state.thicknessError = +action.payload < 1.5
-			// }
+			if (action.payload) {
+				state.thicknessError = +action.payload > 250
+			}
 		},
 
 		// установка чертежа

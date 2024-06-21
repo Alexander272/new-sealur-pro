@@ -54,7 +54,7 @@ export const AppRoutes = () => {
 	if (!ready) return <Loader />
 
 	return (
-		<BrowserRouter basename={'/'}>
+		<BrowserRouter>
 			<Suspense fallback={<Loader />}>
 				{/* //TODO убрать коммент с метрики  */}
 				{/* <Metrics /> */}

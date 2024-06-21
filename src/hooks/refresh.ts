@@ -8,12 +8,18 @@ export function useRefresh() {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isError } = useRefreshQuery(null)
+	const { data, isError, isSuccess } = useRefreshQuery(null)
 
 	useEffect(() => {
-		if (!isError && data) dispatch(setAuth(data.data))
-		setReady(true)
-	}, [data, isError, dispatch])
+		if (isSuccess) {
+			dispatch(setAuth(data.data))
+			setReady(true)
+		}
+	}, [data, isSuccess, dispatch])
+
+	useEffect(() => {
+		if (isError) setReady(true)
+	}, [isError])
 
 	return { ready }
 }

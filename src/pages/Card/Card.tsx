@@ -38,6 +38,7 @@ const Card: FC<Props> = () => {
 	const userId = useAppSelector(state => state.user.roleCode)
 
 	const infoChanged = useRef(false)
+	//TODO возможно стоить увеличить время
 	const newInfo = useDebounce(info, 1000)
 
 	const { data, isLoading: isLoadingData, isError } = useGetOrderQuery(null, { skip: !userId || role != 'user' })

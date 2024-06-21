@@ -90,6 +90,7 @@ export const CustomSize: FC<Props> = ({ sizes, hasThickness }) => {
 				if (temp[temp.length - 1] == '.') value = temp
 				else value = (Math.trunc(+temp * 10) / 10).toString()
 			}
+			if (+temp > 10000) return
 
 			if (type == 'd3') setD3(value)
 			if (type == 'd2') setD2(value)
