@@ -81,12 +81,6 @@ const Header: FC<Props> = ({ disableCard }) => {
 
 					{userId && (
 						<>
-							<Tooltip title='Главная страница'>
-								<Icon onClick={homeHandler}>
-									<img src='/image/home-icon.svg' alt='Главная' width='30' height='30' />
-								</Icon>
-							</Tooltip>
-
 							{!disableCard && (
 								<Tooltip title='Заявка'>
 									<Icon onClick={basketHandler}>
@@ -98,6 +92,12 @@ const Header: FC<Props> = ({ disableCard }) => {
 							<Tooltip title='Профиль'>
 								<Icon onClick={handleClick}>
 									<img src='/image/person-profile.svg' alt='Профиль' width='30' height='30' />
+								</Icon>
+							</Tooltip>
+
+							<Tooltip title='Главная страница'>
+								<Icon onClick={homeHandler}>
+									<img src='/image/home-icon.svg' alt='Главная' width='30' height='30' />
 								</Icon>
 							</Tooltip>
 						</>

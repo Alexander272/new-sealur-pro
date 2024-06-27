@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAppSelector } from '@/hooks/useStore'
 import Footer from '@/components/Footer/Footer'
-import { Container, Wrapper, Base } from './auth.style'
 import { SignIn } from './components/AuthForms/SignInForm'
 import { SignUp } from './components/AuthForms/SignUpForm'
 import Header from './components/Header/Header'
+import { Container, Wrapper, Base } from './auth.style'
 
 export default function Auth() {
 	const [isSignUp, setIsSignUp] = useState(Boolean(localStorage.getItem('managerId')))
@@ -27,7 +27,6 @@ export default function Auth() {
 		setIsSignUp(value)
 	}
 
-	console.log('auth page')
 	return (
 		<Base>
 			<Header />

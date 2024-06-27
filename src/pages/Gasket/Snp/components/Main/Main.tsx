@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react'
 import { FormControl, MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
-import { MainContainer, Column, Image } from '@/pages/Gasket/gasket.style'
+
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
 import {
 	setFiller,
@@ -13,26 +13,8 @@ import {
 import { useGetSnpDataQuery, useGetStandardForSNPQuery } from '@/store/api/snp'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { MainSkeleton } from '@/pages/Gasket/Skeletons/MainSkeleton'
-
-import FlangeA from '@/assets/snp/A.webp'
-import FlangeB from '@/assets/snp/B.webp'
-import FlangeV from '@/assets/snp/V.webp'
-import FlangeG from '@/assets/snp/G.webp'
-import FlangeD from '@/assets/snp/D.webp'
-
-const images = {
-	// А: FlangeA,
-	// Б: FlangeB,
-	// В: FlangeV,
-	// 'В (STG)': FlangeV,
-	// 'В (LTG)': FlangeV,
-	А: FlangeA,
-	'Б-А': FlangeB,
-	'Б-Б': FlangeB,
-	'Б-В': FlangeV,
-	Г: FlangeG,
-	Д: FlangeD,
-}
+import { MainContainer, Column } from '@/pages/Gasket/gasket.style'
+import { Drawing } from './Drawing'
 
 type Props = {}
 
@@ -125,8 +107,10 @@ export const Main: FC<Props> = () => {
 			if (f.code == main.flangeTypeCode) flangeType = f
 		})
 
-		const types: string[] = []
-		set.forEach(t => types.push(t))
+		// const types: string[] = []
+		// set.forEach(t => types.push(t))
+		// console.log(Array.from(set))
+		const types = Array.from(set)
 
 		// console.log(flangeType)
 
@@ -264,24 +248,7 @@ export const Main: FC<Props> = () => {
 				</Column>
 			) : null}
 			<Column>
-				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
-				{main.snpType?.title == 'not_selected' ? (
-					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
-				) : (
-					<Image
-						src={
-							images[
-								`${main.flangeTypeCode == 'Б' ? main.flangeTypeCode + '-' : ''}${
-									main.snpType?.title
-								}` as 'А'
-							]
-						}
-						alt='flange drawing'
-						maxWidth={'450px'}
-						width={450}
-						height={239}
-					/>
-				)}
+				<Drawing />
 			</Column>
 		</MainContainer>
 	)

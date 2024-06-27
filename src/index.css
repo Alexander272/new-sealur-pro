@@ -102,8 +102,8 @@ select {
 
 #root {
     height: 100vh;
-    /* display: flex; */
-    /* flex-direction: column; */
+    display: flex;
+    flex-direction: column;
     /* align-items: center; */
     font-family: 'NunitoSans', sans-serif;
 }

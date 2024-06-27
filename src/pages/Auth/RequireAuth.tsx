@@ -13,7 +13,6 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
 		if (parts[0] === '?managerId') localStorage.setItem('managerId', parts[1])
 	}
 
-	console.log('RequireAuth component')
 	if (!isAuth) return <Navigate to='/auth' state={{ from: location }} />
 
 	return children

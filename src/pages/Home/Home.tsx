@@ -8,6 +8,7 @@ export type ListItem = {
 	children?: ListItem[]
 }
 
+//TODO у меня два списка создаются на основе похожих данных. надо их обЪединить и положить в одно место
 const list: ListItem[] = [
 	{
 		title: 'Фланцевые прокладки',

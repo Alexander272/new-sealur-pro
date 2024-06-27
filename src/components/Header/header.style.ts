@@ -12,7 +12,7 @@ export const Container = styled.header`
 
 export const Content = styled.div`
 	display: flex;
-	padding: 5px 10px;
+	padding: 9px 10px;
 	max-width: 1580px;
 	margin: 0 auto;
 	flex-wrap: wrap;
@@ -21,7 +21,7 @@ export const Content = styled.div`
 
 export const Logo = styled.img`
 	width: auto;
-	height: 65px;
+	height: 46px;
 `
 
 export const LogoLink = styled(Link)`

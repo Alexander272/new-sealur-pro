@@ -11,12 +11,13 @@ const Auth = lazy(() => import('@/pages/Auth/Auth'))
 const Recovery = lazy(() => import('@/pages/Auth/Recovery/Recovery'))
 const RecoveryPassword = lazy(() => import('@/pages/Auth/Recovery/RecoveryPassword'))
 const Confirm = lazy(() => import('@/pages/Auth/Confirm'))
+const CheckAccess = lazy(() => import('@/pages/Auth/CheckAccess'))
 
 const Home = lazy(() => import('@/pages/Home/Home'))
 
-const ProGasket = lazy(() => import('@/pages/Gasket/Gasket'))
-const ProSnp = lazy(() => import('@/pages/Gasket/Snp/Snp'))
-const ProPutg = lazy(() => import('@/pages/Gasket/Putg/Putg'))
+const Gasket = lazy(() => import('@/pages/Gasket/Gasket'))
+const Snp = lazy(() => import('@/pages/Gasket/Snp/Snp'))
+const Putg = lazy(() => import('@/pages/Gasket/Putg/Putg'))
 const Rings = lazy(() => import('@/pages/Rings/Rings'))
 const SingleRings = lazy(() => import('@/pages/Rings/SingleRings/SingleRings'))
 const RingsKit = lazy(() => import('@/pages/Rings/RingsKit/RingsKit'))
@@ -80,10 +81,9 @@ export const AppRoutes = () => {
 					>
 						<Route index element={<Home />} />
 
-						<Route path='/gaskets' element={<ProGasket />}>
-							{/* <Route index element={<ProSnp />} /> */}
-							<Route path='snp' element={<ProSnp />} />
-							<Route path='putg' element={<ProPutg />} />
+						<Route path='gaskets' element={<Gasket />}>
+							<Route path='snp' element={<Snp />} />
+							<Route path='putg' element={<Putg />} />
 						</Route>
 
 						<Route path='rings' element={<Rings />}>
@@ -91,15 +91,15 @@ export const AppRoutes = () => {
 							<Route path='kit' element={<RingsKit />} />
 						</Route>
 
-						<Route path='/orders' element={<Orders />} />
+						<Route path='orders' element={<Orders />} />
 					</Route>
 
 					<Route
 						path='/manager'
 						element={
-							<OnlyManager>
+							<CheckAccess forbiddenRoles={['user']}>
 								<Manager />
-							</OnlyManager>
+							</CheckAccess>
 						}
 					>
 						<Route path='orders' element={<ManagerOrders />} />
