@@ -2,7 +2,7 @@ import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Box, Button, Menu, MenuItem } from '@mui/material'
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { GasketRoute, PutgRoute, RingRoute, RingsKitRoute, RingsRoute, SnpRoute } from '@/routes'
+import { PathRoutes } from '@/constants/routes'
 import { MenuLink } from './production.style'
 
 export const Products = () => {
@@ -74,50 +74,50 @@ export const Products = () => {
 				// 	},
 				// }}
 			>
-				<MenuLink to={GasketRoute}>
+				<MenuLink to={PathRoutes.Gasket.Base}>
 					<MenuItem
-						selected={location.pathname == GasketRoute}
+						selected={location.pathname == PathRoutes.Gasket.Base}
 						sx={{ margin: '0 8px', borderRadius: '12px', fontWeight: 'bold' }}
 					>
 						Фланцевые прокладки
 					</MenuItem>
 				</MenuLink>
-				<MenuLink to={SnpRoute}>
+				<MenuLink to={PathRoutes.Gasket.SNP}>
 					<MenuItem
-						selected={location.pathname == SnpRoute}
+						selected={location.pathname == PathRoutes.Gasket.SNP}
 						sx={{ margin: '0 8px', borderRadius: '12px', paddingLeft: 4 }}
 					>
 						Спирально-навитая прокладка (СНП)
 					</MenuItem>
 				</MenuLink>
-				<MenuLink to={PutgRoute}>
+				<MenuLink to={PathRoutes.Gasket.PUTG}>
 					<MenuItem
-						selected={location.pathname == PutgRoute}
+						selected={location.pathname == PathRoutes.Gasket.PUTG}
 						sx={{ margin: '0 8px', borderRadius: '12px', paddingLeft: 4 }}
 					>
 						Графитовая прокладка ПУТГ
 					</MenuItem>
 				</MenuLink>
 
-				<MenuLink to={RingsRoute}>
+				<MenuLink to={PathRoutes.Rings.Base}>
 					<MenuItem
-						selected={location.pathname == RingsRoute}
+						selected={location.pathname == PathRoutes.Rings.Base}
 						sx={{ margin: '0 8px', borderRadius: '12px', fontWeight: 'bold' }}
 					>
 						Сальниковые кольца и комплекты
 					</MenuItem>
 				</MenuLink>
-				<MenuLink to={RingRoute}>
+				<MenuLink to={PathRoutes.Rings.Single}>
 					<MenuItem
-						selected={location.pathname == RingRoute}
+						selected={location.pathname == PathRoutes.Rings.Single}
 						sx={{ margin: '0 8px', borderRadius: '12px', paddingLeft: 4 }}
 					>
 						Кольца
 					</MenuItem>
 				</MenuLink>
-				<MenuLink to={RingsKitRoute}>
+				<MenuLink to={PathRoutes.Rings.Kit}>
 					<MenuItem
-						selected={location.pathname == RingsKitRoute}
+						selected={location.pathname == PathRoutes.Rings.Kit}
 						sx={{ margin: '0 8px', borderRadius: '12px', paddingLeft: 4 }}
 					>
 						Комплекты колец

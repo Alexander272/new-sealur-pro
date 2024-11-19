@@ -1,9 +1,10 @@
-export const AppRoutes = Object.freeze({
+export const PathRoutes = Object.freeze({
 	Home: '/',
 	Auth: {
 		Base: '/auth',
 		Confirm: '/auth/confirm',
 		Recovery: '/auth/recovery',
+		RecoveryCode: '/auth/recovery/:code',
 	},
 	Connect: '/connect',
 	Gasket: {
@@ -11,7 +12,7 @@ export const AppRoutes = Object.freeze({
 		SNP: '/gaskets/snp',
 		PUTG: '/gaskets/putg',
 	},
-	Ring: {
+	Rings: {
 		Base: '/rings',
 		Single: '/rings/single',
 		Kit: '/rings/kit',
@@ -19,7 +20,11 @@ export const AppRoutes = Object.freeze({
 	Order: '/orders',
 	Manager: {
 		Base: '/manager',
-		Orders: '/manager/orders',
+		Orders: {
+			Base: '/manager/orders',
+			Order: '/manager/orders/:id',
+			Last: '/manager/orders/last',
+		},
 		Analytics: {
 			Base: '/manager/analytics',
 			Users: '/manager/analytics/users',

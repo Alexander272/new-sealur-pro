@@ -11,8 +11,7 @@ type Props = {
 }
 
 export default function CheckAccess({ children, forbiddenRoles }: Props) {
-	const role = useAppSelector(state => state.user.roleCode)
-	const isAuth = useAppSelector(state => state.user.isAuth)
+	const { roleCode: role, isAuth } = useAppSelector(state => state.user)
 	const location = useLocation()
 
 	if (!isAuth) return <Navigate to='/auth' state={{ from: location }} />

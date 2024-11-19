@@ -15,12 +15,12 @@ import {
 } from '@/store/api/order'
 import { sendMetric } from '@/services/metrics'
 import type { IRingData } from '@/types/rings'
-import { PutgRoute, RingRoute, RingsKitRoute, SnpRoute } from '@/routes'
+import type { IKitData } from '@/types/ringsKit'
+import { PathRoutes } from '@/constants/routes'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
 import { Container, Item, Position, Positions } from './card.style'
 import { clearKit, setKit } from '@/store/rings/kit'
-import { IKitData } from '@/types/ringsKit'
 
 type Props = {}
 
@@ -106,7 +106,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setSnp(snp))
-			navigate(SnpRoute)
+			navigate(PathRoutes.Gasket.SNP)
 		}
 		if (position.type === 'Putg') {
 			const putg = {
@@ -116,7 +116,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setPutg(putg))
-			navigate(PutgRoute)
+			navigate(PathRoutes.Gasket.PUTG)
 		}
 		if (position.type === 'Ring') {
 			const ring: IRingData = {
@@ -126,7 +126,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setRing(ring))
-			navigate(RingRoute)
+			navigate(PathRoutes.Rings.Single)
 		}
 		if (position.type == 'RingsKit') {
 			const kit: IKitData = {
@@ -136,7 +136,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setKit(kit))
-			navigate(RingsKitRoute)
+			navigate(PathRoutes.Rings.Kit)
 		}
 	}
 

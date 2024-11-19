@@ -1,5 +1,5 @@
 import { Box, Divider, Typography } from '@mui/material'
-import { GasketRoute, PutgRoute, RingRoute, RingsKitRoute, RingsRoute, SnpRoute } from '@/routes'
+import { PathRoutes } from '@/constants/routes'
 import { List } from './components/List'
 
 export type ListItem = {
@@ -12,18 +12,18 @@ export type ListItem = {
 const list: ListItem[] = [
 	{
 		title: 'Фланцевые прокладки',
-		route: GasketRoute,
+		route: PathRoutes.Gasket.Base,
 		children: [
-			{ title: 'Спирально-навитая прокладка (СНП)', route: SnpRoute },
-			{ title: 'Графитовая прокладка ПУТГ', route: PutgRoute },
+			{ title: 'Спирально-навитая прокладка (СНП)', route: PathRoutes.Gasket.SNP },
+			{ title: 'Графитовая прокладка ПУТГ', route: PathRoutes.Gasket.PUTG },
 		],
 	},
 	{
 		title: 'Сальниковые кольца и комплекты',
-		route: RingsRoute,
+		route: PathRoutes.Rings.Base,
 		children: [
-			{ title: 'Кольца', route: RingRoute },
-			{ title: 'Комплекты колец', route: RingsKitRoute },
+			{ title: 'Кольца', route: PathRoutes.Rings.Single },
+			{ title: 'Комплекты колец', route: PathRoutes.Rings.Kit },
 		],
 	},
 ]

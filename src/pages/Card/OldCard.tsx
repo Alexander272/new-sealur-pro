@@ -17,8 +17,9 @@ import { sendMetric } from '@/services/metrics'
 import type { IRingData } from '@/types/rings'
 import { Loader } from '@/components/Loader/Loader'
 import { Input } from '@/components/Input/input.style'
-import { PutgRoute, RingRoute, SnpRoute } from '@/routes'
+// import { PutgRoute, RingRoute, SnpRoute } from '@/routes'
 import { Container, Item, Position, Positions } from './card.style'
+import { PathRoutes } from '@/constants/routes'
 
 type Props = {}
 
@@ -101,7 +102,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setSnp(snp))
-			navigate(SnpRoute)
+			navigate(PathRoutes.Gasket.SNP)
 		}
 		if (position.type === 'Putg') {
 			const putg = {
@@ -111,7 +112,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setPutg(putg))
-			navigate(PutgRoute)
+			navigate(PathRoutes.Gasket.PUTG)
 		}
 		if (position.type === 'Ring') {
 			const ring: IRingData = {
@@ -121,7 +122,7 @@ const Card: FC<Props> = () => {
 			}
 
 			dispatch(setRing(ring))
-			navigate(RingRoute)
+			navigate(PathRoutes.Rings.Single)
 		}
 	}
 

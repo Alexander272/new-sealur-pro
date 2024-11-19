@@ -3,11 +3,11 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Stack } from '@mui/material'
 import { useAppDispatch } from '@/hooks/useStore'
 import { clearActive } from '@/store/card'
-import { RingRoute, RingsKitRoute, RingsRoute } from '@/routes'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { Container } from '@/pages/Gasket/gasket.style'
 import { Products } from '@/components/Products/Products'
 import { RingsSkeleton } from './RingsSkeleton'
+import { PathRoutes } from '@/constants/routes'
 
 export default function Rings() {
 	const navigate = useNavigate()
@@ -16,7 +16,7 @@ export default function Rings() {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		if (location.pathname == RingsRoute) navigate(RingRoute, { replace: true })
+		if (location.pathname == PathRoutes.Rings.Base) navigate(PathRoutes.Rings.Base, { replace: true })
 	}, [location.pathname])
 
 	const navigateHandler = (path: string) => {
@@ -34,10 +34,18 @@ export default function Rings() {
 				<Products />
 
 				<RadioGroup onChange={navigateHandler}>
-					<RadioItem size='large' value={RingRoute} active={location.pathname == RingRoute}>
+					<RadioItem
+						size='large'
+						value={PathRoutes.Rings.Single}
+						active={location.pathname == PathRoutes.Rings.Single}
+					>
 						Кольца
 					</RadioItem>
-					<RadioItem size='large' value={RingsKitRoute} active={location.pathname == RingsKitRoute}>
+					<RadioItem
+						size='large'
+						value={PathRoutes.Rings.Kit}
+						active={location.pathname == PathRoutes.Rings.Kit}
+					>
 						Комплекты
 					</RadioItem>
 				</RadioGroup>
