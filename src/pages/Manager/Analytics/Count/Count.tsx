@@ -6,6 +6,7 @@ import type { IOrderCount, IOrderParams } from '@/types/analytics'
 import { Loader } from '@/components/Loader/Loader'
 import { Container, TableContainer } from './count.style'
 import { Question } from '../analytics.style'
+import { PathRoutes } from '@/constants/routes'
 
 type DataProps = {
 	o: IOrderCount
@@ -47,12 +48,12 @@ export default function OrderCount() {
 
 	const orderNavigate = (id: string) => () => {
 		let state: IOrderParams = { userId: id }
-		navigate('/manager/analytics/orders', { state })
+		navigate(PathRoutes.Manager.Analytics.Orders, { state })
 	}
 
 	const userNavigate = (userId: string) => (event: MouseEvent<HTMLTableCellElement>) => {
 		event.stopPropagation()
-		navigate('/manager/analytics/user', { state: userId })
+		navigate(PathRoutes.Manager.Analytics.User, { state: userId })
 	}
 
 	const renderHeader = () => {

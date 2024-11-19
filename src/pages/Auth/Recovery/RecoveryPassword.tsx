@@ -4,6 +4,7 @@ import { Alert, Button, FormControl, Snackbar, Typography } from '@mui/material'
 import { useSetPasswordMutation } from '@/store/api/user'
 import { useInput } from '@/hooks/useInput'
 import type { IFetchError } from '@/types/auth'
+import { PathRoutes } from '@/constants/routes'
 import { Loader } from '@/components/Loader/Loader'
 import { Input, Title } from '../components/AuthForms/forms.style'
 import { ValidMessage } from '../components/ValidMessage/ValidMessage'
@@ -42,7 +43,7 @@ export default function RecoveryPassword() {
 			await setPassword({ code, password: password.value }).unwrap()
 			handleClick('success', 'Пароль успешно изменен. Сейчас произойдет перенаправление на страницу авторизации')
 			setTimeout(() => {
-				navigate('/auth')
+				navigate(PathRoutes.Auth.Base)
 			}, 5000)
 		} catch (error) {
 			const fetchError = error as IFetchError

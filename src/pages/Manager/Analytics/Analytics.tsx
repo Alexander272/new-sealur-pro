@@ -6,6 +6,7 @@ import type { IOrderParams, IUserParams } from '@/types/analytics'
 import { Input } from '@/components/Input/input.style'
 import { Loader } from '@/components/Loader/Loader'
 import { BaseInfo, Container, Info, Question } from './analytics.style'
+import { PathRoutes } from '@/constants/routes'
 
 const periodAtName = 'analytics_period_at'
 const periodEndName = 'analytics_period_end'
@@ -47,16 +48,16 @@ export default function Analytics() {
 
 	// надо бы запоминать период при переходе по страницам
 	const navigateUsers = (req?: IUserParams) => () => {
-		navigate('users', { state: req })
+		navigate(PathRoutes.Manager.Analytics.Users, { state: req })
 	}
 
 	const navigateUser = (userId: string) => (event: MouseEvent<HTMLTableCellElement>) => {
 		event.stopPropagation()
-		navigate('user', { state: userId })
+		navigate(PathRoutes.Manager.Analytics.User, { state: userId })
 	}
 
 	const navigateOrder = (req?: IOrderParams) => () => {
-		navigate('orders', { state: req })
+		navigate(PathRoutes.Manager.Analytics.Orders, { state: req })
 	}
 
 	const navigateOrderCount = (hash: string) => () => {

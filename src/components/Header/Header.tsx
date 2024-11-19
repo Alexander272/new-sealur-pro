@@ -2,12 +2,13 @@ import { FC, memo, useState } from 'react'
 import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
+import { PathRoutes } from '@/constants/routes'
 import { toggle } from '@/store/card'
+import { useSignOutMutation } from '@/store/api/auth'
 import { sendMetric } from '@/services/metrics'
 import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
 
 import Instruction from '@/assets/files/instruction.pdf'
-import { useSignOutMutation } from '@/store/api/auth'
 
 type Props = {
 	disableCard?: boolean
@@ -37,20 +38,20 @@ const Header: FC<Props> = ({ disableCard }) => {
 	}
 
 	const homeHandler = () => {
-		navigate('/')
+		navigate(PathRoutes.Home)
 	}
 
 	const ordersHandler = () => {
 		handleClose()
 
-		if (role == 'manager') navigate('/manager/orders')
-		else if (role == 'root' || role == 'cco') navigate('/manager/orders/last')
-		else navigate('/orders')
+		if (role == 'manager') navigate(PathRoutes.Manager.Orders.Base)
+		else if (role == 'root' || role == 'cco') navigate(PathRoutes.Manager.Orders.Last)
+		else navigate(PathRoutes.Orders)
 	}
 
 	const analyticsHandler = () => {
 		handleClose()
-		navigate('/manager/analytics')
+		navigate(PathRoutes.Manager.Analytics.Base)
 	}
 
 	const signOutHandler = () => {
@@ -66,7 +67,7 @@ const Header: FC<Props> = ({ disableCard }) => {
 	return (
 		<Container>
 			<Content>
-				<LogoLink to='/'>
+				<LogoLink to={PathRoutes.Home}>
 					<Logo width={391} height={100} loading='lazy' src='/logo_2.webp' alt='logo' />
 				</LogoLink>
 

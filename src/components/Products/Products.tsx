@@ -13,7 +13,7 @@ export const Products = () => {
 	const location = useLocation()
 
 	useEffect(() => {
-		if (location.pathname == '/') button.current?.click()
+		if (location.pathname == PathRoutes.Home) button.current?.click()
 	}, [location.pathname])
 
 	const handleClick = (event: MouseEvent<HTMLButtonElement>) => {

@@ -91,7 +91,7 @@ export const AppRoutes = () => {
 							<Route path={PathRoutes.Rings.Kit} element={<RingsKit />} />
 						</Route>
 
-						<Route path={PathRoutes.Order} element={<Orders />} />
+						<Route path={PathRoutes.Orders} element={<Orders />} />
 					</Route>
 
 					<Route

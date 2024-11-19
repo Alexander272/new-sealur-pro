@@ -7,6 +7,7 @@ import { stampToDate } from '@/services/date'
 import { Loader } from '@/components/Loader/Loader'
 import { Container, TableContainer } from './user.style'
 import { Question } from '../analytics.style'
+import { PathRoutes } from '@/constants/routes'
 
 export default function Users() {
 	const navigate = useNavigate()
@@ -21,12 +22,12 @@ export default function Users() {
 	const from = req?.useLink != undefined ? (req?.useLink ? '(от менеджеров)' : '(с сайта)') : ''
 
 	const navigateOrder = (req?: IOrderParams) => () => {
-		navigate('/manager/analytics/orders', { state: req })
+		navigate(PathRoutes.Manager.Analytics.Orders, { state: req })
 	}
 
 	const navigateUser = (userId: string) => (event: MouseEvent<HTMLTableCellElement>) => {
 		event.stopPropagation()
-		navigate('/manager/analytics/user', { state: userId })
+		navigate(PathRoutes.Manager.Analytics.User, { state: userId })
 	}
 
 	const renderRows = () => {

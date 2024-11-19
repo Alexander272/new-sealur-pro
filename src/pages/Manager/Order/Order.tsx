@@ -22,6 +22,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Loader } from '@/components/Loader/Loader'
 import Managers from '../Orders/Managers'
 import { Container, Icon, OrderList, Row, UserContainer } from './order.style'
+import { PathRoutes } from '@/constants/routes'
 
 type Alert = { type: 'success' | 'error'; message: string; open: boolean }
 type Manager = { order: IManagerOrder | null; type: 'order' | 'manager'; open: boolean }
@@ -60,7 +61,7 @@ export default function Order() {
 	}, [error, isSuccess])
 
 	useEffect(() => {
-		if (alert.type === 'success') navigate('/manager/orders')
+		if (alert.type === 'success') navigate(PathRoutes.Manager.Orders.Base)
 	}, [alert])
 
 	const open = Boolean(anchorEl)

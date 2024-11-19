@@ -17,7 +17,7 @@ export const PathRoutes = Object.freeze({
 		Single: '/rings/single',
 		Kit: '/rings/kit',
 	},
-	Order: '/orders',
+	Orders: '/orders',
 	Manager: {
 		Base: '/manager',
 		Orders: {

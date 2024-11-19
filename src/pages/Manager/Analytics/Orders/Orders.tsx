@@ -6,6 +6,7 @@ import { useGetAnalyticsOrdersQuery } from '@/store/api/analytics'
 import { Loader } from '@/components/Loader/Loader'
 import { Container, TableContainer } from './order.style'
 import { Question } from '../analytics.style'
+import { PathRoutes } from '@/constants/routes'
 
 export default function Orders() {
 	const navigate = useNavigate()
@@ -20,11 +21,11 @@ export default function Orders() {
 	const client = req?.userId ? `по клиенту ` : ''
 
 	const orderNavigate = (id: string) => () => {
-		navigate(`/manager/orders/${id}`)
+		navigate(`${PathRoutes.Manager.Orders.Base}/${id}`)
 	}
 
 	const userNavigate = (userId: string) => () => {
-		navigate('/manager/analytics/user', { state: userId })
+		navigate(PathRoutes.Manager.Analytics.User, { state: userId })
 	}
 
 	const renderRows = () => {

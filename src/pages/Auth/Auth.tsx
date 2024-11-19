@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAppSelector } from '@/hooks/useStore'
+import { PathRoutes } from '@/constants/routes'
 import Footer from '@/components/Footer/Footer'
 import { SignIn } from './components/AuthForms/SignInForm'
 import { SignUp } from './components/AuthForms/SignUpForm'
@@ -15,7 +16,7 @@ export default function Auth() {
 
 	const isAuth = useAppSelector(state => state.user.isAuth)
 
-	const from: string = (location.state as any)?.from?.pathname || '/'
+	const from: string = (location.state as any)?.from?.pathname || PathRoutes.Home
 
 	useEffect(() => {
 		if (isAuth) {

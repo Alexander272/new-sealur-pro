@@ -1,7 +1,8 @@
 import { memo } from 'react'
 import { Divider, Stack, Typography } from '@mui/material'
-import { Container, FileLink, NavLink } from './footer.style'
 import MailOutlineIcon from '@mui/icons-material/MailOutline'
+import { Container, FileLink, NavLink } from './footer.style'
+import { PathRoutes } from '@/constants/routes'
 
 // import Privacy from '@/assets/files/privacy.pdf'
 import Policy from '@/assets/files/policy.pdf'
@@ -29,7 +30,7 @@ export default memo(function Footer() {
 					Политика конфиденциальности
 				</FileLink>
 
-				<NavLink to='/connect'>
+				<NavLink to={PathRoutes.Connect}>
 					<MailOutlineIcon sx={{ marginRight: 1 }} />
 					Тех. поддержка
 				</NavLink>

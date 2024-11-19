@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Typography } from '@mui/material'
+import { PathRoutes } from '@/constants/routes'
 import { setUser } from '@/store/user'
 import { useConfirmMutation } from '@/store/api/user'
 import { useAppDispatch } from '@/hooks/useStore'
@@ -22,7 +23,7 @@ export default function Confirm() {
 		try {
 			const payload = await confirm(code).unwrap()
 			dispatch(setUser(payload.data))
-			navigate('/', { replace: true })
+			navigate(PathRoutes.Home, { replace: true })
 		} catch {
 			setError('Не удалось активировать аккаунт. Срок действия ссылки истек')
 		}

@@ -6,6 +6,7 @@ import { Wrapper } from '@/layout/Manager/manager.style'
 import { Container } from './notFound.style'
 
 import logo from '@/assets/logo192.webp'
+import { PathRoutes } from '@/constants/routes'
 
 export default function NotFound() {
 	const { palette } = useTheme()
@@ -46,7 +47,7 @@ export default function NotFound() {
 						Страница не найдена
 					</Typography>
 
-					<Link to='/'>
+					<Link to={PathRoutes.Home}>
 						<Button variant='outlined' size='large' sx={{ borderRadius: '12px', padding: '8px 32px' }}>
 							На главную
 						</Button>

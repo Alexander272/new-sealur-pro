@@ -1,6 +1,7 @@
 import { Button, Divider, Stack, Typography, useTheme } from '@mui/material'
 import { Link } from 'react-router-dom'
 
+import { PathRoutes } from '@/constants/routes'
 import Header from '@/components/Header/Header'
 import { Wrapper } from '@/layout/Manager/manager.style'
 import { Container } from './forbidden.style'
@@ -40,7 +41,7 @@ export default function Forbidden() {
 						Доступ к данному разделу запрещен
 					</Typography>
 
-					<Link to='/'>
+					<Link to={PathRoutes.Home}>
 						<Button variant='outlined' size='large' sx={{ borderRadius: '12px', padding: '8px 32px' }}>
 							На главную
 						</Button>
