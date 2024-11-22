@@ -15,7 +15,7 @@ const theme = createTheme({
 		},
 	},
 	typography: {
-		fontFamily: ['NunitoSans', 'Merriweather', 'sans-serif'].join(','),
+		fontFamily: ['NunitoSans', 'sans-serif'].join(','),
 	},
 	components: {
 		MuiTooltip: {
@@ -33,6 +33,43 @@ const theme = createTheme({
 			styleOverrides: {
 				root: {
 					borderRadius: 8,
+				},
+			},
+		},
+		MuiSelect: {
+			defaultProps: {
+				size: 'small',
+			},
+			styleOverrides: {
+				root: {
+					borderRadius: 12,
+				},
+			},
+		},
+		MuiInputLabel: {
+			defaultProps: {
+				size: 'small',
+			},
+		},
+		MuiTextField: {
+			defaultProps: {
+				size: 'small',
+				autoComplete: 'off',
+				onWheel: event => (event.target as HTMLInputElement).blur(),
+			},
+			styleOverrides: {
+				root: {
+					// borderRadius: 12,
+					'& fieldset': {
+						transition: 'all 0.3s ease-in-out',
+					},
+				},
+			},
+		},
+		MuiOutlinedInput: {
+			styleOverrides: {
+				root: {
+					borderRadius: 12,
 				},
 			},
 		},

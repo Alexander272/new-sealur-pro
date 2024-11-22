@@ -1,27 +1,24 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 import path from 'path'
 
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
-	plugins: [
-		react({
-			jsxImportSource: '@emotion/react',
-			babel: {
-				plugins: ['@emotion/babel-plugin'],
-			},
-			// plugins: [['@swc/plugin-emotion', {}]],
-		}),
-	],
+	plugins: [react()],
 	resolve: {
-		alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
+		alias: [
+			{
+				find: '@',
+				replacement: path.resolve(__dirname, 'src'),
+			},
+		],
 	},
 	server: {
 		proxy: {
-			'/api': 'http://localhost:8080',
+			'/api': 'http://localhost:9000',
 		},
 	},
 	build: {
-		target: 'es2015',
+		target: 'es2021',
 	},
 })
