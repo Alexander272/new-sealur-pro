@@ -36,7 +36,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 	const name = useInput({ validation: 'empty' })
 	const position = useInput({ validation: 'empty' })
 	const email = useInput({ validation: 'email' })
-	const phone = useInput({ replace: 'phone' })
+	const phone = useInput({ replace: 'phone', validation: 'phone' })
 	const password = useInput({ validation: 'password' })
 	const confirm = useInput({ validation: 'empty' })
 

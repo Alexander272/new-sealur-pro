@@ -1,26 +1,27 @@
 import { Suspense, lazy } from 'react'
 import { Outlet } from 'react-router-dom'
-// import { Header } from '@/components/Header/Header'
-import { Loader } from '@/components/Loader/Loader'
+
+import { Fallback } from '@/components/Fallback/Fallback'
 import { Base, Wrapper } from './main.style'
 
-const Header = lazy(() => import('@/components/Header/Header'))
-const Footer = lazy(() => import('@/components/Footer/Footer'))
-const Card = lazy(() => import('@/pages/Card/Card'))
+const Header = lazy(() => import('@/components/Layout/Header/Header'))
+const Footer = lazy(() => import('@/components/Layout/Footer/Footer'))
+// const Card = lazy(() => import('@/pages/Card/Card'))
 
 export default function Main() {
 	return (
 		<Base>
-			<Suspense fallback={<Loader />}>
+			<Suspense fallback={<Fallback />}>
 				<Header />
 				{/* </Suspense> */}
 				<Wrapper>
-					<Suspense fallback={<Loader />}>
+					<Suspense fallback={<Fallback />}>
 						<Outlet />
 					</Suspense>
 
 					<Suspense fallback={<></>}>
-						<Card />
+						{/* //TODO */}
+						{/* <Card /> */}
 					</Suspense>
 				</Wrapper>
 				{/* <Suspense fallback={<Loader />}> */}

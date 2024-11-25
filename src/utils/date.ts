@@ -2,7 +2,7 @@ const dateOption: Intl.DateTimeFormatOptions = {
 	// weekday: "short",
 	year: '2-digit',
 	month: 'short',
-	day: 'numeric',
+	day: '2-digit',
 }
 
 // преобразование штампа в дату определенного формата

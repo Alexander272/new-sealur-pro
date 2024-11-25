@@ -47,5 +47,8 @@ export const userPath = userSlice.name
 export const userReducer = userSlice.reducer
 
 export const getIsAuth = (state: RootState) => state.user.isAuth
+export const getUserId = (state: RootState) => state.user.userId
+export const getUser = (state: RootState) => state.user.user
+export const getRole = (state: RootState) => state.user.roleCode
 
 export const { setAuth, setUser, resetUser } = userSlice.actions

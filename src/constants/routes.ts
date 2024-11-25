@@ -23,7 +23,7 @@ export const PathRoutes = Object.freeze({
 		Orders: {
 			Base: '/manager/orders' as const,
 			Order: '/manager/orders/:id' as const,
-			Last: '/manager/orders/last' as const,
+			List: '/manager/orders/list' as const,
 		},
 		Analytics: {
 			Base: '/manager/analytics' as const,

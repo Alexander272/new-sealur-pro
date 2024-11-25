@@ -1,18 +1,18 @@
 import { Suspense, lazy } from 'react'
 import { Outlet } from 'react-router-dom'
-// import { Header } from '@/components/Header/Header'
-import { Loader } from '@/components/Loader/Loader'
+
+import { Fallback } from '@/components/Fallback/Fallback'
 import { Wrapper } from './manager.style'
 
-const Header = lazy(() => import('@/components/Header/Header'))
+const Header = lazy(() => import('@/components/Layout/Header/Header'))
 
 export default function Main() {
 	return (
 		<>
-			<Suspense fallback={<Loader />}>
+			<Suspense fallback={<Fallback />}>
 				<Header disableCard />
 				<Wrapper>
-					<Suspense fallback={<Loader />}>
+					<Suspense fallback={<Fallback />}>
 						<Outlet />
 					</Suspense>
 				</Wrapper>

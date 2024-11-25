@@ -1,11 +1,12 @@
 import { FC, memo, useState } from 'react'
 import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '@/hooks/useStore'
+
+import { useAppSelector } from '@/hooks/redux'
 import { PathRoutes } from '@/constants/routes'
-import { toggle } from '@/store/card'
-import { useSignOutMutation } from '@/store/api/auth'
-import { sendMetric } from '@/services/metrics'
+import { useSignOutMutation } from '@/features/auth/authApiSlice'
+// import { toggle } from '@/store/card'
+// import { sendMetric } from '@/services/metrics'
 import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
 
 import Instruction from '@/assets/files/instruction.pdf'
@@ -23,10 +24,11 @@ const Header: FC<Props> = ({ disableCard }) => {
 	const [signOut] = useSignOutMutation()
 
 	const navigate = useNavigate()
-	const dispatch = useAppDispatch()
+	// const dispatch = useAppDispatch()
 
 	const basketHandler = () => {
-		dispatch(toggle())
+		//TODO
+		// dispatch(toggle())
 	}
 
 	const open = Boolean(anchorEl)

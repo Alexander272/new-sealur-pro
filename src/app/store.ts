@@ -2,13 +2,16 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
 import { userPath, userReducer } from '@/features/user/userSlice'
+import { cardPath, cardReducer } from '@/features/card/cardSlice'
+import { snpPath, snpReducer } from '@/features/gaskets/modules/snp/snpSlice'
 import { resetStoreListener } from './middlewares/resetStore'
 import { apiSlice } from './apiSlice'
 
 const rootReducer = combineReducers({
 	[apiSlice.reducerPath]: apiSlice.reducer,
 	[userPath]: userReducer,
-	// [employeesPath]: employeesReducer,
+	[cardPath]: cardReducer,
+	[snpPath]: snpReducer,
 })
 
 export const store = configureStore({

@@ -9,13 +9,9 @@ import { Auth } from '@/pages/auth/AuthLazy'
 import { Confirm } from '@/pages/confirm/ConfirmLazy'
 import { Recovery } from '@/pages/recovery/RecoveryLazy'
 import { RecoveryPassword } from '@/pages/recovery/PasswordLazy'
-
-// import { Loader } from '@/components/Loader/Loader'
-// import { PathRoutes } from './constants/routes'
-// import { useRefresh } from './hooks/refresh'
-
-// import Main from '@/layout/Main/Main'
-// import RequireAuth from './pages/Auth/RequireAuth'
+import { Manager } from '@/components/Layout/Manager/ManagerLazy'
+import { Connect } from '@/pages/connect/ConnectLazy'
+import { NotFound } from '@/pages/notFound/NotFoundLazy'
 
 export const AppRouter = () => {
 	const { ready } = useRefresh()
@@ -38,23 +34,23 @@ export const AppRouter = () => {
 					<Route path={PathRoutes.Auth.Recovery} element={<Recovery />} />
 					<Route path={PathRoutes.Auth.RecoveryCode} element={<RecoveryPassword />} />
 
-					{/* <Route path={PathRoutes.Connect} element={<Manager />}>
+					<Route path={PathRoutes.Connect} element={<Manager />}>
 						<Route index element={<Connect />} />
 					</Route>
 
 					<Route path='*' element={<NotFound />} />
 
-					<Route
+					{/*<Route
 						path={PathRoutes.Home}
 						element={
-							<RequireAuth>
+							<CheckAccess>
 								<Main />
-							</RequireAuth>
+							</CheckAccess>
 						}
 					>
 						<Route index element={<Home />} />
 
-						<Route path={PathRoutes.Gasket.Base} element={<Gasket />}>
+						<Route path={PathRoutes.Gasket.Base} element={<Gaskets />}>
 							<Route path={PathRoutes.Gasket.SNP} element={<Snp />} />
 							<Route path={PathRoutes.Gasket.PUTG} element={<Putg />} />
 						</Route>
