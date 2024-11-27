@@ -11,6 +11,7 @@ export default function LastOrders() {
 	const search = useDebounce(number, 500)
 
 	const { data: last, isError: isErrorLast, isLoading: isLoadingLast } = useGetLastOrdersQuery(null)
+	//TODO этот запрос отрабатывает не корректно, и вообще их можно объединить с предыдущим
 	const { data, isError, isLoading } = useGetOrderByNumberQuery(search, { skip: !search })
 
 	const searchHandler = (event: ChangeEvent<HTMLInputElement>) => {

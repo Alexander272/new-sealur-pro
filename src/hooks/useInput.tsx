@@ -88,7 +88,7 @@ export const useInput = (props?: Props) => {
 			// 	}
 			// }
 
-			let matrix = '+7 (___) ___-__-__ (доб. ___)'
+			// let matrix = '+7 (___) ___-__-__ (доб. ___)'
 			// 	i = 0,
 			// 	def = matrix.replace(/\D/g, ''),
 			// 	val = newValue.replace(/\D/g, ''),

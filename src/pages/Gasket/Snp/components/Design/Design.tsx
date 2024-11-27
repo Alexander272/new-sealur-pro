@@ -101,7 +101,7 @@ export const Design = () => {
 			dispatch(setDesignDrawing(null))
 		}
 		if (res.error) {
-			setAlert({ type: 'create', open: true })
+			setAlert({ type: 'delete', open: true })
 		}
 	}
 
