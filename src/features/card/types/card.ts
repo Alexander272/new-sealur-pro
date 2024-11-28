@@ -37,3 +37,11 @@ export interface IActive {
 	id: string
 	type: SnpType | PutgType
 }
+
+export interface ICopyPosition {
+	id: string
+	count: number
+	amount: string
+	orderId: string
+	fromOrderId: string
+}

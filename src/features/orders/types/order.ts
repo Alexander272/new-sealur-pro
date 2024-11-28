@@ -1,3 +1,20 @@
+import { Position } from '@/features/card/types/card'
+
+export interface IOrderResponse {
+	data: {
+		id: string
+		number?: number
+		info?: string
+		positions?: Position[]
+	}
+}
+
+export interface ICopyOrder {
+	targetId: string
+	fromId: string
+	count: number
+}
+
 export interface IFullOrder {
 	id: string
 	manager: string

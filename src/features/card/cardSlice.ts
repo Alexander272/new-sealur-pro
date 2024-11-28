@@ -61,5 +61,7 @@ export const cardPath = cardSlice.name
 export const cardReducer = cardSlice.reducer
 
 export const getActive = (state: RootState) => state.card.active
+export const getOrderId = (state: RootState) => state.card.orderId
+export const getPositions = (state: RootState) => state.card.positions
 
 export const { toggle, setOrder, setInfo, setActive, clearActive, resetState } = cardSlice.actions

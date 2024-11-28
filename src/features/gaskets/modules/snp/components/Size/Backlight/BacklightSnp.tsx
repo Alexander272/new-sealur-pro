@@ -1,7 +1,8 @@
-import { useAppSelector } from '@/hooks/useStore'
+import { useAppSelector } from '@/hooks/redux'
+import { getMaterials, getSnpType } from '@/features/gaskets/modules/snp/snpSlice'
 import { Backlight } from '@/components/Backlight/Backlight'
 
-const backlightPositionSnp = {
+const backlightPositionSnp = Object.freeze({
 	Д: {
 		outerRing: [
 			{ id: 'd-ir-l', top: '20%', left: '1%', width: '38px', height: '24px' },
@@ -48,22 +49,18 @@ const backlightPositionSnp = {
 			{ id: 'v-fr-r', top: '22%', left: '80%', width: '88px', height: '28px' },
 		],
 	},
-}
+})
 
 export const BacklightSnp = () => {
-	const main = useAppSelector(state => state.snp.main)
-	const material = useAppSelector(state => state.snp.material)
+	const snp = useAppSelector(getSnpType)
+	const material = useAppSelector(getMaterials)
 
 	return (
 		<>
 			{/* // блок зависит от того какой материал открыт и от того какой тип прокладки выбран */}
-			{material.openIr && (
-				<Backlight blocks={backlightPositionSnp[main.snpType?.title as 'Д']?.innerRing || []} />
-			)}
-			{material.openFr && <Backlight blocks={backlightPositionSnp[main.snpType?.title as 'Д']?.frame || []} />}
-			{material.openOr && (
-				<Backlight blocks={backlightPositionSnp[main.snpType?.title as 'Д']?.outerRing || []} />
-			)}
+			{material.openIr && <Backlight blocks={backlightPositionSnp[snp?.title as 'Д']?.innerRing || []} />}
+			{material.openFr && <Backlight blocks={backlightPositionSnp[snp?.title as 'Д']?.frame || []} />}
+			{material.openOr && <Backlight blocks={backlightPositionSnp[snp?.title as 'Д']?.outerRing || []} />}
 		</>
 	)
 }

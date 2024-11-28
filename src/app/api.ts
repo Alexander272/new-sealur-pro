@@ -18,9 +18,18 @@ export const API = Object.freeze({
 	},
 	orders: {
 		base: 'orders' as const,
+		current: 'orders/current' as const,
+		all: 'orders/all' as const,
+		save: 'orders/save' as const,
+		copy: 'orders/copy' as const,
+		info: 'orders/info' as const,
 		last: 'orders/last' as const,
 		number: 'orders/number' as const,
 		count: 'orders/count' as const,
+	},
+	positions: {
+		base: 'positions' as const,
+		copy: 'positions/copy' as const,
 	},
 	snp: {
 		base: 'snp' as const,
@@ -30,5 +39,7 @@ export const API = Object.freeze({
 		flangeTypes: 'snp/flange-types' as const,
 		fillers: 'snp/fillers' as const,
 		materials: 'snp/materials' as const,
+		sizes: 'snp/sizes' as const,
+		fastenings: 'snp/fastenings' as const,
 	},
 })

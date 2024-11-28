@@ -10,6 +10,8 @@ import type {
 import { apiSlice } from '@/app/apiSlice'
 import { API } from '@/app/api'
 import { toast } from 'react-toastify'
+import { ISnpSize } from './types/size'
+import { IMounting } from '../../types/mounting'
 
 type SnpDataRequest = {
 	standardId?: string
@@ -98,6 +100,36 @@ export const snpApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+		// получение размеров
+		getSizes: builder.query<{ data: ISnpSize[] }, SnpRequest>({
+			query: req => ({
+				url: API.snp.sizes,
+				params: new URLSearchParams({ typeId: req.typeId, hasD2: `${req.hasD2}` }),
+			}),
+			providesTags: [{ type: 'Snp', id: 'sizes' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить размеры', { autoClose: false })
+				}
+			},
+		}),
+
+		// получение списка креплений
+		getFastenings: builder.query<{ data: IMounting[] }, null>({
+			query: () => ({
+				url: API.snp.fastenings,
+			}),
+			providesTags: [{ type: 'Snp', id: 'fastenings' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить список креплений', { autoClose: false })
+				}
+			},
+		}),
 
 		// получение общих данных (материалов, наполнителей, типах фланца, креплений) о типах прокладок (зависит от стандарта)
 		getSnpData: builder.query<ISnpDataResponse, SnpDataRequest>({
@@ -133,6 +165,8 @@ export const {
 	useGetFillersQuery,
 	useGetMaterialsQuery,
 	useGetSnpInfoQuery,
+	useGetSizesQuery,
+	useGetFasteningsQuery,
 	useGetSnpDataQuery,
 	useGetSnpQuery,
 } = snpApi

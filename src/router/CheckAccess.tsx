@@ -6,10 +6,10 @@ import { Forbidden } from '@/pages/forbidden/ForbiddenLazy'
 
 type Props = {
 	children: JSX.Element
-	forbiddenRoles: string[]
+	forbiddenRoles?: string[]
 }
 
-export default function CheckAccess({ children, forbiddenRoles }: Props) {
+export default function CheckAccess({ children, forbiddenRoles = [] }: Props) {
 	const { roleCode: role, isAuth } = useAppSelector(state => state.user)
 	const location = useLocation()
 

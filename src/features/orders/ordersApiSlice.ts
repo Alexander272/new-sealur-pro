@@ -1,13 +1,68 @@
 import { toast } from 'react-toastify'
 
 import type { IBaseFetchError } from '@/app/types/error'
-import type { IFullOrder, IOrderCount } from './types/order'
+import type { ICopyOrder, IFullOrder, IOrder, IOrderCount, IOrderResponse } from './types/order'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 
 export const ordersApiSlice = apiSlice.injectEndpoints({
 	overrideExisting: false,
 	endpoints: builder => ({
+		// получение текущей заявки
+		getOrder: builder.query<IOrderResponse, null>({
+			query: () => API.orders.current,
+			providesTags: [{ type: 'Orders', id: 'current' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить текущую заявку', { autoClose: false })
+				}
+			},
+		}),
+		// получение всех прошлых заявок
+		getAllOrders: builder.query<{ data: IFullOrder[] }, null>({
+			query: () => API.orders.all,
+			providesTags: [{ type: 'Orders', id: 'all' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить список заявок', { autoClose: false })
+				}
+			},
+		}),
+		// оформление заявки с последующей ее отправкой менеджеру
+		saveOrder: builder.mutation<string, IOrder>({
+			query: order => ({
+				url: API.orders.save,
+				method: 'POST',
+				body: order,
+			}),
+			invalidatesTags: [
+				{ type: 'Orders', id: 'current' },
+				{ type: 'Orders', id: 'all' },
+			],
+		}),
+
+		// сохранение доп. информации о заявке
+		saveInfo: builder.mutation<string, { orderId: string; info: string }>({
+			query: info => ({
+				url: API.orders.info,
+				method: 'PUT',
+				body: info,
+			}),
+		}),
+		// перенос всех позиций из прошлой заявки в текущую
+		copyOrder: builder.mutation<string, ICopyOrder>({
+			query: order => ({
+				url: API.orders.copy,
+				method: 'POST',
+				body: order,
+			}),
+			invalidatesTags: [{ type: 'Orders', id: 'current' }],
+		}),
+
 		// получение последних заявок
 		getLastOrders: builder.query<{ data: { orders: IFullOrder[] } }, null>({
 			query: () => API.orders.last,
@@ -78,4 +133,13 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 	}),
 })
 
-export const { useGetLastOrdersQuery, useGetOrderByNumberQuery, useGetOrdersCountQuery } = ordersApiSlice
+export const {
+	useGetOrderQuery,
+	useSaveOrderMutation,
+	useGetAllOrdersQuery,
+	useSaveInfoMutation,
+	useCopyOrderMutation,
+	useGetLastOrdersQuery,
+	useGetOrderByNumberQuery,
+	useGetOrdersCountQuery,
+} = ordersApiSlice

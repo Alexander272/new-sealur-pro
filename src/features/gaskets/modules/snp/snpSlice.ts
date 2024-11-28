@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 import type { RootState } from '@/app/store'
 import type { IMaterial } from '@/features/gaskets/types/material'
-import type { PN } from '@/features/gaskets/types/sizes'
 import type { IMounting } from '@/features/gaskets/types/mounting'
 import type { IDrawing } from '@/features/gaskets/types/drawing'
+import type { ISizeBlock } from './types/size'
 import type {
 	IDesignBlockSnp,
 	IFiller,
@@ -16,6 +16,7 @@ import type {
 	ISnpMaterial,
 	ISNPType,
 	IStandardForSNP,
+	IThickness,
 	OpenMaterial,
 	TypeMaterial,
 } from './types/snp'
@@ -260,26 +261,19 @@ export const snpSlice = createSlice({
 			state.hasSizeError = false
 		},
 		// установка условного прохода
-		setSizePn: (
-			state,
-			action: PayloadAction<{
-				pn: PN
-				size?: { d4: string; d3: string; d2: string; d1: string }
-				thickness?: { h: string; s2: string; s3: string; another: string }
-			}>
-		) => {
+		setSizePn: (state, action: PayloadAction<ISizeBlock>) => {
 			state.size.pn = action.payload.pn
-			if (action.payload.size) {
-				state.size.d4 = action.payload.size.d4
-				state.size.d3 = action.payload.size.d3
-				state.size.d2 = action.payload.size.d2
-				state.size.d1 = action.payload.size.d1
+			if (action.payload.sizes) {
+				state.size.d4 = action.payload.sizes.d4
+				state.size.d3 = action.payload.sizes.d3
+				state.size.d2 = action.payload.sizes.d2
+				state.size.d1 = action.payload.sizes.d1
 			}
-			if (action.payload.thickness) {
-				state.size.h = action.payload.thickness.h
-				state.size.s2 = action.payload.thickness.s2
-				state.size.s3 = action.payload.thickness.s3
-				state.size.another = action.payload.thickness.another
+			if (action.payload.thicknesses) {
+				state.size.h = action.payload.thicknesses.h
+				state.size.s2 = action.payload.thicknesses.s2
+				state.size.s3 = action.payload.thicknesses.s3
+				state.size.another = action.payload.thicknesses.another
 			}
 		},
 		// установка размеров прокладки
@@ -312,10 +306,7 @@ export const snpSlice = createSlice({
 				state.sizeError.emptySize
 		},
 		// установка толщины
-		setSizeThickness: (
-			state,
-			action: PayloadAction<{ h?: string; s2?: string; s3?: string; another?: string }>
-		) => {
+		setSizeThickness: (state, action: PayloadAction<IThickness>) => {
 			if (action.payload.h != undefined) state.size.h = action.payload.h
 			if (action.payload.s2 != undefined) state.size.s2 = action.payload.s2
 			if (action.payload.s3 != undefined) state.size.s3 = action.payload.s3
@@ -515,9 +506,25 @@ export const getFiller = (state: RootState) => state.snp.material.filler
 export const getMaterials = (state: RootState) => state.snp.material
 
 export const getSize = (state: RootState) => state.snp.size
+export const getSizeErr = (state: RootState) => state.snp.sizeError
+export const getDn = (state: RootState) => state.snp.size.dn
+export const getD2 = (state: RootState) => state.snp.size.d2
+export const getPn = (state: RootState) => state.snp.size.pn
+export const getSizeIndex = (state: RootState) => state.snp.size.index
 export const getThickness = (state: RootState) => state.snp.size.h
+export const getAnother = (state: RootState) => state.snp.size.another
+
 export const getDesign = (state: RootState) => state.snp.design
+export const getJumper = (state: RootState) => state.snp.design.jumper
+export const getHasHole = (state: RootState) => state.snp.design.hasHole
 export const getMounting = (state: RootState) => state.snp.design.mounting
+export const getDrawing = (state: RootState) => state.snp.drawing
+
+export const getHasSizeError = (state: RootState) => state.snp.hasSizeError
+export const getHasDesignError = (state: RootState) => state.snp.hasDesignError
+
+export const getInfo = (state: RootState) => state.snp.info
+export const getAmount = (state: RootState) => state.snp.amount
 
 export const {
 	setIsReady,

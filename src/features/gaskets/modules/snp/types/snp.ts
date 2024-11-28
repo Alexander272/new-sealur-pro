@@ -164,6 +164,7 @@ export interface IMaterialBlockSnp {
 }
 
 export interface ISizeBlockSnp {
+	index?: number
 	dn: string
 	dnMm: string
 	d4: string
@@ -198,3 +199,10 @@ export interface IDesignBlockSnp {
 // mounting: IHasMounting
 // hasHole: boolean
 // }
+
+export interface IThickness {
+	h?: string
+	s2?: string
+	s3?: string
+	another?: string
+}
