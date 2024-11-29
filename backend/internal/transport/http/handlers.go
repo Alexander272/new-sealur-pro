@@ -12,11 +12,17 @@ import (
 type Handler struct {
 	// keycloak *auth.KeycloakClient
 	services *services.Services
+	Modules  []*Modules
+}
+
+type Modules interface {
+	Init(*gin.RouterGroup, *config.Config)
 }
 
 func NewHandler(services *services.Services) *Handler {
 	return &Handler{
 		services: services,
+		Modules:  []*Modules{},
 		// keycloak: keycloak,
 	}
 }

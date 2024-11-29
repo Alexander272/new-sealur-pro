@@ -1,3 +1,6 @@
+log_level: debug
+log_source: false
+
 http:
     serviceName: 'api-service'
     host: pro.sealur.ru
