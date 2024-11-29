@@ -25,7 +25,7 @@ type Filler interface {
 	Create(ctx context.Context, dto *models.FillerDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.FillerDTO) error
 	Update(ctx context.Context, dto *models.FillerDTO) error
-	Delete(ctx context.Context, dto *models.FillerDTO) error
+	Delete(ctx context.Context, dto *models.DeleteFillerDTO) error
 }
 
 func (r *FillerRepo) GetAll(ctx context.Context, req *models.GetFillerDTO) ([]*models.Filler, error) {
@@ -103,7 +103,7 @@ func (r *FillerRepo) Update(ctx context.Context, dto *models.FillerDTO) error {
 	return nil
 }
 
-func (r *FillerRepo) Delete(ctx context.Context, dto *models.FillerDTO) error {
+func (r *FillerRepo) Delete(ctx context.Context, dto *models.DeleteFillerDTO) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id=$1", SnpFillerTable)
 
 	if _, err := r.db.ExecContext(ctx, query, dto.Id); err != nil {

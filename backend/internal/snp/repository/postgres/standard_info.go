@@ -26,7 +26,7 @@ type StandardInfo interface {
 	Create(ctx context.Context, dto *models.StandardInfoDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.StandardInfoDTO) error
 	Update(ctx context.Context, dto *models.StandardInfoDTO) error
-	Delete(ctx context.Context, dto *models.StandardInfoDTO) error
+	Delete(ctx context.Context, dto *models.DeleteStandardInfoDTO) error
 }
 
 func (r *StandardInfoRepo) GetAll(ctx context.Context, req *models.GetStandardInfoDTO) ([]*models.StandardInfo, error) {
@@ -128,7 +128,7 @@ func (r *StandardInfoRepo) Update(ctx context.Context, dto *models.StandardInfoD
 	return nil
 }
 
-func (r *StandardInfoRepo) Delete(ctx context.Context, dto *models.StandardInfoDTO) error {
+func (r *StandardInfoRepo) Delete(ctx context.Context, dto *models.DeleteStandardInfoDTO) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id=$1", SnpStandardTable)
 
 	if _, err := r.db.ExecContext(ctx, query, dto.Id); err != nil {
