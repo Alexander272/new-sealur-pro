@@ -14,6 +14,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/repository"
 	"github.com/Alexander272/new-sealur-pro/internal/server"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
+	"github.com/Alexander272/new-sealur-pro/internal/snp"
 	transport "github.com/Alexander272/new-sealur-pro/internal/transport/http"
 	"github.com/Alexander272/new-sealur-pro/pkg/auth"
 	"github.com/Alexander272/new-sealur-pro/pkg/database/postgres"
@@ -73,6 +74,11 @@ func main() {
 		LimitTTL:        conf.Limiter.TTL,
 	})
 	handlers := transport.NewHandler(services)
+
+	snpModule := snp.NewSnpModule(db, conf)
+	// handlers.Modules = append(handlers.Modules, snpModule)
+
+	handlers.Modules = []transport.Modules{snpModule}
 
 	//* HTTP Server
 	srv := server.NewServer(&conf.Http, handlers.Init(conf))

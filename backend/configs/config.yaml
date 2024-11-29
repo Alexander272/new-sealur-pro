@@ -23,6 +23,16 @@ auth:
     secure: false
     domain: pro.sealur.ru
 
+postgres:
+    db_name: pro
+    # db_name: sealur_pro
+    host: 127.0.0.1
+    # host: pro.sealur.ru
+    port: 5436
+    # port: 5432
+    ssl_mode: disable
+    username: postgres
+
 redis:
     host: 192.168.5.159
     port: 6379

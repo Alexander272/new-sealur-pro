@@ -5,6 +5,7 @@ import (
 
 	"github.com/Alexander272/new-sealur-pro/internal/config"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
+	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/pkg/limiter"
 	"github.com/gin-gonic/gin"
 )
@@ -12,17 +13,17 @@ import (
 type Handler struct {
 	// keycloak *auth.KeycloakClient
 	services *services.Services
-	Modules  []*Modules
+	Modules  []Modules
 }
 
 type Modules interface {
-	Init(*gin.RouterGroup, *config.Config)
+	Init(*gin.RouterGroup, *middleware.Middleware)
 }
 
 func NewHandler(services *services.Services) *Handler {
 	return &Handler{
 		services: services,
-		Modules:  []*Modules{},
+		Modules:  []Modules{},
 		// keycloak: keycloak,
 	}
 }
@@ -45,7 +46,11 @@ func (h *Handler) Init(conf *config.Config) *gin.Engine {
 }
 
 func (h *Handler) initAPI(router *gin.Engine, conf *config.Config) {
-	// api := router.Group("/api")
-	// middleware := middleware.NewMiddleware(h.services, conf.Auth, h.keycloak)
+	api := router.Group("/api")
+	middleware := middleware.NewMiddleware(h.services, conf.Auth)
 	// httpV1.Register(api, &httpV1.Deps{Services: h.services, Conf: conf, Middleware: middleware})
+
+	for _, module := range h.Modules {
+		module.Init(api, middleware)
+	}
 }
