@@ -1,51 +1,51 @@
-package standard_info
+package standard
 
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
-	"github.com/Alexander272/new-sealur-pro/internal/snp/models"
-	"github.com/Alexander272/new-sealur-pro/internal/snp/services"
+	"github.com/Alexander272/new-sealur-pro/internal/services"
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/pkg/error_bot"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	service services.StandardInfo
+	service services.Standard
 }
 
-func NewHandler(service services.StandardInfo) *Handler {
+func NewHandler(service services.Standard) *Handler {
 	return &Handler{
 		service: service,
 	}
 }
 
-func Register(api *gin.RouterGroup, service services.StandardInfo, middleware *middleware.Middleware) {
+func Register(api *gin.RouterGroup, service services.Standard, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	standard := api.Group("/standard-info")
+	standards := api.Group("/standards")
 	{
-		standard.GET("", handler.getAll)
-		standard.POST("", handler.create)
-		standard.PUT("/:id", handler.update)
-		standard.DELETE("/:id", handler.delete)
+		standards.GET("", handler.getAll)
+		standards.POST("", handler.create)
+		standards.PUT("/:id", handler.update)
+		standards.DELETE("/:id", handler.delete)
 	}
 }
 
 func (h *Handler) getAll(c *gin.Context) {
-	standards, err := h.service.GetAll(c, &models.GetStandardInfoDTO{})
+	data, err := h.service.GetAll(c, &models.GetStandardDTO{})
 	if err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "something went wrong")
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить стандарты")
 		error_bot.Send(c, err.Error(), nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, response.DataResponse{Data: standards, Total: len(standards)})
+	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
 }
 
 func (h *Handler) create(c *gin.Context) {
-	dto := &models.StandardInfoDTO{}
+	dto := &models.StandardDTO{}
 	if err := c.BindJSON(&dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
@@ -66,7 +66,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	dto := &models.StandardInfoDTO{}
+	dto := &models.StandardDTO{}
 	if err := c.BindJSON(&dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
@@ -88,7 +88,7 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	dto := &models.DeleteStandardInfoDTO{Id: id}
+	dto := &models.DeleteStandardDTO{Id: id}
 	if err := h.service.Delete(c, dto); err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить стандарт")
 		error_bot.Send(c, err.Error(), dto)

@@ -2,12 +2,12 @@ package models
 
 type Info struct {
 	Id           string `db:"id" json:"id"`
-	HasInnerRing bool   `db:"hasInnerRing" json:"hasInnerRing"`
-	HasFrame     bool   `db:"hasFrame" json:"hasFrame"`
-	HasOuterRing bool   `db:"hasOuterRing" json:"hasOuterRing"`
-	HasHole      bool   `db:"hasHole" json:"hasHole"`
-	HasJumper    bool   `db:"hasJumper" json:"hasJumper"`
-	HasMounting  bool   `db:"hasMounting" json:"hasMounting"`
+	HasInnerRing bool   `db:"has_inner_ring" json:"hasInnerRing"`
+	HasFrame     bool   `db:"has_frame" json:"hasFrame"`
+	HasOuterRing bool   `db:"has_outer_ring" json:"hasOuterRing"`
+	HasHole      bool   `db:"has_hole" json:"hasHole"`
+	HasJumper    bool   `db:"has_jumper" json:"hasJumper"`
+	HasMounting  bool   `db:"has_mounting" json:"hasMounting"`
 }
 
 type GetInfoDTO struct {

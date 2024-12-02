@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/Alexander272/new-sealur-pro/internal/snp/services"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/transport/http/filler"
+	"github.com/Alexander272/new-sealur-pro/internal/snp/transport/http/flange_type"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/transport/http/info"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/transport/http/materials"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/transport/http/size"
@@ -23,8 +24,11 @@ func NewHandler(services *services.Services) *Handler {
 }
 
 func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) {
-	snp := api.Group("/snp", middleware.UserIdentity)
+	snp := api.Group("/snp")
+	//TODO
+	// snp := api.Group("/snp", middleware.UserIdentity)
 	filler.Register(snp, h.services.Filler, middleware)
+	flange_type.Register(snp, h.services.FlangeType, middleware)
 	info.Register(snp, h.services.Info, middleware)
 	materials.Register(snp, h.services.Materials, middleware)
 	size.Register(snp, h.services.Size, middleware)
