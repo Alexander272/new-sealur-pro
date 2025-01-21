@@ -42,9 +42,9 @@ export const snpApi = apiSlice.injectEndpoints({
 		}),
 		// получение типов фланцев
 		getFlangeTypes: builder.query<{ data: IFlangeType[] }, SnpDataRequest>({
-			query: ({ standardId = '', snpStandardId = '' }) => ({
-				url: API.snp.flangeTypes,
-				params: new URLSearchParams({ standardId, snpStandardId }),
+			query: ({ standardId = '' }) => ({
+				url: API.snp.types,
+				params: new URLSearchParams({ standardId }),
 			}),
 			providesTags: [{ type: 'Snp', id: 'flangeTypes' }],
 			onQueryStarted: async (_arg, api) => {
@@ -119,7 +119,7 @@ export const snpApi = apiSlice.injectEndpoints({
 		// получение списка креплений
 		getFastenings: builder.query<{ data: IMounting[] }, null>({
 			query: () => ({
-				url: API.snp.fastenings,
+				url: API.fastenings,
 			}),
 			providesTags: [{ type: 'Snp', id: 'fastenings' }],
 			onQueryStarted: async (_arg, api) => {

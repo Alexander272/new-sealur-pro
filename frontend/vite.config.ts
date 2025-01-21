@@ -4,7 +4,11 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [react()],
+	plugins: [
+		react({
+			plugins: [['@swc/plugin-emotion', {}]],
+		}),
+	],
 	resolve: {
 		alias: [
 			{
@@ -15,7 +19,7 @@ export default defineConfig({
 	},
 	server: {
 		proxy: {
-			'/api': 'http://localhost:9000',
+			'/api': 'http://localhost:8080',
 		},
 	},
 	build: {

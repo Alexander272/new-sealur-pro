@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react'
-import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
 import type { ISnpSize } from '@/features/gaskets/modules/snp/types/size'
 import type { IThickness } from '@/features/gaskets/modules/snp/types/snp'
@@ -8,16 +8,17 @@ import { getPn, getSizeIndex, getThickness, setSizeThickness } from '@/features/
 
 type Props = {
 	sizes: ISnpSize[]
+	isFetching?: boolean
 }
 
-export const Thickness: FC<Props> = ({ sizes }) => {
+export const Thickness: FC<Props> = ({ sizes, isFetching }) => {
 	const pn = useAppSelector(getPn)
 	const h = useAppSelector(getThickness)
 	const idx = useAppSelector(getSizeIndex)
 
 	const dispatch = useAppDispatch()
 
-	const size = useMemo(() => sizes[idx || 0].sizes.find(s => s.pn.some(d => d.mpa == pn.mpa)), [idx, pn.mpa, sizes])
+	const size = useMemo(() => sizes[idx || 0]?.sizes.find(s => s.pn.some(d => d.mpa == pn.mpa)), [idx, pn.mpa, sizes])
 
 	const thicknessHandler = (event: SelectChangeEvent<string>) => {
 		if (!size) return
@@ -42,20 +43,24 @@ export const Thickness: FC<Props> = ({ sizes }) => {
 	return (
 		<>
 			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
-			<Select value={h || 'another'} onChange={thicknessHandler}>
-				{size?.h.map(h => (
-					<MenuItem key={h} value={h}>
-						{h}
-					</MenuItem>
-				))}
-				{/* {filteredSizes.map(s => {
+			{isFetching ? (
+				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
+			) : (
+				<Select value={h || 'another'} onChange={thicknessHandler}>
+					{size?.h.map(h => (
+						<MenuItem key={h} value={h}>
+							{h}
+						</MenuItem>
+					))}
+					{/* {filteredSizes.map(s => {
 					return s.h.map(h => (
 						<MenuItem key={h} value={h}>
 							{h}
 						</MenuItem>
 					))
 				})} */}
-			</Select>
+				</Select>
+			)}
 		</>
 	)
 }

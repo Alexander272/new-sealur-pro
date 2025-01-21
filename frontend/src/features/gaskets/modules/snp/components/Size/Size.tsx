@@ -3,7 +3,6 @@ import { Skeleton, Typography } from '@mui/material'
 
 import { useAppSelector } from '@/hooks/redux'
 import { Column, Image, ImageContainer, SizeContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
-import { SizeSkeleton } from '@/features/gaskets/components/Skeletons/SizeSkeleton'
 import { getSnpType, getStandard } from '../../snpSlice'
 import { BacklightSnp } from './Backlight/BacklightSnp'
 import { SizesBlockSnp } from './SizesBlock/SizesBlock'
@@ -27,25 +26,25 @@ const images = {
 type Props = unknown
 
 export const Size: FC<Props> = () => {
-	const isReady = useAppSelector(state => state.snp.isReady)
+	// const isReady = useAppSelector(state => state.snp.isReady)
 
 	const snp = useAppSelector(getSnpType)
 	const standard = useAppSelector(getStandard)
 
 	// const dispatch = useAppDispatch()
 
-	//TODO думаю это не работает
-	if (!isReady) {
-		return (
-			<SizeContainer>
-				<SizeSkeleton />
-				<Column width={55}>
-					<Skeleton animation='wave' />
-					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
-				</Column>
-			</SizeContainer>
-		)
-	}
+	// //TODO думаю это не работает
+	// if (!isReady) {
+	// 	return (
+	// 		<SizeContainer>
+	// 			<SizeSkeleton />
+	// 			<Column width={55}>
+	// 				<Skeleton animation='wave' />
+	// 				<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
+	// 			</Column>
+	// 		</SizeContainer>
+	// 	)
+	// }
 
 	return (
 		<SizeContainer>

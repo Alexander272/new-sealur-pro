@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
 import type { PN } from '@/features/gaskets/types/sizes'
 import type { ISizeBlock, ISnpSize } from '@/features/gaskets/modules/snp/types/size'
@@ -8,9 +8,10 @@ import { getPn, getSizeIndex, getStandard, getThickness, setSizePn } from '@/fea
 
 type Props = {
 	sizes: ISnpSize[]
+	isFetching?: boolean
 }
 
-export const Pn: FC<Props> = ({ sizes }) => {
+export const Pn: FC<Props> = ({ sizes, isFetching }) => {
 	const standard = useAppSelector(getStandard)
 	const pn = useAppSelector(getPn)
 	const h = useAppSelector(getThickness)
@@ -19,7 +20,7 @@ export const Pn: FC<Props> = ({ sizes }) => {
 	const dispatch = useAppDispatch()
 
 	const pnHandler = (event: SelectChangeEvent<string>) => {
-		if (!idx) return
+		if (idx == undefined) return
 
 		let sizeIdx = 0
 		let pn: PN = {} as PN
@@ -35,21 +36,6 @@ export const Pn: FC<Props> = ({ sizes }) => {
 			pn,
 			sizes: sizes[idx].sizes[sizeIdx],
 		}
-
-		// if (
-		// 	size.d4 != curSize.sizes[sizeIdx].d4 ||
-		// 	size.d3 != curSize.sizes[sizeIdx].d3 ||
-		// 	size.d2 != curSize.sizes[sizeIdx].d2 ||
-		// 	size.d1 != curSize.sizes[sizeIdx].d1
-		// ) {
-		// 	const s = {
-		// 		d4: curSize.sizes[sizeIdx].d4,
-		// 		d3: curSize.sizes[sizeIdx].d3,
-		// 		d2: curSize.sizes[sizeIdx].d2,
-		// 		d1: curSize.sizes[sizeIdx].d1,
-		// 	}
-		// 	sizePn.size = s
-		// }
 
 		if (h != sizes[idx].sizes[sizeIdx].h[0]) {
 			const t = {
@@ -67,19 +53,23 @@ export const Pn: FC<Props> = ({ sizes }) => {
 	return (
 		<>
 			<Typography fontWeight='bold'>{standard?.pnTitle}</Typography>
-			<Select value={pn.mpa || 'not_selected'} onChange={pnHandler}>
-				<MenuItem disabled value='not_selected'>
-					Выберите значение
-				</MenuItem>
+			{isFetching ? (
+				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
+			) : (
+				<Select value={pn.mpa || 'not_selected'} onChange={pnHandler}>
+					<MenuItem disabled value='not_selected'>
+						Выберите значение
+					</MenuItem>
 
-				{sizes[idx || 0]?.sizes.map(s =>
-					s.pn.map(pn => (
-						<MenuItem key={pn.mpa} value={pn.mpa}>
-							{pn.mpa} {pn.kg ? `(${pn.kg})` : ''}
-						</MenuItem>
-					))
-				)}
-			</Select>
+					{sizes[idx || 0]?.sizes.map(s =>
+						s.pn.map(pn => (
+							<MenuItem key={pn.mpa} value={pn.mpa}>
+								{pn.mpa} {pn.kg ? `(${pn.kg})` : ''}
+							</MenuItem>
+						))
+					)}
+				</Select>
+			)}
 		</>
 	)
 }

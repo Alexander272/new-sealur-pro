@@ -1,7 +1,7 @@
 import { FC, MouseEvent, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { Image } from '@/pages/Gasket/gasket.style'
-import { IMainJumper } from '@/types/jumper'
+import { Image } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { IMainJumper } from './type'
 import { Field } from './jumper.style'
 
 import A from '@/assets/jumper/a.webp'

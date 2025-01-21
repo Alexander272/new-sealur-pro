@@ -1,5 +1,5 @@
 import { Skeleton, Box, Stack } from '@mui/material'
-import { ResultContainer } from '../gasket.style'
+import { ResultContainer } from './gasket.style'
 
 export const ResultSkeleton = () => {
 	return (

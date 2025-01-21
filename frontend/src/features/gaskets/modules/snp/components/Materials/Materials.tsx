@@ -2,18 +2,16 @@ import { FC, useEffect } from 'react'
 import { toast } from 'react-toastify'
 
 import { useAppSelector } from '@/hooks/redux'
-import { MaterialSkeleton } from '@/features/gaskets/components/Skeletons/MaterialSkeleton'
 import { AsideContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
-import { getMaterials, getReady, getSnpTypeId, getThickness } from '../../snpSlice'
+import { getMaterials, getSnpTypeId, getThickness } from '../../snpSlice'
+import { useGetSnpInfoQuery } from '../../snpApiSlice'
 import { Material } from './Material'
 import { Filler } from './Filler'
-import { useGetSnpInfoQuery } from '../../snpApiSlice'
 
 type Props = unknown
 
 // часть с наполнителями и материалами каркаса и колец
 export const Materials: FC<Props> = () => {
-	const isReady = useAppSelector(getReady)
 	const materials = useAppSelector(getMaterials)
 	const thickness = useAppSelector(getThickness)
 	const snp = useAppSelector(getSnpTypeId)
@@ -29,28 +27,27 @@ export const Materials: FC<Props> = () => {
 		}
 	}, [thickness, materials])
 
-	if (!isReady) {
-		return (
-			<AsideContainer>
-				<MaterialSkeleton />
-			</AsideContainer>
-		)
-	}
-
 	return (
 		<AsideContainer>
 			<Filler />
 
-			<Material title='Материал каркаса' type='frame' disabled={!data?.data.hasFrame || isFetching} />
+			<Material
+				title='Материал каркаса'
+				type='frame'
+				disabled={!data?.data.hasFrame || isFetching}
+				isEmpty={!data?.data.hasFrame}
+			/>
 			<Material
 				title='Материал внутреннего кольца'
 				type='innerRing'
 				disabled={!data?.data.hasInnerRing || isFetching}
+				isEmpty={!data?.data.hasInnerRing}
 			/>
 			<Material
 				title='Материал наружного кольца'
 				type='outerRing'
 				disabled={!data?.data.hasOuterRing || isFetching}
+				isEmpty={!data?.data.hasOuterRing}
 			/>
 		</AsideContainer>
 	)

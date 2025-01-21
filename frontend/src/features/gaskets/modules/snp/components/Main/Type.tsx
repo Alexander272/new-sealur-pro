@@ -1,33 +1,22 @@
-import { Typography } from '@mui/material'
+import { Skeleton, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { useGetFlangeTypesQuery } from '../../snpApiSlice'
-import {
-	getFlangeType,
-	getSnpType,
-	getStandard,
-	getStandardId,
-	setMainFlangeType,
-	setMainSnpType,
-} from '../../snpSlice'
+import { getFlangeType, getSnpType, getStandardId, setMainFlangeType, setMainSnpType } from '../../snpSlice'
 
 export const Type = () => {
 	const active = useAppSelector(getActive)
 	const standardId = useAppSelector(getStandardId)
-	const standard = useAppSelector(getStandard)
 	const flange = useAppSelector(getFlangeType)
 	const snp = useAppSelector(getSnpType)
 
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetFlangeTypesQuery(
-		{
-			standardId: standardId,
-			snpStandardId: standard?.standard.id || '',
-		},
-		{ skip: !standardId }
+	const { data, isFetching, isUninitialized } = useGetFlangeTypesQuery(
+		{ standardId: standardId },
+		{ skip: !standardId || standardId == 'not_selected' }
 	)
 
 	const typeHandler = (type: string) => {
@@ -73,9 +62,13 @@ export const Type = () => {
 	return (
 		<>
 			<Typography fontWeight='bold'>Тип СНП</Typography>
-			<RadioGroup onChange={typeHandler} disabled={Boolean(active?.id) || isFetching}>
-				{renderTypes()}
-			</RadioGroup>
+			{isUninitialized || isFetching ? (
+				<Skeleton animation='wave' variant='rounded' height={34} width={200} sx={{ borderRadius: 6 }} />
+			) : (
+				<RadioGroup onChange={typeHandler} disabled={Boolean(active?.id) || isFetching}>
+					{renderTypes()}
+				</RadioGroup>
+			)}
 		</>
 	)
 }

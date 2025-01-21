@@ -1,0 +1,121 @@
+/* Указываем box sizing */
+/**,
+*::before,
+*::after {
+    box-sizing: border-box;
+}*/
+
+/* Убираем внутренние отступы */
+/*ul,
+ol {
+    padding: 0;
+}*/
+
+/* Убираем внешние отступы */
+/* body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+    margin: 0;
+} */
+
+/* Выставляем основные настройки по-умолчанию для body */
+/* body {
+    min-height: 100vh;
+    scroll-behavior: smooth;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+    font-family: var(--body-font);
+} */
+
+/* Удаляем стандартную стилизацию для всех ul и il, у которых есть атрибут class*/
+/* ul[class],
+ol[class] {
+    list-style: none;
+} */
+
+/* Элементы a, у которых нет класса, сбрасываем до дефолтных стилей */
+/* a:not([class]) {
+    text-decoration-skip-ink: auto;
+}
+
+a {
+    text-decoration: none;
+} */
+
+/* Упрощаем работу с изображениями */
+/* img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    display: block;
+} */
+
+/* Указываем понятную периодичность в потоке данных у article*/
+/* article>*+* {
+    margin-top: 1em;
+} */
+
+/* Наследуем шрифты */
+/* input,
+button,
+textarea,
+select {
+    font: inherit;
+}  */
+
+:root {
+    --body-bg-color: #fbfbfb;
+    --theme-bg-color: #fff;
+    --body-color: #1b1f31;
+    --main-color: #7a7e9d;
+    --main-light-color: #a1a4b9;
+    --title-color: #979dc3;
+    --button-bg-color: #eaeefc;
+    --main-container-bg: #f0f0f7;
+    --danger-color: rgb(207, 25, 25);
+
+    --border-white: #e5e4e9;
+    --primary-color: #05287f;
+    --secondary-color: #eaeefc;
+    --light-blue: #0066ffa3;
+    --border-color: #0737b180;
+    /* --border-color: #0737b1; */
+    --white: #fff;
+    --gray: #616161;
+}
+
+#root {
+    height: 100vh;
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: center; */
+    font-family: 'NunitoSans', sans-serif;
+}
+
+@font-face {
+    font-family: 'NunitoSans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/NunitoSans-Regular.ttf') format('truetype');
+}
+
+/* @font-face {
+    font-family: 'Merriweather';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/fonts/Merriweather-Regular.ttf') format('truetype');
+} */

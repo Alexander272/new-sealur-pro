@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { AppRouter } from '@/router/AppRouter'
 import { store } from './app/store'
 import theme from './theme'
+import './index.css'
 
 function App() {
 	return (

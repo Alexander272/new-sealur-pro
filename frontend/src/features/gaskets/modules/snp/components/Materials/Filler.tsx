@@ -1,9 +1,10 @@
-import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 import { toast } from 'react-toastify'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getFiller, getSnpTypeId, getStandard, setMaterialFiller, setMaterialToggle } from '../../snpSlice'
 import { useGetFillersQuery } from '../../snpApiSlice'
+import { useEffect } from 'react'
 
 export const Filler = () => {
 	const standard = useAppSelector(getStandard)
@@ -12,7 +13,11 @@ export const Filler = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetFillersQuery(standard?.standard.id || '', { skip: !standard })
+	const { data, isFetching, isUninitialized } = useGetFillersQuery(standard?.standard.id || '', { skip: !standard })
+
+	useEffect(() => {
+		if (data) dispatch(setMaterialFiller(data.data[0]))
+	}, [data, dispatch])
 
 	const openHandler = () => {
 		dispatch(setMaterialToggle({ type: 'filler', isOpen: true }))
@@ -37,25 +42,27 @@ export const Filler = () => {
 	return (
 		<>
 			<Typography fontWeight='bold'>Тип наполнителя</Typography>
-			<Select
-				value={filler?.id || 'not_selected'}
-				onChange={fillerHandler}
-				onOpen={openHandler}
-				onClose={closeHandler}
-				disabled={data?.data.length == 1 || isFetching}
-				sx={{
-					borderRadius: '12px',
-					width: '100%',
-				}}
-			>
-				<MenuItem value='not_selected'>Выберите тип наполнителя</MenuItem>
 
-				{data?.data?.map(f => (
-					<MenuItem key={f.id} value={f.id} sx={{ color: 'black' }}>
-						{f.title} ({f.description} {f.description && ', '} {f.temperature})
-					</MenuItem>
-				))}
-			</Select>
+			{isFetching || isUninitialized ? (
+				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
+			) : (
+				<Select
+					value={filler?.id || 'not_selected'}
+					onChange={fillerHandler}
+					onOpen={openHandler}
+					onClose={closeHandler}
+					disabled={data?.data.length == 1 || isFetching}
+					fullWidth
+				>
+					<MenuItem value='not_selected'>Выберите тип наполнителя</MenuItem>
+
+					{data?.data?.map(f => (
+						<MenuItem key={f.id} value={f.id} sx={{ color: 'black' }}>
+							{f.title} ({f.description} {f.description && ', '} {f.temperature})
+						</MenuItem>
+					))}
+				</Select>
+			)}
 		</>
 	)
 }

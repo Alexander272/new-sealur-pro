@@ -15,7 +15,7 @@ import { NotFound } from '@/pages/notFound/NotFoundLazy'
 import { Main } from '@/components/Layout/Main/MainLazy'
 import { Gaskets } from '@/pages/gaskets/GasketsLazy'
 import { Snp } from '@/pages/gaskets/snp/SnpLazy'
-import CheckAccess from './CheckAccess'
+// import CheckAccess from './CheckAccess'
 
 export const AppRouter = () => {
 	const { ready } = useRefresh()
@@ -47,9 +47,9 @@ export const AppRouter = () => {
 					<Route
 						path={PathRoutes.Home}
 						element={
-							<CheckAccess>
-								<Main />
-							</CheckAccess>
+							// <CheckAccess>
+							<Main />
+							// </CheckAccess>
 						}
 					>
 						{/* <Route index element={<Home />} /> */}

@@ -31,6 +31,7 @@ type BaseQuery = BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 const baseQueryWithReAuth: BaseQuery = async (args, api, extraOptions) => {
 	// mutex позволяет предотвратить множественное обращение на обновление токена
 	await mutex.waitForUnlock()
+	//TODO почему этот запрос выполняется при загрузке страницы
 	let result = await baseQuery(args, api, extraOptions)
 
 	if (result.error && result.error.status === 401 && api.endpoint !== 'signIn' && api.endpoint != 'refresh') {

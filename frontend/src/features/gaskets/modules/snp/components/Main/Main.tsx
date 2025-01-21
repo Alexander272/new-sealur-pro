@@ -2,8 +2,7 @@ import { FC } from 'react'
 import { Skeleton, Typography } from '@mui/material'
 
 import { useAppSelector } from '@/hooks/redux'
-import { getFlangeType, getReady, getSnpType } from '@/features/gaskets/modules/snp/snpSlice'
-import { MainSkeleton } from '@/features/gaskets/components/Skeletons/MainSkeleton'
+import { getFlangeType, getSnpType } from '@/features/gaskets/modules/snp/snpSlice'
 import { MainContainer, Column, Image } from '@/features/gaskets/components/Skeletons/gasket.style'
 import { Standards } from './Standards'
 import { Flange } from './Flange'
@@ -33,22 +32,8 @@ type Props = unknown
 
 // часть со стандартами, типами фланцев и типами снп
 export const Main: FC<Props> = () => {
-	const isReady = useAppSelector(getReady)
-
 	const snp = useAppSelector(getSnpType)
 	const flange = useAppSelector(getFlangeType)
-
-	if (!isReady) {
-		return (
-			<MainContainer>
-				<MainSkeleton />
-				<Column>
-					<Skeleton animation='wave' />
-					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
-				</Column>
-			</MainContainer>
-		)
-	}
 
 	return (
 		<MainContainer>
@@ -60,7 +45,7 @@ export const Main: FC<Props> = () => {
 
 			<Column>
 				<Typography fontWeight='bold'>Чертеж фланца с прокладкой</Typography>
-				{snp?.title == 'not_selected' ? (
+				{!snp || snp?.title == 'not_selected' ? (
 					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
 				) : (
 					<Image

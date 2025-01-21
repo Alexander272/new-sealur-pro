@@ -250,7 +250,7 @@ export const snpSlice = createSlice({
 			state.material.filler = action.payload
 		},
 		// установка материалов (каркаса или колец)
-		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material: IMaterial }>) => {
+		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material?: IMaterial }>) => {
 			state.material[action.payload.type] = action.payload.material
 		},
 

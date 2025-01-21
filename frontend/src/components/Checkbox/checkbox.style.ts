@@ -24,7 +24,7 @@ export const Label = styled.label`
 	&:hover {
 		background: rgba(0, 119, 255, 0.06);
 
-		span:first-child {
+		span:first-of-type {
 			border-color: #05287f;
 		}
 	}
@@ -33,7 +33,7 @@ export const Label = styled.label`
 		vertical-align: middle;
 		transform: translate3d(0, 0, 0);
 
-		&:first-child {
+		&:first-of-type {
 			position: relative;
 			width: 18px;
 			height: 18px;
@@ -78,7 +78,7 @@ export const Input = styled.input`
 	position: absolute;
 	visibility: hidden;
 
-	&:checked + ${Label} span:first-child {
+	&:checked + ${Label} span:first-of-type {
 		background: #05287f;
 		border-color: #05287f;
 		animation: ${wave} 0.4s ease;

@@ -4,6 +4,7 @@ import { useDesignation } from '../../hooks/designation'
 
 export const Designation = () => {
 	const designation = useDesignation()
+	console.log('designation', designation)
 
 	return (
 		<Stack

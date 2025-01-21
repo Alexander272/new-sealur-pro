@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { useAppSelector } from '@/hooks/redux'
 import { getDesign, getMain, getMaterials, getSize } from '../snpSlice'
@@ -11,7 +11,7 @@ export const useDesignation = () => {
 	const size = useAppSelector(getSize)
 	const design = useAppSelector(getDesign)
 
-	useCallback(() => {
+	const calculateDesignation = useCallback(() => {
 		let designationMaterials = ''
 		let designationDesign = ''
 		const designationDesignParts: string[] = []
@@ -173,6 +173,10 @@ export const useDesignation = () => {
 
 		setValue('')
 	}, [design, main, materials, size])
+
+	useEffect(() => {
+		calculateDesignation()
+	}, [calculateDesignation])
 
 	return value
 }

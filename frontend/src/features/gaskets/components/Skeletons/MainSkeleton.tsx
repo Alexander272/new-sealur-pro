@@ -1,5 +1,5 @@
 import { Skeleton } from '@mui/material'
-import { Column, MainContainer } from '../gasket.style'
+import { Column } from './gasket.style'
 
 export const MainSkeleton = () => {
 	return (

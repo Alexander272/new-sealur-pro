@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
 import type { ISnpSize } from '@/features/gaskets/modules/snp/types/size'
 import type { ISizeBlockSnp } from '@/features/gaskets/modules/snp/types/snp'
@@ -8,9 +8,10 @@ import { getDn, getStandard, setSize } from '@/features/gaskets/modules/snp/snpS
 
 type Props = {
 	sizes: ISnpSize[]
+	isFetching?: boolean
 }
 
-export const Dn: FC<Props> = ({ sizes }) => {
+export const Dn: FC<Props> = ({ sizes, isFetching }) => {
 	const standard = useAppSelector(getStandard)
 	const dn = useAppSelector(getDn)
 
@@ -43,17 +44,21 @@ export const Dn: FC<Props> = ({ sizes }) => {
 	return (
 		<>
 			<Typography fontWeight='bold'>{standard?.dnTitle}</Typography>
-			<Select value={dn || 'not_selected'} onChange={dnHandler}>
-				<MenuItem disabled value='not_selected'>
-					Выберите значение
-				</MenuItem>
-
-				{sizes.map(f => (
-					<MenuItem key={f.id} value={f.dn}>
-						{f.dn} {f.dnMm && `(${f.dnMm})`}
+			{isFetching ? (
+				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
+			) : (
+				<Select value={dn || 'not_selected'} onChange={dnHandler}>
+					<MenuItem disabled value='not_selected'>
+						Выберите значение
 					</MenuItem>
-				))}
-			</Select>
+
+					{sizes.map(f => (
+						<MenuItem key={f.id} value={f.dn}>
+							{f.dn} {f.dnMm && `(${f.dnMm})`}
+						</MenuItem>
+					))}
+				</Select>
+			)}
 		</>
 	)
 }
