@@ -1,5 +1,8 @@
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { Provider } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
+
+import 'react-toastify/dist/ReactToastify.min.css'
 
 import { AppRouter } from '@/router/AppRouter'
 import { store } from './app/store'
@@ -13,6 +16,7 @@ function App() {
 				<CssBaseline />
 				<AppRouter />
 			</ThemeProvider>
+			<ToastContainer />
 		</Provider>
 	)
 }

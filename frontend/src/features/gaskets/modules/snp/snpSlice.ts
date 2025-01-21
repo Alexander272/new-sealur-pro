@@ -3,7 +3,6 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import type { RootState } from '@/app/store'
 import type { IMaterial } from '@/features/gaskets/types/material'
-import type { IMounting } from '@/features/gaskets/types/mounting'
 import type { IDrawing } from '@/features/gaskets/types/drawing'
 import type { ISizeBlock } from './types/size'
 import type {
@@ -12,8 +11,6 @@ import type {
 	IMainSnp,
 	IMaterialBlockSnp,
 	ISizeBlockSnp,
-	ISnp,
-	ISnpMaterial,
 	ISNPType,
 	IStandardForSNP,
 	IThickness,
@@ -22,14 +19,12 @@ import type {
 } from './types/snp'
 
 export interface ISNPState {
-	isReady: boolean
-
-	fillers: IFiller[]
-	mountings: IMounting[]
+	// fillers: IFiller[]
+	// mountings: IMounting[]
 	// materialsIr?: ISNPMaterial
 	// materialsFr?: ISNPMaterial
 	// materialsOr?: ISNPMaterial
-	materials?: ISnpMaterial
+	// materials?: ISnpMaterial
 
 	// cardIndex?: number
 	// positionId?: string
@@ -64,17 +59,6 @@ export interface ISNPState {
 }
 
 const initialState: ISNPState = {
-	// готовы ли данные
-	isReady: false,
-
-	// списки
-	//TODO а зачем я это здесь храню?
-	fillers: [],
-	mountings: [],
-	// materialsIr: undefined,
-	// materialsFr: undefined,
-	// materialsOr: undefined,
-
 	// ошибки
 	hasError: false,
 	hasSizeError: false,
@@ -152,50 +136,6 @@ export const snpSlice = createSlice({
 	name: 'snp',
 	initialState,
 	reducers: {
-		// данные готовы
-		setIsReady: (state, action: PayloadAction<boolean>) => {
-			state.isReady = action.payload
-		},
-
-		// установка списка наполнителей
-		setFiller: (state, action: PayloadAction<{ fillers: IFiller[]; positionId?: string }>) => {
-			state.fillers = action.payload.fillers
-			if (action.payload.positionId === undefined) {
-				state.material.filler = action.payload.fillers[0]
-			}
-		},
-		// установка списка креплений
-		setMounting: (state, action: PayloadAction<{ mountings: IMounting[]; positionId?: string }>) => {
-			state.mountings = action.payload.mountings
-			if (action.payload.positionId === undefined) {
-				state.design.mounting.code = action.payload.mountings[0].title
-			}
-		},
-		// установка списка материалов
-		setMaterials: (state, action: PayloadAction<{ material: ISnpMaterial; positionId?: string }>) => {
-			state.materials = action.payload.material
-			if (action.payload.positionId === undefined) {
-				state.material.frame = action.payload.material.frame[action.payload.material.frameDefaultIndex || 0]
-				state.material.innerRing =
-					action.payload.material.innerRing[action.payload.material.innerRingDefaultIndex || 0]
-				state.material.outerRing =
-					action.payload.material.outerRing[action.payload.material.outerRingDefaultIndex || 0]
-			}
-		},
-
-		// setHasError: (state, action: PayloadAction<boolean>) => {
-		// 	// возможно стоит тут прописать все поля в которых могут быть ошибки
-		// 	// и назвать функцию checkErrors
-		// 	state.hasError = action.payload
-		// },
-		// checkErrors: state => {
-		// 	state.hasError = state.hasSizeError
-		// },
-		// // установка ошибки
-		// setSizeError: (state, action: PayloadAction<boolean>) => {
-		// 	state.hasSizeError = action.payload
-		// },
-
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<{ id: string; standard: IStandardForSNP }>) => {
 			state.main.snpStandardId = action.payload.id
@@ -210,18 +150,6 @@ export const snpSlice = createSlice({
 		setMainSnpType: (state, action: PayloadAction<{ id: string; type: ISNPType }>) => {
 			state.main.snpTypeId = action.payload.id
 			state.main.snpType = action.payload.type
-			// state.main.snpTypeTitle = action.payload.title
-			// state.main.snpTypeCode = action.payload.code
-
-			if (state.material.filler.disabledTypes?.includes(action.payload.id)) {
-				const filler = state.fillers.find(f => !f.disabledTypes?.includes(action.payload.id))
-				state.material.filler = filler!
-			}
-
-			// state.sizeError.emptyD4 = !state.size.d4
-			// state.sizeError.emptyD3 = !state.size.d3
-			// state.sizeError.emptyD2 = !state.size.d2
-			// state.sizeError.emptyD1 = !state.size.d1
 
 			const emptyD4 = (state.main.snpType?.hasD4 || false) && !state.size.d4
 			const emptyD3 = (state.main.snpType?.hasD3 || false) && !state.size.d3
@@ -321,30 +249,6 @@ export const snpSlice = createSlice({
 			}
 		},
 
-		// сброс материалов и конструктивных элементов
-		clearMaterialAndDesign: (state, action: PayloadAction<ISnp>) => {
-			if (!action.payload.hasInnerRing) state.material.innerRing = undefined
-			else state.material.innerRing = state.materials?.innerRing[state.materials.innerRingDefaultIndex || 0]
-
-			// else if (state.positionId === undefined)
-			// 	state.material.innerRing = state.materials?.innerRing[state.materials.innerRingDefaultIndex || 0]
-
-			if (!action.payload.hasFrame) state.material.frame = undefined
-			else state.material.frame = state.materials?.frame[state.materials.frameDefaultIndex || 0]
-
-			// else if (state.positionId === undefined)
-			// 	state.material.frame = state.materials?.frame[state.materials.frameDefaultIndex || 0]
-
-			if (!action.payload.hasOuterRing) state.material.outerRing = undefined
-			else state.material.outerRing = state.materials?.outerRing[state.materials.outerRingDefaultIndex || 0]
-
-			// else if (state.positionId === undefined)
-			// 	state.material.outerRing = state.materials?.outerRing[state.materials.outerRingDefaultIndex || 0]
-
-			if (!action.payload.hasJumper) state.design.jumper.hasJumper = false
-			if (!action.payload.hasMounting) state.design.mounting.hasMounting = false
-		},
-
 		// установка отверстия
 		setHasHole: (state, action: PayloadAction<boolean>) => {
 			state.design.hasHole = action.payload
@@ -396,48 +300,6 @@ export const snpSlice = createSlice({
 			state.amount = action.payload
 		},
 
-		// выбор позиции (для редактирования)
-		// setSnp: (
-		// 	state,
-		// 	action: PayloadAction<{
-		// 		main: IMainSnp
-		// 		sizes: ISizeBlockSnp
-		// 		materials: IMaterialBlockSnp
-		// 		design: IDesignBlockSnp
-		// 		amount: string
-		// 		cardIndex: number
-		// 		positionId: string
-		// 	}>
-		// ) => {
-		// 	state.cardIndex = action.payload.cardIndex
-		// 	state.positionId = action.payload.positionId
-		// 	state.main = action.payload.main
-		// 	state.size = action.payload.sizes
-
-		// 	state.material = action.payload.materials
-
-		// 	state.design.hasHole = action.payload.design.hasHole || false
-		// 	state.design.jumper.hasJumper = action.payload.design.jumper.hasJumper || false
-		// 	state.design.jumper.code = action.payload.design.jumper.code
-		// 	state.design.jumper.width = action.payload.design.jumper.width
-		// 	state.design.mounting.hasMounting = action.payload.design.mounting.hasMounting || false
-		// 	state.design.mounting.code = action.payload.design.mounting.code
-		// 	state.design.drawing = action.payload.design.drawing
-
-		// 	if (action.payload.design.drawing) {
-		// 		const parts = action.payload.design.drawing.split('/')
-		// 		const drawing: IDrawing = {
-		// 			id: parts[parts.length - 2],
-		// 			name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
-		// 			origName: parts[parts.length - 1],
-		// 			link: action.payload.design.drawing,
-		// 			group: parts[parts.length - 3],
-		// 		}
-		// 		state.drawing = drawing
-		// 	}
-
-		// 	state.amount = action.payload.amount
-		// },
 		setSnp: (
 			state,
 			action: PayloadAction<{
@@ -493,8 +355,6 @@ export const snpSlice = createSlice({
 export const snpPath = snpSlice.name
 export const snpReducer = snpSlice.reducer
 
-export const getReady = (state: RootState) => state.snp.isReady
-
 export const getMain = (state: RootState) => state.snp.main
 export const getStandardId = (state: RootState) => state.snp.main.snpStandardId
 export const getStandard = (state: RootState) => state.snp.main.snpStandard
@@ -527,12 +387,6 @@ export const getInfo = (state: RootState) => state.snp.info
 export const getAmount = (state: RootState) => state.snp.amount
 
 export const {
-	setIsReady,
-
-	setFiller,
-	setMounting,
-	setMaterials,
-	// setSizeError,
 	setMainStandard,
 	setMainFlangeType,
 	setMainSnpType,
@@ -543,7 +397,6 @@ export const {
 	setSizePn,
 	setSizeMain,
 	setSizeThickness,
-	clearMaterialAndDesign,
 	setHasHole,
 	setDesignJumper,
 	setDesignMounting,

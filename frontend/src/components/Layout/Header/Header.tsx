@@ -47,7 +47,7 @@ const Header: FC<Props> = ({ disableCard }) => {
 		handleClose()
 
 		if (role == 'manager') navigate(PathRoutes.Manager.Orders.Base)
-		else if (role == 'root' || role == 'cco') navigate(PathRoutes.Manager.Orders.Last)
+		else if (role == 'root' || role == 'cco') navigate(PathRoutes.Manager.Orders.List)
 		else navigate(PathRoutes.Orders)
 	}
 

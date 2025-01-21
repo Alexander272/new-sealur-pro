@@ -18,6 +18,11 @@ export const Filler = () => {
 	useEffect(() => {
 		if (data) dispatch(setMaterialFiller(data.data[0]))
 	}, [data, dispatch])
+	useEffect(() => {
+		if (filler.disabledTypes?.includes(snp)) {
+			if (data) dispatch(setMaterialFiller(data.data[0]))
+		}
+	}, [data, dispatch, filler.disabledTypes, snp])
 
 	const openHandler = () => {
 		dispatch(setMaterialToggle({ type: 'filler', isOpen: true }))

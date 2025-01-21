@@ -15,6 +15,7 @@ import { NotFound } from '@/pages/notFound/NotFoundLazy'
 import { Main } from '@/components/Layout/Main/MainLazy'
 import { Gaskets } from '@/pages/gaskets/GasketsLazy'
 import { Snp } from '@/pages/gaskets/snp/SnpLazy'
+import { Putg } from '@/pages/gaskets/putg/PutgLazy'
 // import CheckAccess from './CheckAccess'
 
 export const AppRouter = () => {
@@ -56,7 +57,7 @@ export const AppRouter = () => {
 
 						<Route path={PathRoutes.Gasket.Base} element={<Gaskets />}>
 							<Route path={PathRoutes.Gasket.SNP} element={<Snp />} />
-							{/* <Route path={PathRoutes.Gasket.PUTG} element={<Putg />} /> */}
+							<Route path={PathRoutes.Gasket.PUTG} element={<Putg />} />
 						</Route>
 
 						{/* <Route path={PathRoutes.Rings.Base} element={<Rings />}>

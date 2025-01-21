@@ -1,4 +1,4 @@
-import { ChangeEvent, FC } from 'react'
+import { ChangeEvent, FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Stack } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -16,6 +16,12 @@ export const Mounting: FC<Props> = ({ disabled }) => {
 	const dispatch = useAppDispatch()
 
 	const { data } = useGetFasteningsQuery(null)
+
+	useEffect(() => {
+		if (data && !mounting.code) {
+			dispatch(setDesignMounting({ code: data.data[0].title }))
+		}
+	}, [data, mounting, dispatch])
 
 	const mountingHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		dispatch(setDesignMounting({ hasMounting: event.target.checked }))

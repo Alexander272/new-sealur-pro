@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/hooks/redux'
 import { getSize, getSnpType, getStandard } from '@/features/gaskets/modules/snp/snpSlice'
-import { SizesBlock } from '@/components/SizesBlock/SizesBlock'
+import { SizesBlock } from './Block'
 
 const sizePositionsSnp = Object.freeze({
 	Д: {
@@ -50,13 +50,11 @@ export const SizesBlockSnp = () => {
 	if (!snp) return null
 
 	return (
-		<>
-			<SizesBlock
-				sizes={sizes}
-				hasSizes={snp}
-				hasD2={standard?.hasD2}
-				positions={sizePositionsSnp[snp.title as 'Д']}
-			/>
-		</>
+		<SizesBlock
+			sizes={sizes}
+			hasSizes={snp}
+			hasD2={standard?.hasD2}
+			positions={sizePositionsSnp[snp.title as 'Д']}
+		/>
 	)
 }
