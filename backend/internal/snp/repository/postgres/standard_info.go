@@ -67,8 +67,9 @@ func (r *StandardInfoRepo) GetAll(ctx context.Context, req *models.GetStandardIn
 }
 
 func (r *StandardInfoRepo) GetDefault(ctx context.Context) (*models.StandardInfo, error) {
-	query := fmt.Sprintf(`SELECT %s.id, standard_id	FROM %s INNER JOIN %s ON %s.id=standard_id WHERE is_default=true ORDER BY count LIMIT 1`,
-		SnpStandardTable, SnpStandardTable, StandardTable, StandardTable,
+	query := fmt.Sprintf(`SELECT ss.id, standard_id	FROM %s AS ss INNER JOIN %s AS s ON s.id=standard_id 
+		WHERE is_default=true ORDER BY count LIMIT 1`,
+		SnpStandardTable, StandardTable,
 	)
 	data := &pq_models.StandardInfo{}
 

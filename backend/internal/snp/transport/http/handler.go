@@ -25,7 +25,7 @@ func NewHandler(services *services.Services) *Handler {
 
 func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) {
 	snp := api.Group("/snp")
-	//TODO
+	//TODO прописать middleware
 	// snp := api.Group("/snp", middleware.UserIdentity)
 	filler.Register(snp, h.services.Filler, middleware)
 	flange_type.Register(snp, h.services.FlangeType, middleware)
