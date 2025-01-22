@@ -4,10 +4,11 @@ import (
 	"net/http"
 
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
-	"github.com/Alexander272/new-sealur-pro/internal/snp/models"
-	"github.com/Alexander272/new-sealur-pro/internal/snp/services"
+	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
+	"github.com/Alexander272/new-sealur-pro/internal/putg/services"
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/pkg/error_bot"
+	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -17,40 +18,37 @@ type Handler struct {
 }
 
 func NewHandler(service services.FlangeType) *Handler {
-	return &Handler{
-		service: service,
-	}
+	return &Handler{service: service}
 }
 
 func Register(api *gin.RouterGroup, service services.FlangeType, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	types := api.Group("/flange-types")
+	flangeType := api.Group("/flange-types")
 	{
-		types.GET("", handler.get)
-		types.POST("", handler.create)
-		types.PUT("/:id", handler.update)
-		types.DELETE("/:id", handler.delete)
+		flangeType.GET("", handler.get)
+		// TODO только для админа
+		flangeType.POST("", handler.create)
+		flangeType.PUT("/:id", handler.update)
+		flangeType.DELETE("/:id", handler.delete)
 	}
 }
 
 func (h *Handler) get(c *gin.Context) {
-	standardId := c.Query("standardId")
-	if standardId == "" {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "empty standard id param")
+	standard := c.Query("standard")
+	if standard == "" {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty params", "Отправлены некорректные данные")
 		return
 	}
 
-	dto := &models.GetFlangeTypeDTO{StandardId: standardId}
-
-	types, err := h.service.Get(c, dto)
+	dto := &models.GetFlangeTypeDTO{StandardId: standard}
+	data, err := h.service.Get(c, dto)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить типы фланцев")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-
-	c.JSON(http.StatusOK, response.DataResponse{Data: types, Total: len(types)})
+	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
 }
 
 func (h *Handler) create(c *gin.Context) {
@@ -65,14 +63,15 @@ func (h *Handler) create(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	c.JSON(http.StatusCreated, response.IdResponse{Message: "Тип фланца успешно создан"})
+	logger.Info("Тип фланца создан", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusCreated, response.IdResponse{Message: "Тип фланца создан"})
 }
 
 func (h *Handler) update(c *gin.Context) {
 	id := c.Param("id")
 	err := uuid.Validate(id)
 	if err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "empty id param")
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
 		return
 	}
 
@@ -88,22 +87,23 @@ func (h *Handler) update(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип фланца успешно обновлен"})
+	logger.Info("Тип фланца обновлен", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип фланца обновлен"})
 }
 
 func (h *Handler) delete(c *gin.Context) {
 	id := c.Param("id")
 	err := uuid.Validate(id)
 	if err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "empty id param")
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
 		return
 	}
 
-	dto := &models.DeleteFlangeTypeDTO{Id: id}
-	if err := h.service.Delete(c, dto); err != nil {
+	if err := h.service.Delete(c, &models.DeleteFlangeTypeDTO{Id: id}); err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить тип фланца")
-		error_bot.Send(c, err.Error(), dto)
+		error_bot.Send(c, err.Error(), id)
 		return
 	}
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип фланца успешно удален"})
+	logger.Info("Тип фланца удален", logger.StringAttr("id", id))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип фланца удален"})
 }

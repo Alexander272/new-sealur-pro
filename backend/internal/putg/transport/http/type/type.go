@@ -1,13 +1,14 @@
-package snp_type
+package putg_type
 
 import (
 	"net/http"
 
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
-	"github.com/Alexander272/new-sealur-pro/internal/snp/models"
-	"github.com/Alexander272/new-sealur-pro/internal/snp/services"
+	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
+	"github.com/Alexander272/new-sealur-pro/internal/putg/services"
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/pkg/error_bot"
+	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -17,9 +18,7 @@ type Handler struct {
 }
 
 func NewHandler(service services.Type) *Handler {
-	return &Handler{
-		service: service,
-	}
+	return &Handler{service: service}
 }
 
 func Register(api *gin.RouterGroup, service services.Type, middleware *middleware.Middleware) {
@@ -27,8 +26,7 @@ func Register(api *gin.RouterGroup, service services.Type, middleware *middlewar
 
 	types := api.Group("types")
 	{
-		types.GET("", handler.groupByFlange)
-		types.GET("/base", handler.getBase)
+		types.GET("", handler.get)
 		// TODO только для админа
 		types.POST("", handler.create)
 		types.PUT("/:id", handler.update)
@@ -36,32 +34,15 @@ func Register(api *gin.RouterGroup, service services.Type, middleware *middlewar
 	}
 }
 
-func (h *Handler) groupByFlange(c *gin.Context) {
-	standardId := c.Query("standardId")
-	if standardId == "" {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "стандарт не задан")
+func (h *Handler) get(c *gin.Context) {
+	base := c.Query("base")
+	if base == "" {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Параметр base не задан")
 		return
 	}
 
-	dto := &models.GetTypeDTO{StandardId: standardId}
-	data, err := h.service.GroupByFlange(c, dto)
-	if err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить типы")
-		error_bot.Send(c, err.Error(), dto)
-		return
-	}
-	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
-}
-
-func (h *Handler) getBase(c *gin.Context) {
-	standardId := c.Query("standardId")
-	if standardId == "" {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "стандарт не задан")
-		return
-	}
-
-	dto := &models.GetTypeDTO{StandardId: standardId}
-	data, err := h.service.GetBase(c, dto)
+	dto := &models.GetTypeDTO{BaseId: base}
+	data, err := h.service.Get(c, dto)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить типы")
 		error_bot.Send(c, err.Error(), dto)
@@ -71,8 +52,8 @@ func (h *Handler) getBase(c *gin.Context) {
 }
 
 func (h *Handler) create(c *gin.Context) {
-	dto := &models.TypeDTO{}
-	if err := c.BindJSON(&dto); err != nil {
+	dto := &models.PutgTypeDTO{}
+	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
 	}
@@ -82,19 +63,20 @@ func (h *Handler) create(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	c.JSON(http.StatusCreated, response.IdResponse{Message: "Тип снп успешно создан"})
+	logger.Info("Тип создан", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusCreated, response.IdResponse{Message: "Тип создан"})
 }
 
 func (h *Handler) update(c *gin.Context) {
 	id := c.Param("id")
 	err := uuid.Validate(id)
 	if err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "идентификатор не задан")
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
 		return
 	}
 
-	var dto *models.TypeDTO
-	if err := c.BindJSON(&dto); err != nil {
+	dto := &models.PutgTypeDTO{}
+	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
 	}
@@ -105,22 +87,23 @@ func (h *Handler) update(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип снп успешно обновлен"})
+	logger.Info("Тип обновлен", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип обновлен"})
 }
 
 func (h *Handler) delete(c *gin.Context) {
 	id := c.Param("id")
 	err := uuid.Validate(id)
 	if err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "идентификатор не задан")
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
 		return
 	}
 
-	dto := &models.DeleteTypeDTO{Id: id}
-	if err := h.service.Delete(c, dto); err != nil {
+	if err := h.service.Delete(c, &models.DeleteTypeDTO{Id: id}); err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить тип")
-		error_bot.Send(c, err.Error(), dto)
+		error_bot.Send(c, err.Error(), id)
 		return
 	}
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип снп успешно удален"})
+	logger.Info("Тип удален", logger.StringAttr("id", id))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип удален"})
 }

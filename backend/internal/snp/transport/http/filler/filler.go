@@ -9,6 +9,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/pkg/error_bot"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -83,7 +84,8 @@ func (h *Handler) createSeveral(c *gin.Context) {
 
 func (h *Handler) update(c *gin.Context) {
 	id := c.Param("id")
-	if id == "" {
+	err := uuid.Validate(id)
+	if err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "идентификатор не задан")
 		return
 	}
@@ -105,7 +107,8 @@ func (h *Handler) update(c *gin.Context) {
 
 func (h *Handler) delete(c *gin.Context) {
 	id := c.Param("id")
-	if id == "" {
+	err := uuid.Validate(id)
+	if err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "идентификатор не задан")
 		return
 	}
