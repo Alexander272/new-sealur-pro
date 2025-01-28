@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Alexander272/new-sealur-pro/internal/config"
+	"github.com/Alexander272/new-sealur-pro/internal/orders"
 	"github.com/Alexander272/new-sealur-pro/internal/putg"
 	"github.com/Alexander272/new-sealur-pro/internal/repository"
 	"github.com/Alexander272/new-sealur-pro/internal/server"
@@ -78,9 +79,10 @@ func main() {
 
 	snpModule := snp.NewSnpModule(db, conf)
 	putgModule := putg.NewPutgModule(db, conf)
+	ordersModule := orders.NewOrdersModule(db, conf)
 	// handlers.Modules = append(handlers.Modules, snpModule)
 
-	handlers.Modules = []transport.Modules{snpModule, putgModule}
+	handlers.Modules = []transport.Modules{snpModule, putgModule, ordersModule}
 
 	//* HTTP Server
 	srv := server.NewServer(&conf.Http, handlers.Init(conf))

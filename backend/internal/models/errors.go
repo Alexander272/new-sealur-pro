@@ -18,4 +18,7 @@ var (
 	ErrUserNotVerified = errors.New("user not verified")
 
 	ErrUserNotFound = errors.New("user is not found")
+
+	ErrNoRows         = errors.New("no rows in result set")
+	ErrPositionExists = errors.New("position already exists")
 )
