@@ -1,37 +1,47 @@
 import { useEffect } from 'react'
 import { FormControl, MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
-import { useGetSnpStandardQuery } from '../../snpApiSlice'
-import { getStandardId, setMainStandard } from '../../snpSlice'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { getConfiguration, getStandard, setMainStandard } from '../../putgSlice'
+import { useGetPutgStandardQuery } from '../../putgApiSlice'
 
 export const Standards = () => {
 	const active = useAppSelector(getActive)
-	const standardId = useAppSelector(getStandardId)
+	const standard = useAppSelector(getStandard)
+	const configuration = useAppSelector(getConfiguration)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetSnpStandardQuery(null)
+	const { data, isFetching, isUninitialized } = useGetPutgStandardQuery(null)
 
 	useEffect(() => {
-		if (data) dispatch(setMainStandard({ id: data.data[0].id, standard: data.data[0] }))
-	}, [data, dispatch])
+		if (data && !active?.id) dispatch(setMainStandard(data.data[0]))
+	}, [data, active, dispatch])
+
+	useEffect(() => {
+		if (!data) return
+		if (configuration?.code != 'round') dispatch(setMainStandard(data.data[data.data.length - 1]))
+		else dispatch(setMainStandard(data.data[0]))
+	}, [configuration, data, dispatch])
 
 	const standardHandler = (event: SelectChangeEvent<string>) => {
 		const standard = data?.data.find(s => s.id === event.target.value)
 		if (!standard) return
-		dispatch(setMainStandard({ id: standard.id, standard: standard }))
+		dispatch(setMainStandard(standard))
 	}
 
+	if (configuration?.code != 'round') return null
 	return (
 		<>
-			<Typography fontWeight='bold'>Стандарт на прокладку / стандарт на фланец</Typography>
-			{isFetching ? (
+			<Typography fontWeight='bold' mt={1}>
+				Стандарт на прокладку / стандарт на фланец
+			</Typography>
+			{isFetching || isUninitialized ? (
 				<Skeleton animation='wave' variant='rounded' height={41} sx={{ borderRadius: 3 }} />
 			) : (
 				<FormControl size='small'>
 					<Select
-						value={standardId || 'not_selected'}
+						value={standard?.id || 'not_selected'}
 						onChange={standardHandler}
 						disabled={Boolean(active?.id) || isFetching}
 					>

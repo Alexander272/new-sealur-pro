@@ -3,7 +3,7 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
-import { useGetFlangeTypesQuery } from '../../snpApiSlice'
+import { useGetSnpFlangeTypesQuery } from '../../snpApiSlice'
 import { getFlangeType, getStandardId, setMainFlangeType, setMainSnpType } from '../../snpSlice'
 
 export const Flange = () => {
@@ -13,7 +13,7 @@ export const Flange = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetFlangeTypesQuery(
+	const { data, isFetching } = useGetSnpFlangeTypesQuery(
 		{ standardId: standardId },
 		{ skip: !standardId || standardId == 'not_selected' }
 	)
@@ -44,7 +44,9 @@ export const Flange = () => {
 
 	return (
 		<>
-			<Typography fontWeight='bold'>Тип фланца</Typography>
+			<Typography fontWeight='bold' mt={1}>
+				Тип фланца
+			</Typography>
 			{isFetching ? (
 				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
 			) : (

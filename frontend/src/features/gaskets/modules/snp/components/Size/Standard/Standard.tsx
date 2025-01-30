@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getSnpTypeId, getStandard, setSize } from '@/features/gaskets/modules/snp/snpSlice'
-import { useGetSizesQuery } from '@/features/gaskets/modules/snp/snpApiSlice'
+import { useGetSnpSizesQuery } from '@/features/gaskets/modules/snp/snpApiSlice'
 import { Dn } from './Dn'
 import { D2 } from './D2'
 import { Pn } from './Pn'
@@ -15,7 +15,7 @@ export const Standard = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetSizesQuery(
+	const { data, isFetching, isUninitialized } = useGetSnpSizesQuery(
 		{ typeId: snp, hasD2: standard?.hasD2 },
 		{ skip: snp == 'not_selected' }
 	)

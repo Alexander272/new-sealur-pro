@@ -1,10 +1,10 @@
 import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
-import type { TypeMaterial } from '../../types/snp'
+import type { TypeMaterial } from '../../types/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useGetSnpMaterialsQuery } from '../../snpApiSlice'
-import { getMaterials, getStandard, setMaterial, setMaterialToggle } from '../../snpSlice'
+import { getMaterials, getStandard, setMaterial } from '../../putgSlice'
+import { useGetPutgMaterialsQuery } from '../../putgApiSlice'
 
 type Props = {
 	title: string
@@ -19,13 +19,13 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty }) => {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetSnpMaterialsQuery(standard?.standard.id || '', {
+	const { data, isFetching, isUninitialized } = useGetPutgMaterialsQuery(standard?.id || '', {
 		skip: !standard,
 	})
 
 	useEffect(() => {
 		const key = `${type}DefaultIndex` as const
-		if (data && data.data[type].length > 0) {
+		if (data && data.data[type]?.length > 0) {
 			const index = data.data[key] || 0
 			dispatch(setMaterial({ type, material: data.data[type][index] }))
 		}
@@ -43,16 +43,6 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty }) => {
 		const current = data?.data?.[type].find(m => m.materialId === event.target.value)
 		if (!current) return
 		dispatch(setMaterial({ type, material: current }))
-		if (type == 'frame' && material?.innerRing?.materialId) {
-			dispatch(setMaterial({ type: 'innerRing', material: current }))
-		}
-	}
-
-	const openHandler = () => {
-		dispatch(setMaterialToggle({ type, isOpen: true }))
-	}
-	const closeHandler = () => {
-		dispatch(setMaterialToggle({ type, isOpen: false }))
 	}
 
 	return (
@@ -67,8 +57,6 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty }) => {
 				<Select
 					value={material?.[type]?.materialId || 'not_selected'}
 					onChange={materialHandler}
-					onOpen={openHandler}
-					onClose={closeHandler}
 					disabled={disabled || isFetching}
 					fullWidth
 				>

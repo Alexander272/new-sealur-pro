@@ -31,6 +31,7 @@ export const API = Object.freeze({
 		base: 'positions' as const,
 		copy: 'positions/copy' as const,
 	},
+	fastenings: 'fastenings' as const,
 	snp: {
 		base: 'snp' as const,
 		data: 'snp/data' as const,
@@ -41,5 +42,20 @@ export const API = Object.freeze({
 		materials: 'snp/materials' as const,
 		sizes: 'snp/sizes' as const,
 	},
-	fastenings: 'fastenings' as const,
+	putg: {
+		base: 'putg' as const,
+		data: 'putg/data' as const,
+		info: {
+			base: 'putg/info' as const,
+			filler: 'putg/info/by-filler' as const,
+		},
+		configurations: 'putg/configurations' as const,
+		standards: 'putg/standard-info' as const,
+		flangeTypes: 'putg/flange-types' as const,
+		types: 'putg/types' as const,
+		constructions: 'putg/constructions' as const,
+		fillers: 'putg/fillers' as const,
+		materials: 'putg/materials' as const,
+		sizes: 'putg/sizes' as const,
+	},
 })

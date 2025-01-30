@@ -4,6 +4,7 @@ import { setupListeners } from '@reduxjs/toolkit/query'
 import { userPath, userReducer } from '@/features/user/userSlice'
 import { cardPath, cardReducer } from '@/features/card/cardSlice'
 import { snpPath, snpReducer } from '@/features/gaskets/modules/snp/snpSlice'
+import { putgPath, putgReducer } from '@/features/gaskets/modules/putg/putgSlice'
 import { resetStoreListener } from './middlewares/resetStore'
 import { apiSlice } from './apiSlice'
 
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
 	[userPath]: userReducer,
 	[cardPath]: cardReducer,
 	[snpPath]: snpReducer,
+	[putgPath]: putgReducer,
 })
 
 export const store = configureStore({

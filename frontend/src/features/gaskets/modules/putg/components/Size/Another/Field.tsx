@@ -3,50 +3,32 @@ import { Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useDebounce } from '@/hooks/debounce'
-import { getSize, setSizeMain } from '@/features/gaskets/modules/snp/snpSlice'
 import { Input } from '@/components/Input/input.style'
+import { getSizes, setSizeMain } from '../../../putgSlice'
 
 type Props = {
 	title: string
 	name: 'd4' | 'd3' | 'd2' | 'd1'
-	errorText?: string
+	errorText?: string | false
 }
 
-export const SizeField: FC<Props> = ({ title, name, errorText }) => {
-	const sizes = useAppSelector(getSize)
-	const [value, setValue] = useState(sizes[name])
+export const Field: FC<Props> = ({ title, name, errorText }) => {
+	const [value, setValue] = useState('')
+	const sizes = useAppSelector(getSizes)
+
 	const dispatch = useAppDispatch()
 
 	const debounced = useDebounce(value, 500)
 
 	useEffect(() => {
-		// debounced.replace(/(^\d*[.,]?)?$/, '$1')
-		// debounced.replace(/(^\d+[.,]?(\d{1})?)$/, '$1.$2')
 		if (sizes[name] == debounced) return
 		dispatch(setSizeMain({ [name]: debounced }))
 	}, [debounced, sizes, dispatch, name])
 
 	const sizeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const regex = /^\d{1,4}([.,](\d{1})?)?$/
+		const regex = /(^\d+[.,]?(\d{1})?)$/
 		if (regex.test(event.target.value)) setValue(event.target.value)
 		if (event.target.value === '') setValue(event.target.value)
-
-		//? это не работает
-		// const temp = event.target.value.replace(/(^\d+[.,]?(\d{1})?)$/g, '$1.$2')
-		// dispatch(setSizeMain({ [name]: temp }))
-
-		//? старое
-		// if (event.target.value === '' || !isNaN(+temp)) {
-		// 	let value: number | string
-		// 	if (+temp > 10000) return
-
-		// 	if (temp[temp.length - 1] == '.') value = temp
-		// 	else value = Math.trunc(+temp * 10) / 10
-
-		// 	if (event.target.value === '') value = event.target.value
-
-		// 	dispatch(setSizeMain({ [name]: value.toString() }))
-		// }
 	}
 
 	return (

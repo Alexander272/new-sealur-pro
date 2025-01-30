@@ -4,7 +4,7 @@ import { MenuItem, Select, SelectChangeEvent, Stack, Typography } from '@mui/mat
 import type { IThickness } from '@/features/gaskets/modules/snp/types/snp'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useDebounce } from '@/hooks/debounce'
-import { getSizeErr, getThickness, setSizeThickness } from '@/features/gaskets/modules/snp/snpSlice'
+import { getAnother, getSizeErr, getThickness, setSizeThickness } from '@/features/gaskets/modules/snp/snpSlice'
 import { Input } from '@/components/Input/input.style'
 
 const thickness = [
@@ -24,6 +24,7 @@ export const Thickness = () => {
 
 	const h = useAppSelector(getThickness)
 	const errors = useAppSelector(getSizeErr)
+	const another = useAppSelector(getAnother)
 
 	const dispatch = useAppDispatch()
 
@@ -31,9 +32,10 @@ export const Thickness = () => {
 
 	useEffect(() => {
 		// debounced.replace(/(^\d*[.,]?)?$/, '$1')
-		// debounced.replace(/(^\d*[.,]?\d{1})?$/, '$1.$2')
+		// debounced.replace(/(^\d+[.,]?(\d{1})?)$/, '$1.$2')
+		if (another == debounced) return
 		dispatch(setSizeThickness({ another: debounced }))
-	}, [debounced, dispatch])
+	}, [debounced, another, dispatch])
 
 	const thicknessHandler = (event: SelectChangeEvent<string>) => {
 		const tmp = thickness.find(t => t.frame === event.target.value)
@@ -47,10 +49,11 @@ export const Thickness = () => {
 	}
 
 	const anotherThicknessHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const regex = /(^\d*[.,]?\d{1})?$/
+		const regex = /(^([5][0-9]|[1-4][0-9]|[0-9])([.,](\d{1})?)?)$/
 		if (regex.test(event.target.value)) setValue(event.target.value)
+		if (event.target.value === '') setValue(event.target.value)
 
-		// const temp = event.target.value.replace(/(^\d*[.,]?\d{1})?$/, '$1.$2')
+		// const temp = event.target.value.replace(/(^\d+[.,]?(\d{1})?)$/, '$1.$2')
 		// setValue(temp)
 		// dispatch(setSizeThickness({ another: temp }))
 	}
@@ -59,7 +62,7 @@ export const Thickness = () => {
 		<>
 			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
 			<Stack direction='row' spacing={1} alignItems='flex-start'>
-				<Select value={h || 'another'} onChange={thicknessHandler}>
+				<Select value={h || 'another'} onChange={thicknessHandler} fullWidth>
 					{thickness.map(t => (
 						<MenuItem key={t.id} value={t.frame}>
 							{t.frame}

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getFiller, getSnpTypeId, getStandard, setMaterialFiller, setMaterialToggle } from '../../snpSlice'
-import { useGetFillersQuery } from '../../snpApiSlice'
+import { useGetSnpFillersQuery } from '../../snpApiSlice'
 import { useEffect } from 'react'
 
 export const Filler = () => {
@@ -13,7 +13,9 @@ export const Filler = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetFillersQuery(standard?.standard.id || '', { skip: !standard })
+	const { data, isFetching, isUninitialized } = useGetSnpFillersQuery(standard?.standard.id || '', {
+		skip: !standard,
+	})
 
 	useEffect(() => {
 		if (data) dispatch(setMaterialFiller(data.data[0]))
@@ -22,7 +24,7 @@ export const Filler = () => {
 		if (filler.disabledTypes?.includes(snp)) {
 			if (data) dispatch(setMaterialFiller(data.data[0]))
 		}
-	}, [data, dispatch, filler.disabledTypes, snp])
+	}, [data, dispatch, filler?.disabledTypes, snp])
 
 	const openHandler = () => {
 		dispatch(setMaterialToggle({ type: 'filler', isOpen: true }))

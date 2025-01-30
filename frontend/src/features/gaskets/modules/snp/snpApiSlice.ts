@@ -1,3 +1,7 @@
+import { toast } from 'react-toastify'
+
+import type { IMounting } from '@/features/gaskets/types/mounting'
+import type { ISnpSize } from './types/size'
 import type {
 	IFiller,
 	IFlangeType,
@@ -9,9 +13,6 @@ import type {
 } from './types/snp'
 import { apiSlice } from '@/app/apiSlice'
 import { API } from '@/app/api'
-import { toast } from 'react-toastify'
-import { ISnpSize } from './types/size'
-import { IMounting } from '../../types/mounting'
 
 type SnpDataRequest = {
 	standardId?: string
@@ -23,13 +24,11 @@ type SnpRequest = {
 	hasD2?: boolean
 }
 
-export const proUrl = 'sealur-pro'
-
 export const snpApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
 	endpoints: builder => ({
 		// получение стандартов на прокладки и фланцы
-		getStandard: builder.query<ISnpStandardResponse, null>({
+		getSnpStandard: builder.query<ISnpStandardResponse, null>({
 			query: () => API.snp.standards,
 			providesTags: [{ type: 'Snp', id: 'standards' }],
 			onQueryStarted: async (_arg, api) => {
@@ -41,7 +40,7 @@ export const snpApi = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение типов фланцев
-		getFlangeTypes: builder.query<{ data: IFlangeType[] }, SnpDataRequest>({
+		getSnpFlangeTypes: builder.query<{ data: IFlangeType[] }, SnpDataRequest>({
 			query: ({ standardId = '' }) => ({
 				url: API.snp.types,
 				params: new URLSearchParams({ standardId }),
@@ -56,7 +55,7 @@ export const snpApi = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение наполнителя
-		getFillers: builder.query<{ data: IFiller[] }, string>({
+		getSnpFillers: builder.query<{ data: IFiller[] }, string>({
 			query: standardId => ({
 				url: API.snp.fillers,
 				params: new URLSearchParams({ standardId }),
@@ -71,7 +70,7 @@ export const snpApi = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение материалов
-		getMaterials: builder.query<{ data: ISnpMaterial }, string>({
+		getSnpMaterials: builder.query<{ data: ISnpMaterial }, string>({
 			query: standardId => ({
 				url: API.snp.materials,
 				params: new URLSearchParams({ standardId }),
@@ -101,7 +100,7 @@ export const snpApi = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение размеров
-		getSizes: builder.query<{ data: ISnpSize[] }, SnpRequest>({
+		getSnpSizes: builder.query<{ data: ISnpSize[] }, SnpRequest>({
 			query: req => ({
 				url: API.snp.sizes,
 				params: new URLSearchParams({ typeId: req.typeId, hasD2: `${req.hasD2}` }),
@@ -160,12 +159,12 @@ export const snpApi = apiSlice.injectEndpoints({
 })
 
 export const {
-	useGetStandardQuery,
-	useGetFlangeTypesQuery,
-	useGetFillersQuery,
-	useGetMaterialsQuery,
+	useGetSnpStandardQuery,
+	useGetSnpFlangeTypesQuery,
+	useGetSnpFillersQuery,
+	useGetSnpMaterialsQuery,
 	useGetSnpInfoQuery,
-	useGetSizesQuery,
+	useGetSnpSizesQuery,
 	useGetFasteningsQuery,
 	useGetSnpDataQuery,
 	useGetSnpQuery,

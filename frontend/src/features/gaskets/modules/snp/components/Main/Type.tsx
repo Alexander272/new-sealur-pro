@@ -3,7 +3,7 @@ import { Skeleton, Typography } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
-import { useGetFlangeTypesQuery } from '../../snpApiSlice'
+import { useGetSnpFlangeTypesQuery } from '../../snpApiSlice'
 import { getFlangeType, getSnpType, getStandardId, setMainFlangeType, setMainSnpType } from '../../snpSlice'
 
 export const Type = () => {
@@ -14,7 +14,7 @@ export const Type = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetFlangeTypesQuery(
+	const { data, isFetching, isUninitialized } = useGetSnpFlangeTypesQuery(
 		{ standardId: standardId },
 		{ skip: !standardId || standardId == 'not_selected' }
 	)
@@ -61,7 +61,9 @@ export const Type = () => {
 
 	return (
 		<>
-			<Typography fontWeight='bold'>Тип СНП</Typography>
+			<Typography fontWeight='bold' mt={1}>
+				Тип СНП
+			</Typography>
 			{isUninitialized || isFetching ? (
 				<Skeleton animation='wave' variant='rounded' height={34} width={200} sx={{ borderRadius: 6 }} />
 			) : (
