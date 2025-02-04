@@ -17,6 +17,13 @@ type Confirm interface {
 	redis.Confirm
 }
 
+type User interface {
+	postgres.User
+}
+type Role interface {
+	postgres.Role
+}
+
 type FlangeStandard interface {
 	postgres.FlangeStandard
 }
@@ -37,6 +44,8 @@ type Repository struct {
 	Session
 	Limit
 	Confirm
+	User
+	Role
 
 	FlangeStandard
 	Material
@@ -50,6 +59,9 @@ func NewRepository(db *sqlx.DB, memDB *memoryDB.Client) *Repository {
 		Session: redis.NewSessionRepo(memDB),
 		Limit:   redis.NewLimitRepo(memDB),
 		Confirm: redis.NewConfirmRepo(memDB),
+
+		User: postgres.NewUserRepo(db),
+		Role: postgres.NewRoleRepo(db),
 
 		FlangeStandard: postgres.NewFlangeStandardRepo(db),
 		Material:       postgres.NewMaterialRepo(db),

@@ -21,6 +21,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/pkg/auth"
 	"github.com/Alexander272/new-sealur-pro/pkg/database/postgres"
 	"github.com/Alexander272/new-sealur-pro/pkg/database/redis"
+	"github.com/Alexander272/new-sealur-pro/pkg/hasher"
 	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/subosito/gotenv"
 )
@@ -64,18 +65,27 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to initialize token manager: %s", err.Error())
 	}
+	hasher := hasher.NewSHA256Hasher(10)
+
+	keycloak := auth.NewKeycloakClient(&auth.Deps{
+		Url:       conf.Keycloak.Url,
+		ClientId:  conf.Keycloak.ClientId,
+		Realm:     conf.Keycloak.Realm,
+		AdminName: conf.Keycloak.Root,
+		AdminPass: conf.Keycloak.RootPass,
+	})
 
 	//* Services, Repos & API Handlers
 	repos := repository.NewRepository(db, memDB)
 	services := services.NewServices(services.Deps{
-		Repos:           repos,
-		TokenManager:    tokenManager,
-		AccessTokenTTL:  conf.Auth.AccessTokenTTL,
-		RefreshTokenTTL: conf.Auth.RefreshTokenTTL,
-		ConfirmTTL:      conf.Auth.ConfirmTTL,
-		LimitTTL:        conf.Limiter.TTL,
+		Repos:        repos,
+		TokenManager: tokenManager,
+		Hasher:       hasher,
+		Keycloak:     keycloak,
+		ConfirmTTL:   conf.Auth.ConfirmTTL,
+		LimitTTL:     conf.Limiter.TTL,
 	})
-	handlers := transport.NewHandler(services)
+	handlers := transport.NewHandler(services, keycloak, tokenManager)
 
 	snpModule := snp.NewSnpModule(db, conf)
 	putgModule := putg.NewPutgModule(db, conf)

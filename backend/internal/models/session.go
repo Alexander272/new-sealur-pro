@@ -3,7 +3,47 @@ package models
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
+
+type SignInDTO struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type SignOutDTO struct {
+	UserId       string `json:"userId"`
+	Realm        string `json:"realm"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+type RefreshDTO struct {
+	Realm        string `json:"realm"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+type SignUpDTO struct {
+	Company    string `json:"company" binding:"required"`
+	Address    string `json:"address"`
+	Inn        string `json:"inn"`
+	Kpp        string `json:"kpp"`
+	Region     string `json:"region"`
+	City       string `json:"city"`
+	Name       string `json:"name"`
+	Position   string `json:"position" binding:"required"`
+	Email      string `json:"email" binding:"required,email"`
+	Phone      string `json:"phone"`
+	Password   string `json:"password" binding:"required,min=6,max=64"`
+	ManagerId  string `json:"managerId"`
+	UseLink    bool   `json:"useLink"`
+	UseLanding bool   `json:"useLanding"`
+}
+
+type Token struct {
+	Active bool
+	Claims *jwt.MapClaims
+}
 
 type SessionResponse struct {
 	Token  Token  `json:"token"`
@@ -11,10 +51,10 @@ type SessionResponse struct {
 	UserId string `json:"userId"`
 }
 
-type Token struct {
-	AccessToken string `json:"accessToken"`
-	Exp         int64  `json:"exp"`
-}
+// type Token struct {
+// 	AccessToken string `json:"accessToken"`
+// 	Exp         int64  `json:"exp"`
+// }
 
 type SignInUserDTO struct {
 	Email    string `json:"email" binding:"required,email"`
@@ -50,7 +90,7 @@ type SessionData struct {
 	Company      string
 	AccessToken  string
 	RefreshToken string
-	RoleCode     string
+	Role         string
 	Exp          time.Duration
 }
 

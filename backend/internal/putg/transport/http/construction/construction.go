@@ -44,7 +44,7 @@ func (h *Handler) get(c *gin.Context) {
 		return
 	}
 
-	dto := &models.GetConstructionDTO{}
+	dto := &models.GetConstructionDTO{FillerId: filler, FlangeTypeId: flangeType}
 	data, err := h.service.Get(c, dto)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить конструкцию")

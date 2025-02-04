@@ -54,5 +54,8 @@ const (
 	PositionRingTable         = "position_ring"
 	PositionRingsKitTable     = "position_rings_kit"
 
-	UserTable = "user"
+	UserTable   = "user"
+	RoleTable   = "role"
+	IpTable     = "ips"
+	RegionTable = "regions"
 )

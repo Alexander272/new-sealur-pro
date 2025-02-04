@@ -17,48 +17,43 @@ const (
 )
 
 func (m *Middleware) UserIdentity(c *gin.Context) {
-	token, err := c.Cookie(m.CookieName)
-	if err != nil {
-		response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(), "user is not authorized")
-		return
-	}
-	if token == "" {
-		response.NewErrorResponse(c, http.StatusUnauthorized, "empty token", "user is not authorized")
-		return
-	}
-
-	user, err := m.services.Session.TokenParse(token)
-	if err != nil {
-		//TODO проверить работоспособность
-		c.SetCookie(m.CookieName, token, -1, "/", m.auth.Domain, m.auth.Secure, true)
-		response.NewErrorResponse(c, http.StatusUnauthorized, err.Error()+" token: "+token, "user is not authorized")
-		return
-	}
-
-	isRefresh, err := m.services.Session.CheckSession(c, user, token)
-	if err != nil {
-		c.SetCookie(m.CookieName, token, -1, "/", m.auth.Domain, m.auth.Secure, true)
-		response.NewErrorResponse(c, http.StatusUnauthorized, err.Error()+" token: "+token+" userId: "+user.Id, "user is not authorized")
-		return
-	}
-
-	if isRefresh {
-		token, err := m.services.Session.SingIn(c, user)
-		if err != nil {
-			response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(), "failed to refresh session")
-			return
-		}
-
-		c.SetCookie(m.CookieName, token, int(m.auth.RefreshTokenTTL.Seconds()), "/", m.auth.Domain, m.auth.Secure, true)
-	}
-
-	c.Set(UserIdCtx, user.Id)
-	// for _, r := range user.Roles {
-	// 	c.Set(fmt.Sprintf("%s_%s", userRolesCtx, r.Service), r.Role)
+	// token, err := c.Cookie(m.CookieName)
+	// if err != nil {
+	// 	response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(), "user is not authorized")
+	// 	return
 	// }
-	c.Set(UserRolesCtx, user.RoleCode)
-	c.Set(UserNameCtx, user.Name)
-	c.Set(UserCompanyCtx, user.Company)
+	// if token == "" {
+	// 	response.NewErrorResponse(c, http.StatusUnauthorized, "empty token", "user is not authorized")
+	// 	return
+	// }
+
+	// user, err := m.services.Session.TokenParse(token)
+	// if err != nil {
+	// 	//TODO проверить работоспособность
+	// 	c.SetCookie(m.CookieName, token, -1, "/", m.auth.Domain, m.auth.Secure, true)
+	// 	response.NewErrorResponse(c, http.StatusUnauthorized, err.Error()+" token: "+token, "user is not authorized")
+	// 	return
+	// }
+
+	// isRefresh, err := m.services.Session.CheckSession(c, user, token)
+	// if err != nil {
+	// 	c.SetCookie(m.CookieName, token, -1, "/", m.auth.Domain, m.auth.Secure, true)
+	// 	response.NewErrorResponse(c, http.StatusUnauthorized, err.Error()+" token: "+token+" userId: "+user.Id, "user is not authorized")
+	// 	return
+	// }
+
+	// if isRefresh {
+	// 	token, err := m.services.Session.SingIn(c, user)
+	// 	if err != nil {
+	// 		response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(), "failed to refresh session")
+	// 		return
+	// 	}
+
+	// 	c.SetCookie(m.CookieName, token, int(m.auth.RefreshTokenTTL.Seconds()), "/", m.auth.Domain, m.auth.Secure, true)
+	// }
+
+	// c.Set(constants.CtxUser, user)
+	c.Next()
 }
 
 func (m *Middleware) AccessForManager(c *gin.Context) {

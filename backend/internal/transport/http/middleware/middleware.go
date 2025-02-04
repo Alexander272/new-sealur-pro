@@ -3,19 +3,28 @@ package middleware
 import (
 	"github.com/Alexander272/new-sealur-pro/internal/config"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
+	"github.com/Alexander272/new-sealur-pro/pkg/auth"
 )
 
 type Middleware struct {
-	CookieName string
-	services   *services.Services
-	auth       config.AuthConfig
-	UserIdCtx  string
+	keycloak *auth.KeycloakClient
+	services *services.Services
+	auth     config.AuthConfig
+	token    auth.TokenManager
 }
 
-func NewMiddleware(services *services.Services, auth config.AuthConfig) *Middleware {
+type MiddlewareDeps struct {
+	Keycloak *auth.KeycloakClient
+	Services *services.Services
+	Auth     config.AuthConfig
+	Token    auth.TokenManager
+}
+
+func NewMiddleware(deps *MiddlewareDeps) *Middleware {
 	return &Middleware{
-		services:  services,
-		auth:      auth,
-		UserIdCtx: "userId",
+		services: deps.Services,
+		auth:     deps.Auth,
+		keycloak: deps.Keycloak,
+		token:    deps.Token,
 	}
 }

@@ -3,6 +3,8 @@ package models
 import "errors"
 
 var (
+	ErrNotFoundKeys = errors.New("not found keys")
+
 	ErrStandAlreadyExists  = errors.New("standard with such title already exists")
 	ErrFlangeAlreadyExists = errors.New("flange with such title or short already exists")
 
@@ -16,8 +18,7 @@ var (
 	ErrUsersEmpty      = errors.New("user list is empty")
 	ErrUserExist       = errors.New("user already exists")
 	ErrUserNotVerified = errors.New("user not verified")
-
-	ErrUserNotFound = errors.New("user is not found")
+	ErrUserNotFound    = errors.New("user is not found")
 
 	ErrNoRows         = errors.New("no rows in result set")
 	ErrPositionExists = errors.New("position already exists")

@@ -5,6 +5,9 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type Order interface {
+	postgres.Order
+}
 type Position interface {
 	postgres.Position
 }
@@ -13,12 +16,14 @@ type PositionSnp interface {
 }
 
 type Repository struct {
+	Order
 	Position
 	PositionSnp
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
+		Order:       postgres.NewOrderRepo(db),
 		Position:    postgres.NewPositionRepo(db),
 		PositionSnp: postgres.NewPositionSnpRepo(db),
 	}

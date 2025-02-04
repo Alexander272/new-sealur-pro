@@ -25,7 +25,7 @@ func NewHandler(service services.Configuration) *Handler {
 func Register(api *gin.RouterGroup, service services.Configuration, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	configuration := api.Group("/configuration")
+	configuration := api.Group("/configurations")
 	{
 		configuration.GET("", handler.get)
 		// TODO только для админа

@@ -53,7 +53,7 @@ type (
 		ConfirmTTL      time.Duration `yaml:"confirm_ttl" env-default:"1h"`
 		Secure          bool          `yaml:"secure" env-default:"false"`
 		Domain          string        `yaml:"domain" env-default:"sealur.ru"`
-		Key             string        `env:"JWT_KEY"`
+		Key             string        `env:"KEY_PEM"`
 	}
 
 	KeycloakConfig struct {

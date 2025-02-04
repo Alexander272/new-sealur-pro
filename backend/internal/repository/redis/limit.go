@@ -65,7 +65,7 @@ func (r *LimitRepo) AddAttempt(ctx context.Context, clientIP string, limit time.
 	cmd := r.client.Get(ctx, clientIP)
 	if cmd.Err() != nil {
 		if cmd.Err() == redis.Nil {
-			return models.ErrClientIPNotFound
+			return r.Create(ctx, clientIP, limit)
 		}
 		return cmd.Err()
 	}
