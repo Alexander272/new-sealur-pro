@@ -3,6 +3,7 @@ package flange_type
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/services"
@@ -28,9 +29,12 @@ func Register(api *gin.RouterGroup, service services.FlangeType, middleware *mid
 	{
 		flangeType.GET("", handler.get)
 		// TODO только для админа
-		flangeType.POST("", handler.create)
-		flangeType.PUT("/:id", handler.update)
-		flangeType.DELETE("/:id", handler.delete)
+		write := flangeType.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

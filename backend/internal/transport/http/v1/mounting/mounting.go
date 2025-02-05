@@ -3,6 +3,7 @@ package mounting
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
@@ -25,12 +26,15 @@ func NewHandler(service services.Mounting) *Handler {
 func Register(api *gin.RouterGroup, service services.Mounting, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	mounting := api.Group("/fastenings")
+	mounting := api.Group("/fastenings", middleware.VerifyToken)
 	{
 		mounting.GET("", handler.getAll)
-		mounting.POST("", handler.create)
-		mounting.PUT("/:id", handler.update)
-		mounting.DELETE("/:id", handler.delete)
+		write := mounting.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

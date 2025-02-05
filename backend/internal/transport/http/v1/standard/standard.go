@@ -3,6 +3,7 @@ package standard
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
@@ -25,12 +26,15 @@ func NewHandler(service services.Standard) *Handler {
 func Register(api *gin.RouterGroup, service services.Standard, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	standards := api.Group("/standards")
+	standards := api.Group("/standards", middleware.VerifyToken)
 	{
 		standards.GET("", handler.getAll)
-		standards.POST("", handler.create)
-		standards.PUT("/:id", handler.update)
-		standards.DELETE("/:id", handler.delete)
+		write := standards.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

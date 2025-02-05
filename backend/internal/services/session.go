@@ -108,18 +108,19 @@ func (s *SessionService) Refresh(ctx context.Context, dto *models.RefreshDTO) (*
 		return nil, fmt.Errorf("failed to refresh token in keycloak. error: %w", err)
 	}
 
-	// token, err := s.tokenManager.Retrospect(res.AccessToken)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// user, err := s.DecodeToken(ctx, token.Claims)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	user, err := s.user.GetById(ctx, &models.GetUserByIdDTO{ProviderId: res.SessionState})
+	token, err := s.tokenManager.Retrospect(res.AccessToken)
 	if err != nil {
 		return nil, err
 	}
+	user, err := s.DecodeToken(ctx, token.Claims)
+	if err != nil {
+		return nil, err
+	}
+	// logger.Debug("refresh", logger.StringAttr("SessionState", res.SessionState), logger.AnyAttr("res", res))
+	// user, err := s.user.GetById(ctx, &models.GetUserByIdDTO{ProviderId: res.SessionState})
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	user.AccessToken = res.AccessToken
 	user.RefreshToken = res.RefreshToken
@@ -128,17 +129,34 @@ func (s *SessionService) Refresh(ctx context.Context, dto *models.RefreshDTO) (*
 }
 
 func (s *SessionService) DecodeToken(ctx context.Context, claims *jwt.MapClaims) (*models.User, error) {
-	var nick string
+	user := &models.User{}
+
 	c := *claims
 	u, ok := c["preferred_username"]
 	if ok {
-		nick = u.(string)
+		user.Nickname = u.(string)
+	}
+	pId, ok := c["sub"]
+	if ok {
+		user.ProviderId = pId.(string)
+	}
+	e, ok := c["email"]
+	if ok {
+		user.Email = e.(string)
+	}
+	r, ok := c["pro_role"]
+	if ok {
+		user.Role = r.(string)
+	}
+	id, ok := c["origin_id"]
+	if ok {
+		user.Id = id.(string)
 	}
 
-	user, err := s.user.GetByNick(ctx, &models.GetUserByNickDTO{Nickname: nick})
-	if err != nil {
-		return nil, err
-	}
+	// user, err := s.user.GetByNick(ctx, &models.GetUserByNickDTO{Nickname: nick})
+	// if err != nil {
+	// 	return nil, err
+	// }
 	return user, nil
 }
 

@@ -3,6 +3,7 @@ package temperature
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
@@ -25,12 +26,16 @@ func NewHandler(service services.Temperature) *Handler {
 func Register(api *gin.RouterGroup, service services.Temperature, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	temperature := api.Group("/temperature")
+	temperature := api.Group("/temperature", middleware.VerifyToken)
 	{
 		temperature.GET("", handler.getAll)
-		temperature.POST("", handler.create)
-		temperature.PUT("/:id", handler.update)
-		temperature.DELETE("/:id", handler.delete)
+		write := temperature.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
+
 	}
 }
 

@@ -3,6 +3,7 @@ package construction
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/services"
@@ -28,10 +29,12 @@ func Register(api *gin.RouterGroup, services *services.Services, middleware *mid
 	construction := api.Group("/constructions")
 	{
 		construction.GET("", handler.get)
-		// TODO только для админа
-		construction.POST("", handler.create)
-		construction.PUT("/:id", handler.update)
-		construction.DELETE("/:id", handler.delete)
+		write := construction.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 	base.Register(construction, services.BaseConstruction, middleware)
 }

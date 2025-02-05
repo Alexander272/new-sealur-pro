@@ -3,6 +3,7 @@ package info
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/services"
@@ -28,9 +29,12 @@ func Register(api *gin.RouterGroup, service services.Info, middleware *middlewar
 	{
 		info.GET("/by-filler", handler.getByFiller)
 		info.GET("/by-construction", handler.getByConstruction)
-		info.POST("", handler.create)
-		info.PUT("/:id", handler.update)
-		info.DELETE("/:id", handler.delete)
+		write := info.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

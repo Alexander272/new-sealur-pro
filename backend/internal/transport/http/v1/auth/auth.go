@@ -41,7 +41,7 @@ func Register(api *gin.RouterGroup, deps *Deps) {
 	auth := api.Group("/auth")
 	{
 		auth.POST("/sign-in", handlers.signIn)
-		auth.POST("/sign-out", handlers.signOut)
+		auth.POST("/sign-out", deps.Middleware.VerifyToken, handlers.signOut)
 		auth.POST("/sign-up", handlers.signUp)
 		auth.POST("refresh", handlers.refresh)
 	}
@@ -60,7 +60,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	if limit.Count >= h.conf.CountAttempt {
+	if limit != nil && limit.Count >= h.conf.CountAttempt {
 		h.services.Limit.AddAttempt(c, c.ClientIP())
 		response.NewErrorResponse(
 			c, http.StatusTooManyRequests,
@@ -115,10 +115,18 @@ func (h *Handler) signOut(c *gin.Context) {
 		response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(), "Сессия не найдена")
 		return
 	}
-	realm := "public"
+
+	u, exists := c.Get(constants.CtxUser)
+	if !exists {
+		response.NewErrorResponse(c, http.StatusUnauthorized, "empty user", "сессия не найдена")
+		return
+	}
+	user := u.(models.User)
+
+	// realm := "public"
 	dto := &models.SignOutDTO{
 		RefreshToken: refreshToken,
-		Realm:        realm,
+		Realm:        user.Realm,
 	}
 
 	if err := h.services.Session.SignOut(c, dto); err != nil {

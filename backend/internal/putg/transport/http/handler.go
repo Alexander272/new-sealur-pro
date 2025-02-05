@@ -26,7 +26,7 @@ func NewHandler(services *services.Services) *Handler {
 }
 
 func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) {
-	putg := api.Group("/putg")
+	putg := api.Group("/putg", middleware.VerifyToken)
 	configuration.Register(putg, h.services.Configuration, middleware)
 	construction.Register(putg, h.services, middleware)
 	filler.Register(putg, h.services, middleware)

@@ -3,6 +3,7 @@ package filler
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/models"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/services"
@@ -28,11 +29,13 @@ func Register(api *gin.RouterGroup, service services.Filler, middleware *middlew
 	fillers := api.Group("/fillers")
 	{
 		fillers.GET("", handler.getAll)
-		// TODO только для админа
-		fillers.POST("", handler.create)
-		fillers.POST("/several", handler.createSeveral)
-		fillers.PUT("/:id", handler.update)
-		fillers.DELETE("/:id", handler.delete)
+		write := fillers.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.POST("/several", handler.createSeveral)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

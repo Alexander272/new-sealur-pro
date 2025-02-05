@@ -3,6 +3,7 @@ package base
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/services"
@@ -28,9 +29,12 @@ func Register(api *gin.RouterGroup, service services.BaseFiller, middleware *mid
 	{
 		base.GET("", handler.get)
 		// TODO только для админа
-		base.POST("", handler.create)
-		base.PUT("/:id", handler.update)
-		base.DELETE("/:id", handler.delete)
+		write := base.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

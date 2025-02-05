@@ -3,6 +3,7 @@ package material
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
@@ -25,12 +26,15 @@ func NewHandler(service services.Materials) *Handler {
 func Register(api *gin.RouterGroup, service services.Materials, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	materials := api.Group("/materials")
+	materials := api.Group("/materials", middleware.VerifyToken)
 	{
 		materials.GET("", handler.getAll)
-		materials.POST("", handler.create)
-		materials.PUT("/:id", handler.update)
-		materials.DELETE("/:id", handler.delete)
+		write := materials.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

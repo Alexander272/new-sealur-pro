@@ -3,6 +3,7 @@ package standard_info
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/services"
@@ -30,9 +31,12 @@ func Register(api *gin.RouterGroup, service services.StandardInfo, middleware *m
 	{
 		standardInfo.GET("", handler.get)
 		// TODO только для админа
-		standardInfo.POST("", handler.create)
-		standardInfo.PUT("/:id", handler.update)
-		standardInfo.DELETE("/:id", handler.delete)
+		write := standardInfo.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

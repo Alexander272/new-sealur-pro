@@ -3,6 +3,7 @@ package putg_type
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/services"
@@ -27,10 +28,12 @@ func Register(api *gin.RouterGroup, service services.Type, middleware *middlewar
 	types := api.Group("types")
 	{
 		types.GET("", handler.get)
-		// TODO только для админа
-		types.POST("", handler.create)
-		types.PUT("/:id", handler.update)
-		types.DELETE("/:id", handler.delete)
+		write := types.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

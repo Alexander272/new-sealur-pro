@@ -24,9 +24,7 @@ func NewHandler(services *services.Services) *Handler {
 }
 
 func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) {
-	snp := api.Group("/snp")
-	//TODO прописать middleware
-	// snp := api.Group("/snp", middleware.UserIdentity)
+	snp := api.Group("/snp", middleware.VerifyToken)
 	filler.Register(snp, h.services.Filler, middleware)
 	flange_type.Register(snp, h.services.FlangeType, middleware)
 	info.Register(snp, h.services.Info, middleware)

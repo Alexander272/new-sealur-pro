@@ -3,6 +3,7 @@ package size
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/models"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/services"
@@ -28,11 +29,13 @@ func Register(api *gin.RouterGroup, service services.Size, middleware *middlewar
 	sizes := api.Group("sizes")
 	{
 		sizes.GET("", handler.get)
-		// TODO только для админа
-		sizes.POST("", handler.create)
-		sizes.POST("/several", handler.createSeveral)
-		sizes.PUT("/:id", handler.update)
-		sizes.DELETE("/:id", handler.delete)
+		write := sizes.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.POST("/several", handler.createSeveral)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

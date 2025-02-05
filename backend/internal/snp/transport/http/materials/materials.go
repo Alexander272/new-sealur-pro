@@ -3,6 +3,7 @@ package materials
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/models"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/services"
@@ -28,10 +29,12 @@ func Register(api *gin.RouterGroup, service services.Materials, middleware *midd
 	material := api.Group("materials")
 	{
 		material.GET("", handler.get)
-		// TODO только для админа
-		material.POST("", handler.create)
-		material.PUT("/:id", handler.update)
-		material.DELETE("/:id", handler.delete)
+		write := material.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 
 }

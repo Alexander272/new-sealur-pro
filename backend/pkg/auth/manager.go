@@ -47,9 +47,10 @@ func (m *Manager) Retrospect(token string) (*models.Token, error) {
 		return nil, err
 	}
 
+	claims := res.Claims.(jwt.MapClaims)
 	result := &models.Token{
-		Active: date.Before(time.Now()),
-		Claims: res.Claims.(*jwt.MapClaims),
+		Active: date.After(time.Now()),
+		Claims: &claims,
 	}
 	return result, err
 }

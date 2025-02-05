@@ -3,6 +3,7 @@ package flange_standard
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
@@ -25,12 +26,15 @@ func NewHandler(service services.FlangeStandard) *Handler {
 func Register(api *gin.RouterGroup, service services.FlangeStandard, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	flangeStandard := api.Group("/flange-standards")
+	flangeStandard := api.Group("/flange-standards", middleware.VerifyToken)
 	{
 		flangeStandard.GET("", handler.getAll)
-		flangeStandard.POST("", handler.create)
-		flangeStandard.PUT("/:id", handler.update)
-		flangeStandard.DELETE("/:id", handler.delete)
+		write := flangeStandard.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

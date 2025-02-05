@@ -3,6 +3,7 @@ package standard_info
 import (
 	"net/http"
 
+	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/models"
 	"github.com/Alexander272/new-sealur-pro/internal/snp/services"
@@ -28,9 +29,12 @@ func Register(api *gin.RouterGroup, service services.StandardInfo, middleware *m
 	standard := api.Group("/standard-info")
 	{
 		standard.GET("", handler.getAll)
-		standard.POST("", handler.create)
-		standard.PUT("/:id", handler.update)
-		standard.DELETE("/:id", handler.delete)
+		write := standard.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		{
+			write.POST("", handler.create)
+			write.PUT("/:id", handler.update)
+			write.DELETE("/:id", handler.delete)
+		}
 	}
 }
 

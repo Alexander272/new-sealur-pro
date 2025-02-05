@@ -18,6 +18,6 @@ func NewHandler(services *services.Services) *Handler {
 }
 
 func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) {
-	orders := api.Group("/orders")
+	orders := api.Group("/orders", middleware.VerifyToken)
 	position.Register(orders, h.services.Position, middleware)
 }
