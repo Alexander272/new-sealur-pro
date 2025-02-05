@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { PathRoutes } from '@/constants/routes'
 import { useAppSelector } from '@/hooks/redux'
-import { getIsAuth } from '@/features/user/userSlice'
+import { getToken } from '@/features/user/userSlice'
 import Header from '@/features/auth/components/Header/Header'
 import { SignIn } from '@/features/auth/components/Forms/SignInForm'
 import { SignUp } from '@/features/auth/components/Forms/SignUpForm'
@@ -20,15 +20,12 @@ export default function Auth() {
 	const navigate = useNavigate()
 	const location = useLocation()
 
-	const isAuth = useAppSelector(getIsAuth)
-
-	const from: string = (location.state as LocationState)?.from?.pathname || PathRoutes.Home
+	const token = useAppSelector(getToken)
 
 	useEffect(() => {
-		if (isAuth) {
-			navigate(from, { replace: true })
-		}
-	}, [isAuth, navigate, from])
+		const to: string = (location.state as LocationState)?.from?.pathname || PathRoutes.Home
+		if (token) navigate(to, { replace: true })
+	}, [navigate, location.state, token])
 
 	const changeTabHandler = (value: boolean) => () => {
 		setIsSignUp(value)

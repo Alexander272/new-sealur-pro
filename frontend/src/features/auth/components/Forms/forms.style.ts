@@ -12,7 +12,7 @@ export const Title = styled.h2<FormProps>`
 	border-bottom: ${props => (props.open ? '1px solid var(--border-white)' : 'none')};
 	text-align: center;
 	padding-bottom: 10px;
-	margin-bottom: ${props => (props.open ? '10px' : '0')};
+	/* margin-bottom: ${props => (props.open ? '10px' : '0')}; */
 	font-weight: 500;
 	letter-spacing: 1.2px;
 	color: var(--primary-color);
@@ -25,7 +25,7 @@ export const FormContent = styled.div`
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	margin: 10px 0;
+	padding: 10px 0;
 `
 
 export const Form = styled.form<FormProps>`

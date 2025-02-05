@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { useAppDispatch } from '@/hooks/redux'
-import { setUser } from '@/features/user/userSlice'
+import { setAuth } from '@/features/user/userSlice'
 import { useRefreshQuery } from '../authApiSlice'
 
 export function useRefresh() {
@@ -13,7 +13,7 @@ export function useRefresh() {
 
 	useEffect(() => {
 		if (isSuccess) {
-			dispatch(setUser(data.data))
+			dispatch(setAuth(data.data))
 			setReady(true)
 		}
 	}, [isSuccess, data, dispatch])

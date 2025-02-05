@@ -5,20 +5,18 @@ import { IRefreshUser, IUser } from './types/user'
 import { RootState } from '@/app/store'
 
 export interface IUserState {
-	ready: boolean
-	loading: boolean
-	userId: string
-	isAuth: boolean
-	roleCode: string
+	id: string | null
+	name: string
+	role: string | null
+	token: string | null
 	user?: IUser
 }
 
 const initialState: IUserState = {
-	ready: false,
-	loading: false,
-	userId: '',
-	isAuth: false,
-	roleCode: 'user',
+	id: null,
+	name: '',
+	role: null,
+	token: null,
 }
 
 export const userSlice = createSlice({
@@ -27,15 +25,15 @@ export const userSlice = createSlice({
 	reducers: {
 		// установка авторизации пользователя
 		setAuth: (state, action: PayloadAction<IRefreshUser>) => {
-			state.userId = action.payload.id
-			state.roleCode = action.payload.roleCode
-			state.isAuth = true
+			state.id = action.payload.id
+			state.role = action.payload.role
+			state.token = action.payload.token
 		},
 		// установка данных о пользователе и авторизации
 		setUser: (state, action: PayloadAction<IUser>) => {
-			state.userId = action.payload.id
-			state.roleCode = action.payload.roleCode
-			state.isAuth = true
+			state.id = action.payload.id
+			state.role = action.payload.role
+			state.token = action.payload.token
 			state.user = action.payload
 		},
 		// сброс пользователя
@@ -46,9 +44,9 @@ export const userSlice = createSlice({
 export const userPath = userSlice.name
 export const userReducer = userSlice.reducer
 
-export const getIsAuth = (state: RootState) => state.user.isAuth
-export const getUserId = (state: RootState) => state.user.userId
+export const getUserId = (state: RootState) => state.user.id
 export const getUser = (state: RootState) => state.user.user
-export const getRole = (state: RootState) => state.user.roleCode
+export const getRole = (state: RootState) => state.user.role
+export const getToken = (state: RootState) => state.user.token
 
 export const { setAuth, setUser, resetUser } = userSlice.actions

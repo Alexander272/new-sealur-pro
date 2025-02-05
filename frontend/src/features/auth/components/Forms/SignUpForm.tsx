@@ -1,4 +1,4 @@
-import { Button, FormControl, InputAdornment, Typography } from '@mui/material'
+import { Button, FormControl, InputAdornment, TextField, Typography } from '@mui/material'
 import { FC, FormEvent, useState } from 'react'
 import { toast } from 'react-toastify'
 import InVisibleIcon from '@mui/icons-material/VisibilityOffOutlined'
@@ -12,7 +12,7 @@ import { Company } from '@/features/auth/modules/dadata/components/Company'
 import { useSignUpMutation } from '@/features/auth/authApiSlice'
 import { useInput } from '@/features/auth/hooks/useInput'
 import { ValidMessage } from '../ValidMessage/ValidMessage'
-import { FormContent, Input, SignUpForm, Title } from './forms.style'
+import { FormContent, SignUpForm, Title } from './forms.style'
 
 import Privacy from '@/assets/files/privacy.pdf'
 
@@ -116,66 +116,77 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 				</FormControl>
 
 				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
-					<Input
+					<TextField
 						name='name'
 						value={name.value}
 						onChange={name.onChange}
 						placeholder='Ф.И.О.'
 						error={!name.valid}
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' } }}
 					/>
 					{!name.valid && <ValidMessage messages={['Поле обязательно для заполнения.']} />}
 				</FormControl>
 
 				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
-					<Input
+					<TextField
 						name='position'
 						value={position.value}
 						onChange={position.onChange}
 						placeholder='Должность *'
 						error={!position.valid}
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' } }}
 					/>
 					{/* //TODO надо наверное ValidMessage тоже запихать в input props */}
 					{!position.valid && <ValidMessage messages={['Поле обязательно для заполнения.']} />}
 				</FormControl>
 
 				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
-					<Input
+					<TextField
 						name='email'
 						type='email'
 						value={email.value}
 						onChange={email.onChange}
 						placeholder='Email *'
 						error={!email.valid}
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' } }}
 					/>
 					{!email.valid && <ValidMessage messages={['Email не корректен']} />}
 				</FormControl>
 
 				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
-					<Input
+					<TextField
 						name='phone'
 						value={phone.value}
 						onChange={phone.onChange}
 						placeholder='Телефон (+7 (123) 123-45-67 (доб.123))'
 						error={!phone.valid}
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' } }}
 					/>
 					{!phone.valid && <ValidMessage messages={['Поле обязательно для заполнения.']} />}
 				</FormControl>
 
 				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
-					<Input
+					<TextField
 						name='password'
 						value={password.value}
 						onChange={password.onChange}
 						type={passIsVisible ? 'text' : 'password'}
 						placeholder='Пароль *'
 						error={!password.valid}
-						inputProps={{
-							endAdornment: (
-								<InputAdornment position='start' onClick={togglePassVisible} sx={{ cursor: 'pointer' }}>
-									{passIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
-								</InputAdornment>
-							),
+						slotProps={{
+							input: {
+								endAdornment: (
+									<InputAdornment
+										position='end'
+										onClick={togglePassVisible}
+										sx={{ cursor: 'pointer' }}
+									>
+										{passIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
+									</InputAdornment>
+								),
+							},
 						}}
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' } }}
 					/>
 					{!password.valid && (
 						<ValidMessage
@@ -189,20 +200,27 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 				</FormControl>
 
 				<FormControl sx={{ marginBottom: 2 }}>
-					<Input
+					<TextField
 						name='confirm'
 						value={confirm.value}
 						onChange={confirm.onChange}
 						type={confIsVisible ? 'text' : 'password'}
 						placeholder='Повторите пароль *'
 						error={!confirm.valid || !compare}
-						inputProps={{
-							endAdornment: (
-								<InputAdornment position='start' onClick={toggleConfVisible} sx={{ cursor: 'pointer' }}>
-									{confIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
-								</InputAdornment>
-							),
+						slotProps={{
+							input: {
+								endAdornment: (
+									<InputAdornment
+										position='end'
+										onClick={toggleConfVisible}
+										sx={{ cursor: 'pointer' }}
+									>
+										{passIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
+									</InputAdornment>
+								),
+							},
 						}}
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' } }}
 					/>
 					{!confirm.valid || !compare ? (
 						<ValidMessage iconRight='46px' messages={['Пароли должны совпадать']} />

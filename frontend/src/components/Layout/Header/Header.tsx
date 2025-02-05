@@ -18,8 +18,8 @@ type Props = {
 const Header: FC<Props> = ({ disableCard }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
-	const userId = useAppSelector(state => state.user.userId)
-	const role = useAppSelector(state => state.user.roleCode)
+	const userId = useAppSelector(state => state.user.id)
+	const role = useAppSelector(state => state.user.role)
 
 	const [signOut] = useSignOutMutation()
 

@@ -1,5 +1,6 @@
 export interface IUser {
 	id: string
+	nickname: string
 	company: string
 	address: string
 	inn: string
@@ -10,13 +11,18 @@ export interface IUser {
 	position: string
 	email: string
 	phone: string
-	roleCode: string
+	role: string
 	useLink?: boolean
+
+	token: string
 }
 
 export interface IRefreshUser {
 	id: string
-	roleCode: string
+	nickname: string
+	email: string
+	role: string
+	token: string
 }
 
 export interface IUserData {
@@ -31,7 +37,7 @@ export interface IUserData {
 	position: string
 	email: string
 	phone: string
-	roleCode: string
+	role: string
 	useLink?: boolean
 	confirmed?: boolean
 	date?: string

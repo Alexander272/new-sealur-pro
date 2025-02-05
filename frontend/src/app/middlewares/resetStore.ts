@@ -3,6 +3,7 @@ import { createListenerMiddleware, TypedStartListening } from '@reduxjs/toolkit'
 import { apiSlice } from '@/app/apiSlice'
 import { AppDispatch, RootState } from '@/app/store'
 import { resetUser } from '@/features/user/userSlice'
+import { dadataApi } from '@/features/auth/modules/dadata/dadataApiSlice'
 
 export const resetStoreListener = createListenerMiddleware()
 
@@ -14,5 +15,6 @@ startResetStoreListener({
 		await listenerApi.delay(100)
 		//TODO
 		listenerApi.dispatch(apiSlice.util.resetApiState())
+		listenerApi.dispatch(dadataApi.util.resetApiState())
 	},
 })

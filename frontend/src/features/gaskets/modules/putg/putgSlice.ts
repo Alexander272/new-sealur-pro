@@ -405,7 +405,7 @@ export const putgSlice = createSlice({
 				const r = range[i]
 
 				if (state.main.configuration?.code == 'round') {
-					console.log(r.width, (+state.size.d3 - +state.size.d2) / 2 >= r.width)
+					// console.log(r.width, (+state.size.d3 - +state.size.d2) / 2 >= r.width)
 
 					if ((+state.size.d3 - +state.size.d2) / 2 >= r.width) {
 						hasError = false

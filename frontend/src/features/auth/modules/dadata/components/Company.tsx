@@ -1,10 +1,9 @@
 import { FC, SyntheticEvent, useState } from 'react'
-import { Autocomplete, Stack, Typography } from '@mui/material'
+import { Autocomplete, Stack, TextField, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/SearchOutlined'
 
 import type { CompanyInfo } from '../types/company'
 import { useDebounce } from '@/hooks/debounce'
-import { Input } from '@/features/auth/components/Forms/forms.style'
 import { useFindCompanyQuery } from '../dadataApiSlice'
 
 type Props = {
@@ -40,13 +39,14 @@ export const Company: FC<Props> = ({ value, onChange, error }) => {
 			noOptionsText='Ничего не найдено'
 			onInputChange={companyHandler}
 			renderInput={params => (
-				<Input
+				<TextField
 					{...params}
 					name='company'
 					placeholder='Название организации *'
 					size='small'
 					autoComplete='off'
 					error={error}
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' } }}
 				/>
 			)}
 			renderOption={(props, option) => {

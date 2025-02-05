@@ -12,17 +12,18 @@ import type { IUser } from '@/features/user/types/user'
 import { BaseUrl } from '@/constants/baseUrl'
 import { resetUser, setUser } from '@/features/user/userSlice'
 import { API } from './api'
+import { RootState } from './store'
 
 const baseQuery = fetchBaseQuery({
 	baseUrl: BaseUrl,
 	mode: 'cors',
 	credentials: 'include',
-	// prepareHeaders: (headers, api) => {
-	// 	const token = (api.getState() as RootState).user.token
-	// 	if (token) headers.set('authorization', `Bearer ${token}`)
+	prepareHeaders: (headers, api) => {
+		const token = (api.getState() as RootState).user.token
+		if (token) headers.set('authorization', `Bearer ${token}`)
 
-	// 	return headers
-	// },
+		return headers
+	},
 })
 
 const mutex = new Mutex()
@@ -31,7 +32,6 @@ type BaseQuery = BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 const baseQueryWithReAuth: BaseQuery = async (args, api, extraOptions) => {
 	// mutex позволяет предотвратить множественное обращение на обновление токена
 	await mutex.waitForUnlock()
-	//TODO почему этот запрос выполняется при загрузке страницы
 	let result = await baseQuery(args, api, extraOptions)
 
 	if (result.error && result.error.status === 401 && api.endpoint !== 'signIn' && api.endpoint != 'refresh') {

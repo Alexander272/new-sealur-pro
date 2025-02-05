@@ -15,7 +15,7 @@ export const useDesignation = () => {
 		const standard = main.standard
 		const construction = material.construction
 
-		const sizes = [size?.d4, size.d3, size.d2, size?.d1].filter(Boolean).join('x')
+		const sizes = [size?.d4, size.d3, size.d2, size?.d1].filter(Boolean).join('x').replaceAll('.', ',')
 		const h = (+size.h).toFixed(1).replace('.', ',')
 
 		const designationDesign = []

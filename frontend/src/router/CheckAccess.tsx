@@ -10,7 +10,7 @@ type Props = {
 }
 
 export default function CheckAccess({ children, forbiddenRoles = [] }: Props) {
-	const { roleCode: role, isAuth } = useAppSelector(state => state.user)
+	const { role, token } = useAppSelector(state => state.user)
 	const location = useLocation()
 
 	if (location.search) {
@@ -18,7 +18,7 @@ export default function CheckAccess({ children, forbiddenRoles = [] }: Props) {
 		if (parts[0] === '?managerId') localStorage.setItem('managerId', parts[1])
 	}
 
-	if (!isAuth) return <Navigate to={PathRoutes.Auth.Base} state={{ from: location }} />
-	if (forbiddenRoles.includes(role)) return <Forbidden />
+	if (!token) return <Navigate to={PathRoutes.Auth.Base} state={{ from: location }} />
+	if (forbiddenRoles.includes(role || '')) return <Forbidden />
 	return children
 }

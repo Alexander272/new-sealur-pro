@@ -1,5 +1,5 @@
 import { FC, FormEvent, useState } from 'react'
-import { Button, FormControl, InputAdornment } from '@mui/material'
+import { Button, FormControl, InputAdornment, TextField } from '@mui/material'
 import { toast } from 'react-toastify'
 import InVisibleIcon from '@mui/icons-material/VisibilityOffOutlined'
 import VisibleIcon from '@mui/icons-material/RemoveRedEye'
@@ -11,7 +11,7 @@ import { useAppDispatch } from '@/hooks/redux'
 import { useSignInMutation } from '@/features/auth/authApiSlice'
 import { setUser } from '@/features/user/userSlice'
 import { useInput } from '@/features/auth/hooks/useInput'
-import { Input, FormContent, SignInForm, Title, NavLink } from './forms.style'
+import { FormContent, SignInForm, Title, NavLink } from './forms.style'
 import { Fallback } from '@/components/Fallback/Fallback'
 
 type Props = {
@@ -29,7 +29,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 
 	const togglePassVisible = () => setPassIsVisible(prev => !prev)
 
-	const email = useInput({ validation: 'email' })
+	const email = useInput({ validation: 'empty' })
 	const password = useInput({ validation: 'empty' })
 
 	const signInHandler = async (event: FormEvent<HTMLFormElement>) => {
@@ -41,7 +41,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 		if (!emailValid || !passwordValid) return
 
 		const value: ISignIn = {
-			email: email.value,
+			username: email.value,
 			password: password.value,
 		}
 
@@ -62,30 +62,38 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 
 			<FormContent>
 				<FormControl sx={{ marginTop: 1, marginBottom: 2 }}>
-					<Input
+					<TextField
 						value={email.value}
 						onChange={email.onChange}
 						name='email'
 						placeholder='Email'
 						error={!email.valid}
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10 } }}
 					/>
 				</FormControl>
 
 				<FormControl sx={{ marginBottom: 2, position: 'relative' }}>
-					<Input
+					<TextField
 						value={password.value}
 						onChange={password.onChange}
 						name='password'
 						type={passIsVisible ? 'text' : 'password'}
 						placeholder='Пароль'
 						error={!password.valid}
-						inputProps={{
-							endAdornment: (
-								<InputAdornment position='start' onClick={togglePassVisible} sx={{ cursor: 'pointer' }}>
-									{passIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
-								</InputAdornment>
-							),
+						slotProps={{
+							input: {
+								endAdornment: (
+									<InputAdornment
+										position='end'
+										onClick={togglePassVisible}
+										sx={{ cursor: 'pointer' }}
+									>
+										{passIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
+									</InputAdornment>
+								),
+							},
 						}}
+						sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10 } }}
 					/>
 					{/* <VisiblePassword password={password.value} /> */}
 				</FormControl>
