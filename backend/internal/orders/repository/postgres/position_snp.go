@@ -10,6 +10,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository/postgres/pq_models"
 	snp_models "github.com/Alexander272/new-sealur-pro/internal/snp/models"
+	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -23,6 +24,7 @@ func NewPositionSnpRepo(db *sqlx.DB) *PositionSnpRepo {
 }
 
 type PositionSnp interface {
+	GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionSnpDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionSnpDTO) error
@@ -33,12 +35,14 @@ type PositionSnp interface {
 
 func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error) {
 	query := fmt.Sprintf(`SELECT id, position_id, snp_standard_id, snp_type_id, flange_type_id,
-		size_id, pn_index, h_index, another, COALESCE(s.d4, ps.d4), COALESCE(s.d3, ps.d3), 
-		COALESCE(s.d2, ps.d2), COALESCE(s.d1, ps.d1), h[h_index+1],
+		size_id, pn_index, h_index, another, COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, 
+		COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, COALESCE(dn, '') AS dn, 
+		COALESCE(pn_mpa[pn_index+1], '') AS pn_mpa, COALESCE(pn_kg[pn_index+1], '') AS pn_kg, 
+		COALESCE(h[h_index+1], '') AS h, COALESCE(s2[h_index+1], '') AS s2, COALESCE(s3[h_index+1], '') AS s3,
 		filler_id, f.filler_code, m.arr_mat_code, frame_id, inner_ring_id, outer_ring_id,
 		jumper, jumper_width, has_hole, mounting, drawing
 		FROM %s AS ps
-		LEFT JOIN LATERAL (SELECT d4, d3, d2, d1, h FROM %s WHERE id=ps.size_id) AS s ON true
+		LEFT JOIN LATERAL (SELECT dn, pn_mpa, pn_kg, d4, d3, d2, d1, h, s2, s3 FROM %s WHERE id=ps.size_id) AS s ON true
 		LEFT JOIN LATERAL (SELECT code AS filler_code FROM %s WHERE id=ps.filler_id) AS f ON true
 		LEFT JOIN LATERAL (SELECT ARRAY_AGG(code) AS arr_mat_code FROM %s
 			WHERE id=ANY(ARRAY[ps.frame_id, ps.inner_ring_id, ps.outer_ring_id])
@@ -56,22 +60,30 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 
-	innerRingMat := tmp.ArrMaterials[0]
-	if tmp.FrameId != tmp.InnerRingId {
+	innerRingMat := ""
+	if len(tmp.ArrMaterials) > 1 {
 		innerRingMat = tmp.ArrMaterials[1]
 	}
 	data := &models.PositionSnp{
 		Main: &models.PositionSnp_Main{
-			SnpStandardId:  tmp.SnpStandardId,
-			SnpTypeId:      tmp.SnpTypeId,
-			FlangeTypeCode: tmp.FlangeTypeId,
+			SnpStandardId: tmp.SnpStandardId,
+			SnpTypeId:     tmp.SnpTypeId,
+			FlangeTypeId:  tmp.FlangeTypeId,
 		},
 		Size: &models.PositionSnp_Size{
-			D4: tmp.D4,
-			D3: tmp.D3,
-			D2: tmp.D2,
-			D1: tmp.D1,
-			H:  tmp.H,
+			Id:      tmp.SizeId,
+			PnIndex: tmp.PnIndex,
+			Dn:      tmp.Dn,
+			Pn:      &snp_models.Pn{Mpa: tmp.PnMpa, Kg: tmp.PnKg},
+			HIndex:  tmp.HIndex,
+			D4:      tmp.D4,
+			D3:      tmp.D3,
+			D2:      tmp.D2,
+			D1:      tmp.D1,
+			H:       tmp.H,
+			S2:      tmp.S2,
+			S3:      tmp.S3,
+			Another: tmp.Another,
 		},
 		Material: &models.PositionSnp_Material{
 			Filler: &snp_models.Filler{
@@ -106,7 +118,7 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 		},
 	}
 
-	return data, fmt.Errorf("not implemented")
+	return data, nil
 }
 
 /*
@@ -129,7 +141,8 @@ func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionSnpDTO
 		size_id, pn_index, h_index, another, d4, d3, d2, d1,
 		filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing)
 		VALUES (:id, :position_id, :snp_standard_id, :snp_type_id, :flange_type_id, :size_id, :pn_index, :h_index, :another,
-		:filler_id, :frame_id, :inner_ring_id, :outer_ring_id, :jumper, :jumper_width, :has_hole, :mounting, :drawing)`,
+		:d4, :d3, :d2, :d1,	:filler_id, :frame_id, :inner_ring_id, :outer_ring_id, :jumper, :jumper_width, 
+		:has_hole, :mounting, :drawing)`,
 		PositionSnpTable,
 	)
 	dto.Id = uuid.NewString()
@@ -167,6 +180,7 @@ func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionSnpDTO
 		Mounting:      dto.Design.Mounting,
 		Drawing:       dto.Design.Drawing,
 	}
+	logger.Debug("create position snp", logger.AnyAttr("data", data))
 
 	_, err := r.db.NamedExecContext(ctx, query, data)
 	if err != nil {
@@ -234,7 +248,7 @@ func (r *PositionSnpRepo) Update(ctx context.Context, dto *models.PositionSnpDTO
 		size_id=:size_id, pn_index=:pn_index, h_index=:h_index, another=:another, d4=:d4, d3=:d3, d2=:d2, d1=:d1,
 		filler_id=:filler_id, frame_id=:frame_id, inner_ring_id=:inner_ring_id, outer_ring_id=:outer_ring_id, 
 		jumper=:jumper, jumper_width=:jumper_width, has_hole=:has_hole, mounting=:mounting, drawing=:drawing
-		WHERE id=:id`,
+		WHERE position_id=:position_id`,
 		PositionSnpTable,
 	)
 

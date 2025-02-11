@@ -22,7 +22,7 @@ func NewPositionRepo(db *sqlx.DB) *PositionRepo {
 
 type Position interface {
 	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
-	GetById(ctx context.Context, id string) (*models.PositionDTO, error)
+	GetById(ctx context.Context, id string) (*models.Position, error)
 	GetIdByTitle(ctx context.Context, req *models.GetPositionByTitle) (string, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
@@ -41,11 +41,11 @@ func (r *PositionRepo) Get(ctx context.Context, req *models.GetPositionsDTO) ([]
 	return data, nil
 }
 
-func (r *PositionRepo) GetById(ctx context.Context, id string) (*models.PositionDTO, error) {
+func (r *PositionRepo) GetById(ctx context.Context, id string) (*models.Position, error) {
 	query := fmt.Sprintf(`SELECT id, title, amount, type, count, info FROM %s WHERE id=$1`, PositionTable)
-	data := &models.PositionDTO{}
+	data := &models.Position{}
 
-	if err := r.db.GetContext(ctx, &data, query, id); err != nil {
+	if err := r.db.GetContext(ctx, data, query, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, base.ErrNoRows
 		}

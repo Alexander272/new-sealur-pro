@@ -17,10 +17,19 @@ func NewPositionSnpService(repo repository.PositionSnp) *PositionSnpService {
 }
 
 type PositionSnp interface {
+	GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionSnpDTO) error
 	Update(ctx context.Context, dto *models.PositionDTO) error
+}
+
+func (s *PositionSnpService) GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error) {
+	data, err := s.repo.GetByPosition(ctx, positionId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get position snp by position id. error: %w", err)
+	}
+	return data, nil
 }
 
 func (s *PositionSnpService) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {
@@ -32,6 +41,13 @@ func (s *PositionSnpService) Copy(ctx context.Context, dto *models.CopyPositionD
 }
 
 func (s *PositionSnpService) Create(ctx context.Context, dto *models.PositionDTO) error {
+	if dto.SnpData.Size.SizeId != "" {
+		dto.SnpData.Size.D4 = ""
+		dto.SnpData.Size.D3 = ""
+		dto.SnpData.Size.D2 = ""
+		dto.SnpData.Size.D1 = ""
+	}
+
 	tmp := &models.PositionSnpDTO{
 		PositionId: dto.Id,
 		Main:       dto.SnpData.Main,
@@ -53,6 +69,13 @@ func (s *PositionSnpService) CreateSeveral(ctx context.Context, dto []*models.Po
 }
 
 func (s *PositionSnpService) Update(ctx context.Context, dto *models.PositionDTO) error {
+	if dto.SnpData.Size.SizeId != "" {
+		dto.SnpData.Size.D4 = ""
+		dto.SnpData.Size.D3 = ""
+		dto.SnpData.Size.D2 = ""
+		dto.SnpData.Size.D1 = ""
+	}
+
 	tmp := &models.PositionSnpDTO{
 		PositionId: dto.Id,
 		Main:       dto.SnpData.Main,

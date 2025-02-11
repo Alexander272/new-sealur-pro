@@ -24,7 +24,7 @@ func NewPositionService(repo repository.Position, snp PositionSnp) *PositionServ
 
 type Position interface {
 	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
-	GetById(ctx context.Context, id string) (*models.PositionDTO, error)
+	GetById(ctx context.Context, id string) (*models.Position, error)
 	GetIdByTitle(ctx context.Context, req *models.GetPositionByTitle) (string, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
@@ -40,11 +40,23 @@ func (s *PositionService) Get(ctx context.Context, req *models.GetPositionsDTO) 
 	return data, nil
 }
 
-func (s *PositionService) GetById(ctx context.Context, id string) (*models.PositionDTO, error) {
+func (s *PositionService) GetById(ctx context.Context, id string) (*models.Position, error) {
 	data, err := s.repo.GetById(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get position by id. error: %w", err)
 	}
+
+	if data.Type == models.PositionTypeSnp {
+		snpData, err := s.snp.GetByPosition(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		// data.SnpData = snpData
+		data.Data = snpData
+	}
+
+	//TODO add another types
+
 	return data, nil
 }
 
@@ -75,8 +87,19 @@ func (s *PositionService) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 	if dto.Amount != "" {
 		pos.Amount = dto.Amount
 	}
+
+	data := &models.PositionDTO{
+		Id:      pos.Id,
+		OrderId: pos.OrderId,
+		Count:   pos.Count,
+		Title:   pos.Title,
+		Amount:  pos.Amount,
+		Type:    pos.Type,
+		Info:    pos.Info,
+	}
+
 	// Поскольку я для проверки получаю позицию я могу просто создать новую заменив данные
-	if err := s.repo.Create(ctx, pos); err != nil {
+	if err := s.repo.Create(ctx, data); err != nil {
 		return fmt.Errorf("failed to create position. error: %w", err)
 	}
 
@@ -111,6 +134,7 @@ func (s *PositionService) Create(ctx context.Context, dto *models.PositionDTO) e
 		err = s.snp.Create(ctx, dto)
 	}
 	if err != nil {
+		s.Delete(ctx, &models.DeletePositionDTO{Id: dto.Id})
 		return err
 	}
 	return nil

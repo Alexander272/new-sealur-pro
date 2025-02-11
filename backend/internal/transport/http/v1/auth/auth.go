@@ -79,12 +79,12 @@ func (h *Handler) signIn(c *gin.Context) {
 			logger.ErrAttr(err),
 		)
 
-		if strings.Contains(err.Error(), "invalid_grant") {
+		if strings.Contains(err.Error(), "invalid_grant") || errors.Is(err, models.ErrUserNotFound) {
 			h.services.Limit.AddAttempt(c, c.ClientIP())
 			response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 			return
 		}
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка: "+err.Error())
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
@@ -130,7 +130,7 @@ func (h *Handler) signOut(c *gin.Context) {
 	}
 
 	if err := h.services.Session.SignOut(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка: "+err.Error())
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
@@ -158,7 +158,7 @@ func (h *Handler) signUp(c *gin.Context) {
 	}
 
 	if err := h.services.Session.SignUp(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка: "+err.Error())
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
@@ -171,6 +171,16 @@ func (h *Handler) refresh(c *gin.Context) {
 		response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(), "Сессия не найдена")
 		return
 	}
+
+	// u, exists := c.Get(constants.CtxUser)
+	// if !exists {
+	// 	response.NewErrorResponse(c, http.StatusUnauthorized, "empty user", "сессия не найдена")
+	// 	return
+	// }
+	// decodedUser := u.(models.User)
+	//TODO если у меня будет несколько реалмов, то надо как-то определять куда отправлять запрос на обновление
+	//* я могу получить реалм из токена обновления, главное чтобы он нормально декодировался
+
 	realm := "public"
 	dto := &models.RefreshDTO{
 		RefreshToken: refreshToken,
@@ -183,7 +193,7 @@ func (h *Handler) refresh(c *gin.Context) {
 			response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(), "Сессия не найдена")
 			return
 		}
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка: "+err.Error())
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}

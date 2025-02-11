@@ -152,6 +152,11 @@ func (s *SessionService) DecodeToken(ctx context.Context, claims *jwt.MapClaims)
 	if ok {
 		user.Id = id.(string)
 	}
+	issuer, ok := c["iss"]
+	if ok {
+		parts := strings.Split(issuer.(string), "/")
+		user.Realm = parts[len(parts)-1]
+	}
 
 	// user, err := s.user.GetByNick(ctx, &models.GetUserByNickDTO{Nickname: nick})
 	// if err != nil {

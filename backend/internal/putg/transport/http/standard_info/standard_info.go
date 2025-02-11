@@ -30,7 +30,6 @@ func Register(api *gin.RouterGroup, service services.StandardInfo, middleware *m
 	standardInfo := api.Group("/standard-info")
 	{
 		standardInfo.GET("", handler.get)
-		// TODO только для админа
 		write := standardInfo.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)

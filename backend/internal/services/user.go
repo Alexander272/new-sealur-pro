@@ -88,6 +88,7 @@ func (s *UserService) CreateInProvider(ctx context.Context, user *models.User, r
 	dto := &models.UserDTO{
 		Id:       user.Id,
 		Nickname: user.Nickname,
+		Role:     user.Role,
 		Company:  user.Company,
 		Inn:      user.Inn,
 		Kpp:      user.Kpp,

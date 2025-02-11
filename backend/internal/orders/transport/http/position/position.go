@@ -30,6 +30,7 @@ func Register(api *gin.RouterGroup, service services.Position, middleware *middl
 	{
 		positions.GET("", handler.get)
 		positions.GET("/:id", handler.getById)
+		// positions.GET("/data/:id", handler.getDataById)
 		positions.POST("/copy/:id", handler.copy)
 		positions.POST("", handler.create)
 		positions.PUT("/:id", handler.update)
@@ -70,6 +71,29 @@ func (h *Handler) getById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, response.DataResponse{Data: data})
 }
+
+// func (h *Handler) getDataById(c *gin.Context) {
+// 	id := c.Param("id")
+// 	err := uuid.Validate(id)
+// 	if err != nil {
+// 		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
+// 		return
+// 	}
+
+// 	posType := c.Query("type")
+// 	if posType == "" {
+// 		response.NewErrorResponse(c, http.StatusBadRequest, "empty params", "Отправлены некорректные данные")
+// 		return
+// 	}
+
+// 	// data, err := h.service.GetDataById(c, id, posType)
+// 	// if err != nil {
+// 	// 	response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить позицию")
+// 	// 	error_bot.Send(c, err.Error(), id)
+// 	// 	return
+// 	// }
+// 	// c.JSON(http.StatusOK, response.DataResponse{Data: data})
+// }
 
 func (h *Handler) copy(c *gin.Context) {
 	id := c.Param("id")

@@ -20,16 +20,16 @@ type ShortPosition struct {
 }
 
 type Position struct {
-	Id       string        `json:"id"`
-	OrderId  string        `json:"orderId"`
-	Count    int64         `json:"count"`
-	Title    string        `json:"title"`
-	Amount   string        `json:"amount"`
-	Type     string        `json:"type"`
-	TypeCode PositionType  `json:"typeCode"`
-	Info     string        `json:"info"`
+	Id       string        `json:"id" db:"id"`
+	OrderId  string        `json:"orderId" db:"order_id"`
+	Count    int64         `json:"count" db:"count"`
+	Title    string        `json:"title" db:"title"`
+	Amount   string        `json:"amount" db:"amount"`
+	Type     PositionType  `json:"type" db:"type"`
+	Info     string        `json:"info" db:"info"`
 	SnpData  *PositionSnp  `json:"snpData"`
 	PutgData *PositionPutg `json:"putgData"`
+	Data     interface{}   `json:"data"`
 	// RingData *PositionRing     `json:"ringData"`
 	// KitData  *PositionRingsKit `json:"kitData"`
 }

@@ -27,6 +27,7 @@ type Order interface {
 	GetById(ctx context.Context, req *models.GetOrderDTO) (*models.Order, error)
 	Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error)
 	Create(ctx context.Context, dto *models.OrderDTO) error
+	Save(ctx context.Context, dto *models.SaveOrderDTO) error
 	SetInfo(ctx context.Context, dto *models.SetInfoDTO) error
 	SetStatus(ctx context.Context, dto *models.SetStatusDTO) error
 	SetManager(ctx context.Context, dto *models.SetManagerDTO) error
@@ -38,7 +39,7 @@ func (s *OrderService) GetCurrent(ctx context.Context, req *models.GetCurrentOrd
 		return nil, fmt.Errorf("failed to get current order. error: %w", err)
 	}
 	if data == nil {
-		dto := &models.OrderDTO{UserId: req.UserId, ManagerId: req.ManagerId}
+		dto := &models.OrderDTO{UserId: req.UserId}
 		err := s.Create(ctx, dto)
 		if err != nil {
 			return nil, err
@@ -75,6 +76,16 @@ func (s *OrderService) Create(ctx context.Context, dto *models.OrderDTO) error {
 	if err := s.repo.Create(ctx, dto); err != nil {
 		return fmt.Errorf("failed to create order. error: %w", err)
 	}
+	return nil
+}
+
+func (s *OrderService) Save(ctx context.Context, dto *models.SaveOrderDTO) error {
+	if err := s.repo.Save(ctx, dto); err != nil {
+		return fmt.Errorf("failed to save order. error: %w", err)
+	}
+
+	//TODO send email to manager
+
 	return nil
 }
 

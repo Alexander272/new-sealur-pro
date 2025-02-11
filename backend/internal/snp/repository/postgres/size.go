@@ -52,6 +52,7 @@ func (r *SizeRepo) Get(ctx context.Context, req *models.GetGroupedSize) ([]*mode
 		}
 
 		data := &models.Size{
+			Id: ss.Id,
 			Pn: Pn,
 			D4: ss.D4,
 			D3: ss.D3,

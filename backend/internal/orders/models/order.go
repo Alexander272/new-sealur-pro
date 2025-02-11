@@ -36,13 +36,19 @@ type GetOrderByNumberDTO struct {
 }
 
 type OrderDTO struct {
-	Id        string         `json:"id"`
-	UserId    string         `json:"userId"`
-	ManagerId string         `json:"managerId"`
-	Count     int64          `json:"count"`
-	Info      string         `json:"info"`
-	Date      string         `json:"date"`
-	Positions []*PositionDTO `json:"positions"`
+	Id        string         `json:"id" db:"id"`
+	UserId    string         `json:"userId" db:"user_id"`
+	ManagerId string         `json:"managerId" db:"manager_id"`
+	Count     int64          `json:"count" db:"count_position"`
+	Info      string         `json:"info" db:"info"`
+	Date      string         `json:"date" db:"date"`
+	Positions []*PositionDTO `json:"positions" db:"positions"`
+}
+
+type SaveOrderDTO struct {
+	Id            string `json:"id" db:"id" binding:"required"`
+	CountPosition int64  `json:"count" db:"count_position" binding:"required"`
+	Date          string `json:"date" db:"date"`
 }
 
 type SetInfoDTO struct {

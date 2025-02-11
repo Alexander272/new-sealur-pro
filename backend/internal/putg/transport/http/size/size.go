@@ -28,7 +28,6 @@ func Register(api *gin.RouterGroup, service services.Size, middleware *middlewar
 	size := api.Group("/sizes")
 	{
 		size.GET("", handler.get)
-		// TODO только для админа
 		write := size.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)

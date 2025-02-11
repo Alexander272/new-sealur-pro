@@ -36,9 +36,14 @@ func (m *Manager) Retrospect(token string) (*models.Token, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
+
 		return key, nil
 	})
 	if err != nil {
+		if strings.Contains(err.Error(), jwt.ErrTokenExpired.Error()) {
+			return &models.Token{Active: false}, nil
+		}
+
 		return nil, err
 	}
 

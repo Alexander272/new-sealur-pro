@@ -13,6 +13,7 @@ type PositionSnp_Main struct {
 	Id              string                   `json:"id"`
 	SnpStandardId   string                   `json:"snpStandardId"`
 	SnpTypeId       string                   `json:"snpTypeId"`
+	FlangeTypeId    string                   `json:"flangeTypeId"`
 	FlangeTypeCode  string                   `json:"flangeTypeCode"`
 	FlangeTypeTitle string                   `json:"flangeTypeTitle"`
 	SnpStandard     *snp_models.StandardInfo `json:"snpStandard"`
@@ -20,15 +21,17 @@ type PositionSnp_Main struct {
 }
 
 type PositionSnp_Size struct {
-	Id      string         `json:"id"`
+	Id      string         `json:"sizeId"`
 	Dn      string         `json:"dn"`
 	DnMm    string         `json:"dnMm"`
 	Pn      *snp_models.Pn `json:"pn"`
+	PnIndex int            `json:"pnIndex"`
 	D4      string         `json:"d4"`
 	D3      string         `json:"d3"`
 	D2      string         `json:"d2"`
 	D1      string         `json:"d1"`
 	H       string         `json:"h"`
+	HIndex  int            `json:"hIndex"`
 	S2      string         `json:"s2"`
 	S3      string         `json:"s3"`
 	Another string         `json:"another"`
@@ -92,13 +95,17 @@ type PositionSnpDTO_Material struct {
 
 type PositionSnpDTO_Design struct {
 	Jumper   *PositionSnpDTO_Design_Jumper `json:"jumper"`
-	HasHole  bool                          `json:"hasHole"`
 	Mounting string                        `json:"mounting"`
+	HasHole  bool                          `json:"hasHole"`
 	Drawing  string                        `json:"drawing"`
 }
 type PositionSnpDTO_Design_Jumper struct {
 	Code  string `json:"code"`
 	Width string `json:"width"`
+}
+type PositionSnpDTO_Design_Mounting struct {
+	HasMounting bool   `json:"hasMounting"`
+	Code        string `json:"code"`
 }
 
 // type PositionSnpDTO_Main struct {

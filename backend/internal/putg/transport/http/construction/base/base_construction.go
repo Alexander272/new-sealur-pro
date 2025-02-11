@@ -27,7 +27,6 @@ func Register(api *gin.RouterGroup, service services.BaseConstruction, middlewar
 	base := api.Group("/base")
 	{
 		base.GET("", handler.get)
-		// TODO только для админа
 		write := base.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)

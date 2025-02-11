@@ -28,7 +28,6 @@ func Register(api *gin.RouterGroup, service services.FlangeType, middleware *mid
 	flangeType := api.Group("/flange-types")
 	{
 		flangeType.GET("", handler.get)
-		// TODO только для админа
 		write := flangeType.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)

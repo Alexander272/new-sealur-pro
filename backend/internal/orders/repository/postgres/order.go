@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
@@ -26,6 +27,7 @@ type Order interface {
 	GetById(ctx context.Context, req *models.GetOrderDTO) (*models.Order, error)
 	Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error)
 	Create(ctx context.Context, dto *models.OrderDTO) error
+	Save(ctx context.Context, dto *models.SaveOrderDTO) error
 	SetInfo(ctx context.Context, dto *models.SetInfoDTO) error
 	SetStatus(ctx context.Context, dto *models.SetStatusDTO) error
 	SetManager(ctx context.Context, dto *models.SetManagerDTO) error
@@ -95,11 +97,23 @@ func (r *OrderRepo) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*mo
 }
 
 func (r *OrderRepo) Create(ctx context.Context, dto *models.OrderDTO) error {
-	query := fmt.Sprintf(`INSERT INTO "%s" (id, user_id, date, count_position, manager_id, info) 
-		VALUES (:id, :user_id, :date, :count_position, :manager_id, :info)`,
-		OrderTable,
+	query := fmt.Sprintf(`INSERT INTO "%s" (id, user_id, date, count_position, manager_id) 
+		VALUES (:id, :user_id, :date, :count_position, (SELECT manager_id FROM "%s" WHERE id=:manager_id))`,
+		OrderTable, UserTable,
 	)
 	dto.Id = uuid.NewString()
+	dto.ManagerId = dto.Id
+
+	_, err := r.db.NamedExecContext(ctx, query, dto)
+	if err != nil {
+		return fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return nil
+}
+
+func (r *OrderRepo) Save(ctx context.Context, dto *models.SaveOrderDTO) error {
+	query := fmt.Sprintf(`UPDATE "%s" SET date=:date, count_position=:count_position WHERE id=:id`, OrderTable)
+	dto.Date = fmt.Sprintf("%d", time.Now().UnixMilli())
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)
 	if err != nil {
