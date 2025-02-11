@@ -35,6 +35,11 @@ export interface IOrder {
 	status: 'new' | 'work' | 'finish'
 }
 
+export interface ISaveOrder {
+	id: string
+	count: number
+}
+
 export interface IOrderCount {
 	id: string
 	name: string

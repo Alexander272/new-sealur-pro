@@ -2,10 +2,10 @@ import { FC, memo, useState } from 'react'
 import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
-import { useAppSelector } from '@/hooks/redux'
+import { useAppSelector, useAppDispatch } from '@/hooks/redux'
 import { PathRoutes } from '@/constants/routes'
+import { toggle } from '@/features/card/cardSlice'
 import { useSignOutMutation } from '@/features/auth/authApiSlice'
-// import { toggle } from '@/store/card'
 // import { sendMetric } from '@/services/metrics'
 import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
 
@@ -24,11 +24,10 @@ const Header: FC<Props> = ({ disableCard }) => {
 	const [signOut] = useSignOutMutation()
 
 	const navigate = useNavigate()
-	// const dispatch = useAppDispatch()
+	const dispatch = useAppDispatch()
 
 	const basketHandler = () => {
-		//TODO
-		// dispatch(toggle())
+		dispatch(toggle())
 	}
 
 	const open = Boolean(anchorEl)
@@ -97,14 +96,14 @@ const Header: FC<Props> = ({ disableCard }) => {
 									<img src='/image/person-profile.svg' alt='Профиль' width='30' height='30' />
 								</Icon>
 							</Tooltip>
-
-							<Tooltip title='Главная страница'>
-								<Icon onClick={homeHandler}>
-									<img src='/image/home-icon.svg' alt='Главная' width='30' height='30' />
-								</Icon>
-							</Tooltip>
 						</>
 					)}
+
+					<Tooltip title='Главная страница'>
+						<Icon onClick={homeHandler}>
+							<img src='/image/home-icon.svg' alt='Главная' width='30' height='30' />
+						</Icon>
+					</Tooltip>
 				</Nav>
 
 				<Menu
@@ -144,7 +143,7 @@ const Header: FC<Props> = ({ disableCard }) => {
 						</ListItemIcon>
 						Заказы
 					</MenuItem>
-					{role !== 'user' && role != 'manager' ? (
+					{role != 'user' && role != 'manager' ? (
 						<MenuItem onClick={analyticsHandler} selected={false}>
 							<ListItemIcon>
 								<img height={24} width={18} src='/image/graph.svg' />

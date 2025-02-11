@@ -34,7 +34,7 @@ export const SizesBlock: FC<Props> = ({ sizes, hasSizes, hasD2, positions }) => 
 	return (
 		<Container>
 			<Size top={positions.frame?.top} left={positions.frame?.left}>
-				{sizes.h === 'another' ? sizes.another : sizes.h}{' '}
+				{sizes.h === 'another' || sizes.h == '' ? sizes.another : sizes.h}{' '}
 				<Tooltip title='толщина каркаса' arrow>
 					<Question>?</Question>
 				</Tooltip>

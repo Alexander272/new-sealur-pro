@@ -28,8 +28,9 @@ export const API = Object.freeze({
 		count: 'orders/count' as const,
 	},
 	positions: {
-		base: 'positions' as const,
-		copy: 'positions/copy' as const,
+		base: 'orders/positions' as const,
+		// data: 'orders/positions/data' as const,
+		copy: 'orders/positions/copy' as const,
 	},
 	fastenings: 'fastenings' as const,
 	snp: {

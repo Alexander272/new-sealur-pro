@@ -37,14 +37,17 @@ export const D2: FC<Props> = ({ sizes, isFetching }) => {
 
 		const newSize: ISizeBlockSnp = {
 			index: idx,
+			sizeId: s.sizes[0].id,
 			dn: s.dn,
 			dnMm: s.dnMm || '',
 			pn: ss.pn[0],
+			pnIndex: 0,
 			d4: ss.d4,
 			d3: ss.d3,
 			d2: ss.d2,
 			d1: ss.d1,
 			h: ss.h[0],
+			hIndex: 0,
 			s2: ss.s2[0],
 			s3: ss.s3[0],
 			another: '',

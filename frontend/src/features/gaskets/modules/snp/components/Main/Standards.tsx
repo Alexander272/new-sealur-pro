@@ -14,8 +14,11 @@ export const Standards = () => {
 	const { data, isFetching } = useGetSnpStandardQuery(null)
 
 	useEffect(() => {
-		if (data) dispatch(setMainStandard({ id: data.data[0].id, standard: data.data[0] }))
-	}, [data, dispatch])
+		if (!data) return
+		let idx = data.data.findIndex(s => s.id === standardId)
+		if (idx == -1) idx = 0
+		dispatch(setMainStandard({ id: data.data[idx].id, standard: data.data[idx] }))
+	}, [data, standardId, dispatch])
 
 	const standardHandler = (event: SelectChangeEvent<string>) => {
 		const standard = data?.data.find(s => s.id === event.target.value)

@@ -7,12 +7,12 @@ import VisibleIcon from '@mui/icons-material/RemoveRedEye'
 import type { IFetchError } from '@/app/types/error'
 import type { CompanyInfo } from '@/features/auth/modules/dadata/types/company'
 import type { ISignUp } from '@/features/auth/types/auth'
-import { Fallback } from '@/components/Fallback/Fallback'
 import { Company } from '@/features/auth/modules/dadata/components/Company'
 import { useSignUpMutation } from '@/features/auth/authApiSlice'
 import { useInput } from '@/features/auth/hooks/useInput'
 import { ValidMessage } from '../ValidMessage/ValidMessage'
 import { FormContent, SignUpForm, Title } from './forms.style'
+import { Fallback } from './Fallback'
 
 import Privacy from '@/assets/files/privacy.pdf'
 
@@ -105,7 +105,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 
 	return (
 		<SignUpForm onClick={!isOpen ? onChangeTab : undefined} onSubmit={signUpHandler} open={isOpen}>
-			{isLoading ? <Fallback background={'#d8e0fc40'} /> : null}
+			{isLoading ? <Fallback /> : null}
 
 			<Title open={isOpen}>Регистрация</Title>
 

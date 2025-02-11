@@ -32,10 +32,10 @@ export const cardSlice = createSlice({
 		},
 
 		// установка текущей заявки
-		setOrder: (state, action: PayloadAction<{ id: string; info: string; positions: Position[] }>) => {
+		setOrder: (state, action: PayloadAction<{ id: string; info?: string; positions?: Position[] }>) => {
 			state.orderId = action.payload.id
-			state.info = action.payload.info
-			state.positions = action.payload.positions
+			state.info = action.payload?.info || ''
+			state.positions = action.payload.positions || []
 		},
 
 		// изменение доп. информации о заявке
@@ -60,6 +60,8 @@ export const cardSlice = createSlice({
 export const cardPath = cardSlice.name
 export const cardReducer = cardSlice.reducer
 
+export const getOpen = (state: RootState) => state.card.open
+export const getInfo = (state: RootState) => state.card.info
 export const getActive = (state: RootState) => state.card.active
 export const getOrderId = (state: RootState) => state.card.orderId
 export const getPositions = (state: RootState) => state.card.positions

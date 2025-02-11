@@ -1,5 +1,5 @@
 import { FormEvent, useEffect } from 'react'
-import { Button, FormControl, Typography } from '@mui/material'
+import { Button, FormControl, Typography, TextField } from '@mui/material'
 import { toast } from 'react-toastify'
 
 import type { IFetchError } from '@/app/types/error'
@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useGetUserQuery } from '@/features/user/userApiSlice'
 import { getUser, getUserId, setUser } from '@/features/user/userSlice'
 import { useInput } from '@/features/auth/hooks/useInput'
-import { Input } from '@/features/auth/components/Forms/forms.style'
 import { Fallback } from '@/components/Fallback/Fallback'
 import { useSendFeedbackMutation } from '../../feedbackApiSlice'
 import { Form } from './form.style'
@@ -20,7 +19,7 @@ export const FeedbackForm = () => {
 
 	const dispatch = useAppDispatch()
 
-	const { data } = useGetUserQuery(userId, { skip: !userId || Boolean(user) })
+	const { data } = useGetUserQuery(userId || '', { skip: !userId || Boolean(user) })
 	const [sendFeedback, { isLoading }] = useSendFeedbackMutation()
 
 	useEffect(() => {
@@ -70,38 +69,41 @@ export const FeedbackForm = () => {
 			</Typography>
 			<Typography>Оставьте нам свое сообщение, и мы обязательно свяжемся с Вами!</Typography>
 			<FormControl>
-				<Input
+				<TextField
 					value={email.value}
 					onChange={email.onChange}
 					label='Email'
 					fullWidth
 					error={!email.valid}
 					helperText={!email.valid && 'Email не корректен'}
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10 } }}
 				/>
 			</FormControl>
 			<FormControl>
-				<Input
+				<TextField
 					value={name.value}
 					onChange={name.onChange}
 					label='Ф.И.О.'
 					fullWidth
 					error={!name.valid}
 					helperText={!name.valid && 'Поле обязательно для заполнения.'}
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10 } }}
 				/>
 			</FormControl>
 
 			<FormControl>
-				<Input
+				<TextField
 					value={subject.value}
 					onChange={subject.onChange}
 					label='Тема обращения'
 					fullWidth
 					error={!subject.valid}
 					helperText={!subject.valid && 'Поле обязательно для заполнения.'}
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10 } }}
 				/>
 			</FormControl>
 			<FormControl>
-				<Input
+				<TextField
 					value={message.value}
 					onChange={message.onChange}
 					label='Сообщение'
@@ -109,6 +111,7 @@ export const FeedbackForm = () => {
 					helperText={!message.valid && 'Поле обязательно для заполнения.'}
 					multiline
 					rows={5}
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 } }}
 				/>
 			</FormControl>
 

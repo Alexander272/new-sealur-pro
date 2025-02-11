@@ -9,14 +9,12 @@ const Header = lazy(() => import('@/components/Layout/Header/Header'))
 export default function Main() {
 	return (
 		<>
-			<Suspense fallback={<Fallback />}>
-				<Header disableCard />
-				<Wrapper>
-					<Suspense fallback={<Fallback />}>
-						<Outlet />
-					</Suspense>
-				</Wrapper>
-			</Suspense>
+			<Header disableCard />
+			<Wrapper>
+				<Suspense fallback={<Fallback alignSelf={'center'} />}>
+					<Outlet />
+				</Suspense>
+			</Wrapper>
 		</>
 	)
 }

@@ -12,7 +12,7 @@ import { useSignInMutation } from '@/features/auth/authApiSlice'
 import { setUser } from '@/features/user/userSlice'
 import { useInput } from '@/features/auth/hooks/useInput'
 import { FormContent, SignInForm, Title, NavLink } from './forms.style'
-import { Fallback } from '@/components/Fallback/Fallback'
+import { Fallback } from './Fallback'
 
 type Props = {
 	isOpen: boolean
@@ -56,7 +56,7 @@ export const SignIn: FC<Props> = ({ isOpen, onChangeTab }) => {
 
 	return (
 		<SignInForm onClick={!isOpen ? onChangeTab : undefined} open={isOpen} onSubmit={signInHandler}>
-			{isLoading ? <Fallback background={'#d8e0fc40'} /> : null}
+			{isLoading ? <Fallback /> : null}
 
 			<Title open={isOpen}>Вход</Title>
 

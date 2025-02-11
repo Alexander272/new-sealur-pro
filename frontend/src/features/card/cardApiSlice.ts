@@ -1,12 +1,26 @@
-import type { ICopyPosition, Position } from './types/card'
+import { toast } from 'react-toastify'
+
+import type { ICopyPosition, Position, PositionDTO } from './types/card'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 
 export const cardApiSlice = apiSlice.injectEndpoints({
 	overrideExisting: false,
 	endpoints: builder => ({
+		getPositionById: builder.query<{ data: Position }, string>({
+			query: id => `${API.positions.base}/${id}`,
+			providesTags: (_arr, _err, arg) => [{ type: 'Orders', id: 'position_' + arg }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить позицию', { autoClose: false })
+				}
+			},
+		}),
+
 		// добавление позиции
-		createPosition: builder.mutation<string, Position>({
+		createPosition: builder.mutation<string, PositionDTO>({
 			query: position => ({
 				url: API.positions.base,
 				method: 'POST',
@@ -16,13 +30,13 @@ export const cardApiSlice = apiSlice.injectEndpoints({
 		}),
 
 		// обновление позиции
-		updatePosition: builder.mutation<string, Position>({
+		updatePosition: builder.mutation<string, PositionDTO>({
 			query: position => ({
 				url: `${API.positions.base}/${position.id}`,
 				method: 'PUT',
 				body: position,
 			}),
-			invalidatesTags: [{ type: 'Orders', id: 'current' }],
+			invalidatesTags: (_arr, _err, arg) => [{ type: 'Orders', id: 'position_' + arg.id }],
 		}),
 
 		// удаление позиции
@@ -47,6 +61,7 @@ export const cardApiSlice = apiSlice.injectEndpoints({
 })
 
 export const {
+	useLazyGetPositionByIdQuery,
 	useCreatePositionMutation,
 	useUpdatePositionMutation,
 	useDeletePositionMutation,

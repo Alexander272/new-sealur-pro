@@ -1,7 +1,7 @@
 // import styled from 'styled-components'
 import styled from '@emotion/styled'
-import { TextField } from '@mui/material'
-import { styled as UIStyled } from '@mui/material/styles'
+// import { TextField } from '@mui/material'
+// import { styled as UIStyled } from '@mui/material/styles'
 import { Link } from 'react-router-dom'
 
 type FormProps = {
@@ -19,6 +19,7 @@ export const Title = styled.h2<FormProps>`
 	transition: all 0.5s ease-in-out;
 	font-weight: 700;
 	font-size: ${props => (props.open ? '1.5rem' : '1.2rem')};
+	user-select: none;
 `
 
 export const FormContent = styled.div`
@@ -43,24 +44,24 @@ export const SignUpForm = styled(Form)`
 	transform: ${props => (props.open ? 'translateY(-245px)' : 'translateY(5px)')};
 `
 
-export const Input = UIStyled(TextField)(() => ({
-	'& .MuiOutlinedInput-root': {
-		backgroundColor: '#fff',
-		borderRadius: '20px',
+// export const Input = UIStyled(TextField)(() => ({
+// 	'& .MuiOutlinedInput-root': {
+// 		backgroundColor: '#fff',
+// 		borderRadius: '20px',
 
-		'& fieldset': {
-			borderRadius: '20px',
-			borderColor: 'var(--border-color)',
-			borderWidth: '2px',
-		},
-		'&:hover fieldset': {
-			borderColor: 'var(--light-blue)',
-		},
-		'&.Mui-focused fieldset': {
-			borderColor: 'var(--primary-color)',
-		},
-	},
-}))
+// 		'& fieldset': {
+// 			borderRadius: '20px',
+// 			borderColor: 'var(--border-color)',
+// 			borderWidth: '2px',
+// 		},
+// 		'&:hover fieldset': {
+// 			borderColor: 'var(--light-blue)',
+// 		},
+// 		'&.Mui-focused fieldset': {
+// 			borderColor: 'var(--primary-color)',
+// 		},
+// 	},
+// }))
 
 export const NavLink = styled(Link)`
 	text-decoration: none;

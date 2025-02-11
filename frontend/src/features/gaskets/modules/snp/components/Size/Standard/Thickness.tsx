@@ -25,13 +25,16 @@ export const Thickness: FC<Props> = ({ sizes, isFetching }) => {
 
 		const newThickness: IThickness = {
 			h: event.target.value,
+			hIndex: -1,
 			s2: '',
 			s3: '',
 		}
 
 		if (event.target.value !== 'another') {
 			const idx = size.h.findIndex(h => h === event.target.value)
+			console.log(size.h, event.target.value, idx)
 			newThickness.h = size.h[idx]
+			newThickness.hIndex = idx
 			newThickness.s2 = size.s2[idx]
 			newThickness.s3 = size.s3[idx]
 		}
@@ -52,13 +55,6 @@ export const Thickness: FC<Props> = ({ sizes, isFetching }) => {
 							{h}
 						</MenuItem>
 					))}
-					{/* {filteredSizes.map(s => {
-					return s.h.map(h => (
-						<MenuItem key={h} value={h}>
-							{h}
-						</MenuItem>
-					))
-				})} */}
 				</Select>
 			)}
 		</>

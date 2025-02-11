@@ -9,24 +9,23 @@ export interface ISnpSize {
 }
 
 export interface ISNPMainSize {
+	id: string
 	d4: string
 	d3: string
 	d2: string
 	d1: string
-	h: string[]
 	pn: PN[]
+	pnIndex?: number
+	h: string[]
+	hIndex?: number
 	s2: string[]
 	s3: string[]
 }
 
 export interface ISizeBlock {
 	pn: PN
-	sizes?: {
-		d4: string
-		d3: string
-		d2: string
-		d1: string
-	}
+	pnIndex?: number
+	sizes?: ISNPMainSize
 	thicknesses?: {
 		h: string
 		s2: string

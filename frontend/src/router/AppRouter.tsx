@@ -1,21 +1,20 @@
-import { Suspense } from 'react'
 import { Box } from '@mui/material'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { PathRoutes } from '@/constants/routes'
-import { Fallback } from '@/components/Fallback/Fallback'
 import { useRefresh } from '@/features/auth/hooks/refresh'
 import { Auth } from '@/pages/auth/AuthLazy'
 import { Confirm } from '@/pages/confirm/ConfirmLazy'
 import { Recovery } from '@/pages/recovery/RecoveryLazy'
 import { RecoveryPassword } from '@/pages/recovery/PasswordLazy'
-import { Manager } from '@/components/Layout/Manager/ManagerLazy'
 import { Connect } from '@/pages/connect/ConnectLazy'
 import { NotFound } from '@/pages/notFound/NotFoundLazy'
-import { Main } from '@/components/Layout/Main/MainLazy'
 import { Gaskets } from '@/pages/gaskets/GasketsLazy'
 import { Snp } from '@/pages/gaskets/snp/SnpLazy'
 import { Putg } from '@/pages/gaskets/putg/PutgLazy'
+import { Main } from '@/components/Layout/Main/MainLazy'
+import { Base } from '@/components/Layout/Base/Base'
+import { Fallback } from '@/components/Fallback/Fallback'
 import CheckAccess from './CheckAccess'
 
 export const AppRouter = () => {
@@ -30,16 +29,16 @@ export const AppRouter = () => {
 
 	return (
 		<BrowserRouter>
-			<Suspense fallback={<Fallback />}>
-				{/* //TODO убрать коммент с метрики  */}
-				{/* <Metrics />*/}
-				<Routes>
+			{/* //TODO убрать коммент с метрики  */}
+			{/* <Metrics />*/}
+			<Routes>
+				<Route path='' element={<Base />}>
 					<Route path={PathRoutes.Auth.Base} element={<Auth />} />
 					<Route path={PathRoutes.Auth.Confirm} element={<Confirm />} />
 					<Route path={PathRoutes.Auth.Recovery} element={<Recovery />} />
 					<Route path={PathRoutes.Auth.RecoveryCode} element={<RecoveryPassword />} />
 
-					<Route path={PathRoutes.Connect} element={<Manager />}>
+					<Route path={PathRoutes.Connect} element={<Main disableCard />}>
 						<Route index element={<Connect />} />
 					</Route>
 
@@ -72,7 +71,7 @@ export const AppRouter = () => {
 						path={PathRoutes.Manager.Base}
 						element={
 							<CheckAccess forbiddenRoles={['user']}>
-								<Manager />
+								<Main disableCard />
 							</CheckAccess>
 						}
 					>
@@ -86,8 +85,8 @@ export const AppRouter = () => {
 						<Route path={PathRoutes.Manager.Analytics.Count} element={<AnalyticsCount />} />
 						<Route path={PathRoutes.Manager.Analytics.User} element={<AnalyticsUser />} />
 					</Route>*/}
-				</Routes>
-			</Suspense>
+				</Route>
+			</Routes>
 		</BrowserRouter>
 	)
 }

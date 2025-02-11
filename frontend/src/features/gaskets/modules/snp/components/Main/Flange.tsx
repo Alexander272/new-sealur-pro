@@ -4,12 +4,13 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetSnpFlangeTypesQuery } from '../../snpApiSlice'
-import { getFlangeType, getStandardId, setMainFlangeType, setMainSnpType } from '../../snpSlice'
+import { getFlangeType, getFlangeTypeId, getStandardId, setMainFlangeType, setMainSnpType } from '../../snpSlice'
 
 export const Flange = () => {
 	const active = useAppSelector(getActive)
 	const standardId = useAppSelector(getStandardId)
 	const flange = useAppSelector(getFlangeType)
+	const flangeId = useAppSelector(getFlangeTypeId)
 
 	const dispatch = useAppDispatch()
 
@@ -19,16 +20,24 @@ export const Flange = () => {
 	)
 
 	useEffect(() => {
-		if (active || !data) return
+		if (!data) return
+		let idx = data.data.findIndex(f => f.id === flangeId)
+		if (idx == -1) idx = data.data.length - 1
+		const flange = data.data[idx]
+		dispatch(setMainFlangeType({ id: flange.id, code: flange.code, title: flange.title }))
+	}, [data, flangeId, dispatch])
 
-		const flange = data.data[data.data.length - 1]
-		dispatch(setMainFlangeType({ code: flange.code, title: flange.title }))
-		const type = {
-			id: flange.types[flange.types.length - 1].id,
-			type: flange.types[flange.types.length - 1],
-		}
-		dispatch(setMainSnpType(type))
-	}, [active, data, dispatch])
+	// useEffect(() => {
+	// 	if (active || !data) return
+
+	// 	const flange = data.data[data.data.length - 1]
+	// 	dispatch(setMainFlangeType({ id: flange.id, code: flange.code, title: flange.title }))
+	// 	const type = {
+	// 		id: flange.types[flange.types.length - 1].id,
+	// 		type: flange.types[flange.types.length - 1],
+	// 	}
+	// 	dispatch(setMainSnpType(type))
+	// }, [active, data, dispatch])
 
 	const flangeTypeHandler = (event: SelectChangeEvent<string>) => {
 		const flangeType = data?.data.find(f => f.code === event.target.value)
@@ -39,7 +48,7 @@ export const Flange = () => {
 			type: flangeType.types[flangeType.types.length - 1],
 		}
 		dispatch(setMainSnpType(type))
-		dispatch(setMainFlangeType({ code: event.target.value, title: flangeType.title }))
+		dispatch(setMainFlangeType({ id: flangeType.id, code: event.target.value, title: flangeType.title }))
 	}
 
 	return (

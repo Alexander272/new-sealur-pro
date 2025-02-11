@@ -8,7 +8,7 @@ import Header from '@/features/auth/components/Header/Header'
 import { SignIn } from '@/features/auth/components/Forms/SignInForm'
 import { SignUp } from '@/features/auth/components/Forms/SignUpForm'
 import Footer from '@/components/Layout/Footer/Footer'
-import { Container, Wrapper, Base } from './auth.style'
+import { Container, Wrapper } from './auth.style'
 
 type LocationState = {
 	from?: Location
@@ -32,7 +32,7 @@ export default function Auth() {
 	}
 
 	return (
-		<Base>
+		<>
 			<Header />
 			<Wrapper>
 				<Container signUp={isSignUp}>
@@ -42,6 +42,6 @@ export default function Auth() {
 			</Wrapper>
 			{/* <AuthFooter /> */}
 			<Footer />
-		</Base>
+		</>
 	)
 }

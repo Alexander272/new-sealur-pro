@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify'
 
 import type { IBaseFetchError } from '@/app/types/error'
-import type { ICopyOrder, IFullOrder, IOrder, IOrderCount, IOrderResponse } from './types/order'
+import type { ICopyOrder, IFullOrder, IOrderCount, IOrderResponse, ISaveOrder } from './types/order'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 
@@ -33,7 +33,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 			},
 		}),
 		// оформление заявки с последующей ее отправкой менеджеру
-		saveOrder: builder.mutation<string, IOrder>({
+		saveOrder: builder.mutation<string, ISaveOrder>({
 			query: order => ({
 				url: API.orders.save,
 				method: 'POST',

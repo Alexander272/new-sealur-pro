@@ -144,6 +144,7 @@ export interface IMainSnp {
 	snpTypeId: string
 	snpStandard?: IStandardForSNP
 	// snpTypeTitle: string
+	flangeTypeId: string
 	flangeTypeTitle: string
 	// snpTypeCode: string
 	snpType?: ISNPType
@@ -162,9 +163,16 @@ export interface IMaterialBlockSnp {
 	openFr: boolean
 	openOr: boolean
 }
+export interface IMaterialBlockSnpDTO {
+	fillerId: string
+	frameId: string
+	innerRingId: string
+	outerRingId: string
+}
 
 export interface ISizeBlockSnp {
 	index?: number
+	sizeId?: string
 	dn: string
 	dnMm: string
 	d4: string
@@ -172,7 +180,9 @@ export interface ISizeBlockSnp {
 	d2: string
 	d1: string
 	pn: PN
+	pnIndex?: number
 	h: string
+	hIndex?: number
 	another: string
 	s2: string
 	s3: string
@@ -182,6 +192,12 @@ export interface IDesignBlockSnp {
 	jumper: IJumper
 	hasHole?: boolean
 	mounting: IHasMounting
+	drawing?: string
+}
+export interface IDesignBlockSnpDTO {
+	jumper: IJumper
+	hasHole?: boolean
+	mounting: string
 	drawing?: string
 }
 
@@ -202,6 +218,7 @@ export interface IDesignBlockSnp {
 
 export interface IThickness {
 	h?: string
+	hIndex?: number
 	s2?: string
 	s3?: string
 	another?: string

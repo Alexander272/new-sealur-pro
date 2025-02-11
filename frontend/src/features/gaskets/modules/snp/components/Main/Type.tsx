@@ -1,16 +1,25 @@
+import { useEffect } from 'react'
 import { Skeleton, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 import { useGetSnpFlangeTypesQuery } from '../../snpApiSlice'
-import { getFlangeType, getSnpType, getStandardId, setMainFlangeType, setMainSnpType } from '../../snpSlice'
+import {
+	getFlangeTypeId,
+	getSnpType,
+	getSnpTypeId,
+	getStandardId,
+	setMainFlangeType,
+	setMainSnpType,
+} from '../../snpSlice'
 
 export const Type = () => {
 	const active = useAppSelector(getActive)
 	const standardId = useAppSelector(getStandardId)
-	const flange = useAppSelector(getFlangeType)
+	const flangeId = useAppSelector(getFlangeTypeId)
 	const snp = useAppSelector(getSnpType)
+	const snpId = useAppSelector(getSnpTypeId)
 
 	const dispatch = useAppDispatch()
 
@@ -19,15 +28,25 @@ export const Type = () => {
 		{ skip: !standardId || standardId == 'not_selected' }
 	)
 
+	useEffect(() => {
+		if (!data || isFetching) return
+		const fl = data.data.find(f => f.id === flangeId)
+		if (!fl) return
+		let idx = fl.types.findIndex(t => t.id === snpId)
+		if (idx == -1) idx = fl.types.length - 1
+		dispatch(setMainSnpType({ id: fl.types[idx].id, type: fl.types[idx] }))
+	}, [data, flangeId, snpId, isFetching, dispatch])
+
 	const typeHandler = (type: string) => {
-		let flangeType = data?.data.find(f => f.code == flange && f.types.some(t => t.title === type))
+		let flangeType = data?.data.find(f => f.id == flangeId && f.types.some(t => t.title === type))
 		if (!flangeType) {
 			flangeType = data?.data.find(f => f.types.some(t => t.title === type))
 		}
 
 		if (!flangeType) return
 
-		if (flangeType.code != flange) dispatch(setMainFlangeType({ code: flangeType.code, title: flangeType.title }))
+		if (flangeType.id != flangeId)
+			dispatch(setMainFlangeType({ id: flangeType.id, code: flangeType.code, title: flangeType.title }))
 
 		const newType = flangeType.types.find(t => t.title === type)
 		dispatch(setMainSnpType({ id: newType!.id, type: newType! }))
@@ -38,7 +57,7 @@ export const Type = () => {
 		let flangeType = data?.data[0]
 		data?.data.forEach(f => {
 			f.types.forEach(t => set.add(t.title))
-			if (f.code == flange) flangeType = f
+			if (f.id == flangeId) flangeType = f
 		})
 
 		// const types: string[] = []

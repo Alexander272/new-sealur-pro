@@ -2,7 +2,7 @@ import { Button, CircularProgress, Stack } from '@mui/material'
 import { toast } from 'react-toastify'
 
 import type { IFetchError } from '@/app/types/error'
-import type { Position } from '@/features/card/types/card'
+import type { PositionDTO } from '@/features/card/types/card'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useCreatePositionMutation, useUpdatePositionMutation } from '@/features/card/cardApiSlice'
 import { clearActive, getActive, getOrderId, getPositions } from '@/features/card/cardSlice'
@@ -50,7 +50,7 @@ export const Buttons = () => {
 	}
 
 	const savePosition = async () => {
-		const position: Position = {
+		const position: PositionDTO = {
 			id: Date.now().toString() + (positions.length + 1),
 			orderId: orderId,
 			count: positions.length > 0 ? positions[positions.length - 1].count + 1 : 1,
@@ -60,9 +60,28 @@ export const Buttons = () => {
 			type: 'Snp',
 			snpData: {
 				main: main,
-				size: size,
-				material: materials,
-				design: design,
+				size: {
+					...size,
+					d4: size.sizeId ? '' : size.d4,
+					d3: size.sizeId ? '' : size.d3,
+					d2: size.sizeId ? '' : size.d2,
+					d1: size.sizeId ? '' : size.d1,
+				},
+				material: {
+					fillerId: materials.filler.id,
+					frameId: materials.frame?.id || '',
+					innerRingId: materials.innerRing?.id || '',
+					outerRingId: materials.outerRing?.id || '',
+				},
+				design: {
+					hasHole: design.hasHole,
+					jumper: {
+						code: design.jumper.hasJumper ? design.jumper.code : '',
+						width: design.jumper.width,
+					},
+					mounting: design.mounting.hasMounting ? design.mounting.code : '',
+					drawing: design.drawing,
+				},
 			},
 		}
 		try {
@@ -97,7 +116,7 @@ export const Buttons = () => {
 					disabled={isLoading || isLoadingUpdate}
 					variant='outlined'
 					color='secondary'
-					sx={{ maxWidth: 240, width: '100%' }}
+					sx={{ maxWidth: 240, padding: '6px 20px' }}
 				>
 					Отменить
 				</Button>
@@ -106,8 +125,8 @@ export const Buttons = () => {
 			<Button
 				disabled={!amount || hasSizeError || hasDesignError || role != 'user' || isLoading || isLoadingUpdate}
 				onClick={savePosition}
-				variant='contained'
-				sx={{ maxWidth: 240, width: '100%' }}
+				variant='outlined'
+				sx={{ maxWidth: 240, padding: '6px 20px' }}
 			>
 				{isLoading || isLoadingUpdate ? <CircularProgress size={18} /> : null}
 

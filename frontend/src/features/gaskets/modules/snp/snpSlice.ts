@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { RootState } from '@/app/store'
 import type { IMaterial } from '@/features/gaskets/types/material'
 import type { IDrawing } from '@/features/gaskets/types/drawing'
+import type { PositionSnp } from '@/features/card/types/card'
 import type { ISizeBlock } from './types/size'
 import type {
 	IDesignBlockSnp,
@@ -83,6 +84,7 @@ const initialState: ISNPState = {
 	main: {
 		snpStandardId: 'not_selected',
 		snpTypeId: 'not_selected',
+		flangeTypeId: 'not_selected',
 		flangeTypeCode: 'not_selected',
 		flangeTypeTitle: '',
 		// snpTypeTitle: 'Д',
@@ -132,6 +134,7 @@ const initialState: ISNPState = {
 	amount: '',
 }
 
+// TODO надо удалить лишние поля (все что не используется или то что я могу легко получить)
 export const snpSlice = createSlice({
 	name: 'snp',
 	initialState,
@@ -142,7 +145,8 @@ export const snpSlice = createSlice({
 			state.main.snpStandard = action.payload.standard
 		},
 		// установка типа фланца
-		setMainFlangeType: (state, action: PayloadAction<{ code: string; title: string }>) => {
+		setMainFlangeType: (state, action: PayloadAction<{ id: string; code: string; title: string }>) => {
+			state.main.flangeTypeId = action.payload.id
 			state.main.flangeTypeCode = action.payload.code
 			state.main.flangeTypeTitle = action.payload.title
 		},
@@ -188,9 +192,14 @@ export const snpSlice = createSlice({
 			state.sizeError.emptySize = false
 			state.hasSizeError = false
 		},
+		setSizeIdx: (state, action: PayloadAction<number>) => {
+			state.size.index = action.payload
+		},
 		// установка условного прохода
 		setSizePn: (state, action: PayloadAction<ISizeBlock>) => {
 			state.size.pn = action.payload.pn
+			state.size.pnIndex = action.payload.pnIndex
+			state.size.sizeId = action.payload.sizes?.id
 			if (action.payload.sizes) {
 				state.size.d4 = action.payload.sizes.d4
 				state.size.d3 = action.payload.sizes.d3
@@ -235,7 +244,10 @@ export const snpSlice = createSlice({
 		},
 		// установка толщины
 		setSizeThickness: (state, action: PayloadAction<IThickness>) => {
-			if (action.payload.h != undefined) state.size.h = action.payload.h
+			if (action.payload.h != undefined) {
+				state.size.h = action.payload.h
+				state.size.hIndex = action.payload.hIndex
+			}
 			if (action.payload.s2 != undefined) state.size.s2 = action.payload.s2
 			if (action.payload.s3 != undefined) state.size.s3 = action.payload.s3
 			if (action.payload.another != undefined) {
@@ -300,20 +312,13 @@ export const snpSlice = createSlice({
 			state.amount = action.payload
 		},
 
-		setSnp: (
-			state,
-			action: PayloadAction<{
-				data: {
-					main: IMainSnp
-					size: ISizeBlockSnp
-					material: IMaterialBlockSnp
-					design: IDesignBlockSnp
-				}
-				amount: string
-				info?: string
-			}>
-		) => {
-			state.main = action.payload.data.main
+		setSnp: (state, action: PayloadAction<PositionSnp>) => {
+			state.main = {
+				...state.main,
+				snpStandardId: action.payload.data.main.snpStandardId,
+				flangeTypeId: action.payload.data.main.flangeTypeId,
+				snpTypeId: action.payload.data.main.snpTypeId,
+			}
 			state.size = action.payload.data.size
 			state.material = action.payload.data.material
 
@@ -344,11 +349,11 @@ export const snpSlice = createSlice({
 		},
 		// сброс выбранной позиции
 		clearSnp: state => {
-			// state.cardIndex = undefined
-			// state.positionId = undefined
 			state.drawing = undefined
 			state.design.drawing = undefined
 		},
+		// сброс стейта
+		resetSnp: () => initialState,
 	},
 })
 
@@ -358,6 +363,7 @@ export const snpReducer = snpSlice.reducer
 export const getMain = (state: RootState) => state.snp.main
 export const getStandardId = (state: RootState) => state.snp.main.snpStandardId
 export const getStandard = (state: RootState) => state.snp.main.snpStandard
+export const getFlangeTypeId = (state: RootState) => state.snp.main.flangeTypeId
 export const getFlangeType = (state: RootState) => state.snp.main.flangeTypeCode
 export const getSnpTypeId = (state: RootState) => state.snp.main.snpTypeId
 export const getSnpType = (state: RootState) => state.snp.main.snpType
@@ -367,6 +373,7 @@ export const getMaterials = (state: RootState) => state.snp.material
 
 export const getSize = (state: RootState) => state.snp.size
 export const getSizeErr = (state: RootState) => state.snp.sizeError
+export const getSizeId = (state: RootState) => state.snp.size.sizeId
 export const getDn = (state: RootState) => state.snp.size.dn
 export const getD2 = (state: RootState) => state.snp.size.d2
 export const getPn = (state: RootState) => state.snp.size.pn
@@ -394,6 +401,7 @@ export const {
 	setMaterialFiller,
 	setMaterial,
 	setSize,
+	setSizeIdx,
 	setSizePn,
 	setSizeMain,
 	setSizeThickness,
@@ -405,4 +413,5 @@ export const {
 	setAmount,
 	setSnp,
 	clearSnp,
+	resetSnp,
 } = snpSlice.actions
