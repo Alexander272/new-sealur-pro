@@ -29,9 +29,9 @@ type Filler interface {
 }
 
 func (r *FillerRepo) GetAll(ctx context.Context, req *models.GetFillerDTO) ([]*models.Filler, error) {
-	query := fmt.Sprintf(`SELECT %s.id, %s.title, base_code, code, description, designation, disabled_types, %s.title as temperature
-		FROM %s INNER JOIN %s on %s.id=temperature_id WHERE standard_id=$1 ORDER BY base_code`,
-		SnpFillerNewTable, SnpFillerNewTable, TemperatureTable, SnpFillerNewTable, TemperatureTable, TemperatureTable,
+	query := fmt.Sprintf(`SELECT f.id, f.title, base_code, code, description, designation, disabled_types, t.title as temperature
+		FROM %s AS f INNER JOIN %s AS t on t.id=temperature_id WHERE standard_id=$1 ORDER BY base_code`,
+		SnpFillerTable, TemperatureTable,
 	)
 	data := []*pq_models.Filler{}
 

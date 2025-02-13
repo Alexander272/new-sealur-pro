@@ -53,7 +53,6 @@ type PositionDTO struct {
 	Info     string           `json:"info"`
 	SnpData  *PositionSnpDTO  `json:"snpData"`
 	PutgData *PositionPutgDTO `json:"putgData"`
-	Data     *interface{}     `json:"data"`
 	// RingData *PositionRingDTO     `json:"ringData"`
 	// KitData  *PositionRingsKitDTO `json:"kitData"`
 }

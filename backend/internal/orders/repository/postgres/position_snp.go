@@ -36,13 +36,13 @@ type PositionSnp interface {
 func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error) {
 	query := fmt.Sprintf(`SELECT id, position_id, snp_standard_id, snp_type_id, flange_type_id,
 		size_id, pn_index, h_index, another, COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, 
-		COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, COALESCE(dn, '') AS dn, 
+		COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, COALESCE(dn, '') AS dn, COALESCE(dn_mm, '') AS dn_mm, 
 		COALESCE(pn_mpa[pn_index+1], '') AS pn_mpa, COALESCE(pn_kg[pn_index+1], '') AS pn_kg, 
 		COALESCE(h[h_index+1], '') AS h, COALESCE(s2[h_index+1], '') AS s2, COALESCE(s3[h_index+1], '') AS s3,
 		filler_id, f.filler_code, m.arr_mat_code, frame_id, inner_ring_id, outer_ring_id,
 		jumper, jumper_width, has_hole, mounting, drawing
 		FROM %s AS ps
-		LEFT JOIN LATERAL (SELECT dn, pn_mpa, pn_kg, d4, d3, d2, d1, h, s2, s3 FROM %s WHERE id=ps.size_id) AS s ON true
+		LEFT JOIN LATERAL (SELECT dn, dn_mm, pn_mpa, pn_kg, d4, d3, d2, d1, h, s2, s3 FROM %s WHERE id=ps.size_id) AS s ON true
 		LEFT JOIN LATERAL (SELECT code AS filler_code FROM %s WHERE id=ps.filler_id) AS f ON true
 		LEFT JOIN LATERAL (SELECT ARRAY_AGG(code) AS arr_mat_code FROM %s
 			WHERE id=ANY(ARRAY[ps.frame_id, ps.inner_ring_id, ps.outer_ring_id])
@@ -60,10 +60,20 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 
-	innerRingMat := ""
-	if len(tmp.ArrMaterials) > 1 {
-		innerRingMat = tmp.ArrMaterials[1]
+	var outerRing, innerRing *snp_models.Material
+	if tmp.OuterRingId != uuid.Nil.String() {
+		outerRing = &snp_models.Material{
+			Id:   tmp.OuterRingId,
+			Code: tmp.ArrMaterials[len(tmp.ArrMaterials)-1],
+		}
 	}
+	if tmp.InnerRingId != uuid.Nil.String() {
+		innerRing = &snp_models.Material{
+			Id:   tmp.InnerRingId,
+			Code: tmp.ArrMaterials[1],
+		}
+	}
+
 	data := &models.PositionSnp{
 		Main: &models.PositionSnp_Main{
 			SnpStandardId: tmp.SnpStandardId,
@@ -74,6 +84,7 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 			Id:      tmp.SizeId,
 			PnIndex: tmp.PnIndex,
 			Dn:      tmp.Dn,
+			DnMm:    tmp.DnMm,
 			Pn:      &snp_models.Pn{Mpa: tmp.PnMpa, Kg: tmp.PnKg},
 			HIndex:  tmp.HIndex,
 			D4:      tmp.D4,
@@ -94,14 +105,8 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 				Id:   tmp.FrameId,
 				Code: tmp.ArrMaterials[0],
 			},
-			InnerRing: &snp_models.Material{
-				Id:   tmp.InnerRingId,
-				Code: innerRingMat,
-			},
-			OuterRing: &snp_models.Material{
-				Id:   tmp.OuterRingId,
-				Code: tmp.ArrMaterials[len(tmp.ArrMaterials)-1],
-			},
+			InnerRing: innerRing,
+			OuterRing: outerRing,
 		},
 		Design: &models.PositionSnp_Design{
 			Jumper: &models.PositionSnp_Design_Jumper{

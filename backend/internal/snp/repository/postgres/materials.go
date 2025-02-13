@@ -26,9 +26,9 @@ type Material interface {
 }
 
 func (r *MaterialRepo) Get(ctx context.Context, req *models.GetMaterialDTO) (*models.Materials, error) {
-	query := fmt.Sprintf(`SELECT %s.id, material_id, type, is_default, %s.code, is_standard, %s.code as base_code, title
-		FROM %s INNER JOIN %s ON material_id=%s.id WHERE standard_id=$1 ORDER BY type, count`,
-		SnpMaterialTableNew, SnpMaterialTableNew, MaterialTable, SnpMaterialTableNew, MaterialTable, MaterialTable,
+	query := fmt.Sprintf(`SELECT sm.id, material_id, type, is_default, sm.code, is_standard, m.code as base_code, title
+		FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id WHERE standard_id=$1 ORDER BY type, count`,
+		SnpMaterialTable, MaterialTable,
 	)
 	data := []*pq_models.Material{}
 

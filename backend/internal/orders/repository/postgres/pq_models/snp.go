@@ -58,6 +58,7 @@ type PositionSnp struct {
 	HIndex          int            `db:"h_index"`
 	Another         string         `db:"another"`
 	Dn              string         `db:"dn"`
+	DnMm            string         `db:"dn_mm"`
 	PnMpa           string         `db:"pn_mpa"`
 	PnKg            string         `db:"pn_kg"`
 	D4              string         `db:"d4"`
