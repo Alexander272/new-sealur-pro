@@ -1,11 +1,11 @@
 import { FormEvent } from 'react'
-import { Button, FormControl, Typography } from '@mui/material'
+import { Button, FormControl, TextField, Typography } from '@mui/material'
 import { toast } from 'react-toastify'
 
 import type { IFetchError } from '@/app/types/error'
 import { useInput } from '@/features/auth/hooks/useInput'
 import { ValidMessage } from '@/features/auth/components/ValidMessage/ValidMessage'
-import { Input, Title } from '@/features/auth/components/Forms/forms.style'
+import { Title } from '@/features/auth/components/Forms/forms.style'
 import { Fallback } from '@/components/Fallback/Fallback'
 import { useGetRecoveryCodeMutation } from '../../recoveryApiSlice'
 import { Form } from './recovery.style'
@@ -42,13 +42,14 @@ export const Recovery = () => {
 				восстановлению пароля.
 			</Typography>
 			<FormControl sx={{ marginTop: 3, marginBottom: 2, position: 'relative' }}>
-				<Input
+				<TextField
 					label='email'
 					type='email'
 					value={email.value}
 					onChange={email.onChange}
 					error={!email.valid}
 					size='small'
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10 } }}
 				/>
 				{!email.valid && <ValidMessage messages={['Email не корректен']} />}
 			</FormControl>

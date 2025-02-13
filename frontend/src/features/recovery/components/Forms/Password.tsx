@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react'
-import { Button, FormControl, InputAdornment, Typography } from '@mui/material'
+import { Button, FormControl, InputAdornment, TextField, Typography } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import InVisibleIcon from '@mui/icons-material/VisibilityOffOutlined'
@@ -9,7 +9,7 @@ import type { IFetchError } from '@/app/types/error'
 import { PathRoutes } from '@/constants/routes'
 import { useInput } from '@/features/auth/hooks/useInput'
 import { ValidMessage } from '@/features/auth/components/ValidMessage/ValidMessage'
-import { Input, Title } from '@/features/auth/components/Forms/forms.style'
+import { Title } from '@/features/auth/components/Forms/forms.style'
 import { Fallback } from '@/components/Fallback/Fallback'
 import { useSetPasswordMutation } from '../../recoveryApiSlice'
 import { Form } from './recovery.style'
@@ -68,19 +68,22 @@ export const Password = () => {
 			</Typography>
 
 			<FormControl sx={{ marginTop: 3, marginBottom: 1, position: 'relative' }}>
-				<Input
+				<TextField
 					label='Пароль'
 					type={passIsVisible ? 'text' : 'password'}
 					value={password.value}
 					onChange={password.onChange}
 					error={!password.valid}
-					inputProps={{
-						endAdornment: (
-							<InputAdornment position='start' onClick={togglePassVisible} sx={{ cursor: 'pointer' }}>
-								{passIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
-							</InputAdornment>
-						),
+					slotProps={{
+						input: {
+							endAdornment: (
+								<InputAdornment position='end' onClick={togglePassVisible} sx={{ cursor: 'pointer' }}>
+									{passIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
+								</InputAdornment>
+							),
+						},
 					}}
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10 } }}
 				/>
 				{!password.valid && (
 					<ValidMessage
@@ -94,19 +97,22 @@ export const Password = () => {
 			</FormControl>
 
 			<FormControl sx={{ marginTop: 1, marginBottom: 2 }}>
-				<Input
+				<TextField
 					label='Повторите пароль'
 					type={confIsVisible ? 'text' : 'password'}
 					value={confirm.value}
 					onChange={confirm.onChange}
 					error={!confirm.valid || !compare}
-					inputProps={{
-						endAdornment: (
-							<InputAdornment position='start' onClick={toggleConfVisible} sx={{ cursor: 'pointer' }}>
-								{confIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
-							</InputAdornment>
-						),
+					slotProps={{
+						input: {
+							endAdornment: (
+								<InputAdornment position='end' onClick={toggleConfVisible} sx={{ cursor: 'pointer' }}>
+									{confIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
+								</InputAdornment>
+							),
+						},
 					}}
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10 } }}
 				/>
 				{!confirm.valid || !compare ? (
 					<ValidMessage iconRight='46px' messages={['Пароли должны совпадать']} />

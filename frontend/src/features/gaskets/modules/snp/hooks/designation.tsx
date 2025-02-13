@@ -145,7 +145,7 @@ export const useDesignation = () => {
 			if (size?.d1) sizes += 'x' + size.d1
 
 			//TODO стоить выводить пред. толщину, а не пустоту
-			let thickness = size.h != 'another' ? size.h : size.another
+			let thickness = size.h && size.h != 'another' ? size.h : size.another
 			if (thickness) thickness = (+thickness.replace(',', '.'))?.toFixed(1)?.replace('.', ',')
 
 			//TODO выводить словами материалы (с 09Г2С не очень получается)

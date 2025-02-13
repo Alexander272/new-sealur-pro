@@ -14,9 +14,8 @@ type Props = {
 }
 
 export const Jumper: FC<Props> = ({ disabled }) => {
-	const [value, setValue] = useState('')
-
 	const jumper = useAppSelector(getJumper)
+	const [value, setValue] = useState(jumper.width)
 
 	const dispatch = useAppDispatch()
 

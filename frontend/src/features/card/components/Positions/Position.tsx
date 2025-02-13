@@ -49,14 +49,9 @@ export const Position: FC<Props> = ({ idx, data }) => {
 		}
 		//TODO надо еще показывать индикатор загрузки
 
-		// try {
 		const payload = await fetch(data.id).unwrap()
-		console.log('payload', payload, !payload)
-		// } catch {
-		// 	//
-		// }
-
 		if (!payload) return
+
 		dispatch(setActive({ index: idx, id: data.id, type: payload.data.type }))
 		if (payload.data.type == 'Snp') {
 			console.log('set snp')

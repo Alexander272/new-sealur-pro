@@ -41,13 +41,14 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty }) => {
 	}, [data, active, dispatch, type])
 
 	useEffect(() => {
+		if (active) return
 		if (isEmpty) dispatch(setMaterial({ type }))
 		else if (data && !material?.[type]?.materialId) {
 			const key = `${type}DefaultIndex` as const
 			const index = data.data[key] || 0
 			dispatch(setMaterial({ type, material: data.data[type][index] }))
 		}
-	}, [data, dispatch, isEmpty, material, type])
+	}, [active, data, dispatch, isEmpty, material, type])
 
 	const materialHandler = (event: SelectChangeEvent<string>) => {
 		const current = data?.data?.[type].find(m => m.materialId === event.target.value)

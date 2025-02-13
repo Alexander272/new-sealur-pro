@@ -2,7 +2,7 @@ import { MenuItem, Select, SelectChangeEvent, Stack, Typography } from '@mui/mat
 
 import type { IThickness } from '@/features/gaskets/modules/snp/types/snp'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getAnother, getSizeErr, setSizeThickness } from '@/features/gaskets/modules/snp/snpSlice'
+import { getAnother, getSizeErr, getThickness, setSizeThickness } from '@/features/gaskets/modules/snp/snpSlice'
 import { Input } from '@/components/Input/input.style'
 
 const thickness = [
@@ -18,31 +18,26 @@ const thickness = [
 ]
 
 export const Thickness = () => {
-	//TODO возможно мне тут стоит использовать another, а не h
-	// const h = useAppSelector(getThickness)
+	const h = useAppSelector(getThickness)
 	const errors = useAppSelector(getSizeErr)
 	const another = useAppSelector(getAnother)
 
-	// const [value, setValue] = useState(another)
-
 	const dispatch = useAppDispatch()
 
-	// const debounced = useDebounce(value, 500)
-
-	// useEffect(() => {
-	// 	// debounced.replace(/(^\d*[.,]?)?$/, '$1')
-	// 	// debounced.replace(/(^\d+[.,]?(\d{1})?)$/, '$1.$2')
-	// 	if (another == debounced) return
-	// 	dispatch(setSizeThickness({ another: debounced }))
-	// }, [debounced, another, dispatch])
+	const stand = thickness.some(t => t.frame === another)
 
 	const thicknessHandler = (event: SelectChangeEvent<string>) => {
 		const tmp = thickness.find(t => t.frame === event.target.value)
 
 		const newThickness: IThickness = {
-			another: event.target.value,
+			// another: event.target.value,
 			s2: tmp?.ring || '',
 			s3: tmp?.twisted || '',
+		}
+		if (event.target.value == 'another') newThickness.h = 'another'
+		else {
+			newThickness.h = ''
+			newThickness.another = event.target.value
 		}
 		dispatch(setSizeThickness(newThickness))
 	}
@@ -51,17 +46,13 @@ export const Thickness = () => {
 		const regex = /(^([5][0-9]|[1-4][0-9]|[0-9])([.,](\d{1})?)?)$/
 		if (regex.test(event.target.value)) dispatch(setSizeThickness({ another: event.target.value }))
 		if (event.target.value === '') dispatch(setSizeThickness({ another: event.target.value }))
-
-		// const temp = event.target.value.replace(/(^\d+[.,]?(\d{1})?)$/, '$1.$2')
-		// setValue(temp)
-		// dispatch(setSizeThickness({ another: temp }))
 	}
 
 	return (
 		<>
 			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>
 			<Stack direction='row' spacing={1} alignItems='flex-start'>
-				<Select value={another || 'another'} onChange={thicknessHandler} fullWidth>
+				<Select value={stand && h == '' ? another : 'another'} onChange={thicknessHandler} fullWidth>
 					{thickness.map(t => (
 						<MenuItem key={t.id} value={t.frame}>
 							{t.frame}
@@ -70,7 +61,7 @@ export const Thickness = () => {
 					<MenuItem value='another'>другая</MenuItem>
 				</Select>
 
-				{another == 'another' || another == '' ? (
+				{(!stand && h == '') || h == 'another' ? (
 					<Input
 						name='thickness'
 						value={another}
