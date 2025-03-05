@@ -10,6 +10,7 @@ const (
 	PositionMaterialSnpTable = "position_snp_material"
 	PositionDesignSnpTable   = "position_snp_design"
 
+	PositionPutgTable         = "position_putg"
 	PositionMainPutgTable     = "position_putg_main"
 	PositionSizePutgTable     = "position_putg_size"
 	PositionMaterialPutgTable = "position_putg_material"
@@ -17,6 +18,8 @@ const (
 
 	PositionRingTable     = "position_ring"
 	PositionRingsKitTable = "position_rings_kit"
+
+	PutgSizeTable = "putg_size"
 
 	FlangeTypeTable  = "flange_type"
 	SnpFillerTable   = "snp_filler_new"

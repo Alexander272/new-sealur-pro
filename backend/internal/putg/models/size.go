@@ -8,6 +8,7 @@ type GroupedSize struct {
 }
 
 type Size struct {
+	Id string   `json:"id"`
 	Pn []*Pn    `json:"pn"`
 	D4 string   `json:"d4"`
 	D3 string   `json:"d3"`

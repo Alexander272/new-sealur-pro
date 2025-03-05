@@ -51,6 +51,7 @@ func (r *SizeRepo) Get(ctx context.Context, req *models.GetGroupedSizeDTO) ([]*m
 		}
 
 		data := &models.Size{
+			Id: s.Id,
 			Pn: Pn,
 			D4: s.D4,
 			D3: s.D3,

@@ -18,6 +18,7 @@ func NewFlangeTypeService(repo repository.FlangeType) *FlangeTypeService {
 	}
 }
 
+// DEPRECATED
 type FlangeType interface {
 	Get(ctx context.Context, req *models.GetFlangeTypeDTO) ([]*models.FlangeType, error)
 	Create(ctx context.Context, dto *models.FlangeTypeDTO) error

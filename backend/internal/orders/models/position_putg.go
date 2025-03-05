@@ -19,10 +19,11 @@ type PositionPutg_Main struct {
 }
 
 type PositionPutg_Size struct {
-	Id            string          `json:"id"`
+	Id            string          `json:"sizeId"`
 	Dn            string          `json:"dn"`
 	DnMm          string          `json:"dnMm"`
 	Pn            *putg_models.Pn `json:"pn"`
+	PnIndex       int             `json:"pnIndex"`
 	D4            string          `json:"d4"`
 	D3            string          `json:"d3"`
 	D2            string          `json:"d2"`
@@ -63,47 +64,55 @@ type PositionPutg_Design_Mounting struct {
 }
 
 type PositionPutgDTO struct {
-	Main     *PositionPutgDTO_Main     `json:"main"`
-	Size     *PositionPutgDTO_Size     `json:"size"`
-	Material *PositionPutgDTO_Material `json:"material"`
-	Design   *PositionPutgDTO_Design   `json:"design"`
+	Id         string                    `json:"id"`
+	PositionId string                    `json:"positionId"`
+	Main       *PositionPutgDTO_Main     `json:"main"`
+	Size       *PositionPutgDTO_Size     `json:"size"`
+	Material   *PositionPutgDTO_Material `json:"material"`
+	Design     *PositionPutgDTO_Design   `json:"design"`
 }
 
 type PositionPutgDTO_Main struct {
-	PutgStandardId    string `json:"putgStandardId"`
-	FlangeTypeId      string `json:"flangeTypeId"`
-	ConfigurationId   string `json:"configurationId"`
-	ConfigurationCode string `json:"configurationCode"`
+	PutgStandardId  string `json:"standardId"`
+	FlangeTypeId    string `json:"flangeTypeId"`
+	ConfigurationId string `json:"configurationId"`
 }
 
 type PositionPutgDTO_Size struct {
-	Dn            string          `json:"dn"`
-	DnMm          string          `json:"dnMm"`
-	Pn            *putg_models.Pn `json:"pn"`
-	D4            string          `json:"d4"`
-	D3            string          `json:"d3"`
-	D2            string          `json:"d2"`
-	D1            string          `json:"d1"`
-	H             string          `json:"h"`
-	Another       string          `json:"another"`
-	UseDimensions bool            `json:"useDimensions"`
-	HasRounding   bool            `json:"hasRounding"`
+	SizeId      string `json:"sizeId"`
+	PnIndex     int    `json:"pnIndex"`
+	D4          string `json:"d4"`
+	D3          string `json:"d3"`
+	D2          string `json:"d2"`
+	D1          string `json:"d1"`
+	H           string `json:"h"`
+	HasRounding bool   `json:"hasRounding"`
 }
 
 type PositionPutgDTO_Material struct {
-	Filler       *putg_models.Filler       `json:"filler"`
-	PutgType     *putg_models.PutgType     `json:"putgType"`
-	Construction *putg_models.Construction `json:"construction"`
-	RotaryPlug   *putg_models.Material     `json:"rotaryPlug,omitempty"`
-	InnerRing    *putg_models.Material     `json:"innerRing,omitempty"`
-	OuterRing    *putg_models.Material     `json:"outerRing,omitempty"`
+	FillerId       string `json:"fillerId"`
+	TypeId         string `json:"typeId"`
+	ConstructionId string `json:"constructionId"`
+	RotaryPlugId   string `json:"rotaryPlugId"`
+	InnerRingId    string `json:"innerRingId"`
+	OuterRingId    string `json:"outerRingId"`
+	// Filler       *putg_models.Filler       `json:"filler"`
+	// PutgType     *putg_models.PutgType     `json:"putgType"`
+	// Construction *putg_models.Construction `json:"construction"`
+	// RotaryPlug   *putg_models.Material     `json:"rotaryPlug,omitempty"`
+	// InnerRing    *putg_models.Material     `json:"innerRing,omitempty"`
+	// OuterRing    *putg_models.Material     `json:"outerRing,omitempty"`
 }
 
 type PositionPutgDTO_Design struct {
-	Jumper       *PositionPutg_Design_Jumper   `json:"jumper,omitempty"`
-	HasHole      bool                          `json:"hasHole"`
-	HasCoating   bool                          `json:"hasCoating"`
-	HasRemovable bool                          `json:"hasRemovable"`
-	Mounting     *PositionPutg_Design_Mounting `json:"mounting,omitempty"`
-	Drawing      string                        `json:"drawing"`
+	Jumper       *PositionPutgDTO_Design_Jumper `json:"jumper,omitempty"`
+	HasHole      bool                           `json:"hasHole"`
+	HasCoating   bool                           `json:"hasCoating"`
+	HasRemovable bool                           `json:"hasRemovable"`
+	Mounting     string                         `json:"mounting"`
+	Drawing      string                         `json:"drawing"`
+}
+type PositionPutgDTO_Design_Jumper struct {
+	Code  string `json:"code"`
+	Width string `json:"width"`
 }

@@ -14,17 +14,22 @@ type Position interface {
 type PositionSnp interface {
 	postgres.PositionSnp
 }
+type PositionPutg interface {
+	postgres.PositionPutg
+}
 
 type Repository struct {
 	Order
 	Position
 	PositionSnp
+	PositionPutg
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Order:       postgres.NewOrderRepo(db),
-		Position:    postgres.NewPositionRepo(db),
-		PositionSnp: postgres.NewPositionSnpRepo(db),
+		Order:        postgres.NewOrderRepo(db),
+		Position:     postgres.NewPositionRepo(db),
+		PositionSnp:  postgres.NewPositionSnpRepo(db),
+		PositionPutg: postgres.NewPositionPutgRepo(db),
 	}
 }

@@ -13,12 +13,20 @@ import (
 type PositionService struct {
 	repo repository.Position
 	snp  PositionSnp
+	putg PositionPutg
 }
 
-func NewPositionService(repo repository.Position, snp PositionSnp) *PositionService {
+type PositionDeps struct {
+	Repo repository.Position
+	Snp  PositionSnp
+	Putg PositionPutg
+}
+
+func NewPositionService(deps *PositionDeps) *PositionService {
 	return &PositionService{
-		repo: repo,
-		snp:  snp,
+		repo: deps.Repo,
+		snp:  deps.Snp,
+		putg: deps.Putg,
 	}
 }
 
@@ -53,6 +61,13 @@ func (s *PositionService) GetById(ctx context.Context, id string) (*models.Posit
 		}
 		// data.SnpData = snpData
 		data.Data = snpData
+	}
+	if data.Type == models.PositionTypePutg {
+		putgData, err := s.putg.GetByPosition(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		data.Data = putgData
 	}
 
 	//TODO add another types
@@ -110,7 +125,11 @@ func (s *PositionService) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 	if pos.Type == models.PositionTypeSnp {
 		err = s.snp.Copy(ctx, dto)
 	}
+	if pos.Type == models.PositionTypePutg {
+		err = s.putg.Copy(ctx, dto)
+	}
 	if err != nil {
+		s.Delete(ctx, &models.DeletePositionDTO{Id: data.Id})
 		return err
 	}
 
@@ -133,6 +152,9 @@ func (s *PositionService) Create(ctx context.Context, dto *models.PositionDTO) e
 	if dto.Type == models.PositionTypeSnp {
 		err = s.snp.Create(ctx, dto)
 	}
+	if dto.Type == models.PositionTypePutg {
+		err = s.putg.Create(ctx, dto)
+	}
 	if err != nil {
 		s.Delete(ctx, &models.DeletePositionDTO{Id: dto.Id})
 		return err
@@ -151,10 +173,16 @@ func (s *PositionService) Update(ctx context.Context, dto *models.PositionDTO) e
 	if err := s.repo.Update(ctx, dto); err != nil {
 		return fmt.Errorf("failed to update position. error: %w", err)
 	}
+
+	var err error
 	if dto.Type == models.PositionTypeSnp {
-		if err := s.snp.Update(ctx, dto); err != nil {
-			return err
-		}
+		err = s.snp.Update(ctx, dto)
+	}
+	if dto.Type == models.PositionTypePutg {
+		err = s.putg.Update(ctx, dto)
+	}
+	if err != nil {
+		return err
 	}
 	return nil
 }

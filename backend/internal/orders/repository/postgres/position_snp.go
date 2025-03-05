@@ -10,7 +10,6 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository/postgres/pq_models"
 	snp_models "github.com/Alexander272/new-sealur-pro/internal/snp/models"
-	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -126,21 +125,6 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 	return data, nil
 }
 
-/*
-SELECT id, position_id, snp_standard_id, snp_type_id, flange_type_id,
-	size_id, pn_index, h_index, another, d4, d3, d2, d1, h[h_index+1],
-	filler_id, f.filler_code, m.arr_mat_code, frame_id, inner_ring_id, outer_ring_id,
-	jumper, jumper_width, has_hole, mounting, drawing, created_at
-	FROM public.position_snp AS ps
-	LEFT JOIN LATERAL (SELECT d4, d3, d2, d1, h FROM snp_size WHERE id=ps.size_id) AS s ON true
-	LEFT JOIN LATERAL (SELECT code AS filler_code FROM snp_filler_new WHERE id=ps.filler_id) AS f ON true
-	LEFT JOIN LATERAL (SELECT ARRAY_AGG(code) AS arr_mat_code FROM snp_material_new
-		WHERE id=ANY(ARRAY[ps.frame_id, ps.inner_ring_id, ps.outer_ring_id])
-	) AS m ON true
-	WHERE position_id=$1
-	;
-*/
-
 func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionSnpDTO) error {
 	query := fmt.Sprintf(`INSERT INTO %s(id, position_id, snp_standard_id, snp_type_id, flange_type_id, 
 		size_id, pn_index, h_index, another, d4, d3, d2, d1,
@@ -185,7 +169,7 @@ func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionSnpDTO
 		Mounting:      dto.Design.Mounting,
 		Drawing:       dto.Design.Drawing,
 	}
-	logger.Debug("create position snp", logger.AnyAttr("data", data))
+	// logger.Debug("create position snp", logger.AnyAttr("data", data))
 
 	_, err := r.db.NamedExecContext(ctx, query, data)
 	if err != nil {
@@ -314,75 +298,3 @@ func (r *PositionSnpRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 	}
 	return nil
 }
-
-// func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionDTO) error {
-// 	mainQuery := fmt.Sprintf(`INSERT INTO %s(id, position_id, snp_standard_id, snp_type_id, flange_type_code, flange_type_title)
-// 		VALUES ($1, $2, $3, $4, $5, $6)`,
-// 		PositionMainSnpTable,
-// 	)
-// 	sizeQuery := fmt.Sprintf(`INSERT INTO %s(id, position_id, dn, dn_mm, pn_mpa, pn_kg, d4, d3, d2, d1, h, s2, s3, another)
-// 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
-// 		PositionSizeSnpTable,
-// 	)
-// 	materialQuery := fmt.Sprintf(`INSERT INTO %s(id, position_id, filler_id, frame_id, inner_ring_id, outer_ring_id, filler_code, frame_code,
-// 		inner_ring_code, outer_ring_code, frame_title, inner_ring_title, outer_ring_title) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
-// 		PositionMaterialSnpTable,
-// 	)
-// 	designQuery := fmt.Sprintf(`INSERT INTO %s(id, position_id, has_jumper, jumper_code, jumper_width, has_hole, has_mounting, mounting_code, drawing)
-// 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-// 		PositionDesignSnpTable,
-// 	)
-
-// 	tx, err := r.db.Begin()
-// 	if err != nil {
-// 		return fmt.Errorf("failed to start transaction. error: %w", err)
-// 	}
-
-// 	id := uuid.New()
-// 	main := dto.SnpData.Main
-// 	size := dto.SnpData.Size
-// 	material := dto.SnpData.Material
-// 	design := dto.SnpData.Design
-
-// 	nilId := uuid.Nil.String()
-// 	if material.InnerRing.Id == "" {
-// 		material.InnerRing.Id = nilId
-// 	}
-// 	if material.OuterRing.Id == "" {
-// 		material.OuterRing.Id = nilId
-// 	}
-
-// 	_, err = tx.Exec(mainQuery, id, dto.Id, main.SnpStandardId, main.SnpTypeId, main.FlangeTypeCode, main.FlangeTypeTitle)
-// 	if err != nil {
-// 		tx.Rollback()
-// 		return fmt.Errorf("failed to complete query main. error: %w", err)
-// 	}
-// 	_, err = tx.Exec(sizeQuery, id, dto.Id, size.Dn, size.DnMm, size.Pn.Mpa, size.Pn.Kg, size.D4, size.D3, size.D2, size.D1,
-// 		size.H, size.S2, size.S3, size.Another,
-// 	)
-// 	if err != nil {
-// 		tx.Rollback()
-// 		return fmt.Errorf("failed to complete query size. error: %w", err)
-// 	}
-// 	_, err = tx.Exec(materialQuery, id, dto.Id, material.Filler.Id, material.Frame.Id, material.InnerRing.Id, material.OuterRing.Id,
-// 		material.Filler.Code, material.Frame.Code, material.InnerRing.Code, material.OuterRing.Code, material.Frame.Title,
-// 		material.InnerRing.Title, material.OuterRing.Title,
-// 	)
-// 	if err != nil {
-// 		tx.Rollback()
-// 		return fmt.Errorf("failed to complete query material. error: %w", err)
-// 	}
-// 	_, err = tx.Exec(designQuery, id, dto.Id, design.Jumper.HasJumper, design.Jumper.Code, design.Jumper.Width, design.HasHole,
-// 		design.Mounting.HasMounting, design.Mounting.Code, design.Drawing,
-// 	)
-// 	if err != nil {
-// 		tx.Rollback()
-// 		return fmt.Errorf("failed to complete query design. error: %w", err)
-// 	}
-
-// 	err = tx.Commit()
-// 	if err != nil {
-// 		return fmt.Errorf("failed to finish transaction. error: %w", err)
-// 	}
-// 	return nil
-// }

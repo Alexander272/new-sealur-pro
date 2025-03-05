@@ -172,14 +172,9 @@ func (h *Handler) refresh(c *gin.Context) {
 		return
 	}
 
-	// u, exists := c.Get(constants.CtxUser)
-	// if !exists {
-	// 	response.NewErrorResponse(c, http.StatusUnauthorized, "empty user", "сессия не найдена")
-	// 	return
-	// }
-	// decodedUser := u.(models.User)
 	//TODO если у меня будет несколько реалмов, то надо как-то определять куда отправлять запрос на обновление
 	//* я могу получить реалм из токена обновления, главное чтобы он нормально декодировался
+	//* а еще я же в разные куки записываю токены из разных реалмов
 
 	realm := "public"
 	dto := &models.RefreshDTO{

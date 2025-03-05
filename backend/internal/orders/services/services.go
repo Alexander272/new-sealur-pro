@@ -14,7 +14,8 @@ type Deps struct {
 
 func NewServices(deps *Deps) *Services {
 	snp := NewPositionSnpService(deps.Repos.PositionSnp)
-	position := NewPositionService(deps.Repos.Position, snp)
+	putg := NewPositionPutgService(deps.Repos.PositionPutg)
+	position := NewPositionService(&PositionDeps{Repo: deps.Repos.Position, Snp: snp, Putg: putg})
 	order := NewOrderService(deps.Repos.Order, position)
 
 	return &Services{
