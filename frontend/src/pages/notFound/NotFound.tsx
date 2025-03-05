@@ -31,6 +31,7 @@ export default function NotFound() {
 							sx={{
 								fontSize: '8rem',
 								fontWeight: 'bold',
+								fontFamily: 'Arial, sans-serif',
 								color: palette.common.white,
 								WebkitTextStrokeWidth: 3,
 								WebkitTextStrokeColor: palette.primary.main,

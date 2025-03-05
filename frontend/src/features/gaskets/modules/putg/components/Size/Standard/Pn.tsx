@@ -21,23 +21,21 @@ export const Pn: FC<Props> = ({ sizes, isFetching }) => {
 		if (idx == undefined) return
 
 		let sizeIdx = 0
+		let pnIndex = -1
 		let pn: PN = {} as PN
 		sizes[idx].sizes.forEach((s, i) => {
-			const candidate = s.pn.find(pn => pn.mpa === event.target.value)
-			if (candidate) {
-				pn = candidate
+			const idx = s.pn.findIndex(pn => pn.mpa === event.target.value)
+			if (idx != -1) {
+				pn = s.pn[idx]
+				pnIndex = idx
 				sizeIdx = i
 			}
 		})
 
 		const sizePn = {
 			pn,
-			size: {
-				d4: sizes[idx].sizes[sizeIdx].d4 || '',
-				d3: sizes[idx].sizes[sizeIdx].d3,
-				d2: sizes[idx].sizes[sizeIdx].d2,
-				d1: sizes[idx].sizes[sizeIdx].d1 || '',
-			},
+			pnIndex: pnIndex,
+			sizes: sizes[idx].sizes[sizeIdx],
 		}
 		dispatch(setSizePn(sizePn))
 	}

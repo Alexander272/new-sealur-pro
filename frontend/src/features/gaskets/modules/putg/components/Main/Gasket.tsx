@@ -2,10 +2,12 @@ import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { getActive } from '@/features/card/cardSlice'
 import { getFiller, getType, setType } from '../../putgSlice'
 import { useGetPutgTypesQuery } from '../../putgApiSlice'
 
 export const Gasket = () => {
+	const active = useAppSelector(getActive)
 	const type = useAppSelector(getType)
 	const filler = useAppSelector(getFiller)
 	const dispatch = useAppDispatch()
@@ -13,8 +15,14 @@ export const Gasket = () => {
 	const { data, isFetching, isUninitialized } = useGetPutgTypesQuery(filler?.baseId || '', { skip: !filler?.baseId })
 
 	useEffect(() => {
-		if (data) dispatch(setType(data.data[0]))
-	}, [data, dispatch])
+		if (data && !active?.id && !isFetching) dispatch(setType(data.data[0]))
+	}, [data, active, isFetching, dispatch])
+	useEffect(() => {
+		if (!data || !active || isFetching) return
+		let idx = data.data.findIndex(c => c.id === type?.id)
+		if (idx == -1) idx = 0
+		dispatch(setType(data.data[idx]))
+	}, [data, type, active, isFetching, dispatch])
 
 	const typeHandler = (event: SelectChangeEvent<string>) => {
 		const type = data?.data.find(s => s.code === event.target.value)

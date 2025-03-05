@@ -2,7 +2,9 @@
 import type {
 	IDesignBlockPutg,
 	IMainBlockPutg,
+	IMainPutgDTO,
 	IMaterialBlockPutg,
+	IMaterialPutgDTO,
 	ISizeBlockPutg,
 } from '@/features/gaskets/modules/putg/types/putg'
 import type {
@@ -46,13 +48,18 @@ export type PositionSnp = PositionBase<
 export type PositionPutgDTO = PositionBase<
 	PutgType,
 	{
-		putgData: { main: IMainBlockPutg; size: ISizeBlockPutg; material: IMaterialBlockPutg; design: IDesignBlockPutg }
+		putgData: { main: IMainPutgDTO; size: ISizeBlockPutg; material: IMaterialPutgDTO; design: IDesignBlockPutg }
 	}
 >
 export type PositionPutg = PositionBase<
 	PutgType,
 	{
-		data: { main: IMainBlockPutg; size: ISizeBlockPutg; material: IMaterialBlockPutg; design: IDesignBlockPutg }
+		data: {
+			main: IMainBlockPutg
+			size: ISizeBlockPutg
+			material: IMaterialBlockPutg
+			design: IDesignBlockPutg
+		}
 	}
 >
 

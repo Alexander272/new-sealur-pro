@@ -14,11 +14,10 @@ type Props = {
 }
 
 export const Jumper: FC<Props> = ({ disabled }) => {
-	const [value, setValue] = useState('')
-
 	const construction = useAppSelector(getConstruction)
 	const sizes = useAppSelector(getSizes)
 	const jumper = useAppSelector(getJumper)
+	const [value, setValue] = useState(jumper.width)
 
 	const dispatch = useAppDispatch()
 
@@ -41,7 +40,7 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 	}
 
 	const jumperInRange = () => {
-		if (!construction) return false
+		if (!construction || !construction.jumperRange) return false
 
 		if (+sizes.d2 >= construction.jumperRange[0] && construction.jumperRange[1] == -1) return true
 		if (+sizes.d2 >= construction.jumperRange[0] && +sizes.d2 < construction.jumperRange[1]) return true

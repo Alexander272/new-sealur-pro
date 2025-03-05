@@ -15,8 +15,14 @@ export const Configuration = () => {
 	const { data, isFetching, isUninitialized } = useGetPutgConfigurationsQuery(null)
 
 	useEffect(() => {
-		if (data && !active?.id) dispatch(setMainConfiguration(data.data[0]))
-	}, [data, dispatch, active])
+		if (data && !active?.id && !isFetching) dispatch(setMainConfiguration(data.data[0]))
+	}, [data, dispatch, isFetching, active])
+	useEffect(() => {
+		if (!data || !active || isFetching) return
+		let idx = conf ? data.data.findIndex(c => c.id === conf.id) : 0
+		if (idx == -1) idx = 0
+		dispatch(setMainConfiguration(data.data[idx]))
+	}, [data, conf, active, isFetching, dispatch])
 
 	const gasketHandler = (type: string) => {
 		if (!data) return

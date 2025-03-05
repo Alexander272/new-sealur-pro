@@ -15,14 +15,21 @@ export const Standards = () => {
 	const { data, isFetching, isUninitialized } = useGetPutgStandardQuery(null)
 
 	useEffect(() => {
-		if (data && !active?.id) dispatch(setMainStandard(data.data[0]))
-	}, [data, active, dispatch])
+		if (!data || active?.id || isFetching) return
+		dispatch(setMainStandard(data.data[0]))
+	}, [data, active, isFetching, dispatch])
+	useEffect(() => {
+		if (!data || !active || isFetching) return
+		let idx = data.data.findIndex(c => c.id === standard?.id)
+		if (idx == -1) idx = 0
+		dispatch(setMainStandard(data.data[idx]))
+	}, [data, active, isFetching, standard, dispatch])
 
 	useEffect(() => {
-		if (!data) return
+		if (!data || active?.id || isFetching) return
 		if (configuration?.code != 'round') dispatch(setMainStandard(data.data[data.data.length - 1]))
 		else dispatch(setMainStandard(data.data[0]))
-	}, [configuration, data, dispatch])
+	}, [configuration, data, active, isFetching, dispatch])
 
 	const standardHandler = (event: SelectChangeEvent<string>) => {
 		const standard = data?.data.find(s => s.id === event.target.value)

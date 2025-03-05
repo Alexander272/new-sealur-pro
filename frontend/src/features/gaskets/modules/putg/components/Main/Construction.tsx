@@ -2,10 +2,12 @@ import { useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { getActive } from '@/features/card/cardSlice'
 import { getConstruction, getFiller, getFlangeType, setConstruction } from '../../putgSlice'
 import { useGetPutgConstructionsQuery } from '../../putgApiSlice'
 
 export const Construction = () => {
+	const active = useAppSelector(getActive)
 	const construction = useAppSelector(getConstruction)
 	const filler = useAppSelector(getFiller)
 	const flangeType = useAppSelector(getFlangeType)
@@ -17,8 +19,14 @@ export const Construction = () => {
 	)
 
 	useEffect(() => {
-		if (data) dispatch(setConstruction(data.data[0]))
-	}, [data, dispatch])
+		if (data && !active?.id && !isFetching) dispatch(setConstruction(data.data[0]))
+	}, [data, active, isFetching, dispatch])
+	useEffect(() => {
+		if (!data || !active || isFetching) return
+		let idx = data.data.findIndex(c => c.id === construction?.id)
+		if (idx == -1) idx = 0
+		dispatch(setConstruction(data.data[idx]))
+	}, [data, construction, active, isFetching, dispatch])
 
 	const constructionHandler = (event: SelectChangeEvent<string>) => {
 		const construction = data?.data.find(s => s.code === event.target.value)

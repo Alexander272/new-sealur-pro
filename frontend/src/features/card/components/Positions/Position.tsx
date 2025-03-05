@@ -10,6 +10,7 @@ import { getActive, setActive } from '../../cardSlice'
 import { useDeletePositionMutation, useLazyGetPositionByIdQuery } from '../../cardApiSlice'
 import { setSnp } from '@/features/gaskets/modules/snp/snpSlice'
 import { PathRoutes } from '@/constants/routes'
+import { setPutg } from '@/features/gaskets/modules/putg/putgSlice'
 
 type Props = {
 	idx: number
@@ -57,6 +58,11 @@ export const Position: FC<Props> = ({ idx, data }) => {
 			console.log('set snp')
 			dispatch(setSnp(payload.data))
 			if (location.pathname !== PathRoutes.Gasket.SNP) navigate(PathRoutes.Gasket.SNP)
+		}
+		if (payload.data.type == 'Putg') {
+			console.log('set putg')
+			dispatch(setPutg(payload.data))
+			if (location.pathname !== PathRoutes.Gasket.PUTG) navigate(PathRoutes.Gasket.PUTG)
 		}
 	}
 

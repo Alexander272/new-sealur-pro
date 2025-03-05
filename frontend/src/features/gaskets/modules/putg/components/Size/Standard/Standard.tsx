@@ -1,44 +1,58 @@
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { getActive } from '@/features/card/cardSlice'
+import { setSizeIdx } from '@/features/gaskets/modules/snp/snpSlice'
 import { useGetPutgSizesQuery } from '../../../putgApiSlice'
-import { getConstruction, getFiller, getFlangeType, setSize } from '../../../putgSlice'
+import { getConstruction, getFiller, getFlangeType, getSizeId, setSize } from '../../../putgSlice'
 import { Dn } from './Dn'
 import { Pn } from './Pn'
 import { Thickness } from '../Thickness/Thickness'
 
 export const Standard = () => {
+	const active = useAppSelector(getActive)
 	const construction = useAppSelector(getConstruction)
 	const filler = useAppSelector(getFiller)
 	const type = useAppSelector(getFlangeType)
+	const sizeId = useAppSelector(getSizeId)
 
 	const dispatch = useAppDispatch()
 
 	const { data, isFetching, isUninitialized } = useGetPutgSizesQuery(
 		{ filler: filler?.baseId || '', flangeType: type?.id || '', construction: construction?.baseId || '' },
-		{ skip: !filler || !type || !construction }
+		{ skip: !filler?.baseId || !type || !construction?.baseId }
 	)
 
 	useEffect(() => {
-		//TODO надо еще проверять если выбрана позиция из корзины, то нужно брать ее размеры
-		if (data) {
-			const s = data.data[0]
-			if (!s) return
-			const size = {
-				index: 0,
-				dn: s.dn,
-				dnMm: s.dnMm || '',
-				pn: s.sizes[0].pn[0],
-				d4: s.sizes[0]?.d4 || '',
-				d3: s.sizes[0].d3,
-				d2: s.sizes[0].d2,
-				d1: s.sizes[0]?.d1 || '',
-				h: s.sizes[0].h[0],
-			}
+		if (!data || isFetching || !active) return
 
-			dispatch(setSize(size))
+		const found = data.data.findIndex(s => s.sizes.some(p => p.id === sizeId))
+		if (found != -1) {
+			dispatch(setSizeIdx(found))
+			return
 		}
-	}, [data, dispatch])
+	}, [active, data, dispatch, isFetching, sizeId])
+	useEffect(() => {
+		if (!data || isFetching || active) return
+
+		const s = data.data[0]
+		if (!s) return
+		const size = {
+			index: 0,
+			sizeId: s.sizes[0].id,
+			dn: s.dn,
+			dnMm: s.dnMm || '',
+			pn: s.sizes[0].pn[0],
+			pnIndex: 0,
+			d4: s.sizes[0]?.d4 || '',
+			d3: s.sizes[0].d3,
+			d2: s.sizes[0].d2,
+			d1: s.sizes[0]?.d1 || '',
+			h: s.sizes[0].h[0],
+		}
+
+		dispatch(setSize(size))
+	}, [data, isFetching, active, dispatch])
 
 	return (
 		<>

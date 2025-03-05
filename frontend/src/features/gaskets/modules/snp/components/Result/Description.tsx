@@ -10,7 +10,6 @@ export const Description = () => {
 	const design = useAppSelector(getDesign)
 
 	const renderDescription = () => {
-		//TODO поправлено codeium надо проверять
 		const rings =
 			main.snpType?.title == 'Д'
 				? `(с наружным ${materials.outerRing?.title} и внутренним ${materials.innerRing?.title} ограничительными кольцами)`

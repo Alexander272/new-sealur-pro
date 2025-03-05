@@ -15,8 +15,14 @@ export const Filler = () => {
 	const { data, isFetching } = useGetPutgFillersQuery(standard?.id || '', { skip: !standard?.id })
 
 	useEffect(() => {
-		if (data && !active?.id) dispatch(setMaterialFiller(data.data[0]))
-	}, [data, active, dispatch])
+		if (data && !active?.id && !isFetching) dispatch(setMaterialFiller(data.data[0]))
+	}, [data, active, isFetching, dispatch])
+	useEffect(() => {
+		if (!data || !active || isFetching) return
+		let idx = data.data.findIndex(c => c.id === filler?.id)
+		if (idx == -1) idx = 0
+		dispatch(setMaterialFiller(data.data[idx]))
+	}, [data, filler, active, isFetching, dispatch])
 
 	const fillerHandler = (event: SelectChangeEvent<string>) => {
 		const filler = data?.data.find(s => s.id === event.target.value)

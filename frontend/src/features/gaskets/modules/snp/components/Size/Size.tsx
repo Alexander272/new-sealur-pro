@@ -26,25 +26,8 @@ const images = {
 type Props = unknown
 
 export const Size: FC<Props> = () => {
-	// const isReady = useAppSelector(state => state.snp.isReady)
-
 	const snp = useAppSelector(getSnpType)
 	const standard = useAppSelector(getStandard)
-
-	// const dispatch = useAppDispatch()
-
-	// //TODO думаю это не работает
-	// if (!isReady) {
-	// 	return (
-	// 		<SizeContainer>
-	// 			<SizeSkeleton />
-	// 			<Column width={55}>
-	// 				<Skeleton animation='wave' />
-	// 				<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
-	// 			</Column>
-	// 		</SizeContainer>
-	// 	)
-	// }
 
 	return (
 		<SizeContainer>

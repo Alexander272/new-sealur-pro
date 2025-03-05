@@ -10,7 +10,6 @@ export const Another = () => {
 	const errors = useAppSelector(getSizeErr)
 	const dispatch = useAppDispatch()
 
-	//TODO надо сбрасывать sizeId
 	useEffect(() => {
 		dispatch(setSizePn({ pn: { mpa: '', kg: '' }, pnIndex: -1 }))
 	}, [dispatch])

@@ -4,7 +4,6 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/app/store'
 import type { IMaterial } from '@/features/gaskets/types/material'
 import type { IDrawing } from '@/features/gaskets/types/drawing'
-import type { PN } from '@/features/gaskets/types/sizes'
 import type {
 	IConstruction,
 	IDesignBlockPutg,
@@ -18,6 +17,7 @@ import type {
 	ISizeBlockPutg,
 	TypeMaterial,
 } from './types/putg'
+import { ISizeBlock } from './types/size'
 
 export interface IPutgState {
 	main: IMainBlockPutg
@@ -138,10 +138,11 @@ export const putgSlice = createSlice({
 			// if (action.payload.code != 'round') {
 			// 	state.main.standard = state.standards[state.standards.length - 1]
 			// }
-			state.size.d4 = ''
-			state.size.d3 = ''
-			state.size.d2 = ''
-			state.size.d1 = ''
+			//TODO проблема. при выборе позиции размеры полученные с сервера сбрасываются
+			// state.size.d4 = ''
+			// state.size.d3 = ''
+			// state.size.d2 = ''
+			// state.size.d1 = ''
 			state.size.useDimensions = false
 			state.sizeError.emptyD1 = false
 			state.sizeError.emptyD2 = false
@@ -322,21 +323,19 @@ export const putgSlice = createSlice({
 			}
 			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
+		setSizeIdx: (state, action: PayloadAction<number>) => {
+			state.size.index = action.payload
+		},
 		// установка условного прохода
-		setSizePn: (
-			state,
-			action: PayloadAction<{
-				pn: PN
-				size?: { d4: string; d3: string; d2: string; d1: string }
-				thickness?: { h: string; another: string }
-			}>
-		) => {
+		setSizePn: (state, action: PayloadAction<ISizeBlock>) => {
 			state.size.pn = action.payload.pn
-			if (action.payload.size) {
-				state.size.d4 = action.payload.size.d4
-				state.size.d3 = action.payload.size.d3
-				state.size.d2 = action.payload.size.d2
-				state.size.d1 = action.payload.size.d1
+			state.size.pnIndex = action.payload.pnIndex
+			state.size.sizeId = action.payload.sizes?.id
+			if (action.payload.sizes) {
+				state.size.d4 = action.payload.sizes.d4 || ''
+				state.size.d3 = action.payload.sizes.d3
+				state.size.d2 = action.payload.sizes.d2
+				state.size.d1 = action.payload.sizes.d1 || ''
 			}
 			if (action.payload.thickness) {
 				state.size.h = action.payload.thickness.h
@@ -574,6 +573,7 @@ export const getType = (state: RootState) => state.putg.material.putgType
 export const getSizes = (state: RootState) => state.putg.size
 export const getSizeErr = (state: RootState) => state.putg.sizeError
 export const getSizeIdx = (state: RootState) => state.putg.size.index
+export const getSizeId = (state: RootState) => state.putg.size.sizeId
 export const getDn = (state: RootState) => state.putg.size.dn
 export const getPn = (state: RootState) => state.putg.size.pn
 export const getH = (state: RootState) => state.putg.size.h

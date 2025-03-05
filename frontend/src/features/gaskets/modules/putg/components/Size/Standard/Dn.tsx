@@ -24,9 +24,11 @@ export const Dn: FC<Props> = ({ sizes, isFetching }) => {
 		const s = sizes[idx]
 		const size: ISizeBlockPutg = {
 			index: idx,
+			sizeId: s.sizes[0].id,
 			dn: s.dn,
 			dnMm: s.dnMm || '',
 			pn: s.sizes[0].pn[0],
+			pnIndex: 0,
 			d4: s.sizes[0].d4 || '',
 			d3: s.sizes[0].d3,
 			d2: s.sizes[0].d2,

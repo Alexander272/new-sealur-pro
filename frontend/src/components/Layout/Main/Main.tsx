@@ -24,7 +24,6 @@ export default function Main({ disableCard }: Props) {
 
 				{!disableCard && (
 					<Suspense fallback={<></>}>
-						{/* //TODO */}
 						<Card />
 					</Suspense>
 				)}

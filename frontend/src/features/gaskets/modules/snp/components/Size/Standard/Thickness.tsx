@@ -42,7 +42,6 @@ export const Thickness: FC<Props> = ({ sizes, isFetching }) => {
 		dispatch(setSizeThickness(newThickness))
 	}
 
-	// TODO надо это все по тестировать
 	return (
 		<>
 			<Typography fontWeight='bold'>Толщина прокладки по каркасу</Typography>

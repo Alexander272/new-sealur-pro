@@ -27,18 +27,6 @@ export const Flange = () => {
 		dispatch(setMainFlangeType({ id: flange.id, code: flange.code, title: flange.title }))
 	}, [data, flangeId, dispatch])
 
-	// useEffect(() => {
-	// 	if (active || !data) return
-
-	// 	const flange = data.data[data.data.length - 1]
-	// 	dispatch(setMainFlangeType({ id: flange.id, code: flange.code, title: flange.title }))
-	// 	const type = {
-	// 		id: flange.types[flange.types.length - 1].id,
-	// 		type: flange.types[flange.types.length - 1],
-	// 	}
-	// 	dispatch(setMainSnpType(type))
-	// }, [active, data, dispatch])
-
 	const flangeTypeHandler = (event: SelectChangeEvent<string>) => {
 		const flangeType = data?.data.find(f => f.code === event.target.value)
 		if (!flangeType) return
@@ -56,6 +44,7 @@ export const Flange = () => {
 			<Typography fontWeight='bold' mt={1}>
 				Тип фланца
 			</Typography>
+
 			{isFetching ? (
 				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
 			) : (
@@ -68,7 +57,6 @@ export const Flange = () => {
 						Выберите тип фланца
 					</MenuItem>
 
-					{/* //TODO а почему я не сервере нужный порядок не задаю */}
 					{[...(data?.data || [])].reverse().map(f => (
 						<MenuItem key={f.id} value={f.code}>
 							{f.title} {f.description && `(${f.description})`}

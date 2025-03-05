@@ -23,7 +23,6 @@ export const D2: FC<Props> = ({ sizes, isFetching }) => {
 	)
 
 	const d2Handler = (event: SelectChangeEvent<string>) => {
-		//TODO правки внесены codeium, поэтому по тестировать
 		const idx = filteredSizes.findIndex(s => s.d2 === event.target.value)
 		// const idx = sizes.findIndex(s =>
 		// 	s.sizes.some(s => s.d2 === event.target.value && s.pn.some(d => d.mpa === pn.mpa))

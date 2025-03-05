@@ -3,6 +3,7 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 
 import type { TypeMaterial } from '../../types/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { getActive } from '@/features/card/cardSlice'
 import { getMaterials, getStandard, setMaterial } from '../../putgSlice'
 import { useGetPutgMaterialsQuery } from '../../putgApiSlice'
 
@@ -14,6 +15,7 @@ type Props = {
 }
 
 export const Material: FC<Props> = ({ title, type, disabled, isEmpty }) => {
+	const active = useAppSelector(getActive)
 	const standard = useAppSelector(getStandard)
 	const material = useAppSelector(getMaterials)
 
@@ -24,20 +26,28 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty }) => {
 	})
 
 	useEffect(() => {
+		if (!data || isFetching || !active) return
+		const found = data.data[type].find(m => m.id === material?.[type]?.id)
+		if (found) dispatch(setMaterial({ type, material: found }))
+	}, [active, data, dispatch, material, type, isFetching])
+
+	useEffect(() => {
+		if (!data || active) return
 		const key = `${type}DefaultIndex` as const
-		if (data && data.data[type]?.length > 0) {
+		if (data.data[type]?.length > 0) {
 			const index = data.data[key] || 0
 			dispatch(setMaterial({ type, material: data.data[type][index] }))
 		}
-	}, [data, dispatch, type])
+	}, [data, active, dispatch, type])
 	useEffect(() => {
+		if (active) return
 		if (isEmpty) dispatch(setMaterial({ type }))
 		else if (data && !material?.[type]?.materialId) {
 			const key = `${type}DefaultIndex` as const
 			const index = data.data[key] || 0
 			dispatch(setMaterial({ type, material: data.data[type][index] }))
 		}
-	}, [data, dispatch, isEmpty, material, type])
+	}, [data, active, dispatch, isEmpty, material, type])
 
 	const materialHandler = (event: SelectChangeEvent<string>) => {
 		const current = data?.data?.[type].find(m => m.materialId === event.target.value)

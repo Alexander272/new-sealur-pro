@@ -2,12 +2,12 @@ import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { Stack } from '@mui/material'
 
 import type { IMainJumper } from '@/features/gaskets/types/jumper'
+import { useDebounce } from '@/hooks/debounce'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { JumperSelect } from '@/components/Jumper/Jumper'
 import { Input } from '@/components/Input/input.style'
 import { getJumper, setDesignJumper } from '../../snpSlice'
-import { useDebounce } from '@/hooks/debounce'
 
 type Props = {
 	disabled?: boolean
@@ -35,13 +35,6 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 		const regex = /(^\d{1,3})$/
 		if (regex.test(event.target.value)) setValue(event.target.value)
 		if (event.target.value === '') setValue(event.target.value)
-
-		// const regex = /^[0-9\b]+$/
-		// if (event.target.value === '' || regex.test(event.target.value)) {
-		// 	let value: number | string = +event.target.value
-		// 	if (event.target.value === '') value = event.target.value
-		// 	dispatch(setDesignJumper({ width: value.toString() }))
-		// }
 	}
 
 	return (

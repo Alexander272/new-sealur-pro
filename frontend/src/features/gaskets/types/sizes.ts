@@ -40,6 +40,7 @@ export interface IPutgSize {
 }
 
 export interface IPutgMainSize {
+	id: string
 	pn: PN[]
 	d4?: string
 	d3: string

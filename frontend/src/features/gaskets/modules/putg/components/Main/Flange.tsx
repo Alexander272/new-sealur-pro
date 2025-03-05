@@ -15,8 +15,14 @@ export const Flange = () => {
 	const { data, isFetching, isUninitialized } = useGetPutgFlangeTypesQuery(standard?.id || '', { skip: !standard })
 
 	useEffect(() => {
-		if (data && !active?.id) dispatch(setMainFlangeType(data.data[0]))
-	}, [data, active, dispatch])
+		if (data && !active?.id && !isFetching) dispatch(setMainFlangeType(data.data[0]))
+	}, [data, active, isFetching, dispatch])
+	useEffect(() => {
+		if (!data || !active || isFetching) return
+		let idx = data.data.findIndex(c => c.id === flange?.id)
+		if (idx == -1) idx = 0
+		dispatch(setMainFlangeType(data.data[idx]))
+	}, [data, flange, isFetching, active, dispatch])
 
 	const flangeTypeHandler = (event: SelectChangeEvent<string>) => {
 		const flangeType = data?.data.find(f => f.id === event.target.value)

@@ -93,6 +93,11 @@ export interface IMainBlockPutg {
 	standard?: IPutgStandard
 	flangeType?: IFlangeType
 }
+export interface IMainPutgDTO {
+	configurationId: string
+	standardId: string
+	flangeTypeId: string
+}
 
 export interface IMaterialBlockPutg {
 	filler?: IFiller
@@ -101,6 +106,14 @@ export interface IMaterialBlockPutg {
 	rotaryPlug?: IMaterial
 	innerRing?: IMaterial
 	outerRing?: IMaterial
+}
+export interface IMaterialPutgDTO {
+	fillerId: string
+	typeId: string
+	constructionId: string
+	rotaryPlugId: string
+	innerRingId: string
+	outerRingId: string
 }
 
 export interface IDesignBlockPutg {
@@ -114,6 +127,7 @@ export interface IDesignBlockPutg {
 
 export interface ISizeBlockPutg {
 	index?: number
+	sizeId?: string
 	dn: string
 	dnMm: string
 	d4: string
@@ -121,6 +135,7 @@ export interface ISizeBlockPutg {
 	d2: string
 	d1: string
 	pn: PN
+	pnIndex?: number
 	h: string
 	useDimensions?: boolean
 	hasRounding?: boolean
