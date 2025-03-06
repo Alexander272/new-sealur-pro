@@ -19,6 +19,7 @@ func NewPositionSnpService(repo repository.PositionSnp) *PositionSnpService {
 type PositionSnp interface {
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
+	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionSnpDTO) error
 	Update(ctx context.Context, dto *models.PositionDTO) error
@@ -36,6 +37,14 @@ func (s *PositionSnpService) Copy(ctx context.Context, dto *models.CopyPositionD
 	//TODO надо еще что-то сделать с чертежами
 	if err := s.repo.Copy(ctx, dto); err != nil {
 		return fmt.Errorf("failed to copy position snp. error: %w", err)
+	}
+	return nil
+}
+
+func (s *PositionSnpService) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
+	//TODO надо еще что-то сделать с чертежами
+	if err := s.repo.CopySeveral(ctx, dto); err != nil {
+		return fmt.Errorf("failed to copy several positions snp. error: %w", err)
 	}
 	return nil
 }

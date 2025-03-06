@@ -26,6 +26,7 @@ type Order interface {
 	GetCurrent(ctx context.Context, req *models.GetCurrentOrderDTO) (*models.Order, error)
 	GetById(ctx context.Context, req *models.GetOrderDTO) (*models.Order, error)
 	Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error)
+	Copy(ctx context.Context, dto *models.CopyOrderDTO) error
 	Create(ctx context.Context, dto *models.OrderDTO) error
 	Save(ctx context.Context, dto *models.SaveOrderDTO) error
 	SetInfo(ctx context.Context, dto *models.SetInfoDTO) error
@@ -70,6 +71,13 @@ func (s *OrderService) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]
 		return nil, fmt.Errorf("failed to get orders. error: %w", err)
 	}
 	return data, nil
+}
+
+func (s *OrderService) Copy(ctx context.Context, dto *models.CopyOrderDTO) error {
+	if err := s.position.CopySeveral(ctx, dto.Positions); err != nil {
+		return fmt.Errorf("failed to copy order. error: %w", err)
+	}
+	return nil
 }
 
 func (s *OrderService) Create(ctx context.Context, dto *models.OrderDTO) error {

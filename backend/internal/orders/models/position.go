@@ -44,13 +44,13 @@ type GetPositionByTitle struct {
 }
 
 type PositionDTO struct {
-	Id       string           `json:"id"`
-	OrderId  string           `json:"orderId"`
-	Count    int64            `json:"count"`
-	Title    string           `json:"title"`
-	Amount   string           `json:"amount"`
-	Type     PositionType     `json:"type"`
-	Info     string           `json:"info"`
+	Id       string           `json:"id" db:"id"`
+	OrderId  string           `json:"orderId" db:"order_id"`
+	Count    int64            `json:"count" db:"count"`
+	Title    string           `json:"title" db:"title"`
+	Amount   string           `json:"amount" db:"amount"`
+	Type     PositionType     `json:"type" db:"type"`
+	Info     string           `json:"info" db:"info"`
 	SnpData  *PositionSnpDTO  `json:"snpData"`
 	PutgData *PositionPutgDTO `json:"putgData"`
 	// RingData *PositionRingDTO     `json:"ringData"`

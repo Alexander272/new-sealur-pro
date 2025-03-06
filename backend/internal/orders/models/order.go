@@ -51,6 +51,10 @@ type SaveOrderDTO struct {
 	Date          string `json:"date" db:"date"`
 }
 
+type CopyOrderDTO struct {
+	Positions []*CopyPositionDTO `json:"positions" binding:"required"`
+}
+
 type SetInfoDTO struct {
 	OrderId string `json:"orderId" db:"id"`
 	Info    string `json:"info" db:"info"`

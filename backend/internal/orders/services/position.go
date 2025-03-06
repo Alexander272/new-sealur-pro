@@ -35,6 +35,7 @@ type Position interface {
 	GetById(ctx context.Context, id string) (*models.Position, error)
 	GetIdByTitle(ctx context.Context, req *models.GetPositionByTitle) (string, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
+	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
 	Update(ctx context.Context, dto *models.PositionDTO) error
 	Delete(ctx context.Context, dto *models.DeletePositionDTO) error
@@ -104,11 +105,10 @@ func (s *PositionService) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 	}
 
 	data := &models.PositionDTO{
-		Id:      pos.Id,
-		OrderId: pos.OrderId,
-		Count:   pos.Count,
+		OrderId: dto.OrderId,
+		Count:   dto.Count,
 		Title:   pos.Title,
-		Amount:  pos.Amount,
+		Amount:  dto.Amount,
 		Type:    pos.Type,
 		Info:    pos.Info,
 	}
@@ -117,6 +117,7 @@ func (s *PositionService) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 	if err := s.repo.Create(ctx, data); err != nil {
 		return fmt.Errorf("failed to create position. error: %w", err)
 	}
+	dto.NewId = data.Id
 
 	// if err := s.repo.Copy(ctx, dto); err != nil {
 	// 	return fmt.Errorf("failed to copy position. error: %w", err)
@@ -130,6 +131,79 @@ func (s *PositionService) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 	}
 	if err != nil {
 		s.Delete(ctx, &models.DeletePositionDTO{Id: data.Id})
+		return err
+	}
+
+	return nil
+}
+
+func (s *PositionService) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
+	originals, err := s.repo.Get(ctx, &models.GetPositionsDTO{OrderId: dto[0].FromOrderId})
+	if err != nil {
+		return fmt.Errorf("failed to get positions by from order id. error: %w", err)
+	}
+
+	positions, err := s.repo.Get(ctx, &models.GetPositionsDTO{OrderId: dto[0].OrderId})
+	if err != nil {
+		return fmt.Errorf("failed to get positions by order id. error: %w", err)
+	}
+
+	data := []*models.PositionDTO{}
+	filtered := make(map[string]*models.CopyPositionDTO)
+	candidates := make(map[string]*models.PositionDTO)
+
+	for _, v := range originals {
+		tmp := &models.CopyPositionDTO{}
+		for _, d := range dto {
+			if d.Id == v.Id {
+				tmp = d
+				break
+			}
+		}
+		filtered[v.Title] = tmp
+
+		candidates[v.Title] = &models.PositionDTO{
+			OrderId: tmp.OrderId,
+			Count:   tmp.Count,
+			Title:   v.Title,
+			Amount:  v.Amount,
+			Type:    v.Type,
+			Info:    v.Info,
+		}
+	}
+	for _, v := range positions {
+		delete(candidates, v.Title)
+		delete(filtered, v.Title)
+	}
+
+	for _, v := range candidates {
+		data = append(data, v)
+	}
+
+	if err := s.repo.CreateSeveral(ctx, data); err != nil {
+		return fmt.Errorf("failed to create positions. error: %w", err)
+	}
+
+	snpDTO := []*models.CopyPositionDTO{}
+	putgDTO := []*models.CopyPositionDTO{}
+	for _, v := range data {
+		filtered[v.Title].NewId = v.Id
+		if v.Type == models.PositionTypeSnp {
+			snpDTO = append(snpDTO, filtered[v.Title])
+		}
+		if v.Type == models.PositionTypePutg {
+			putgDTO = append(putgDTO, filtered[v.Title])
+		}
+	}
+
+	if len(snpDTO) > 0 {
+		err = s.snp.CopySeveral(ctx, snpDTO)
+	}
+	if len(putgDTO) > 0 {
+		err = s.putg.CopySeveral(ctx, putgDTO)
+	}
+	if err != nil {
+		s.DeleteSeveral(ctx, data)
 		return err
 	}
 
@@ -190,6 +264,18 @@ func (s *PositionService) Update(ctx context.Context, dto *models.PositionDTO) e
 func (s *PositionService) Delete(ctx context.Context, dto *models.DeletePositionDTO) error {
 	if err := s.repo.Delete(ctx, dto); err != nil {
 		return fmt.Errorf("failed to delete position. error: %w", err)
+	}
+	return nil
+}
+
+func (s *PositionService) DeleteSeveral(ctx context.Context, dto []*models.PositionDTO) error {
+	tmp := []*models.DeletePositionDTO{}
+	for i := range dto {
+		tmp = append(tmp, &models.DeletePositionDTO{Id: dto[i].Id})
+	}
+
+	if err := s.repo.DeleteSeveral(ctx, tmp); err != nil {
+		return fmt.Errorf("failed to delete positions. error: %w", err)
 	}
 	return nil
 }

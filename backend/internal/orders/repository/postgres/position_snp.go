@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
@@ -25,6 +26,7 @@ func NewPositionSnpRepo(db *sqlx.DB) *PositionSnpRepo {
 type PositionSnp interface {
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
+	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionSnpDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionSnpDTO) error
 	Update(ctx context.Context, dto *models.PositionSnpDTO) error
@@ -294,6 +296,36 @@ func (r *PositionSnpRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 
 	_, err := r.db.ExecContext(ctx, query, id, dto.NewId, dto.Id)
 	if err != nil {
+		return fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return nil
+}
+
+func (r *PositionSnpRepo) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
+	values := []string{}
+	args := []interface{}{}
+	for i, v := range dto {
+		tmp := []interface{}{uuid.New(), v.NewId, v.Id}
+		args = append(args, tmp...)
+		numbers := []string{}
+		for j := range tmp {
+			numbers = append(numbers, fmt.Sprintf("$%d", i*len(tmp)+j+1))
+		}
+		values = append(values, fmt.Sprintf("(%s)", strings.Join(numbers, ",")))
+	}
+
+	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another,
+		filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing)
+		SELECT id::uuid, position_id::uuid, snp_standard_id::uuid, snp_type_id::uuid, flange_type_id::uuid, size_id::uuid, pn_index::integer,
+			h_index::integer, another, filler_id::uuid, frame_id::uuid, inner_ring_id::uuid, outer_ring_id::uuid, jumper, jumper_width,
+			has_hole, mounting, drawing FROM (VALUES %s) AS s(id, position_id, orig_id)
+		LEFT JOIN LATERAL (SELECT snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another,
+			filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing FROM %s
+			WHERE position_id=s.orig_id::uuid) AS m ON true`,
+		PositionSnpTable, strings.Join(values, ","), PositionSnpTable,
+	)
+
+	if _, err := r.db.ExecContext(ctx, query, args...); err != nil {
 		return fmt.Errorf("failed to execute query. error: %w", err)
 	}
 	return nil

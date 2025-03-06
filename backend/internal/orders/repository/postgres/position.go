@@ -5,11 +5,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 )
 
 type PositionRepo struct {
@@ -25,10 +27,12 @@ type Position interface {
 	GetById(ctx context.Context, id string) (*models.Position, error)
 	GetIdByTitle(ctx context.Context, req *models.GetPositionByTitle) (string, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
+	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionDTO) error
 	Update(ctx context.Context, dto *models.PositionDTO) error
 	Delete(ctx context.Context, dto *models.DeletePositionDTO) error
+	DeleteSeveral(ctx context.Context, dto []*models.DeletePositionDTO) error
 }
 
 func (r *PositionRepo) Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error) {
@@ -86,6 +90,32 @@ func (r *PositionRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO) er
 	return nil
 }
 
+func (r *PositionRepo) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
+	values := []string{}
+	args := []interface{}{}
+	for i, v := range dto {
+		tmp := []interface{}{uuid.New(), v.OrderId, v.Count, v.Id}
+		args = append(args, tmp...)
+		numbers := []string{}
+		for j := range tmp {
+			numbers = append(numbers, fmt.Sprintf("$%d", i*len(tmp)+j+1))
+		}
+		values = append(values, fmt.Sprintf("(%s)", strings.Join(numbers, ",")))
+	}
+
+	query := fmt.Sprintf(`INSERT INTO "%s"(id, order_id, title, amount, type, info, count)
+		SELECT id::uuid, order_id::uuid, title, amount, type, info, count::integer FROM (VALUES %s) AS t(id, order_id, count, orig_id)
+		LEFT JOIN LATERAL (SELECT title, amount, type, info FROM %s WHERE id=orig_id) AS p ON true`,
+		PositionTable, strings.Join(values, ","), PositionTable,
+	)
+
+	_, err := r.db.ExecContext(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return nil
+}
+
 func (r *PositionRepo) Create(ctx context.Context, dto *models.PositionDTO) error {
 	query := fmt.Sprintf(`INSERT INTO %s (id, order_id, title, amount, type, count, info) VALUES ($1, $2, $3, $4, $5, $6, $7)`, PositionTable)
 	dto.Id = uuid.NewString()
@@ -127,6 +157,21 @@ func (r *PositionRepo) Delete(ctx context.Context, dto *models.DeletePositionDTO
 	query := fmt.Sprintf(`DELETE FROM %s WHERE id=$1`, PositionTable)
 
 	_, err := r.db.ExecContext(ctx, query, dto.Id)
+	if err != nil {
+		return fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return nil
+}
+
+func (r *PositionRepo) DeleteSeveral(ctx context.Context, dto []*models.DeletePositionDTO) error {
+	query := fmt.Sprintf(`DELETE FROM %s WHERE id=ANY($1)`, PositionTable)
+
+	params := pq.StringArray{}
+	for i := range dto {
+		params = append(params, dto[i].Id)
+	}
+
+	_, err := r.db.ExecContext(ctx, query, params)
 	if err != nil {
 		return fmt.Errorf("failed to execute query. error: %w", err)
 	}

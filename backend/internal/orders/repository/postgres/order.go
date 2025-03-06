@@ -60,9 +60,9 @@ func (r *OrderRepo) GetById(ctx context.Context, req *models.GetOrderDTO) (*mode
 }
 
 func (r *OrderRepo) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error) {
-	query := fmt.Sprintf(`SELECT "%s".id, date, "%s".info, count_position, number, %s.id as position_id, title, amount, %s.count as position_count
-		FROM "%s" INNER JOIN %s on order_id="%s".id WHERE user_id=$1 AND date != '' ORDER BY number DESC, position_count`,
-		OrderTable, OrderTable, PositionTable, PositionTable, OrderTable, PositionTable, OrderTable,
+	query := fmt.Sprintf(`SELECT o.id, date, o.info, count_position, number, p.id as position_id, title, amount, p.count as position_count, type
+		FROM "%s" AS o INNER JOIN %s AS p on order_id=o.id WHERE user_id=$1 AND date != '' ORDER BY number DESC, position_count`,
+		OrderTable, PositionTable,
 	)
 	tmp := []*pq_models.OrderWithPosition{}
 	data := []*models.Order{}
@@ -73,10 +73,12 @@ func (r *OrderRepo) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*mo
 
 	for i, o := range tmp {
 		position := &models.Position{
-			Id:     o.PositionId,
-			Count:  o.PositionCount,
-			Title:  o.Title,
-			Amount: o.Amount,
+			Id:      o.PositionId,
+			OrderId: o.Id,
+			Count:   o.PositionCount,
+			Title:   o.Title,
+			Amount:  o.Amount,
+			Type:    o.Type,
 		}
 
 		if i > 0 && o.Id == data[len(data)-1].Id {

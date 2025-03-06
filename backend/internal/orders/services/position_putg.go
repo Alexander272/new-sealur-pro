@@ -19,6 +19,7 @@ func NewPositionPutgService(repo repository.PositionPutg) *PositionPutgService {
 type PositionPutg interface {
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
+	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
 	Update(ctx context.Context, dto *models.PositionDTO) error
 }
@@ -35,6 +36,14 @@ func (s *PositionPutgService) Copy(ctx context.Context, dto *models.CopyPosition
 	//TODO надо еще что-то сделать с чертежами
 	if err := s.repo.Copy(ctx, dto); err != nil {
 		return fmt.Errorf("failed to copy position putg. error: %w", err)
+	}
+	return nil
+}
+
+func (s *PositionPutgService) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
+	//TODO надо еще что-то сделать с чертежами
+	if err := s.repo.CopySeveral(ctx, dto); err != nil {
+		return fmt.Errorf("failed to copy several positions putg. error: %w", err)
 	}
 	return nil
 }

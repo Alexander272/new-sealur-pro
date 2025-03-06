@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
@@ -29,6 +30,7 @@ type PositionPutg interface {
 	CreateSeveral(ctx context.Context, dto []*models.PositionPutgDTO) error
 	Update(ctx context.Context, dto *models.PositionPutgDTO) error
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
+	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 }
 
 func (r *PositionPutgRepo) GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error) {
@@ -298,6 +300,39 @@ func (r *PositionPutgRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO
 
 	_, err := r.db.ExecContext(ctx, query, id, dto.NewId, dto.Id)
 	if err != nil {
+		return fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return nil
+}
+
+func (r *PositionPutgRepo) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
+	values := []string{}
+	args := []interface{}{}
+	for i, v := range dto {
+		tmp := []interface{}{uuid.New(), v.NewId, v.Id}
+		args = append(args, tmp...)
+		numbers := []string{}
+		for j := range tmp {
+			numbers = append(numbers, fmt.Sprintf("$%d", i*len(tmp)+j+1))
+		}
+		values = append(values, fmt.Sprintf("(%s)", strings.Join(numbers, ",")))
+	}
+
+	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
+		d4, d3, d2, d1, h, has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
+		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing)
+		SELECT id::uuid, position_id::uuid, putg_standard_id::uuid, flange_type_id::uuid, configuration_id::uuid, size_id::uuid, 
+			pn_index::integer, d4, d3, d2, d1, h, has_rounding, filler_id::uuid, type_id::uuid, construction_id::uuid, 
+			rotary_plug_id::uuid, inner_ring_id::uuid, outer_ring_id::uuid, jumper, jumper_width, mounting, has_hole, 
+			has_coating, has_removable, drawing FROM (VALUES %s) AS s(id, position_id, orig_id)
+		LEFT JOIN LATERAL (SELECT putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
+			d4, d3, d2, d1, h, has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, 
+			outer_ring_id, jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing FROM %s
+			WHERE position_id=s.orig_id::uuid) AS m ON true`,
+		PositionPutgTable, strings.Join(values, ","), PositionPutgTable,
+	)
+
+	if _, err := r.db.ExecContext(ctx, query, args...); err != nil {
 		return fmt.Errorf("failed to execute query. error: %w", err)
 	}
 	return nil
