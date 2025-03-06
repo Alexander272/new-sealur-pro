@@ -98,7 +98,7 @@ export const Card = () => {
 								<CloseIcon />
 							</IconButton>
 						</Stack>
-						<Divider />
+						<Divider sx={{ width: '94%', mx: 'auto' }} />
 
 						{isError ? (
 							<Typography mt={2} px={2} variant='h6' color={'error'}>

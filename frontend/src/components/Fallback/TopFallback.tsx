@@ -8,6 +8,8 @@ export const TopFallback = () => {
 			width={'100%'}
 			height={'100%'}
 			zIndex={15}
+			top={0}
+			left={0}
 			display={'flex'}
 			alignItems={'center'}
 			justifyContent={'center'}

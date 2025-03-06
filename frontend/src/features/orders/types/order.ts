@@ -1,4 +1,4 @@
-import { Position } from '@/features/card/types/card'
+import { ICopyPosition, Position } from '@/features/card/types/card'
 
 export interface IOrderResponse {
 	data: {
@@ -10,16 +10,27 @@ export interface IOrderResponse {
 }
 
 export interface ICopyOrder {
-	targetId: string
-	fromId: string
-	count: number
+	// targetId: string
+	// fromId: string
+	// count: number
+	id: string
+	positions: ICopyPosition[]
 }
 
 export interface IFullOrder {
 	id: string
-	manager: string
-	clients: IClient[]
+	number?: number
+	date?: string
+	countPosition?: number
+	positions: Position[]
+	info?: string
 }
+
+// export interface IFullOrder {
+// 	id: string
+// 	manager: string
+// 	clients: IClient[]
+// }
 
 export interface IClient {
 	id: string

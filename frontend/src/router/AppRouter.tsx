@@ -12,6 +12,7 @@ import { NotFound } from '@/pages/notFound/NotFoundLazy'
 import { Gaskets } from '@/pages/gaskets/GasketsLazy'
 import { Snp } from '@/pages/gaskets/snp/SnpLazy'
 import { Putg } from '@/pages/gaskets/putg/PutgLazy'
+import { Orders } from '@/pages/orders/orders/OrdersLazy'
 import { Main } from '@/components/Layout/Main/MainLazy'
 import { Base } from '@/components/Layout/Base/Base'
 import { Fallback } from '@/components/Fallback/Fallback'
@@ -64,7 +65,7 @@ export const AppRouter = () => {
 							<Route path={PathRoutes.Rings.Kit} element={<RingsKit />} />
 						</Route> */}
 
-						{/* <Route path={PathRoutes.Orders} element={<Orders />} /> */}
+						<Route path={PathRoutes.Orders} element={<Orders />} />
 					</Route>
 
 					{/*<Route

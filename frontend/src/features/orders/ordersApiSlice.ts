@@ -22,7 +22,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 		}),
 		// получение всех прошлых заявок
 		getAllOrders: builder.query<{ data: IFullOrder[] }, null>({
-			query: () => API.orders.all,
+			query: () => API.orders.base,
 			providesTags: [{ type: 'Orders', id: 'all' }],
 			onQueryStarted: async (_arg, api) => {
 				try {
@@ -56,7 +56,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 		// перенос всех позиций из прошлой заявки в текущую
 		copyOrder: builder.mutation<string, ICopyOrder>({
 			query: order => ({
-				url: API.orders.copy,
+				url: `${API.orders.copy}/${order.id}`,
 				method: 'POST',
 				body: order,
 			}),
@@ -64,17 +64,17 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 		}),
 
 		// получение последних заявок
-		getLastOrders: builder.query<{ data: { orders: IFullOrder[] } }, null>({
-			query: () => API.orders.last,
-			onQueryStarted: async (_arg, api) => {
-				try {
-					await api.queryFulfilled
-				} catch (error) {
-					const fetchError = (error as IBaseFetchError).error
-					toast.error(fetchError.data.message, { autoClose: false })
-				}
-			},
-		}),
+		// getLastOrders: builder.query<{ data: { orders: IFullOrder[] } }, null>({
+		// 	query: () => API.orders.last,
+		// 	onQueryStarted: async (_arg, api) => {
+		// 		try {
+		// 			await api.queryFulfilled
+		// 		} catch (error) {
+		// 			const fetchError = (error as IBaseFetchError).error
+		// 			toast.error(fetchError.data.message, { autoClose: false })
+		// 		}
+		// 	},
+		// }),
 
 		// получение заявки по номеру
 		getOrderByNumber: builder.query<{ data: IFullOrder }, string>({
@@ -139,7 +139,7 @@ export const {
 	useGetAllOrdersQuery,
 	useSaveInfoMutation,
 	useCopyOrderMutation,
-	useGetLastOrdersQuery,
+	// useGetLastOrdersQuery,
 	useGetOrderByNumberQuery,
 	useGetOrdersCountQuery,
 } = ordersApiSlice
