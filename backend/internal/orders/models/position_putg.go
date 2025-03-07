@@ -79,14 +79,15 @@ type PositionPutgDTO_Main struct {
 }
 
 type PositionPutgDTO_Size struct {
-	SizeId      string `json:"sizeId"`
-	PnIndex     int    `json:"pnIndex"`
-	D4          string `json:"d4"`
-	D3          string `json:"d3"`
-	D2          string `json:"d2"`
-	D1          string `json:"d1"`
-	H           string `json:"h"`
-	HasRounding bool   `json:"hasRounding"`
+	SizeId        string `json:"sizeId"`
+	PnIndex       int    `json:"pnIndex"`
+	D4            string `json:"d4"`
+	D3            string `json:"d3"`
+	D2            string `json:"d2"`
+	D1            string `json:"d1"`
+	H             string `json:"h"`
+	HasRounding   bool   `json:"hasRounding"`
+	UseDimensions bool   `json:"useDimensions"`
 }
 
 type PositionPutgDTO_Material struct {

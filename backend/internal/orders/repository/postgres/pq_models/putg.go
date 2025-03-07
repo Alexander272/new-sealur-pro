@@ -17,6 +17,7 @@ type PositionPutg struct {
 	D2              string `db:"d2"`
 	D1              string `db:"d1"`
 	H               string `db:"h"`
+	UseDimensions   bool   `db:"use_dimensions"`
 	HasRounding     bool   `db:"has_rounding"`
 	FillerId        string `db:"filler_id"`
 	TypeId          string `db:"type_id"`
@@ -46,6 +47,7 @@ type PositionPutgDTO struct {
 	D2              string `db:"d2"`
 	D1              string `db:"d1"`
 	H               string `db:"h"`
+	UseDimensions   bool   `db:"use_dimensions"`
 	HasRounding     bool   `db:"has_rounding"`
 	FillerId        string `db:"filler_id"`
 	TypeId          string `db:"type_id"`

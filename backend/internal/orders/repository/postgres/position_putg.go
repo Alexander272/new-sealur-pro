@@ -37,7 +37,7 @@ func (r *PositionPutgRepo) GetByPosition(ctx context.Context, positionId string)
 	query := fmt.Sprintf(`SELECT id, position_id, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, h,
 		COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, 
 		COALESCE(dn, '') AS dn, COALESCE(dn_mm, '') AS dn_mm, COALESCE(pn_mpa[pn_index+1], '') AS pn_mpa, COALESCE(pn_kg[pn_index+1], '') AS pn_kg,
-		has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
+		has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
 		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing
 		FROM %s AS ps
 		LEFT JOIN LATERAL (SELECT dn, dn_mm, pn_mpa, pn_kg, d4, d3, d2, d1 FROM %s WHERE id=ps.size_id) AS s ON true 
@@ -61,17 +61,18 @@ func (r *PositionPutgRepo) GetByPosition(ctx context.Context, positionId string)
 			Configuration: &putg_models.Configuration{Id: tmp.ConfigurationId},
 		},
 		Size: &models.PositionPutg_Size{
-			Id:          tmp.SizeId,
-			PnIndex:     tmp.PnIndex,
-			Dn:          tmp.Dn,
-			DnMm:        tmp.DnMm,
-			Pn:          &putg_models.Pn{Mpa: tmp.PnMpa, Kg: tmp.PnKg},
-			D4:          tmp.D4,
-			D3:          tmp.D3,
-			D2:          tmp.D2,
-			D1:          tmp.D1,
-			H:           tmp.H,
-			HasRounding: tmp.HasRounding,
+			Id:            tmp.SizeId,
+			PnIndex:       tmp.PnIndex,
+			Dn:            tmp.Dn,
+			DnMm:          tmp.DnMm,
+			Pn:            &putg_models.Pn{Mpa: tmp.PnMpa, Kg: tmp.PnKg},
+			D4:            tmp.D4,
+			D3:            tmp.D3,
+			D2:            tmp.D2,
+			D1:            tmp.D1,
+			H:             tmp.H,
+			UseDimensions: tmp.UseDimensions,
+			HasRounding:   tmp.HasRounding,
 		},
 		Material: &models.PositionPutg_Material{
 			Filler:       &putg_models.Filler{Id: tmp.FillerId},
@@ -103,10 +104,10 @@ func (r *PositionPutgRepo) GetByPosition(ctx context.Context, positionId string)
 
 func (r *PositionPutgRepo) Create(ctx context.Context, dto *models.PositionPutgDTO) error {
 	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
-		d4, d3, d2, d1, h, has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
+		d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
 		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing) 
 		VALUES(:id, :position_id, :putg_standard_id, :flange_type_id, :configuration_id, :size_id, :pn_index, 
-		:d4, :d3, :d2, :d1, :h, :has_rounding, :filler_id, :type_id, :construction_id, :rotary_plug_id, :inner_ring_id, :outer_ring_id,
+		:d4, :d3, :d2, :d1, :h, :has_rounding, :use_dimensions, :filler_id, :type_id, :construction_id, :rotary_plug_id, :inner_ring_id, :outer_ring_id,
 		:jumper, :jumper_width, :mounting, :has_hole, :has_coating, :has_removable, :drawing)`,
 		PositionPutgTable,
 	)
@@ -140,6 +141,7 @@ func (r *PositionPutgRepo) Create(ctx context.Context, dto *models.PositionPutgD
 		D1:              dto.Size.D1,
 		H:               dto.Size.H,
 		HasRounding:     dto.Size.HasRounding,
+		UseDimensions:   dto.Size.UseDimensions,
 		FillerId:        dto.Material.FillerId,
 		TypeId:          dto.Material.TypeId,
 		ConstructionId:  dto.Material.ConstructionId,
@@ -165,11 +167,11 @@ func (r *PositionPutgRepo) Create(ctx context.Context, dto *models.PositionPutgD
 
 func (r *PositionPutgRepo) CreateSeveral(ctx context.Context, dto []*models.PositionPutgDTO) error {
 	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
-		d4, d3, d2, d1, h, has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
+		d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
 		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing) 
 		VALUES(:id, :position_id, :putg_standard_id, :flange_type_id, :configuration_id, :size_id, :pn_index, 
-		:d4, :d3, :d2, :d1, :h, :has_rounding, :filler_id, :type_id, :construction_id, :rotary_plug_id, :inner_ring_id, :outer_ring_id,
-		:jumper, :jumper_width, :mounting, :has_hole, :has_coating, :has_removable, :drawing)`,
+		:d4, :d3, :d2, :d1, :h, :has_rounding, :use_dimensions, :filler_id, :type_id, :construction_id, :rotary_plug_id, :inner_ring_id,
+		:outer_ring_id, :jumper, :jumper_width, :mounting, :has_hole, :has_coating, :has_removable, :drawing)`,
 		PositionPutgTable,
 	)
 	data := []*pq_models.PositionPutgDTO{}
@@ -204,6 +206,7 @@ func (r *PositionPutgRepo) CreateSeveral(ctx context.Context, dto []*models.Posi
 			D1:              d.Size.D1,
 			H:               d.Size.H,
 			HasRounding:     d.Size.HasRounding,
+			UseDimensions:   d.Size.UseDimensions,
 			FillerId:        d.Material.FillerId,
 			TypeId:          d.Material.TypeId,
 			ConstructionId:  d.Material.ConstructionId,
@@ -229,7 +232,7 @@ func (r *PositionPutgRepo) CreateSeveral(ctx context.Context, dto []*models.Posi
 
 func (r *PositionPutgRepo) Update(ctx context.Context, dto *models.PositionPutgDTO) error {
 	query := fmt.Sprintf(`UPDATE %s SET putg_standard_id=:putg_standard_id, flange_type_id=:flange_type_id, configuration_id=:configuration_id, 
-		size_id=:size_id, pn_index=:pn_index, d4=:d4, d3=:d3, d2=:d2, d1=:d1, h=:h, has_rounding=:has_rounding, 
+		size_id=:size_id, pn_index=:pn_index, d4=:d4, d3=:d3, d2=:d2, d1=:d1, h=:h, has_rounding=:has_rounding, use_dimensions=:use_dimensions,
 		filler_id=:filler_id, type_id=:type_id, construction_id=:construction_id, rotary_plug_id=:rotary_plug_id, 
 		inner_ring_id=:inner_ring_id, outer_ring_id=:outer_ring_id, jumper=:jumper, jumper_width=:jumper_width, 
 		mounting=:mounting, has_hole=:has_hole, has_coating=:has_coating, has_removable=:has_removable, drawing=:drawing 
@@ -265,6 +268,7 @@ func (r *PositionPutgRepo) Update(ctx context.Context, dto *models.PositionPutgD
 		D1:              dto.Size.D1,
 		H:               dto.Size.H,
 		HasRounding:     dto.Size.HasRounding,
+		UseDimensions:   dto.Size.UseDimensions,
 		FillerId:        dto.Material.FillerId,
 		TypeId:          dto.Material.TypeId,
 		ConstructionId:  dto.Material.ConstructionId,
@@ -289,10 +293,10 @@ func (r *PositionPutgRepo) Update(ctx context.Context, dto *models.PositionPutgD
 
 func (r *PositionPutgRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {
 	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
-		d4, d3, d2, d1, h, has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
+		d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
 		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing)
 		SELECT $1, $2, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
-		d4, d3, d2, d1, h, has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
+		d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
 		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing FROM %s WHERE position_id=$3`,
 		PositionPutgTable, PositionPutgTable,
 	)
@@ -319,10 +323,10 @@ func (r *PositionPutgRepo) CopySeveral(ctx context.Context, dto []*models.CopyPo
 	}
 
 	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
-		d4, d3, d2, d1, h, has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
+		d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
 		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing)
 		SELECT id::uuid, position_id::uuid, putg_standard_id::uuid, flange_type_id::uuid, configuration_id::uuid, size_id::uuid, 
-			pn_index::integer, d4, d3, d2, d1, h, has_rounding, filler_id::uuid, type_id::uuid, construction_id::uuid, 
+			pn_index::integer, d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id::uuid, type_id::uuid, construction_id::uuid, 
 			rotary_plug_id::uuid, inner_ring_id::uuid, outer_ring_id::uuid, jumper, jumper_width, mounting, has_hole, 
 			has_coating, has_removable, drawing FROM (VALUES %s) AS s(id, position_id, orig_id)
 		LEFT JOIN LATERAL (SELECT putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 

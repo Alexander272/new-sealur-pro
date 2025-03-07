@@ -116,6 +116,6 @@ func (h *Handler) copy(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Info("Заказ скопирован", logger.AnyAttr("dto", dto))
+	logger.Info("Заказ скопирован", logger.StringAttr("id", c.Param("id")), logger.AnyAttr("dto", dto))
 	c.JSON(http.StatusOK, response.IdResponse{Message: "Заказ скопирован"})
 }
