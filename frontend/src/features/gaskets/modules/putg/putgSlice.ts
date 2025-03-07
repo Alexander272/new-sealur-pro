@@ -143,7 +143,7 @@ export const putgSlice = createSlice({
 			// state.size.d3 = ''
 			// state.size.d2 = ''
 			// state.size.d1 = ''
-			state.size.useDimensions = false
+			state.size.useDimensions = (action.payload.code != 'round' && state.size.useDimensions) || false
 			state.sizeError.emptyD1 = false
 			state.sizeError.emptyD2 = false
 			state.sizeError.emptyD3 = false

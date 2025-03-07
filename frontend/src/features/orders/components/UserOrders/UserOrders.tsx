@@ -8,7 +8,7 @@ import { Row } from './Row'
 export const UserOrders = () => {
 	const { data, isFetching } = useGetAllOrdersQuery(null)
 
-	if (!data)
+	if (!data || data.data.length === 0)
 		return (
 			<Box
 				position={'relative'}

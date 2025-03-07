@@ -1,19 +1,19 @@
 import { Skeleton, Typography } from '@mui/material'
 
-import { Column, Image, ImageContainer, SizeContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
 import { useAppSelector } from '@/hooks/redux'
-import { getConfiguration, getConstruction, getStandard, getType } from '../../putgSlice'
+import { Column, Image, ImageContainer, SizeContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { SizeSkeleton } from '@/features/gaskets/components/Skeletons/SizeSkeleton'
 import { StandardImage } from './Image/StandardImage'
 import { SizesBlock } from './SizeBlock/SizesBlock'
 import { NotStandardImage } from './Image/NotStandardImage'
 import { AnotherSizeBlock } from './SizeBlock/AnotherSizeBlock'
+import { getConfiguration, getConstruction, getStandard, getType } from '../../putgSlice'
+import { Configuration } from './Configuration/Configuration'
 import { Standard } from './Standard/Standard'
 import { Another } from './Another/Another'
 
 import ovalImage from '@/assets/putg/ov.webp'
 import rectangularImage from '@/assets/putg/pr.webp'
-import { Configuration } from './Configuration/Configuration'
-import { SizeSkeleton } from '@/features/gaskets/components/Skeletons/SizeSkeleton'
 
 const images = {
 	oval: ovalImage,
@@ -30,7 +30,7 @@ export const Size = () => {
 		<SizeContainer>
 			{configuration ? (
 				<Column width={40}>
-					{standard?.flangeStandard?.code ? (
+					{!standard?.flangeStandard || standard?.flangeStandard?.code ? (
 						<Standard />
 					) : configuration?.code === 'round' ? (
 						<Another />

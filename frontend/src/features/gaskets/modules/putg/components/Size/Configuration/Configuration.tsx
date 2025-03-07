@@ -1,19 +1,28 @@
-import { useAppSelector } from '@/hooks/redux'
-import { getConfiguration, getSizeErr, getUseDimensions } from '../../../putgSlice'
-import { Dimensions } from './Dimensions'
+import { useEffect } from 'react'
+
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { getConfiguration, getSizeErr, getUseDimensions, setSizePn } from '../../../putgSlice'
 import { Field } from '../Another/Field'
 import { Thickness } from '../Thickness/Thickness'
+import { Dimensions } from './Dimensions'
 import { Round } from './Round'
 
 export const Configuration = () => {
 	const configuration = useAppSelector(getConfiguration)
 	const useDimensions = useAppSelector(getUseDimensions)
 	const errors = useAppSelector(getSizeErr)
+	const dispatch = useAppDispatch()
+
+	useEffect(() => {
+		dispatch(setSizePn({ pn: { mpa: '', kg: '' }, pnIndex: -1 }))
+	}, [dispatch])
 
 	let A1Err = (errors.d3Err && 'A1 должен быть больше, чем B1') || (errors.emptyD3 && 'размер не задан')
 	if (useDimensions) {
 		A1Err = (errors.d4Err && 'A1 должен быть больше, чем A2 и B1') || (errors.emptyD4 && 'размер не задан')
 	}
+
+	//TODO надо сбрасывать sizeId
 
 	return (
 		<>

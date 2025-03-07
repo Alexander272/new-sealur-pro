@@ -1,11 +1,18 @@
-import { useAppSelector } from '@/hooks/redux'
-import { getConstruction, getSizeErr } from '../../../putgSlice'
+import { useEffect } from 'react'
+
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { getConstruction, getSizeErr, setSizePn } from '../../../putgSlice'
 import { Thickness } from '../Thickness/Thickness'
 import { Field } from './Field'
 
 export const Another = () => {
 	const construction = useAppSelector(getConstruction)
 	const errors = useAppSelector(getSizeErr)
+	const dispatch = useAppDispatch()
+
+	useEffect(() => {
+		dispatch(setSizePn({ pn: { mpa: '', kg: '' }, pnIndex: -1 }))
+	}, [dispatch])
 
 	return (
 		<>
