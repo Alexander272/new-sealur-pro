@@ -16,6 +16,7 @@ type (
 		Redis       RedisConfig
 		Auth        AuthConfig
 		Keycloak    KeycloakConfig
+		MinIO       MinIOConfig
 		Http        HttpConfig
 		Limiter     LimiterConfig
 		// ErrorBot    ErrorBotConfig
@@ -63,6 +64,16 @@ type (
 		Realm        string `yaml:"keycloak_realm" env:"KEYCLOAK_REALM"`
 		Root         string `env:"KEYCLOAK_ROOT"`
 		RootPass     string `env:"KEYCLOAK_ROOT_PASS"`
+	}
+
+	MinIOConfig struct {
+		Endpoint           string   `yaml:"endpoint" env:"MINIO_ENDPOINT"`
+		AccessKey          string   `yaml:"accessKey" env:"MINIO_ACCESS_KEY"`
+		SecretKey          string   `yaml:"secretKey" env:"MINIO_SECRET_KEY"`
+		UseSSL             bool     `yaml:"useSSL"`
+		Bucket             string   `yaml:"bucket" env:"MINIO_BUCKET"`
+		DisabledFileTypes  []string `yaml:"disabledFileTypes"`
+		DisabledExtensions []string `yaml:"disabledExtensions"`
 	}
 
 	LimiterConfig struct {
