@@ -10,6 +10,7 @@ export const API = Object.freeze({
 		confirm: 'users/confirm' as const,
 		recovery: 'users/recovery' as const,
 	},
+	files: 'files' as const,
 	feedback: 'connect/feedback' as const,
 	analytics: {
 		base: 'analytics' as const,

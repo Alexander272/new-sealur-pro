@@ -100,8 +100,9 @@ export const Buttons = () => {
 				dispatch(clearActive())
 			} else {
 				await create(position).unwrap()
+				//TODO после сохранения позиции с чертежом появляется надпись о необходимости загрузить чертеж, что не правильно
 			}
-			dispatch(setDesignDrawing(null))
+			dispatch(setDesignDrawing())
 			toast.success(active?.index ? 'Позиция успешно обновлена' : 'Позиция успешно добавлена')
 		} catch (error) {
 			const fetchError = error as IFetchError
@@ -130,7 +131,7 @@ export const Buttons = () => {
 			<Button
 				disabled={!amount || hasSizeError || hasDesignError || role != 'user' || isLoading || isLoadingUpdate}
 				onClick={savePosition}
-				variant='contained'
+				variant='outlined'
 				sx={{ maxWidth: 240, padding: '6px 20px' }}
 			>
 				{isLoading || isLoadingUpdate ? <CircularProgress size={18} /> : null}

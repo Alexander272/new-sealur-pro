@@ -18,6 +18,8 @@ import type {
 	OpenMaterial,
 	TypeMaterial,
 } from './types/snp'
+import { localKeys } from '@/constants/localKeys'
+import { setActive } from '@/features/card/cardSlice'
 
 export interface ISNPState {
 	// fillers: IFiller[]
@@ -290,14 +292,11 @@ export const snpSlice = createSlice({
 			if (action.payload.code != undefined) state.design.mounting.code = action.payload.code
 		},
 		// установка чертежа
-		setDesignDrawing: (state, action: PayloadAction<IDrawing | null>) => {
-			if (action.payload) {
-				state.drawing = action.payload
-				state.design.drawing = action.payload.link
-			} else {
-				state.drawing = undefined
-				state.design.drawing = undefined
-			}
+		setDesignDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {
+			state.drawing = action.payload
+			state.design.drawing = action.payload?.link
+			localStorage.setItem(localKeys.snpDrawing, JSON.stringify(action.payload || ''))
+
 			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
 			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
 			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
@@ -331,13 +330,14 @@ export const snpSlice = createSlice({
 			state.design.drawing = action.payload.data.design.drawing
 
 			if (action.payload.data.design.drawing) {
-				const parts = action.payload.data.design.drawing.split('/')
+				const params = new URLSearchParams(action.payload.data.design.drawing.split('?')[1])
+				const id = params.get('name')?.split('_')[0]
 				const drawing: IDrawing = {
-					id: parts[parts.length - 2],
-					name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
-					origName: parts[parts.length - 1],
+					id: id || '',
+					name: params.get('name') || '',
+					origName: params.get('orig') || '',
 					link: action.payload.data.design.drawing,
-					group: parts[parts.length - 3],
+					group: params.get('group') || '',
 				}
 				state.drawing = drawing
 			} else {
@@ -349,12 +349,21 @@ export const snpSlice = createSlice({
 		},
 		// сброс выбранной позиции
 		clearSnp: state => {
-			state.drawing = undefined
-			state.design.drawing = undefined
+			// state.drawing = undefined
+			// state.design.drawing = undefined
+			state.drawing = JSON.parse(localStorage.getItem(localKeys.snpDrawing) || 'null') || undefined
+			state.design.drawing = state.drawing?.origName
 		},
 		// сброс стейта
 		resetSnp: () => initialState,
 	},
+	extraReducers: builder =>
+		builder.addCase(setActive, (state, action) => {
+			if (!action.payload) {
+				state.drawing = JSON.parse(localStorage.getItem(localKeys.snpDrawing) || 'null') || undefined
+				state.design.drawing = state.drawing?.origName
+			}
+		}),
 })
 
 export const snpPath = snpSlice.name

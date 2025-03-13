@@ -53,7 +53,7 @@ export const cardSlice = createSlice({
 		},
 
 		// сброс состояния
-		resetState: () => initialState,
+		resetCard: () => initialState,
 	},
 })
 
@@ -66,4 +66,4 @@ export const getActive = (state: RootState) => state.card.active
 export const getOrderId = (state: RootState) => state.card.orderId
 export const getPositions = (state: RootState) => state.card.positions
 
-export const { toggle, setOrder, setInfo, setActive, clearActive, resetState } = cardSlice.actions
+export const { toggle, setOrder, setInfo, setActive, clearActive, resetCard } = cardSlice.actions

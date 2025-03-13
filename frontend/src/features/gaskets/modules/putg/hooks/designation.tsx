@@ -23,7 +23,7 @@ export const useDesignation = () => {
 		if (main.configuration?.code != 'round') designationDesign.push(form)
 		if (design.hasRemovable) designationDesign.push('разъемная')
 		if (design.hasHole || design.drawing) designationDesign.push('черт.')
-		const designStr = designationDesign.length ? ` (${designationDesign.join(', ')})` : ''
+		const designStr = designationDesign.length ? `(${designationDesign.join(', ')}) ` : ''
 
 		const jumper = design.jumper.hasJumper
 			? ` (${design.jumper.code}${design.jumper?.width ? `/${design.jumper.width}` : ''})`
@@ -43,7 +43,7 @@ export const useDesignation = () => {
 		const res = `Прокладка ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${construction?.code}`
 
 		if (main.configuration?.code != 'round') {
-			setValue(`${res}-${sizes}-${h}${coating}${jumper}${materialsStr} ${designStr} ТУ 5728-006-93978201-2008`)
+			setValue(`${res}-${sizes}-${h}${coating}${jumper}${materialsStr} ${designStr}ТУ 5728-006-93978201-2008`)
 			return
 		}
 
@@ -52,7 +52,7 @@ export const useDesignation = () => {
 			// == нестандартные фланцы
 			if (standard.flangeStandard.id == '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7') {
 				setValue(
-					`${res}-${sizes}-${h}${coating}${jumper}${materialsStr} ${designStr} ${standard?.standard.title}`
+					`${res}-${sizes}-${h}${coating}${jumper}${materialsStr} ${designStr}${standard?.standard.title}`
 				)
 				return
 			}

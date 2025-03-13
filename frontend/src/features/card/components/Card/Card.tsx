@@ -52,7 +52,11 @@ export const Card = () => {
 	}
 
 	return (
-		<Stack minWidth={{ xl: open ? 500 : 26, lg: 26 }} ml={2} sx={{ transition: 'all 0.3s ease-in-out' }}>
+		<Stack
+			minWidth={{ xl: open ? 500 : 26, lg: 26 }}
+			ml={{ xl: open ? 2 : '-32px', lg: 2 }}
+			sx={{ transition: 'all 0.3s ease-in-out' }}
+		>
 			<Stack
 				direction={'row'}
 				sx={{

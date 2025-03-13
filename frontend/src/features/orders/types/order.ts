@@ -65,4 +65,20 @@ export interface IOrderCount {
 	averagePosition: number
 	averageSnpPosition?: number
 	averagePutgPosition?: number
+
+	// orderCount: {
+	// 	main: number
+	// 	withSnp: number
+	// 	withPutg: number
+	// },
+	// positionCount: {
+	// 	main: number
+	// 	snp: number
+	// 	putg: number
+	// }
+	// average: {
+	// 	main: number
+	// 	snp: number
+	// 	putg: number
+	// }
 }

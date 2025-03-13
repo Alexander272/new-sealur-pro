@@ -96,7 +96,7 @@ export const Buttons = () => {
 				await create(position).unwrap()
 				// dispatch(addPosition(position))
 			}
-			dispatch(setDesignDrawing(null))
+			dispatch(setDesignDrawing())
 			toast.success(active?.index ? 'Позиция успешно обновлена' : 'Позиция успешно добавлена')
 		} catch (error) {
 			const fetchError = error as IFetchError

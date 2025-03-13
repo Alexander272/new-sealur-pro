@@ -4,6 +4,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/app/store'
 import type { IMaterial } from '@/features/gaskets/types/material'
 import type { IDrawing } from '@/features/gaskets/types/drawing'
+import type { ISizeBlock } from './types/size'
 import type {
 	IConstruction,
 	IDesignBlockPutg,
@@ -17,7 +18,8 @@ import type {
 	ISizeBlockPutg,
 	TypeMaterial,
 } from './types/putg'
-import { ISizeBlock } from './types/size'
+import { localKeys } from '@/constants/localKeys'
+import { setActive } from '@/features/card/cardSlice'
 
 export interface IPutgState {
 	main: IMainBlockPutg
@@ -121,7 +123,9 @@ const initialState: IPutgState = {
 		// 	hasMounting: false,
 		// 	code: '',
 		// },
+		drawing: JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null')?.origName,
 	},
+	drawing: JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null') || undefined,
 	// доп. информация к позиции
 	info: '',
 	// количество прокладок
@@ -286,16 +290,16 @@ export const putgSlice = createSlice({
 		// 	if (action.payload.code != undefined) state.design.mounting.code = action.payload.code
 		// },
 		// установка чертежа
-		setDesignDrawing: (state, action: PayloadAction<IDrawing | null>) => {
-			if (action.payload) {
-				state.drawing = action.payload
-				state.design.drawing = action.payload.link
-			} else {
-				state.drawing = undefined
-				state.design.drawing = undefined
-			}
+		setDesignDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {
+			state.drawing = action.payload
+			state.design.drawing = action.payload?.link
+			localStorage.setItem(localKeys.putgDrawing, JSON.stringify(action.payload || ''))
+
 			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
 			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
+			state.designError.emptyDrawingRemovable = !state.drawing && (state.design.hasRemovable || false)
+			state.designError.emptyDrawingRounding = !state.drawing && (state.size.hasRounding || false)
+			state.designError.emptyDrawingForm = !state.drawing && (state.main.configuration?.hasDrawing || false)
 			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 
@@ -533,15 +537,18 @@ export const putgSlice = createSlice({
 			state.design.drawing = action.payload.data.design.drawing
 
 			if (action.payload.data.design.drawing) {
-				const parts = action.payload.data.design.drawing.split('/')
+				const params = new URLSearchParams(action.payload.data.design.drawing.split('?')[1])
+				const id = params.get('name')?.split('_')[0]
 				const drawing: IDrawing = {
-					id: parts[parts.length - 2],
-					name: `${parts[parts.length - 2]}_${parts[parts.length - 1]}`,
-					origName: parts[parts.length - 1],
+					id: id || '',
+					name: params.get('name') || '',
+					origName: params.get('orig') || '',
 					link: action.payload.data.design.drawing,
-					group: parts[parts.length - 3],
+					group: params.get('group') || '',
 				}
 				state.drawing = drawing
+			} else {
+				state.drawing = undefined
 			}
 
 			state.amount = action.payload.amount
@@ -551,10 +558,19 @@ export const putgSlice = createSlice({
 		clearPutg: state => {
 			// state.cardIndex = undefined
 			// state.positionId = undefined
-			state.drawing = undefined
-			state.design.drawing = undefined
+			state.drawing = JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null') || undefined
+			state.design.drawing = state.drawing?.origName
 		},
+		// сброс стейта
+		resetPutg: () => initialState,
 	},
+	extraReducers: builder =>
+		builder.addCase(setActive, (state, action) => {
+			if (!action.payload) {
+				state.drawing = JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null') || undefined
+				state.design.drawing = state.drawing?.origName
+			}
+		}),
 })
 
 export const putgPath = putgSlice.name
@@ -618,4 +634,5 @@ export const {
 
 	setPutg,
 	clearPutg,
+	resetPutg,
 } = putgSlice.actions

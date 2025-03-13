@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify'
 
-import type { ICopyPosition, Position, PositionDTO } from './types/card'
+import type { ICopyPosition, Position, PositionDTO, PositionType } from './types/card'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 
@@ -40,9 +40,10 @@ export const cardApiSlice = apiSlice.injectEndpoints({
 		}),
 
 		// удаление позиции
-		deletePosition: builder.mutation<string, string>({
-			query: positionId => ({
-				url: `${API.positions.base}/${positionId}`,
+		deletePosition: builder.mutation<string, { id: string; type: PositionType }>({
+			query: dto => ({
+				url: `${API.positions.base}/${dto.id}`,
+				params: new URLSearchParams({ type: dto.type }),
 				method: 'DELETE',
 			}),
 			invalidatesTags: [{ type: 'Orders', id: 'current' }],
