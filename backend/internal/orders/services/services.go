@@ -1,6 +1,9 @@
 package services
 
-import "github.com/Alexander272/new-sealur-pro/internal/orders/repository"
+import (
+	files "github.com/Alexander272/new-sealur-pro/internal/files/services"
+	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
+)
 
 type Services struct {
 	PositionSnp
@@ -10,12 +13,13 @@ type Services struct {
 
 type Deps struct {
 	Repos *repository.Repository
+	Files *files.Services
 }
 
 func NewServices(deps *Deps) *Services {
-	snp := NewPositionSnpService(deps.Repos.PositionSnp)
-	putg := NewPositionPutgService(deps.Repos.PositionPutg)
-	position := NewPositionService(&PositionDeps{Repo: deps.Repos.Position, Snp: snp, Putg: putg})
+	snp := NewPositionSnpService(deps.Repos.PositionSnp, deps.Files.Files)
+	putg := NewPositionPutgService(deps.Repos.PositionPutg, deps.Files.Files)
+	position := NewPositionService(&PositionDeps{Repo: deps.Repos.Position, Snp: snp, Putg: putg, Files: deps.Files.Files})
 	order := NewOrderService(deps.Repos.Order, position)
 
 	return &Services{

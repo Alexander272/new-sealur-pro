@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"io"
 	"strings"
 	"unicode"
 
@@ -39,8 +40,8 @@ type FileDTO struct {
 	Size        int64  `json:"size"`
 	Group       string `json:"group"`
 	ContentType string `json:"contentType"`
-	Bytes       []byte `json:"file"`
-	// Reader      io.Reader
+	// Bytes       []byte `json:"file"`
+	Reader io.Reader
 }
 
 type CopyFileDTO struct {

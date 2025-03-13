@@ -4,29 +4,36 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
+	"strings"
 
+	file_models "github.com/Alexander272/new-sealur-pro/internal/files/models"
+	"github.com/Alexander272/new-sealur-pro/internal/files/services"
 	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
 )
 
 type PositionService struct {
-	repo repository.Position
-	snp  PositionSnp
-	putg PositionPutg
+	repo  repository.Position
+	snp   PositionSnp
+	putg  PositionPutg
+	files services.Files
 }
 
 type PositionDeps struct {
-	Repo repository.Position
-	Snp  PositionSnp
-	Putg PositionPutg
+	Repo  repository.Position
+	Snp   PositionSnp
+	Putg  PositionPutg
+	Files services.Files
 }
 
 func NewPositionService(deps *PositionDeps) *PositionService {
 	return &PositionService{
-		repo: deps.Repo,
-		snp:  deps.Snp,
-		putg: deps.Putg,
+		repo:  deps.Repo,
+		snp:   deps.Snp,
+		putg:  deps.Putg,
+		files: deps.Files,
 	}
 }
 
@@ -207,6 +214,13 @@ func (s *PositionService) CopySeveral(ctx context.Context, dto []*models.CopyPos
 		return err
 	}
 
+	group := &file_models.CopyGroupDTO{
+		Group:    dto[0].FromOrderId,
+		NewGroup: dto[0].OrderId,
+	}
+	if err := s.files.CopyGroup(ctx, group); err != nil {
+		return fmt.Errorf("failed to copy files. error: %w", err)
+	}
 	return nil
 }
 
@@ -262,6 +276,44 @@ func (s *PositionService) Update(ctx context.Context, dto *models.PositionDTO) e
 }
 
 func (s *PositionService) Delete(ctx context.Context, dto *models.DeletePositionDTO) error {
+	drawing := ""
+	if dto.Type == models.PositionTypeSnp {
+		data, err := s.snp.GetByPosition(ctx, dto.Id)
+		if err != nil {
+			return err
+		}
+		drawing = data.Design.Drawing
+	}
+	if dto.Type == models.PositionTypePutg {
+		data, err := s.putg.GetByPosition(ctx, dto.Id)
+		if err != nil {
+			return err
+		}
+		drawing = data.Design.Drawing
+	}
+
+	if drawing != "" {
+		u, err := url.Parse(drawing)
+		if err != nil {
+			return fmt.Errorf("failed to parse url. error: %w", err)
+		}
+
+		q, err := url.ParseQuery(u.RawQuery)
+		if err != nil {
+			return fmt.Errorf("failed to parse query. error: %w", err)
+		}
+
+		name := q.Get("name")
+		file := &file_models.DeleteFileDTO{
+			Group: q.Get("group"),
+			Name:  strings.Split(name, "_")[1],
+			Id:    strings.Split(name, "_")[0],
+		}
+		if err := s.files.Delete(ctx, file); err != nil {
+			return fmt.Errorf("failed to delete file. error: %w", err)
+		}
+	}
+
 	if err := s.repo.Delete(ctx, dto); err != nil {
 		return fmt.Errorf("failed to delete position. error: %w", err)
 	}

@@ -29,7 +29,7 @@ type PositionPutg interface {
 	Create(ctx context.Context, dto *models.PositionPutgDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionPutgDTO) error
 	Update(ctx context.Context, dto *models.PositionPutgDTO) error
-	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
+	Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error)
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 }
 
@@ -291,29 +291,40 @@ func (r *PositionPutgRepo) Update(ctx context.Context, dto *models.PositionPutgD
 	return nil
 }
 
-func (r *PositionPutgRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {
+func (r *PositionPutgRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error) {
 	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
 		d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
 		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing)
 		SELECT $1, $2, putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
 		d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, outer_ring_id, 
-		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing FROM %s WHERE position_id=$3`,
+		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, replace(drawing, $3, $4) FROM %s 
+		WHERE position_id=$5 RETURNING drawing`,
 		PositionPutgTable, PositionPutgTable,
 	)
 	id := uuid.New()
 
-	_, err := r.db.ExecContext(ctx, query, id, dto.NewId, dto.Id)
-	if err != nil {
-		return fmt.Errorf("failed to execute query. error: %w", err)
+	row := r.db.QueryRowContext(ctx, query, id, dto.NewId, dto.FromOrderId, dto.OrderId, dto.Id)
+	if row.Err() != nil {
+		return "", fmt.Errorf("failed to execute query. error: %w", row.Err())
 	}
-	return nil
+
+	var drawing string
+	if err := row.Scan(&drawing); err != nil {
+		return "", fmt.Errorf("failed to scan result. error: %w", err)
+	}
+
+	// _, err := r.db.ExecContext(ctx, query, id, dto.NewId, dto.Id)
+	// if err != nil {
+	// 	return fmt.Errorf("failed to execute query. error: %w", err)
+	// }
+	return drawing, nil
 }
 
 func (r *PositionPutgRepo) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
 	values := []string{}
 	args := []interface{}{}
 	for i, v := range dto {
-		tmp := []interface{}{uuid.New(), v.NewId, v.Id}
+		tmp := []interface{}{uuid.New(), v.NewId, v.Id, v.FromOrderId, v.OrderId}
 		args = append(args, tmp...)
 		numbers := []string{}
 		for j := range tmp {
@@ -328,11 +339,12 @@ func (r *PositionPutgRepo) CopySeveral(ctx context.Context, dto []*models.CopyPo
 		SELECT id::uuid, position_id::uuid, putg_standard_id::uuid, flange_type_id::uuid, configuration_id::uuid, size_id::uuid, 
 			pn_index::integer, d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id::uuid, type_id::uuid, construction_id::uuid, 
 			rotary_plug_id::uuid, inner_ring_id::uuid, outer_ring_id::uuid, jumper, jumper_width, mounting, has_hole, 
-			has_coating, has_removable, drawing FROM (VALUES %s) AS s(id, position_id, orig_id)
+			has_coating, has_removable, drawing FROM (VALUES %s) AS s(id, position_id, orig_id, from_order_id, order_id)
 		LEFT JOIN LATERAL (SELECT putg_standard_id, flange_type_id, configuration_id, size_id, pn_index, 
-			d4, d3, d2, d1, h, has_rounding, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, 
-			outer_ring_id, jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing FROM %s
-			WHERE position_id=s.orig_id::uuid) AS m ON true`,
+			d4, d3, d2, d1, h, has_rounding, use_dimensions, filler_id, type_id, construction_id, rotary_plug_id, inner_ring_id, 
+			outer_ring_id, jumper, jumper_width, mounting, has_hole, has_coating, has_removable, 
+			replace(drawing, s.from_order_id, s.order_id) AS drawing
+			FROM %s WHERE position_id=s.orig_id::uuid) AS m ON true`,
 		PositionPutgTable, strings.Join(values, ","), PositionPutgTable,
 	)
 

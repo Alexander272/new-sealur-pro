@@ -1,7 +1,6 @@
 package minio
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -102,12 +101,12 @@ func (r *FilesRepo) GetByGroup(ctx context.Context, req *models.GetFilesByGroupD
 func (r *FilesRepo) Create(ctx context.Context, dto *models.FileDTO) error {
 	dto.Id = uuid.NewString()
 	file := &storage.UploadFileDTO{
-		FileId:      dto.Id,
+		FileId:      fmt.Sprintf("%s/%s_%s", dto.Group, dto.Id, dto.Name),
 		FileName:    dto.Name,
 		ContentType: dto.ContentType,
 		BucketName:  dto.Bucket,
 		FileSize:    dto.Size,
-		Reader:      bytes.NewBuffer(dto.Bytes),
+		Reader:      dto.Reader,
 	}
 
 	if err := r.storage.UploadFile(ctx, file); err != nil {

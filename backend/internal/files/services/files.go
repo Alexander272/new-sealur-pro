@@ -9,11 +9,15 @@ import (
 )
 
 type FilesService struct {
-	repo repository.Files
+	repo   repository.Files
+	Bucket string
 }
 
-func NewFilesService(repo repository.Files) *FilesService {
-	return &FilesService{repo: repo}
+func NewFilesService(repo repository.Files, bucket string) *FilesService {
+	return &FilesService{
+		repo:   repo,
+		Bucket: bucket,
+	}
 }
 
 type Files interface {
@@ -27,7 +31,7 @@ type Files interface {
 }
 
 func (s *FilesService) Get(ctx context.Context, req *models.GetFileDTO) (*models.File, error) {
-	req.Name = fmt.Sprintf("%s/%s_%s", req.Group, req.Id, req.Name)
+	req.Name = fmt.Sprintf("%s/%s", req.Group, req.Name)
 	data, err := s.repo.Get(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get file. error: %w", err)
@@ -54,6 +58,9 @@ func (s *FilesService) Create(ctx context.Context, dto *models.FileDTO) error {
 }
 
 func (s *FilesService) Copy(ctx context.Context, dto *models.CopyFileDTO) error {
+	if dto.Bucket == "" {
+		dto.Bucket = s.Bucket
+	}
 	if err := s.repo.Copy(ctx, dto); err != nil {
 		return fmt.Errorf("failed to copy file. err: %w", err)
 	}
@@ -61,6 +68,9 @@ func (s *FilesService) Copy(ctx context.Context, dto *models.CopyFileDTO) error 
 }
 
 func (s *FilesService) CopyGroup(ctx context.Context, dto *models.CopyGroupDTO) error {
+	if dto.Bucket == "" {
+		dto.Bucket = s.Bucket
+	}
 	if err := s.repo.CopyGroup(ctx, dto); err != nil {
 		return fmt.Errorf("failed to copy group files. err: %w", err)
 	}
@@ -68,6 +78,9 @@ func (s *FilesService) CopyGroup(ctx context.Context, dto *models.CopyGroupDTO) 
 }
 
 func (s *FilesService) Delete(ctx context.Context, dto *models.DeleteFileDTO) error {
+	if dto.Bucket == "" {
+		dto.Bucket = s.Bucket
+	}
 	dto.Name = fmt.Sprintf("%s/%s_%s", dto.Group, dto.Id, dto.Name)
 	if err := s.repo.Delete(ctx, dto); err != nil {
 		return fmt.Errorf("failed to delete file. err: %w", err)

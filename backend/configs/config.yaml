@@ -39,26 +39,26 @@ redis:
     db: 0
 
 minio:
-    endpoint: pro.sealur.ru:9000
+    endpoint: pro.sealur.ru:9010
     useSSL: false
-    bucket: pro
-    disabledFileTypes: 
-        - "application/octet-stream"
-	    - "application/x-ms-dos-executable"
-	    - "magnus-internal/cgi"
-	    - "text/javascript"
-	    - "application/javascript"
-	    - "application/vnd.microsoft.portable-executable"
-	    - "application/jar"
-	    - "application/x-iso9660-image"
-	    - "application/x-sh"
+    bucket: test
+    disabledFileTypes:
+        - 'application/octet-stream'
+        - 'application/x-ms-dos-executable'
+        - 'magnus-internal/cgi'
+        - 'text/javascript'
+        - 'application/javascript'
+        - 'application/vnd.microsoft.portable-executable'
+        - 'application/jar'
+        - 'application/x-iso9660-image'
+        - 'application/x-sh'
     disabledExtensions:
-        - ".exe"
-        - ".bat"
-        - ".ini"
-        - ".msi"
-        - ".sys"
-        - ".reg"
+        - '.exe'
+        - '.bat'
+        - '.ini'
+        - '.msi'
+        - '.sys'
+        - '.reg'
 
 limiter:
     rps: 10

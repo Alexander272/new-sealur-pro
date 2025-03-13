@@ -7,11 +7,12 @@ type Services struct {
 }
 
 type Deps struct {
-	Repos *repository.Repository
+	Repos  *repository.Repository
+	Bucket string
 }
 
 func NewServices(deps *Deps) *Services {
-	files := NewFilesService(deps.Repos.Files)
+	files := NewFilesService(deps.Repos.Files, deps.Bucket)
 
 	return &Services{
 		Files: files,

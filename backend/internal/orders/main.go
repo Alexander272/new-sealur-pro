@@ -11,7 +11,7 @@ import (
 
 func NewOrdersModule(db *sqlx.DB, conf *config.Config, files *files.Services) *transport.Handler {
 	repo := repository.NewRepository(db)
-	services := services.NewServices(&services.Deps{Repos: repo})
+	services := services.NewServices(&services.Deps{Repos: repo, Files: files})
 	handler := transport.NewHandler(services)
 
 	return handler

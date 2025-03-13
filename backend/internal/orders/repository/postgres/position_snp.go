@@ -25,7 +25,7 @@ func NewPositionSnpRepo(db *sqlx.DB) *PositionSnpRepo {
 
 type PositionSnp interface {
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error)
-	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
+	Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error)
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionSnpDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionSnpDTO) error
@@ -285,27 +285,38 @@ func (r *PositionSnpRepo) Update(ctx context.Context, dto *models.PositionSnpDTO
 	return nil
 }
 
-func (r *PositionSnpRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {
+func (r *PositionSnpRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error) {
 	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another, 
 		filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing)
 		SELECT $1, $2, snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another, filler_id, frame_id, inner_ring_id, 
-		outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing FROM %s WHERE position_id=$3`,
+		outer_ring_id, jumper, jumper_width, has_hole, mounting, replace(drawing, $3, $4) FROM %s 
+		WHERE position_id=$5 RETURNING drawing`,
 		PositionSnpTable, PositionSnpTable,
 	)
 	id := uuid.New()
 
-	_, err := r.db.ExecContext(ctx, query, id, dto.NewId, dto.Id)
-	if err != nil {
-		return fmt.Errorf("failed to execute query. error: %w", err)
+	row := r.db.QueryRowContext(ctx, query, id, dto.NewId, dto.FromOrderId, dto.OrderId, dto.Id)
+	if row.Err() != nil {
+		return "", fmt.Errorf("failed to execute query. error: %w", row.Err())
 	}
-	return nil
+
+	var drawing string
+	if err := row.Scan(&drawing); err != nil {
+		return "", fmt.Errorf("failed to scan result. error: %w", err)
+	}
+
+	// _, err := r.db.ExecContext(ctx, query, id, dto.NewId, dto.Id)
+	// if err != nil {
+	// 	return fmt.Errorf("failed to execute query. error: %w", err)
+	// }
+	return drawing, nil
 }
 
 func (r *PositionSnpRepo) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
 	values := []string{}
 	args := []interface{}{}
 	for i, v := range dto {
-		tmp := []interface{}{uuid.New(), v.NewId, v.Id}
+		tmp := []interface{}{uuid.New(), v.NewId, v.Id, v.FromOrderId, v.OrderId}
 		args = append(args, tmp...)
 		numbers := []string{}
 		for j := range tmp {
@@ -318,9 +329,10 @@ func (r *PositionSnpRepo) CopySeveral(ctx context.Context, dto []*models.CopyPos
 		filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing)
 		SELECT id::uuid, position_id::uuid, snp_standard_id::uuid, snp_type_id::uuid, flange_type_id::uuid, size_id::uuid, pn_index::integer,
 			h_index::integer, another, filler_id::uuid, frame_id::uuid, inner_ring_id::uuid, outer_ring_id::uuid, jumper, jumper_width,
-			has_hole, mounting, drawing FROM (VALUES %s) AS s(id, position_id, orig_id)
+			has_hole, mounting, drawing FROM (VALUES %s) AS s(id, position_id, orig_id, from_order_id, order_id)
 		LEFT JOIN LATERAL (SELECT snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another,
-			filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing FROM %s
+			filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, 
+			replace(drawing, s.from_order_id, s.order_id) AS drawing FROM %s
 			WHERE position_id=s.orig_id::uuid) AS m ON true`,
 		PositionSnpTable, strings.Join(values, ","), PositionSnpTable,
 	)

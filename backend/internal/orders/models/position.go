@@ -67,5 +67,6 @@ type CopyPositionDTO struct {
 }
 
 type DeletePositionDTO struct {
-	Id string `json:"id"`
+	Id   string       `json:"id"`
+	Type PositionType `json:"type"`
 }

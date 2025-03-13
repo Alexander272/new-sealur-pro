@@ -3,17 +3,24 @@ package services
 import (
 	"context"
 	"fmt"
+	"net/url"
 
+	file_models "github.com/Alexander272/new-sealur-pro/internal/files/models"
+	"github.com/Alexander272/new-sealur-pro/internal/files/services"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
 )
 
 type PositionSnpService struct {
-	repo repository.PositionSnp
+	repo  repository.PositionSnp
+	files services.Files
 }
 
-func NewPositionSnpService(repo repository.PositionSnp) *PositionSnpService {
-	return &PositionSnpService{repo: repo}
+func NewPositionSnpService(repo repository.PositionSnp, files services.Files) *PositionSnpService {
+	return &PositionSnpService{
+		repo:  repo,
+		files: files,
+	}
 }
 
 type PositionSnp interface {
@@ -34,15 +41,36 @@ func (s *PositionSnpService) GetByPosition(ctx context.Context, positionId strin
 }
 
 func (s *PositionSnpService) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {
-	//TODO надо еще что-то сделать с чертежами
-	if err := s.repo.Copy(ctx, dto); err != nil {
+	drawing, err := s.repo.Copy(ctx, dto)
+	if err != nil {
 		return fmt.Errorf("failed to copy position snp. error: %w", err)
+	}
+	if drawing == "" {
+		return nil
+	}
+
+	u, err := url.Parse(drawing)
+	if err != nil {
+		return fmt.Errorf("failed to parse url. error: %w", err)
+	}
+
+	q, err := url.ParseQuery(u.RawQuery)
+	if err != nil {
+		return fmt.Errorf("failed to parse query. error: %w", err)
+	}
+
+	name := q.Get("name")
+	file := &file_models.CopyFileDTO{
+		Name:    fmt.Sprintf("%s/%s", dto.FromOrderId, name),
+		NewName: fmt.Sprintf("%s/%s", dto.OrderId, name),
+	}
+	if err := s.files.Copy(ctx, file); err != nil {
+		return fmt.Errorf("failed to copy file. error: %w", err)
 	}
 	return nil
 }
 
 func (s *PositionSnpService) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
-	//TODO надо еще что-то сделать с чертежами
 	if err := s.repo.CopySeveral(ctx, dto); err != nil {
 		return fmt.Errorf("failed to copy several positions snp. error: %w", err)
 	}

@@ -167,12 +167,18 @@ func (h *Handler) delete(c *gin.Context) {
 		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
 		return
 	}
-
-	if err := h.service.Delete(c, &models.DeletePositionDTO{Id: id}); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить позицию")
-		error_bot.Send(c, err.Error(), id)
+	posType := c.Query("type")
+	if posType == "" {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty params", "Отправлены некорректные данные")
 		return
 	}
-	logger.Info("Позиция удалена", logger.StringAttr("id", id))
+
+	dto := &models.DeletePositionDTO{Id: id, Type: models.PositionType(posType)}
+	if err := h.service.Delete(c, dto); err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить позицию")
+		error_bot.Send(c, err.Error(), dto)
+		return
+	}
+	logger.Info("Позиция удалена", logger.StringAttr("id", id), logger.StringAttr("type", posType))
 	c.JSON(http.StatusOK, response.IdResponse{Message: "Позиция удалена"})
 }

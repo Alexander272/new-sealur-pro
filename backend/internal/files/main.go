@@ -18,7 +18,7 @@ func NewFilesModule(db *sqlx.DB, conf *config.Config) *transport.Handler {
 	}
 
 	repo := repository.NewRepository(store)
-	services := services.NewServices(&services.Deps{Repos: repo})
+	services := services.NewServices(&services.Deps{Repos: repo, Bucket: conf.MinIO.Bucket})
 	handler := transport.NewHandler(services, conf.MinIO)
 
 	return handler

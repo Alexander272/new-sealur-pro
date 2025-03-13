@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Alexander272/new-sealur-pro/internal/config"
 	"github.com/Alexander272/new-sealur-pro/pkg/logger"
@@ -22,6 +23,11 @@ func NewClient(conf config.MinIOConfig) (*MinioStorage, error) {
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create minio client. err: %w", err)
+	}
+
+	_, err = minioClient.HealthCheck(5 * time.Second)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check minio health. err: %w", err)
 	}
 
 	return &MinioStorage{Client: minioClient}, nil
