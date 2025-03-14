@@ -41,6 +41,8 @@ type GetUserByRegionDTO struct {
 	Region string `json:"region" db:"region"`
 }
 
+type GetManagersDTO struct{}
+
 type UserDTO struct {
 	Id         string `json:"id" db:"id"`
 	Nickname   string `json:"nickname" db:"nickname"`
@@ -66,4 +68,9 @@ type UserDTO struct {
 type ConfirmUserDTO struct {
 	Id   string `json:"id" db:"id"`
 	Data string `json:"data" db:"data"`
+}
+
+type ChangeManagerDTO struct {
+	Id        string `json:"id" db:"id"`
+	ManagerId string `json:"managerId" db:"manager_id"`
 }

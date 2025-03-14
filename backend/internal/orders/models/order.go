@@ -18,6 +18,17 @@ type Order struct {
 	Positions     []*Position `json:"positions"`
 }
 
+type OrderWithCompany struct {
+	Id            string `json:"id" db:"id"`
+	Date          string `json:"date" db:"date"`
+	CountPosition int64  `json:"countPosition" db:"count_position"`
+	Number        int64  `json:"number" db:"number"`
+	Status        Status `json:"status" db:"status"`
+	UserId        string `json:"userId" db:"user_id"`
+	Company       string `json:"company" db:"company"`
+	ManagerId     string `json:"managerId" db:"manager_id"`
+}
+
 type GetOrderDTO struct {
 	Id string `json:"id"`
 }
@@ -33,6 +44,11 @@ type GetAllOrdersDTO struct {
 
 type GetOrderByNumberDTO struct {
 	Number string `json:"number"`
+}
+
+type GetOrdersByManagerDTO struct {
+	ManagerId string `json:"managerId"`
+	OnlyOpen  bool   `json:"onlyOpen"`
 }
 
 type OrderDTO struct {

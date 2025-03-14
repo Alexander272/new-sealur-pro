@@ -26,6 +26,7 @@ type Order interface {
 	GetCurrent(ctx context.Context, req *models.GetCurrentOrderDTO) (*models.Order, error)
 	GetById(ctx context.Context, req *models.GetOrderDTO) (*models.Order, error)
 	Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error)
+	GetByManager(ctx context.Context, req *models.GetOrdersByManagerDTO) ([]*models.OrderWithCompany, error)
 	Copy(ctx context.Context, dto *models.CopyOrderDTO) error
 	Create(ctx context.Context, dto *models.OrderDTO) error
 	Save(ctx context.Context, dto *models.SaveOrderDTO) error
@@ -62,6 +63,13 @@ func (s *OrderService) GetById(ctx context.Context, req *models.GetOrderDTO) (*m
 	if err != nil {
 		return nil, fmt.Errorf("failed to get order by id. error: %w", err)
 	}
+
+	positions, err := s.position.Get(ctx, &models.GetPositionsDTO{OrderId: data.Id})
+	if err != nil {
+		return nil, err
+	}
+	data.Positions = positions
+
 	return data, nil
 }
 
@@ -69,6 +77,14 @@ func (s *OrderService) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]
 	data, err := s.repo.Get(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get orders. error: %w", err)
+	}
+	return data, nil
+}
+
+func (s *OrderService) GetByManager(ctx context.Context, req *models.GetOrdersByManagerDTO) ([]*models.OrderWithCompany, error) {
+	data, err := s.repo.GetByManager(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get orders by manager. error: %w", err)
 	}
 	return data, nil
 }

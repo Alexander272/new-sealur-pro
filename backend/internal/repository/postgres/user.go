@@ -25,9 +25,11 @@ type User interface {
 	GetById(ctx context.Context, req *models.GetUserByIdDTO) (*models.User, error)
 	GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error)
 	GetByRegion(ctx context.Context, req *models.GetUserByRegionDTO) (*models.User, error)
+	GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error)
 	Create(ctx context.Context, dto *models.UserDTO) error
 	Confirm(ctx context.Context, dto *models.ConfirmUserDTO) error
 	Update(ctx context.Context, dto *models.UserDTO) error
+	SetManager(ctx context.Context, dto *models.ChangeManagerDTO) error
 }
 
 func (r *UserRepo) Get(Ctx context.Context) {}
@@ -53,7 +55,7 @@ func (r *UserRepo) GetById(ctx context.Context, req *models.GetUserByIdDTO) (*mo
 func (r *UserRepo) GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error) {
 	query := fmt.Sprintf(`SELECT u.id, realm, nickname, confirmed, company, inn, kpp, region, city, "position", phone, password, 
 		email, r.code AS role, name, address
-		FROM "%s" AS u INNER JOIN %s AS r ON r.id=role_id WHERE nickname=$1 OR email=$1`,
+		FROM "%s" AS u INNER JOIN %s AS r ON r.id=role_id WHERE nickname=$1 OR lower(email)=lower($1)`,
 		UserTable, RoleTable,
 	)
 	user := &models.User{}
@@ -92,6 +94,19 @@ func (r *UserRepo) GetByRegion(ctx context.Context, req *models.GetUserByRegionD
 	return data, nil
 }
 
+func (r *UserRepo) GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error) {
+	query := fmt.Sprintf(`SELECT u.id, region, city, "position", phone, email, r.code as role, name
+		FROM "%s" AS u INNER JOIN %s AS r on r.id=role_id WHERE r.code='manager'`,
+		UserTable, RoleTable,
+	)
+	data := []*models.User{}
+
+	if err := r.db.SelectContext(ctx, &data, query); err != nil {
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return data, nil
+}
+
 func (r *UserRepo) Create(ctx context.Context, dto *models.UserDTO) error {
 	query := fmt.Sprintf(`INSERT INTO "%s" (id, nickname, company, inn, kpp, region, city, "position", phone, email, realm,
 		role_id, name, address, manager_id, provider_id, use_link, use_landing) VALUES (:id, :nickname, :company, :inn, :kpp, :region, :city, 
@@ -127,6 +142,16 @@ func (r *UserRepo) Update(ctx context.Context, dto *models.UserDTO) error {
 		password=:password, provider_id=:provider_id WHERE id=:id`,
 		UserTable,
 	)
+
+	_, err := r.db.NamedExecContext(ctx, query, dto)
+	if err != nil {
+		return fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return nil
+}
+
+func (r *UserRepo) SetManager(ctx context.Context, dto *models.ChangeManagerDTO) error {
+	query := fmt.Sprintf(`UPDATE "%s" SET manager_id=:manager_id WHERE id=:id`, UserTable)
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)
 	if err != nil {

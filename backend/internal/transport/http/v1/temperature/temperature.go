@@ -51,7 +51,7 @@ func (h *Handler) getAll(c *gin.Context) {
 
 func (h *Handler) create(c *gin.Context) {
 	dto := &models.TemperatureDTO{}
-	if err := c.BindJSON(&dto); err != nil {
+	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
 	}
@@ -73,7 +73,7 @@ func (h *Handler) update(c *gin.Context) {
 	}
 
 	dto := &models.TemperatureDTO{}
-	if err := c.BindJSON(&dto); err != nil {
+	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
 	}

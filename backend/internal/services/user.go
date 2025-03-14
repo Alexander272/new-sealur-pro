@@ -40,8 +40,11 @@ func NewUserService(deps *UserDeps) *UserService {
 type User interface {
 	GetById(ctx context.Context, req *models.GetUserByIdDTO) (*models.User, error)
 	GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error)
+	GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error)
 	CreateInProvider(ctx context.Context, user *models.User, req *models.SignInDTO) error
 	Create(ctx context.Context, dto *models.UserDTO) error
+	Update(ctx context.Context, dto *models.UserDTO) error
+	SetManager(ctx context.Context, dto *models.ChangeManagerDTO) error
 }
 
 // func (s *UserService) Get(ctx context.Context)
@@ -80,6 +83,14 @@ func (s *UserService) GetByRegion(ctx context.Context, req *models.GetUserByRegi
 			return nil, err
 		}
 		return nil, fmt.Errorf("failed to get user by region. error: %w", err)
+	}
+	return data, nil
+}
+
+func (s *UserService) GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error) {
+	data, err := s.repo.GetManagers(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get managers. error: %w", err)
 	}
 	return data, nil
 }
@@ -181,6 +192,8 @@ func (s *UserService) Create(ctx context.Context, dto *models.UserDTO) error {
 		return fmt.Errorf("failed to get user. error: %w", err)
 	}
 	if candidate != nil {
+		//TODO если пользователь уже зарегистрирован, но не подтвердил почту надо обновлять токен подтверждения
+		// или это лучше при логине делать
 		return models.ErrUserExist
 	}
 
@@ -219,6 +232,13 @@ func (s *UserService) Update(ctx context.Context, dto *models.UserDTO) error {
 	err := s.repo.Update(ctx, dto)
 	if err != nil {
 		return fmt.Errorf("failed to update user. error: %w", err)
+	}
+	return nil
+}
+
+func (s *UserService) SetManager(ctx context.Context, dto *models.ChangeManagerDTO) error {
+	if err := s.repo.SetManager(ctx, dto); err != nil {
+		return fmt.Errorf("failed to change manager. error: %w", err)
 	}
 	return nil
 }

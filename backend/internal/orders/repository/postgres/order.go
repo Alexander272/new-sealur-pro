@@ -26,6 +26,7 @@ type Order interface {
 	GetCurrent(ctx context.Context, req *models.GetCurrentOrderDTO) (*models.Order, error)
 	GetById(ctx context.Context, req *models.GetOrderDTO) (*models.Order, error)
 	Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error)
+	GetByManager(ctx context.Context, req *models.GetOrdersByManagerDTO) ([]*models.OrderWithCompany, error)
 	Create(ctx context.Context, dto *models.OrderDTO) error
 	Save(ctx context.Context, dto *models.SaveOrderDTO) error
 	SetInfo(ctx context.Context, dto *models.SetInfoDTO) error
@@ -94,6 +95,28 @@ func (r *OrderRepo) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*mo
 			})
 		}
 
+	}
+	return data, nil
+}
+
+func (r *OrderRepo) GetByManager(ctx context.Context, req *models.GetOrdersByManagerDTO) ([]*models.OrderWithCompany, error) {
+	condition := ""
+	params := []interface{}{req.ManagerId}
+	if req.OnlyOpen {
+		condition = "AND status!=$2"
+		params = append(params, models.StatusFinish)
+	}
+
+	query := fmt.Sprintf(`SELECT o.id, o.date, count_position, number, u.company, status, user_id, u.manager_id
+		FROM "%s" AS o
+		INNER JOIN "%s" AS u on o.user_id=u.id 
+		WHERE o.manager_id=$1 AND o.date != '' %s ORDER BY o.date DESC`,
+		OrderTable, UserTable, condition,
+	)
+	data := []*models.OrderWithCompany{}
+
+	if err := r.db.SelectContext(ctx, &data, query, params...); err != nil {
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 	return data, nil
 }
