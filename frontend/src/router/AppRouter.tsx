@@ -13,6 +13,8 @@ import { Gaskets } from '@/pages/gaskets/GasketsLazy'
 import { Snp } from '@/pages/gaskets/snp/SnpLazy'
 import { Putg } from '@/pages/gaskets/putg/PutgLazy'
 import { Orders } from '@/pages/orders/orders/OrdersLazy'
+import { Orders as ManagerOrders } from '@/pages/orders/byManager/OrdersLazy'
+import { Order as ManagerOrder } from '@/pages/orders/byManager/OrderLazy'
 import { Main } from '@/components/Layout/Main/MainLazy'
 import { Base } from '@/components/Layout/Base/Base'
 import { Fallback } from '@/components/Fallback/Fallback'
@@ -68,7 +70,7 @@ export const AppRouter = () => {
 						<Route path={PathRoutes.Orders} element={<Orders />} />
 					</Route>
 
-					{/*<Route
+					<Route
 						path={PathRoutes.Manager.Base}
 						element={
 							<CheckAccess forbiddenRoles={['user']}>
@@ -78,14 +80,14 @@ export const AppRouter = () => {
 					>
 						<Route path={PathRoutes.Manager.Orders.Base} element={<ManagerOrders />} />
 						<Route path={PathRoutes.Manager.Orders.Order} element={<ManagerOrder />} />
-						<Route path={PathRoutes.Manager.Orders.Last} element={<LastOrders />} />
+						{/*<Route path={PathRoutes.Manager.Orders.Last} element={<LastOrders />} />
 
 						<Route path={PathRoutes.Manager.Analytics.Base} element={<Analytics />} />
 						<Route path={PathRoutes.Manager.Analytics.Users} element={<AnalyticsUsers />} />
 						<Route path={PathRoutes.Manager.Analytics.Orders} element={<AnalyticsOrders />} />
 						<Route path={PathRoutes.Manager.Analytics.Count} element={<AnalyticsCount />} />
-						<Route path={PathRoutes.Manager.Analytics.User} element={<AnalyticsUser />} />
-					</Route>*/}
+						<Route path={PathRoutes.Manager.Analytics.User} element={<AnalyticsUser />} />*/}
+					</Route>
 				</Route>
 			</Routes>
 		</BrowserRouter>

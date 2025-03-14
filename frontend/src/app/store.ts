@@ -5,6 +5,7 @@ import { userPath, userReducer } from '@/features/user/userSlice'
 import { cardPath, cardReducer } from '@/features/card/cardSlice'
 import { snpPath, snpReducer } from '@/features/gaskets/modules/snp/snpSlice'
 import { putgPath, putgReducer } from '@/features/gaskets/modules/putg/putgSlice'
+import { dialogPath, dialogReducer } from '@/features/dialogs/dialogSlice'
 import { dadataApi } from '@/features/auth/modules/dadata/dadataApiSlice'
 import { resetStoreListener } from './middlewares/resetStore'
 import { apiSlice } from './apiSlice'
@@ -12,6 +13,7 @@ import { apiSlice } from './apiSlice'
 const rootReducer = combineReducers({
 	[apiSlice.reducerPath]: apiSlice.reducer,
 	[dadataApi.reducerPath]: dadataApi.reducer,
+	[dialogPath]: dialogReducer,
 	[userPath]: userReducer,
 	[cardPath]: cardReducer,
 	[snpPath]: snpReducer,

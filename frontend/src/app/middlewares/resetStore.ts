@@ -7,6 +7,7 @@ import { dadataApi } from '@/features/auth/modules/dadata/dadataApiSlice'
 import { resetSnp } from '@/features/gaskets/modules/snp/snpSlice'
 import { resetPutg } from '@/features/gaskets/modules/putg/putgSlice'
 import { resetCard } from '@/features/card/cardSlice'
+import { resetDialog } from '@/features/dialogs/dialogSlice'
 
 export const resetStoreListener = createListenerMiddleware()
 
@@ -22,5 +23,6 @@ startResetStoreListener({
 		listenerApi.dispatch(resetSnp())
 		listenerApi.dispatch(resetPutg())
 		listenerApi.dispatch(resetCard())
+		listenerApi.dispatch(resetDialog())
 	},
 })

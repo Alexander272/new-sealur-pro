@@ -1,7 +1,7 @@
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 
 import { TopFallback } from '@/components/Fallback/TopFallback'
-import { NoRowsOverlay } from '@/components/NoRowsOverlay/components/NoRowsOverlay'
+import { NoRowsOverlay } from '@/components/NoRowsOverlay/NoRowsOverlay'
 import { useGetAllOrdersQuery } from '../../ordersApiSlice'
 import { Row } from './Row'
 

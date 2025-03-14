@@ -1,5 +1,7 @@
 import { ICopyPosition, Position } from '@/features/card/types/card'
 
+type Status = 'new' | 'work' | 'finish'
+
 export interface IOrderResponse {
 	data: {
 		id: string
@@ -19,11 +21,12 @@ export interface ICopyOrder {
 
 export interface IFullOrder {
 	id: string
-	number?: number
-	date?: string
-	countPosition?: number
+	number: number
+	date: string
+	countPosition: number
 	positions: Position[]
 	info?: string
+	userId: string
 }
 
 // export interface IFullOrder {
@@ -43,7 +46,18 @@ export interface IOrder {
 	id: string
 	number: string
 	date: string
-	status: 'new' | 'work' | 'finish'
+	status: Status
+}
+
+export interface IOrderWithCompany {
+	id: string
+	number: string
+	date: string
+	countPosition: number
+	status: Status
+	company: string
+	userId: string
+	managerId: string
 }
 
 export interface ISaveOrder {

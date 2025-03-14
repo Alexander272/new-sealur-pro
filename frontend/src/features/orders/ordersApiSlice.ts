@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify'
 
 import type { IBaseFetchError } from '@/app/types/error'
-import type { ICopyOrder, IFullOrder, IOrderCount, IOrderResponse, ISaveOrder } from './types/order'
+import type { ICopyOrder, IFullOrder, IOrderCount, IOrderResponse, IOrderWithCompany, ISaveOrder } from './types/order'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 
@@ -32,6 +32,33 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+
+		getOrderById: builder.query<{ data: IFullOrder }, string>({
+			query: id => `${API.orders.base}/${id}`,
+			providesTags: (_arr, _err, arg) => [
+				{ type: 'Orders', id: 'all' },
+				{ type: 'Orders', id: arg },
+			],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить заявку', { autoClose: false })
+				}
+			},
+		}),
+		getOrdersByManager: builder.query<{ data: IOrderWithCompany[] }, null>({
+			query: () => API.orders.manager,
+			providesTags: [{ type: 'Orders', id: 'all' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить список заявок', { autoClose: false })
+				}
+			},
+		}),
+
 		// оформление заявки с последующей ее отправкой менеджеру
 		saveOrder: builder.mutation<string, ISaveOrder>({
 			query: order => ({
@@ -111,15 +138,15 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 		// 	query: id => `${proUrl}/orders/${id}`,
 		// }),
 
-		// // закрытие заявки
-		// finishOrder: builder.mutation<string, string>({
-		// 	query: id => ({
-		// 		url: `${proUrl}/orders/finish`,
-		// 		method: 'POST',
-		// 		body: { orderId: id },
-		// 	}),
-		// 	invalidatesTags: [{ type: 'Api', id: 'orders/open' }],
-		// }),
+		// закрытие заявки
+		finishOrder: builder.mutation<string, string>({
+			query: id => ({
+				url: API.orders.finish,
+				method: 'POST',
+				body: { orderId: id },
+			}),
+			invalidatesTags: [{ type: 'Orders', id: 'all' }],
+		}),
 
 		// // изменение менеджера привязанного к заявке
 		// setOrderManager: builder.mutation<string, OrderManger>({
@@ -137,9 +164,12 @@ export const {
 	useGetOrderQuery,
 	useSaveOrderMutation,
 	useGetAllOrdersQuery,
+	useGetOrderByIdQuery,
+	useGetOrdersByManagerQuery,
 	useSaveInfoMutation,
 	useCopyOrderMutation,
 	// useGetLastOrdersQuery,
 	useGetOrderByNumberQuery,
 	useGetOrdersCountQuery,
+	useFinishOrderMutation,
 } = ordersApiSlice
