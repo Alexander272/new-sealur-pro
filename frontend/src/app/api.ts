@@ -31,6 +31,8 @@ export const API = Object.freeze({
 		count: 'orders/count' as const,
 		manager: 'orders/by-manager' as const,
 		finish: 'orders/finish' as const,
+		changeManager: 'orders/manager/change' as const,
+		download: 'orders/:id/download' as const,
 	},
 	positions: {
 		base: 'orders/positions' as const,

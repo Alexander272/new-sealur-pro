@@ -31,8 +31,8 @@ export const useDesignation = () => {
 		const coating = design.hasCoating ? '/СК' : ''
 
 		const materials = [
-			material.rotaryPlug?.code || '0',
 			material.innerRing?.code || '0',
+			material.rotaryPlug?.code || '0',
 			material.outerRing?.code || '0',
 		]
 		let materialsStr = ''

@@ -1,9 +1,18 @@
 import { toast } from 'react-toastify'
 
-import type { IBaseFetchError } from '@/app/types/error'
-import type { ICopyOrder, IFullOrder, IOrderCount, IOrderResponse, IOrderWithCompany, ISaveOrder } from './types/order'
+import type { IBaseFetchError, IFetchError } from '@/app/types/error'
+import type {
+	ICopyOrder,
+	IFullOrder,
+	IOrderCount,
+	IOrderMangerDTO,
+	IOrderResponse,
+	IOrderWithCompany,
+	ISaveOrder,
+} from './types/order'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
+import { saveAs } from '../files/utils/save'
 
 export const ordersApiSlice = apiSlice.injectEndpoints({
 	overrideExisting: false,
@@ -56,6 +65,29 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 				} catch {
 					toast.error('Не удалось получить список заявок', { autoClose: false })
 				}
+			},
+		}),
+		downloadOrder: builder.query<null, { id: string; name: string }>({
+			queryFn: async (data, _api, _, baseQuery) => {
+				let filename = ''
+				const result = await baseQuery({
+					url: API.orders.download.replace(':id', data.id),
+					cache: 'no-cache',
+					responseHandler: response => {
+						filename = response.headers.get('Content-Disposition')?.split('=')[1] || ''
+						return response.status === 200 ? response.blob() : response.json()
+					},
+				})
+
+				if (result.error) {
+					console.log(result.error)
+					const fetchError = result.error as IFetchError
+					toast.error(fetchError.data.message, { autoClose: false })
+				}
+				const type = filename.split('.')[1]
+
+				if (result.data instanceof Blob) saveAs(result.data, `${data.name}.${type}`)
+				return { data: null }
 			},
 		}),
 
@@ -148,15 +180,15 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 			invalidatesTags: [{ type: 'Orders', id: 'all' }],
 		}),
 
-		// // изменение менеджера привязанного к заявке
-		// setOrderManager: builder.mutation<string, OrderManger>({
-		// 	query: data => ({
-		// 		url: `${proUrl}/orders/manager`,
-		// 		method: 'POST',
-		// 		body: data,
-		// 	}),
-		// 	invalidatesTags: [{ type: 'Api', id: 'orders/open' }],
-		// }),
+		// изменение менеджера привязанного к заявке
+		changeOrderManager: builder.mutation<string, IOrderMangerDTO>({
+			query: data => ({
+				url: API.orders.changeManager,
+				method: 'POST',
+				body: data,
+			}),
+			invalidatesTags: [{ type: 'Orders', id: 'all' }],
+		}),
 	}),
 })
 
@@ -166,10 +198,13 @@ export const {
 	useGetAllOrdersQuery,
 	useGetOrderByIdQuery,
 	useGetOrdersByManagerQuery,
+	useDownloadOrderQuery,
+	useLazyDownloadOrderQuery,
 	useSaveInfoMutation,
 	useCopyOrderMutation,
 	// useGetLastOrdersQuery,
 	useGetOrderByNumberQuery,
 	useGetOrdersCountQuery,
 	useFinishOrderMutation,
+	useChangeOrderManagerMutation,
 } = ordersApiSlice

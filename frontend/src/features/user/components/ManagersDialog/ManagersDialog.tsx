@@ -1,16 +1,18 @@
 import { FC } from 'react'
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 import type { IUser } from '../../types/user'
+import { PathRoutes } from '@/constants/routes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { changeDialogIsOpen, getDialogState } from '@/features/dialogs/dialogSlice'
+import { useChangeOrderManagerMutation } from '@/features/orders/ordersApiSlice'
 import { Dialog } from '@/features/dialogs/components/Dialog'
 import { Fallback } from '@/components/Fallback/Fallback'
+import { TopFallback } from '@/components/Fallback/TopFallback'
 import { useChangeClientManagerMutation, useGetManagersQuery } from '../../managerApiSlice'
 import { getUserId } from '../../userSlice'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { PathRoutes } from '@/constants/routes'
 
 type Context = { id: string; userId: string }
 
@@ -55,7 +57,8 @@ const Form: FC<FormProps> = ({ data: context, isSentClient }) => {
 	const dispatch = useAppDispatch()
 
 	const { data, isFetching } = useGetManagersQuery(null)
-	const [change] = useChangeClientManagerMutation()
+	const [change, { isLoading: isChanging }] = useChangeClientManagerMutation()
+	const [changeOrder, { isLoading }] = useChangeOrderManagerMutation()
 
 	const changeHandler = (user: IUser) => async () => {
 		if (isSentClient) {
@@ -68,30 +71,38 @@ const Form: FC<FormProps> = ({ data: context, isSentClient }) => {
 			}
 		}
 
-		// const orderDTO = {
-		// 	orderId: context.id,
-		// 	userId: context.userId,
-		// 	managerId: user.id,
-		// 	managerEmail: user.email,
-		// 	oldManagerId: userId,
-		// }
-		dispatch(changeDialogIsOpen({ variant: 'Orders', isOpen: false }))
+		const orderDTO = {
+			orderId: context.id,
+			userId: context.userId,
+			managerId: user.id,
+			managerEmail: user.email,
+			oldManagerId: userId || '',
+		}
+		try {
+			await changeOrder(orderDTO).unwrap()
+			dispatch(changeDialogIsOpen({ variant: 'Orders', isOpen: false }))
+		} catch {
+			toast.error('Не удалось изменить менеджера в заказе')
+		}
 
 		if (location.pathname != PathRoutes.Manager.Orders.Base) navigate(PathRoutes.Manager.Orders.Base)
 	}
 
 	if (isFetching) return <Fallback />
 	return (
-		<List sx={{ mt: -3 }}>
-			{data?.data
-				.filter(d => d.id != userId)
-				.map(d => (
-					<ListItem disablePadding divider>
-						<ListItemButton onClick={changeHandler(d)} sx={{ borderRadius: 4 }}>
-							<ListItemText inset primary={d.name} />
-						</ListItemButton>
-					</ListItem>
-				))}
-		</List>
+		<>
+			{isLoading || isChanging ? <TopFallback /> : null}
+			<List sx={{ mt: -3 }}>
+				{data?.data
+					.filter(d => d.id != userId)
+					.map(d => (
+						<ListItem key={d.id} disablePadding divider>
+							<ListItemButton onClick={changeHandler(d)} sx={{ borderRadius: 4 }}>
+								<ListItemText inset primary={d.name} />
+							</ListItemButton>
+						</ListItem>
+					))}
+			</List>
+		</>
 	)
 }

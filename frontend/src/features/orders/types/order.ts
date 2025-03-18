@@ -96,3 +96,11 @@ export interface IOrderCount {
 	// 	putg: number
 	// }
 }
+
+export interface IOrderMangerDTO {
+	orderId: string
+	userId: string
+	managerId: string
+	managerEmail: string
+	oldManagerId: string
+}

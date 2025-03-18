@@ -22,11 +22,11 @@ export const Construction = () => {
 		if (data && !active?.id && !isFetching) dispatch(setConstruction(data.data[0]))
 	}, [data, active, isFetching, dispatch])
 	useEffect(() => {
-		if (!data || !active || isFetching) return
-		let idx = data.data.findIndex(c => c.id === construction?.id)
+		if (!data || !active || isFetching || !filler?.baseId || !flangeType?.id) return
+		let idx = construction ? data.data.findIndex(c => c.id === construction?.id) : 0
 		if (idx == -1) idx = 0
 		dispatch(setConstruction(data.data[idx]))
-	}, [data, construction, active, isFetching, dispatch])
+	}, [data, construction, active, isFetching, dispatch, filler, flangeType])
 
 	const constructionHandler = (event: SelectChangeEvent<string>) => {
 		const construction = data?.data.find(s => s.code === event.target.value)
