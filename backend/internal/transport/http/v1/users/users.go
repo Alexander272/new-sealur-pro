@@ -9,6 +9,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/services"
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/pkg/error_bot"
+	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -76,5 +77,6 @@ func (h *Handler) changeManager(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
+	logger.Debug("Менеджер у клиента изменен", logger.AnyAttr("dto", dto))
 	c.JSON(http.StatusOK, response.IdResponse{Message: "Менеджер изменен"})
 }

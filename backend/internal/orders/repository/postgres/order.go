@@ -127,7 +127,7 @@ func (r *OrderRepo) Create(ctx context.Context, dto *models.OrderDTO) error {
 		OrderTable, UserTable,
 	)
 	dto.Id = uuid.NewString()
-	dto.ManagerId = dto.Id
+	dto.ManagerId = dto.UserId
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)
 	if err != nil {

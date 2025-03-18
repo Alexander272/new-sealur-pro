@@ -25,12 +25,106 @@ func NewPositionPutgRepo(db *sqlx.DB) *PositionPutgRepo {
 }
 
 type PositionPutg interface {
+	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error)
 	Create(ctx context.Context, dto *models.PositionPutgDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionPutgDTO) error
 	Update(ctx context.Context, dto *models.PositionPutgDTO) error
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error)
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
+}
+
+func (r *PositionPutgRepo) Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error) {
+	query := fmt.Sprintf(`SELECT p.id, title, amount, type, count, info,
+		configuration_id, configuration_code, filler_code, type_code, construction_code, 
+		rotary_plug_id, inner_ring_id, outer_ring_id, m.arr_mat_code,
+		COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, h, use_dimensions,
+		jumper, jumper_width, mounting, has_hole, has_coating, has_removable, drawing
+		FROM %s AS p INNER JOIN %s AS ps ON p.id=ps.position_id
+		LEFT JOIN LATERAL (SELECT code AS configuration_code FROM %s WHERE id=ps.configuration_id) AS c ON true
+		LEFT JOIN LATERAL (SELECT code AS construction_code FROM %s AS c INNER JOIN %s AS b ON construction_id=b.id 
+			WHERE c.id=ps.construction_id) AS con ON true
+		LEFT JOIN LATERAL (SELECT code AS filler_code FROM %s AS f INNER JOIN %s AS b ON base_filler_id=b.id
+			WHERE f.id=ps.filler_id) AS f ON true
+		LEFT JOIN LATERAL (SELECT code AS type_code FROM %s WHERE id=ps.type_id) AS t ON true
+		LEFT JOIN LATERAL (SELECT dn, dn_mm, pn_mpa, pn_kg, d4, d3, d2, d1 FROM %s WHERE id=ps.size_id) AS s ON true
+		LEFT JOIN LATERAL (SELECT COALESCE(ARRAY_AGG(m.code),'{}') AS arr_mat_code FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id
+			WHERE sm.id=ANY(ARRAY[ps.rotary_plug_id, ps.inner_ring_id, ps.outer_ring_id])
+		) AS m ON true
+		WHERE order_id=$1 AND type=$2 ORDER BY configuration_code DESC, length(construction_code), count`,
+		PositionTable, PositionPutgTable, ConfigurationTable, ConstructionTable, BaseConstructionTable, PutgFillerTable, BaseFillerTable,
+		PutgTypeTable, PutgSizeTable, PutgMaterialTable, MaterialTable,
+	)
+	tmp := []*pq_models.BasePositionPutg{}
+
+	if err := r.db.SelectContext(ctx, &tmp, query, req.OrderId, models.PositionTypePutg); err != nil {
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
+	}
+
+	data := []*models.Position{}
+	for _, d := range tmp {
+		rotary := &putg_models.Material{}
+		outerRing := &putg_models.Material{}
+		innerRing := &putg_models.Material{}
+		if d.RotaryPlugId != uuid.Nil.String() {
+			rotary = &putg_models.Material{Code: d.ArrMaterials[0]}
+		}
+		if d.OuterRingId != uuid.Nil.String() {
+			outerRing = &putg_models.Material{
+				Id:   d.OuterRingId,
+				Code: d.ArrMaterials[len(d.ArrMaterials)-1],
+			}
+		}
+		if d.InnerRingId != uuid.Nil.String() {
+			innerRing = &putg_models.Material{
+				Id:   d.InnerRingId,
+				Code: d.ArrMaterials[1],
+			}
+		}
+
+		data = append(data, &models.Position{
+			Id:     d.Id,
+			Count:  d.Count,
+			Title:  d.Title,
+			Amount: d.Amount,
+			Info:   d.Info,
+			Type:   models.PositionType(d.Type),
+			PutgData: &models.PositionPutg{
+				Main: &models.PositionPutg_Main{
+					Configuration: &putg_models.Configuration{Code: d.ConfigurationCode},
+				},
+				Size: &models.PositionPutg_Size{
+					D4:            d.D4,
+					D3:            d.D3,
+					D2:            d.D2,
+					D1:            d.D1,
+					H:             d.H,
+					UseDimensions: d.UseDimensions,
+					HasRounding:   d.HasRounding,
+				},
+				Material: &models.PositionPutg_Material{
+					Filler:       &putg_models.Filler{Code: d.FillerCode},
+					PutgType:     &putg_models.PutgType{Code: d.TypeCode},
+					Construction: &putg_models.Construction{Code: d.ConstructionCode},
+					RotaryPlug:   rotary,
+					InnerRing:    innerRing,
+					OuterRing:    outerRing,
+				},
+				Design: &models.PositionPutg_Design{
+					Jumper: &models.PositionPutg_Design_Jumper{
+						HasJumper: d.Jumper != "",
+						Code:      d.Jumper,
+						Width:     d.JumperWidth,
+					},
+					HasHole:      d.HasHole,
+					HasCoating:   d.HasCoating,
+					HasRemovable: d.HasRemovable,
+					Drawing:      d.Drawing,
+				},
+			},
+		})
+	}
+	return data, nil
 }
 
 func (r *PositionPutgRepo) GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error) {

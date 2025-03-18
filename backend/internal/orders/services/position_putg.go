@@ -24,11 +24,20 @@ func NewPositionPutgService(repo repository.PositionPutg, files services.Files) 
 }
 
 type PositionPutg interface {
+	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
 	Update(ctx context.Context, dto *models.PositionDTO) error
+}
+
+func (s *PositionPutgService) Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error) {
+	data, err := s.repo.Get(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get putg positions by order. error: %w", err)
+	}
+	return data, nil
 }
 
 func (s *PositionPutgService) GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error) {

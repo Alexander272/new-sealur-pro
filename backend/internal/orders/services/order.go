@@ -13,12 +13,14 @@ import (
 type OrderService struct {
 	repo     repository.Order
 	position Position
+	export   Export
 }
 
-func NewOrderService(repo repository.Order, position Position) *OrderService {
+func NewOrderService(repo repository.Order, position Position, export Export) *OrderService {
 	return &OrderService{
 		repo:     repo,
 		position: position,
+		export:   export,
 	}
 }
 
@@ -27,6 +29,7 @@ type Order interface {
 	GetById(ctx context.Context, req *models.GetOrderDTO) (*models.Order, error)
 	Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error)
 	GetByManager(ctx context.Context, req *models.GetOrdersByManagerDTO) ([]*models.OrderWithCompany, error)
+	Download(ctx context.Context, req *models.GetOrderDTO) (*models.File, error)
 	Copy(ctx context.Context, dto *models.CopyOrderDTO) error
 	Create(ctx context.Context, dto *models.OrderDTO) error
 	Save(ctx context.Context, dto *models.SaveOrderDTO) error
@@ -89,6 +92,19 @@ func (s *OrderService) GetByManager(ctx context.Context, req *models.GetOrdersBy
 	return data, nil
 }
 
+func (s *OrderService) Download(ctx context.Context, req *models.GetOrderDTO) (*models.File, error) {
+	data, err := s.GetById(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	file, err := s.export.Prepare(ctx, data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to download order. error: %w", err)
+	}
+	return file, nil
+}
+
 func (s *OrderService) Copy(ctx context.Context, dto *models.CopyOrderDTO) error {
 	if err := s.position.CopySeveral(ctx, dto.Positions); err != nil {
 		return fmt.Errorf("failed to copy order. error: %w", err)
@@ -126,6 +142,8 @@ func (s *OrderService) SetStatus(ctx context.Context, dto *models.SetStatusDTO) 
 	return nil
 }
 func (s *OrderService) SetManager(ctx context.Context, dto *models.SetManagerDTO) error {
+	//TODO send email to new manager
+
 	if err := s.repo.SetManager(ctx, dto); err != nil {
 		return fmt.Errorf("failed to set manager. error: %w", err)
 	}

@@ -3,6 +3,7 @@ package order
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/Alexander272/new-sealur-pro/internal/constants"
@@ -41,8 +42,10 @@ func Register(api *gin.RouterGroup, service services.Order, middleware *middlewa
 		manager := orders.Group("", middleware.CheckAccess(constants.AllowManager))
 		{
 			manager.GET("/:id", handler.getById)
+			manager.GET("/:id/download", handler.download)
 			manager.GET("/by-manager", handler.getByManager)
 			manager.POST("/finish", handler.finish)
+			manager.POST("/manager/change", handler.changeManager)
 		}
 	}
 }
@@ -120,6 +123,32 @@ func (h *Handler) getByManager(c *gin.Context) {
 	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
 }
 
+func (h *Handler) download(c *gin.Context) {
+	id := c.Param("id")
+	err := uuid.Validate(id)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
+		return
+	}
+
+	dto := &models.GetOrderDTO{Id: id}
+	data, err := h.service.Download(c, dto)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
+		error_bot.Send(c, err.Error(), dto)
+		return
+	}
+
+	logger.Debug("download", logger.AnyAttr("data", data))
+
+	defer os.Remove(data.Name)
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Content-Length", fmt.Sprintf("%d", data.Size))
+	c.Header("Content-Disposition", "attachment; filename="+data.Name)
+	c.File(data.Name)
+}
+
 func (h *Handler) setInfo(c *gin.Context) {
 	dto := &models.SetInfoDTO{}
 	if err := c.BindJSON(dto); err != nil {
@@ -168,12 +197,6 @@ func (h *Handler) copy(c *gin.Context) {
 }
 
 func (h *Handler) finish(c *gin.Context) {
-	// id := c.Param("id")
-	// err := uuid.Validate(id)
-	// if err != nil {
-	// 	response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
-	// 	return
-	// }
 	dto := &models.SetStatusDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
@@ -190,4 +213,20 @@ func (h *Handler) finish(c *gin.Context) {
 	}
 	logger.Info("Заказ закрыт", logger.AnyAttr("dto", dto))
 	c.JSON(http.StatusOK, response.IdResponse{Message: "Заказ закрыт"})
+}
+
+func (h *Handler) changeManager(c *gin.Context) {
+	dto := &models.SetManagerDTO{}
+	if err := c.BindJSON(dto); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
+		return
+	}
+
+	if err := h.service.SetManager(c, dto); err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
+		error_bot.Send(c, err.Error(), dto)
+		return
+	}
+	logger.Info("Менеджер у заказа изменен", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Менеджер изменен"})
 }

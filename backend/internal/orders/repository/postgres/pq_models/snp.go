@@ -45,6 +45,31 @@ import "github.com/lib/pq"
 // 	Drawing      string `db:"drawing"`
 // }
 
+type BasePositionSnp struct {
+	Id           string         `db:"id"`
+	Title        string         `db:"title"`
+	Amount       string         `db:"amount"`
+	Type         string         `db:"type"`
+	Count        int64          `db:"count"`
+	Info         string         `db:"info"`
+	FillerCode   string         `db:"filler_code"`
+	ArrMaterials pq.StringArray `db:"arr_mat_code"`
+	FrameId      string         `db:"frame_id"`
+	InnerRingId  string         `db:"inner_ring_id"`
+	OuterRingId  string         `db:"outer_ring_id"`
+	D4           string         `db:"d4"`
+	D3           string         `db:"d3"`
+	D2           string         `db:"d2"`
+	D1           string         `db:"d1"`
+	H            string         `db:"h"`
+	Another      string         `db:"another"`
+	Jumper       string         `db:"jumper"`
+	JumperWidth  string         `db:"jumper_width"`
+	HasHole      bool           `db:"has_hole"`
+	Mounting     string         `db:"mounting"`
+	Drawing      string         `db:"drawing"`
+}
+
 type PositionSnp struct {
 	Id              string         `db:"id"`
 	PositionId      string         `db:"position_id"`

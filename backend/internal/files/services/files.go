@@ -40,6 +40,9 @@ func (s *FilesService) Get(ctx context.Context, req *models.GetFileDTO) (*models
 }
 
 func (s *FilesService) GetByGroup(ctx context.Context, req *models.GetFilesByGroupDTO) ([]*models.File, error) {
+	if req.Bucket == "" {
+		req.Bucket = s.Bucket
+	}
 	data, err := s.repo.GetByGroup(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get files. error: %w", err)

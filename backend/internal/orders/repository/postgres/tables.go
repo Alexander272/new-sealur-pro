@@ -19,12 +19,21 @@ const (
 	PositionRingTable     = "position_ring"
 	PositionRingsKitTable = "position_rings_kit"
 
-	PutgSizeTable = "putg_size"
+	PutgSizeTable         = "putg_size"
+	ConfigurationTable    = "putg_configuration"
+	ConstructionTable     = "putg_construction"
+	BaseConstructionTable = "putg_construction_base"
+	PutgTypeTable         = "putg_type"
+	PutgFillerTable       = "putg_filler"
+	BaseFillerTable       = "putg_filler_base"
+	PutgMaterialTable     = "putg_material"
 
 	FlangeTypeTable  = "flange_type"
 	SnpFillerTable   = "snp_filler_new"
 	SnpMaterialTable = "snp_material_new"
 	SnpSizeTable     = "snp_size"
+
+	MaterialTable = "material"
 
 	UserTable = "user"
 )

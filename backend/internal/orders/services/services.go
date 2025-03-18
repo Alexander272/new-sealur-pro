@@ -9,6 +9,8 @@ type Services struct {
 	PositionSnp
 	Position
 	Order
+	Zip
+	Export
 }
 
 type Deps struct {
@@ -20,11 +22,15 @@ func NewServices(deps *Deps) *Services {
 	snp := NewPositionSnpService(deps.Repos.PositionSnp, deps.Files.Files)
 	putg := NewPositionPutgService(deps.Repos.PositionPutg, deps.Files.Files)
 	position := NewPositionService(&PositionDeps{Repo: deps.Repos.Position, Snp: snp, Putg: putg, Files: deps.Files.Files})
-	order := NewOrderService(deps.Repos.Order, position)
+	zip := NewZipService()
+	export := NewExportService(&ExportDeps{Snp: snp, Putg: putg, Files: deps.Files.Files, Zip: zip})
+	order := NewOrderService(deps.Repos.Order, position, export)
 
 	return &Services{
 		PositionSnp: snp,
 		Position:    position,
 		Order:       order,
+		Zip:         zip,
+		Export:      export,
 	}
 }
