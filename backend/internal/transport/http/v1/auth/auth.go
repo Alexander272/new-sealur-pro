@@ -79,6 +79,11 @@ func (h *Handler) signIn(c *gin.Context) {
 			logger.ErrAttr(err),
 		)
 
+		if errors.Is(err, models.ErrUserNotVerified) {
+			response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(),
+				"Учетная запись не активирована. Для активации учетной записи перейдите по ссылке, отправленной вам в письме.")
+			return
+		}
 		if strings.Contains(err.Error(), "invalid_grant") || errors.Is(err, models.ErrUserNotFound) {
 			h.services.Limit.AddAttempt(c, c.ClientIP())
 			response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")

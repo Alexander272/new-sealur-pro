@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -22,9 +23,9 @@ func NewManager(key string) (*Manager, error) {
 
 type TokenManager interface {
 	Retrospect(token string) (*models.Token, error)
+	NewCode() (string, error)
 	// NewJWT(userId, email string, roleCode string, company, position string, ttl time.Duration) (time.Time, string, error)
 	// Parse(token string) (jwt.MapClaims, error)
-	// NewRefreshToken() (string, error)
 }
 
 func (m *Manager) Retrospect(token string) (*models.Token, error) {
@@ -101,15 +102,15 @@ func (m *Manager) Retrospect(token string) (*models.Token, error) {
 // 	return claims, nil
 // }
 
-// func (m *Manager) NewRefreshToken() (string, error) {
-// 	b := make([]byte, 32)
+func (m *Manager) NewCode() (string, error) {
+	b := make([]byte, 32)
 
-// 	s := rand.NewSource(time.Now().Unix())
-// 	r := rand.New(s)
+	s := rand.NewSource(time.Now().Unix())
+	r := rand.New(s)
 
-// 	if _, err := r.Read(b); err != nil {
-// 		return "", err
-// 	}
+	if _, err := r.Read(b); err != nil {
+		return "", err
+	}
 
-// 	return fmt.Sprintf("%x", b), nil
-// }
+	return fmt.Sprintf("%x", b), nil
+}

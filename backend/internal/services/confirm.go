@@ -26,7 +26,7 @@ func NewConfirmService(repo repository.Confirm, tokenManager auth.TokenManager, 
 
 type Confirm interface {
 	Get(ctx context.Context, code string) (*models.ConfirmData, error)
-	// Create(ctx context.Context, userId string) (string, error)
+	Create(ctx context.Context, userId string) (string, error)
 }
 
 func (s *ConfirmService) Get(ctx context.Context, code string) (*models.ConfirmData, error) {
@@ -38,20 +38,19 @@ func (s *ConfirmService) Get(ctx context.Context, code string) (*models.ConfirmD
 }
 
 func (s *ConfirmService) Create(ctx context.Context, userId string) (string, error) {
-	// code, err := s.tokenManager.NewRefreshToken()
-	// if err != nil {
-	// 	return "", fmt.Errorf("failed to generate code. error: %w", err)
-	// }
+	code, err := s.tokenManager.NewCode()
+	if err != nil {
+		return "", fmt.Errorf("failed to generate code. error: %w", err)
+	}
 
-	// data := &models.ConfirmData{
-	// 	UserId: userId,
-	// 	Code:   code,
-	// 	Exp:    s.confirmTTL,
-	// }
+	data := &models.ConfirmData{
+		UserId: userId,
+		Code:   code,
+		Exp:    s.confirmTTL,
+	}
 
-	// if err := s.repo.Create(ctx, data); err != nil {
-	// 	return "", fmt.Errorf("failed to create confirm record. error: %w", err)
-	// }
-	// return code, nil
-	return "", fmt.Errorf("not implemented")
+	if err := s.repo.Create(ctx, data); err != nil {
+		return "", fmt.Errorf("failed to create confirm record. error: %w", err)
+	}
+	return code, nil
 }

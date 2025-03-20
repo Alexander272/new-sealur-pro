@@ -34,9 +34,10 @@ func (s *OrderService) Send(dto *models.OrderDTO) error {
 		Data:       dto,
 	}
 
-	if err := s.mailer.Send(mail); err != nil {
-		return fmt.Errorf("failed to send feedback. error: %w", err)
-	}
+	// if err := s.mailer.Send(mail); err != nil {
+	// 	return fmt.Errorf("failed to send feedback. error: %w", err)
+	// }
+	s.mailer.AsyncSend(mail)
 	return nil
 }
 
@@ -49,7 +50,7 @@ func (s *OrderService) Redirect(dto *models.RedirectDTO) error {
 	}
 
 	if err := s.mailer.Send(mail); err != nil {
-		return fmt.Errorf("failed to send feedback. error: %w", err)
+		return fmt.Errorf("failed to send redirect order. error: %w", err)
 	}
 	return nil
 }

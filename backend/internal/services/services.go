@@ -3,6 +3,8 @@ package services
 import (
 	"time"
 
+	"github.com/Alexander272/new-sealur-pro/internal/config"
+	mail "github.com/Alexander272/new-sealur-pro/internal/mail/services"
 	"github.com/Alexander272/new-sealur-pro/internal/repository"
 	"github.com/Alexander272/new-sealur-pro/pkg/auth"
 	"github.com/Alexander272/new-sealur-pro/pkg/hasher"
@@ -26,6 +28,8 @@ type Deps struct {
 	TokenManager auth.TokenManager
 	Hasher       hasher.PasswordHasher
 	Keycloak     *auth.KeycloakClient
+	Mail         *mail.Services
+	Links        config.LinksConfig
 	ConfirmTTL   time.Duration
 	LimitTTL     time.Duration
 }
@@ -39,7 +43,10 @@ func NewServices(deps Deps) *Services {
 		Repo:     deps.Repos.User,
 		Hasher:   deps.Hasher,
 		Keycloak: deps.Keycloak,
+		Mail:     deps.Mail,
 		Role:     role,
+		Confirm:  confirm,
+		Links:    deps.Links,
 	})
 	session := NewSessionService(&SessionDeps{
 		Repo:     deps.Repos.Session,

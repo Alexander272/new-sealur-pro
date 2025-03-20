@@ -7,6 +7,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/services"
 	transport "github.com/Alexander272/new-sealur-pro/internal/orders/transport/http"
+	base "github.com/Alexander272/new-sealur-pro/internal/services"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -15,11 +16,12 @@ type Deps struct {
 	Conf  *config.Config
 	Files *files.Services
 	Mail  *mail.Services
+	User  base.User
 }
 
 func NewOrdersModule(deps *Deps) *transport.Handler {
 	repo := repository.NewRepository(deps.DB)
-	services := services.NewServices(&services.Deps{Repos: repo, Files: deps.Files})
+	services := services.NewServices(&services.Deps{Repos: repo, Files: deps.Files, Mail: deps.Mail, User: deps.User})
 	handler := transport.NewHandler(services)
 
 	return handler

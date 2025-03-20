@@ -171,6 +171,14 @@ func (h *Handler) save(c *gin.Context) {
 		return
 	}
 
+	u, exists := c.Get(constants.CtxUser)
+	if !exists {
+		response.NewErrorResponse(c, http.StatusUnauthorized, "empty user", "сессия не найдена")
+		return
+	}
+	user := u.(base.User)
+	dto.UserId = user.Id
+
 	if err := h.service.Save(c, dto); err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)

@@ -79,26 +79,32 @@ func main() {
 
 	//* Services, Repos & API Handlers
 	repos := repository.NewRepository(db, memDB)
-	services := services.NewServices(services.Deps{
-		Repos:        repos,
-		TokenManager: tokenManager,
-		Hasher:       hasher,
-		Keycloak:     keycloak,
-		ConfirmTTL:   conf.Auth.ConfirmTTL,
-		LimitTTL:     conf.Limiter.TTL,
-	})
-	handlers := transport.NewHandler(services, keycloak, tokenManager)
 
 	snpModule := snp.NewSnpModule(db, conf)
 	putgModule := putg.NewPutgModule(db, conf)
 	filesModule := files.NewFilesModule(db, conf)
 	mailModule := mail.NewMailModule(conf)
+
+	services := services.NewServices(services.Deps{
+		Repos:        repos,
+		TokenManager: tokenManager,
+		Hasher:       hasher,
+		Keycloak:     keycloak,
+		Mail:         mailModule.Services,
+		ConfirmTTL:   conf.Auth.ConfirmTTL,
+		LimitTTL:     conf.Limiter.TTL,
+		Links:        conf.Links,
+	})
+	handlers := transport.NewHandler(services, keycloak, tokenManager)
+
 	ordersModule := orders.NewOrdersModule(&orders.Deps{
 		DB:    db,
 		Conf:  conf,
 		Files: filesModule.Services,
 		Mail:  mailModule.Services,
+		User:  services.User,
 	})
+
 	// handlers.Modules = append(handlers.Modules, snpModule)
 
 	handlers.Modules = []transport.Modules{snpModule, putgModule, filesModule, mailModule, ordersModule}

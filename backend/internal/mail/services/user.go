@@ -35,7 +35,7 @@ func (s *UserService) Confirm(dto *models.ConfirmDTO) error {
 	}
 
 	if err := s.mailer.Send(mail); err != nil {
-		return fmt.Errorf("failed to send feedback. error: %w", err)
+		return fmt.Errorf("failed to send confirm. error: %w", err)
 	}
 	return nil
 }
@@ -49,7 +49,7 @@ func (s *UserService) Recovery(dto *models.RecoveryDTO) error {
 	}
 
 	if err := s.mailer.Send(mail); err != nil {
-		return fmt.Errorf("failed to send feedback. error: %w", err)
+		return fmt.Errorf("failed to send recovery code. error: %w", err)
 	}
 	return nil
 }

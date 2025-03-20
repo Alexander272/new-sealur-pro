@@ -5,22 +5,37 @@ import (
 	"errors"
 	"fmt"
 
-	base "github.com/Alexander272/new-sealur-pro/internal/models"
+	mail_models "github.com/Alexander272/new-sealur-pro/internal/mail/models"
+	mail "github.com/Alexander272/new-sealur-pro/internal/mail/services"
+	base_models "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
+	base "github.com/Alexander272/new-sealur-pro/internal/services"
 )
 
 type OrderService struct {
 	repo     repository.Order
+	mail     *mail.Services
+	user     base.User
 	position Position
 	export   Export
 }
 
-func NewOrderService(repo repository.Order, position Position, export Export) *OrderService {
+type OrderDeps struct {
+	Repo     repository.Order
+	Mail     *mail.Services
+	User     base.User
+	Position Position
+	Export   Export
+}
+
+func NewOrderService(deps *OrderDeps) *OrderService {
 	return &OrderService{
-		repo:     repo,
-		position: position,
-		export:   export,
+		repo:     deps.Repo,
+		mail:     deps.Mail,
+		user:     deps.User,
+		position: deps.Position,
+		export:   deps.Export,
 	}
 }
 
@@ -40,7 +55,7 @@ type Order interface {
 
 func (s *OrderService) GetCurrent(ctx context.Context, req *models.GetCurrentOrderDTO) (*models.Order, error) {
 	data, err := s.repo.GetCurrent(ctx, req)
-	if err != nil && !errors.Is(err, base.ErrNoRows) {
+	if err != nil && !errors.Is(err, base_models.ErrNoRows) {
 		return nil, fmt.Errorf("failed to get current order. error: %w", err)
 	}
 	if data == nil {
@@ -124,8 +139,24 @@ func (s *OrderService) Save(ctx context.Context, dto *models.SaveOrderDTO) error
 		return fmt.Errorf("failed to save order. error: %w", err)
 	}
 
-	//TODO send email to manager
+	user, err := s.user.GetByIdWithManager(ctx, &base_models.GetUserByIdDTO{Id: dto.UserId})
+	if err != nil {
+		return err
+	}
 
+	mail := &mail_models.OrderDTO{
+		Recipient: user.ManagerEmail,
+		OrderId:   dto.Id,
+		Name:      user.Name,
+		Position:  user.Position,
+		Company:   user.Company,
+		Address:   user.Address,
+		Email:     user.Email,
+		Phone:     user.Phone,
+	}
+	if err := s.mail.Order.Send(mail); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -142,10 +173,28 @@ func (s *OrderService) SetStatus(ctx context.Context, dto *models.SetStatusDTO) 
 	return nil
 }
 func (s *OrderService) SetManager(ctx context.Context, dto *models.SetManagerDTO) error {
-	//TODO send email to new manager
+	user, err := s.user.GetByIdWithManager(ctx, &base_models.GetUserByIdDTO{Id: dto.UserId})
+	if err != nil {
+		return err
+	}
 
 	if err := s.repo.SetManager(ctx, dto); err != nil {
 		return fmt.Errorf("failed to set manager. error: %w", err)
+	}
+
+	mail := &mail_models.RedirectDTO{
+		Recipient: dto.ManagerEmail,
+		OrderId:   dto.OrderId,
+		Manager:   user.Manager,
+		Name:      user.Name,
+		Position:  user.Position,
+		Company:   user.Company,
+		Address:   user.Address,
+		Email:     user.Email,
+		Phone:     user.Phone,
+	}
+	if err := s.mail.Order.Redirect(mail); err != nil {
+		return err
 	}
 	return nil
 }

@@ -23,6 +23,7 @@ func NewUserRepo(db *sqlx.DB) *UserRepo {
 
 type User interface {
 	GetById(ctx context.Context, req *models.GetUserByIdDTO) (*models.User, error)
+	GetByIdWithManager(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserWithManager, error)
 	GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error)
 	GetByRegion(ctx context.Context, req *models.GetUserByRegionDTO) (*models.User, error)
 	GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error)
@@ -41,6 +42,25 @@ func (r *UserRepo) GetById(ctx context.Context, req *models.GetUserByIdDTO) (*mo
 		UserTable, RoleTable,
 	)
 	user := &models.User{}
+
+	err := r.db.GetContext(ctx, user, query, req.Id, req.ProviderId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrUserNotFound
+		}
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return user, nil
+}
+
+func (r *UserRepo) GetByIdWithManager(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserWithManager, error) {
+	query := fmt.Sprintf(`SELECT u.id, company, "position", phone, u.email, u.name, address, manager_id, nickname, m.name AS manager, m.email AS manager_email
+		FROM "%s" AS u 
+		INNER JOIN LATERAL (SELECT name, email FROM "%s" AS m WHERE u.manager_id=m.id) AS m ON true
+		WHERE u.id::text=$1 OR provider_id::text=$2`,
+		UserTable, UserTable,
+	)
+	user := &models.UserWithManager{}
 
 	err := r.db.GetContext(ctx, user, query, req.Id, req.ProviderId)
 	if err != nil {

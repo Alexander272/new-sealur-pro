@@ -74,3 +74,18 @@ type ChangeManagerDTO struct {
 	Id        string `json:"id" db:"id"`
 	ManagerId string `json:"managerId" db:"manager_id"`
 }
+
+type UserWithManager struct {
+	Id       string `json:"id" db:"id"`
+	Nickname string `json:"nickname" db:"nickname"`
+	Email    string `json:"email" db:"email"`
+	// Role         string `json:"role" db:"role"`
+	Name         string `json:"name" db:"name"`
+	Company      string `json:"company" db:"company"`
+	Address      string `json:"address" db:"address"`
+	Position     string `json:"position" db:"position"`
+	Phone        string `json:"phone" db:"phone"`
+	ManagerId    string `json:"managerId" db:"manager_id"`
+	Manager      string `json:"manager" db:"manager"`
+	ManagerEmail string `json:"managerEmail" db:"manager_email"`
+}

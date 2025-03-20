@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Alexander272/new-sealur-pro/internal/config"
+	mail_models "github.com/Alexander272/new-sealur-pro/internal/mail/models"
+	mail "github.com/Alexander272/new-sealur-pro/internal/mail/services"
 	"github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/repository"
 	"github.com/Alexander272/new-sealur-pro/pkg/auth"
@@ -18,14 +21,20 @@ type UserService struct {
 	repo     repository.User
 	hasher   hasher.PasswordHasher
 	keycloak *auth.KeycloakClient
+	mail     *mail.Services
 	role     Role
+	confirm  Confirm
+	links    config.LinksConfig
 }
 
 type UserDeps struct {
 	Repo     repository.User
 	Hasher   hasher.PasswordHasher
 	Keycloak *auth.KeycloakClient
+	Mail     *mail.Services
 	Role     Role
+	Confirm  Confirm
+	Links    config.LinksConfig
 }
 
 func NewUserService(deps *UserDeps) *UserService {
@@ -33,12 +42,16 @@ func NewUserService(deps *UserDeps) *UserService {
 		repo:     deps.Repo,
 		keycloak: deps.Keycloak,
 		hasher:   deps.Hasher,
+		mail:     deps.Mail,
 		role:     deps.Role,
+		confirm:  deps.Confirm,
+		links:    deps.Links,
 	}
 }
 
 type User interface {
 	GetById(ctx context.Context, req *models.GetUserByIdDTO) (*models.User, error)
+	GetByIdWithManager(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserWithManager, error)
 	GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error)
 	GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error)
 	CreateInProvider(ctx context.Context, user *models.User, req *models.SignInDTO) error
@@ -60,6 +73,17 @@ func (s *UserService) GetById(ctx context.Context, req *models.GetUserByIdDTO) (
 	return data, nil
 }
 
+func (s *UserService) GetByIdWithManager(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserWithManager, error) {
+	data, err := s.repo.GetByIdWithManager(ctx, req)
+	if err != nil {
+		if errors.Is(err, models.ErrUserNotFound) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("failed to get user with manager by id. error: %w", err)
+	}
+	return data, nil
+}
+
 func (s *UserService) GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error) {
 	data, err := s.repo.GetByNick(ctx, req)
 	if err != nil {
@@ -70,7 +94,18 @@ func (s *UserService) GetByNick(ctx context.Context, req *models.GetUserByNickDT
 	}
 
 	if !data.Confirmed {
-		//TODO send email with confirm link
+		code, err := s.confirm.Create(ctx, data.Id)
+		if err != nil {
+			return nil, err
+		}
+		confirm := &mail_models.ConfirmDTO{
+			Email: data.Email,
+			Name:  data.Name,
+			Link:  fmt.Sprintf("%s/auth/confirm?code=%s", s.links.App, code),
+		}
+		if err := s.mail.User.Confirm(confirm); err != nil {
+			return nil, err
+		}
 		return nil, models.ErrUserNotVerified
 	}
 	return data, nil
@@ -185,15 +220,13 @@ func (s *UserService) createInProvider(ctx context.Context, dto *models.UserDTO)
 
 func (s *UserService) Create(ctx context.Context, dto *models.UserDTO) error {
 	candidate, err := s.GetByNick(ctx, &models.GetUserByNickDTO{Nickname: dto.Nickname})
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrUserNotFound) {
 		if errors.Is(err, models.ErrUserNotVerified) {
 			return err
 		}
 		return fmt.Errorf("failed to get user. error: %w", err)
 	}
 	if candidate != nil {
-		//TODO если пользователь уже зарегистрирован, но не подтвердил почту надо обновлять токен подтверждения
-		// или это лучше при логине делать
 		return models.ErrUserExist
 	}
 
@@ -208,7 +241,7 @@ func (s *UserService) Create(ctx context.Context, dto *models.UserDTO) error {
 	dto.Role = role.Id
 	dto.UseLink = dto.ManagerId == "dynamic"
 	dto.UseLanding = dto.ManagerId == "landing"
-	dto.UseLink = dto.ManagerId != "" && dto.ManagerId != uuid.Nil.String() && dto.ManagerId != "dynamic" && dto.ManagerId != "landing"
+	dto.UseLink = dto.ManagerId != "" && dto.ManagerId != uuid.Nil.String() && !dto.UseLink && !dto.UseLanding
 
 	if !dto.UseLink {
 		manager, err := s.GetByRegion(ctx, &models.GetUserByRegionDTO{Region: dto.Region})
@@ -222,9 +255,18 @@ func (s *UserService) Create(ctx context.Context, dto *models.UserDTO) error {
 		return fmt.Errorf("failed to create user. error: %w", err)
 	}
 
-	//TODO send confirm email
-	// можно подтверждение вынести в отдельный сервис и тут просто вызвать функцию (он даже уже у меня есть)
-
+	code, err := s.confirm.Create(ctx, dto.Id)
+	if err != nil {
+		return err
+	}
+	confirm := &mail_models.ConfirmDTO{
+		Email: dto.Email,
+		Name:  dto.Name,
+		Link:  fmt.Sprintf("%s/auth/confirm?code=%s", s.links.App, code),
+	}
+	if err := s.mail.User.Confirm(confirm); err != nil {
+		return err
+	}
 	return nil
 }
 

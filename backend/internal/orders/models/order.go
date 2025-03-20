@@ -65,6 +65,7 @@ type SaveOrderDTO struct {
 	Id            string `json:"id" db:"id" binding:"required"`
 	CountPosition int64  `json:"count" db:"count_position" binding:"required"`
 	Date          string `json:"date" db:"date"`
+	UserId        string
 }
 
 type CopyOrderDTO struct {
