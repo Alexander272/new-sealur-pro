@@ -60,6 +60,13 @@ minio:
         - '.sys'
         - '.reg'
 
+emails:
+    feedback: martynov@sealur.ru
+    support: pro@sealur.ru
+links:
+    orders: http://pro.sealur.ru/manager/orders
+    app: http://pro.sealur.ru
+
 limiter:
     rps: 10
     burst: 20

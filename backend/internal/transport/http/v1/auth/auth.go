@@ -43,7 +43,7 @@ func Register(api *gin.RouterGroup, deps *Deps) {
 		auth.POST("/sign-in", handlers.signIn)
 		auth.POST("/sign-out", deps.Middleware.VerifyToken, handlers.signOut)
 		auth.POST("/sign-up", handlers.signUp)
-		auth.POST("refresh", handlers.refresh)
+		auth.POST("/refresh", handlers.refresh)
 	}
 }
 

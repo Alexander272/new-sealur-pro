@@ -17,6 +17,9 @@ type (
 		Auth        AuthConfig
 		Keycloak    KeycloakConfig
 		MinIO       MinIOConfig
+		SMTP        SMTPConfig
+		Emails      EmailsConfig
+		Links       LinksConfig
 		Http        HttpConfig
 		Limiter     LimiterConfig
 		// ErrorBot    ErrorBotConfig
@@ -74,6 +77,23 @@ type (
 		Bucket             string   `yaml:"bucket" env:"MINIO_BUCKET"`
 		DisabledFileTypes  []string `yaml:"disabledFileTypes"`
 		DisabledExtensions []string `yaml:"disabledExtensions"`
+	}
+
+	SMTPConfig struct {
+		Sender   string `yaml:"sender" env:"SMTP_SENDER"`
+		User     string `yaml:"user" env:"SMTP_USER"`
+		Password string `yaml:"password" env:"SMTP_PASSWORD"`
+		Host     string `yaml:"host" env:"SMTP_HOST"`
+		Port     int    `yaml:"port" env:"SMTP_PORT"`
+	}
+
+	EmailsConfig struct {
+		Feedback string `yaml:"feedback" env:"FEEDBACK_EMAIL"`
+		Support  string `yaml:"support" env:"SUPPORT_EMAIL"`
+	}
+	LinksConfig struct {
+		Orders string `yaml:"orders" env:"ORDERS_LINK"`
+		App    string `yaml:"app" env:"APP_LINK"`
 	}
 
 	LimiterConfig struct {

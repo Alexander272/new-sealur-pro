@@ -1,11 +1,12 @@
 module github.com/Alexander272/new-sealur-pro
 
-go 1.22
+go 1.23.0
+
+toolchain go1.23.7
 
 require (
-	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gin-gonic/gin v1.9.1
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.22.0
 	golang.org/x/time v0.5.0
 )
@@ -23,7 +24,6 @@ require (
 	github.com/go-playground/validator/v10 v10.18.0 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.0.0
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
@@ -59,6 +59,8 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/minio/minio-go/v7 v7.0.87
 	github.com/subosito/gotenv v1.6.0
+	github.com/tdewolff/minify/v2 v2.22.2
+	github.com/wneessen/go-mail v0.6.2
 	github.com/xuri/excelize/v2 v2.9.0
 )
 
@@ -74,6 +76,7 @@ require (
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
 	github.com/rs/xid v1.6.0 // indirect
+	github.com/tdewolff/parse/v2 v2.7.21 // indirect
 	github.com/xuri/efp v0.0.0-20240408161823-9ad904a10d6d // indirect
 	github.com/xuri/nfp v0.0.0-20240318013403-ab9948c2c4a7 // indirect
 )
