@@ -6,7 +6,7 @@ import type { IFetchError } from '@/app/types/error'
 import { useInput } from '@/features/auth/hooks/useInput'
 import { ValidMessage } from '@/features/auth/components/ValidMessage/ValidMessage'
 import { Title } from '@/features/auth/components/Forms/forms.style'
-import { Fallback } from '@/components/Fallback/Fallback'
+import { TopFallback } from '@/components/Fallback/TopFallback'
 import { useGetRecoveryCodeMutation } from '../../recoveryApiSlice'
 import { Form } from './recovery.style'
 
@@ -33,7 +33,7 @@ export const Recovery = () => {
 
 	return (
 		<Form onSubmit={submitHandler}>
-			{isLoading ? <Fallback background={'#d8e0fc40'} /> : null}
+			{isLoading ? <TopFallback /> : null}
 
 			<Title open={true}>Восстановление пароля</Title>
 

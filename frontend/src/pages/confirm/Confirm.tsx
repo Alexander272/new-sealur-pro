@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Typography } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { Mutex } from 'async-mutex'
 
 import { PathRoutes } from '@/constants/routes'
 import { useAppDispatch } from '@/hooks/redux'
@@ -8,6 +9,8 @@ import { useConfirmMutation } from '@/features/user/userApiSlice'
 import { setUser } from '@/features/user/userSlice'
 import { Container, Wrapper } from '../auth/auth.style'
 import { Loader } from '@/components/Fallback/Loader'
+
+const mutex = new Mutex()
 
 // страница для подтверждения пользователя
 export default function Confirm() {
@@ -22,12 +25,20 @@ export default function Confirm() {
 
 	const confirmHandler = useCallback(
 		async (code: string) => {
-			try {
-				const payload = await confirm(code).unwrap()
-				dispatch(setUser(payload.data))
-				navigate(PathRoutes.Home, { replace: true })
-			} catch {
-				setError('Не удалось активировать аккаунт. Срок действия ссылки истек')
+			await mutex.waitForUnlock()
+			if (!mutex.isLocked()) {
+				const release = await mutex.acquire()
+				try {
+					const payload = await confirm(code).unwrap()
+					dispatch(setUser(payload.data))
+					navigate(PathRoutes.Home, { replace: true })
+				} catch {
+					setError('Не удалось активировать аккаунт. Срок действия ссылки истек')
+				} finally {
+					release()
+				}
+			} else {
+				await mutex.waitForUnlock()
 			}
 		},
 		[confirm, dispatch, navigate]

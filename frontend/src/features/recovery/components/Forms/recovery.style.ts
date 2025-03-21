@@ -8,4 +8,5 @@ export const Form = styled.form`
 	display: flex;
 	flex-direction: column;
 	margin: 10px 0;
+	position: relative;
 `

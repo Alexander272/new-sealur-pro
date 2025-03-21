@@ -13,7 +13,7 @@ export const API = Object.freeze({
 		changeManager: 'users/manager/change' as const,
 	},
 	files: 'files' as const,
-	feedback: 'connect/feedback' as const,
+	feedback: 'feedback' as const,
 	analytics: {
 		base: 'analytics' as const,
 		users: 'analytics/users' as const,
