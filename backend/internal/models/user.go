@@ -67,7 +67,7 @@ type UserDTO struct {
 
 type ConfirmUserDTO struct {
 	Id   string `json:"id" db:"id"`
-	Data string `json:"data" db:"data"`
+	Date string `json:"date" db:"date"`
 }
 
 type ChangeManagerDTO struct {
@@ -88,4 +88,13 @@ type UserWithManager struct {
 	ManagerId    string `json:"managerId" db:"manager_id"`
 	Manager      string `json:"manager" db:"manager"`
 	ManagerEmail string `json:"managerEmail" db:"manager_email"`
+}
+
+type RecoveryDTO struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
+type UpgradePasswordDTO struct {
+	Code     string `json:"code"`
+	Password string `json:"password" binding:"required,min=6,max=64"`
 }

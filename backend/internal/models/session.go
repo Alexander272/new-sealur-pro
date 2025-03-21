@@ -1,9 +1,9 @@
 package models
 
 import (
-	"encoding/json"
 	"time"
 
+	"github.com/goccy/go-json"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -80,8 +80,8 @@ type ConfirmData struct {
 func (i *ConfirmData) MarshalBinary() ([]byte, error) {
 	return json.Marshal(i)
 }
-func (i *ConfirmData) UnMarshalBinary(str string) {
-	json.Unmarshal([]byte(str), &i)
+func (i *ConfirmData) UnMarshalBinary(str string) error {
+	return json.Unmarshal([]byte(str), i)
 }
 
 type SessionData struct {

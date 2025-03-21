@@ -36,6 +36,7 @@ func NewSessionService(deps *SessionDeps) *SessionService {
 
 type Session interface {
 	SignIn(ctx context.Context, dto *models.SignInDTO) (*models.User, error)
+	Create(ctx context.Context, dto *models.User) error
 	SignOut(ctx context.Context, dto *models.SignOutDTO) error
 	SignUp(ctx context.Context, dto *models.SignUpDTO) error
 	Refresh(ctx context.Context, dto *models.RefreshDTO) (*models.User, error)
@@ -63,6 +64,17 @@ func (s *SessionService) SignIn(ctx context.Context, dto *models.SignInDTO) (*mo
 	cnd.RefreshToken = res.RefreshToken
 
 	return cnd, nil
+}
+
+func (s *SessionService) Create(ctx context.Context, dto *models.User) error {
+	res, err := s.keycloak.Client.Login(ctx, s.keycloak.ClientId, s.keycloak.ClientSecret, dto.Realm, dto.Nickname, dto.Password)
+	if err != nil {
+		return fmt.Errorf("failed to login to keycloak. error: %w", err)
+	}
+
+	dto.AccessToken = res.AccessToken
+	dto.RefreshToken = res.RefreshToken
+	return nil
 }
 
 func (s *SessionService) SignOut(ctx context.Context, dto *models.SignOutDTO) error {

@@ -37,7 +37,7 @@ func (r *UserRepo) Get(Ctx context.Context) {}
 
 func (r *UserRepo) GetById(ctx context.Context, req *models.GetUserByIdDTO) (*models.User, error) {
 	query := fmt.Sprintf(`SELECT u.id, realm, nickname, company, inn, kpp, region, city, "position", phone, password, email, 
-		r.code AS role, name, address, manager_id
+		r.code AS role, name, address, manager_id, provider_id
 		FROM "%s" AS u INNER JOIN %s AS r on r.id=role_id WHERE u.id::text=$1 OR provider_id::text=$2`,
 		UserTable, RoleTable,
 	)
@@ -128,12 +128,11 @@ func (r *UserRepo) GetManagers(ctx context.Context, req *models.GetManagersDTO) 
 }
 
 func (r *UserRepo) Create(ctx context.Context, dto *models.UserDTO) error {
-	query := fmt.Sprintf(`INSERT INTO "%s" (id, nickname, company, inn, kpp, region, city, "position", phone, email, realm,
+	query := fmt.Sprintf(`INSERT INTO "%s" (id, nickname, company, inn, kpp, region, city, "position", password, phone, email, realm,
 		role_id, name, address, manager_id, provider_id, use_link, use_landing) VALUES (:id, :nickname, :company, :inn, :kpp, :region, :city, 
-		:position, :phone, :email, :realm, :role_id, :name, :address, :manager_id, :provider_id, :use_link, :use_landing)`,
+		:position, :password, :phone, :email, :realm, :role_id, :name, :address, :manager_id, :provider_id, :use_link, :use_landing)`,
 		UserTable,
 	)
-	dto.Id = uuid.NewString()
 	if dto.ManagerId == "" {
 		dto.ManagerId = uuid.Nil.String()
 	}
@@ -146,8 +145,8 @@ func (r *UserRepo) Create(ctx context.Context, dto *models.UserDTO) error {
 }
 
 func (r *UserRepo) Confirm(ctx context.Context, dto *models.ConfirmUserDTO) error {
-	query := fmt.Sprintf(`UPDATE "%s" SET confirmed=true, data=:data WHERE id=:id`, UserTable)
-	dto.Data = fmt.Sprintf("%d", time.Now().UnixMilli())
+	query := fmt.Sprintf(`UPDATE "%s" SET confirmed=true, password='', date=:date WHERE id=:id`, UserTable)
+	dto.Date = fmt.Sprintf("%d", time.Now().UnixMilli())
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)
 	if err != nil {

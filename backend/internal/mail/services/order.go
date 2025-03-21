@@ -30,6 +30,7 @@ func (s *OrderService) Send(dto *models.OrderDTO) error {
 	dto.Link = fmt.Sprintf("%s/%s?action=save", s.links.Orders, dto.OrderId)
 	mail := &smtp.SendDTO{
 		Recipients: []string{dto.Recipient},
+		ReplyTo:    dto.Email,
 		Template:   constants.OrderTemplate,
 		Data:       dto,
 	}
@@ -45,6 +46,7 @@ func (s *OrderService) Redirect(dto *models.RedirectDTO) error {
 	dto.Link = fmt.Sprintf("%s/%s?action=save", s.links.Orders, dto.OrderId)
 	mail := &smtp.SendDTO{
 		Recipients: []string{dto.Recipient},
+		ReplyTo:    dto.Email,
 		Template:   constants.RedirectOrderTemplate,
 		Data:       dto,
 	}

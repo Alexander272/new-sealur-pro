@@ -56,8 +56,11 @@ type User interface {
 	GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error)
 	CreateInProvider(ctx context.Context, user *models.User, req *models.SignInDTO) error
 	Create(ctx context.Context, dto *models.UserDTO) error
+	Confirm(ctx context.Context, code string) (*models.User, error)
 	Update(ctx context.Context, dto *models.UserDTO) error
 	SetManager(ctx context.Context, dto *models.ChangeManagerDTO) error
+	Recovery(ctx context.Context, dto *models.RecoveryDTO) error
+	UpgradePassword(ctx context.Context, dto *models.UpgradePasswordDTO) error
 }
 
 // func (s *UserService) Get(ctx context.Context)
@@ -213,7 +216,7 @@ func (s *UserService) createInProvider(ctx context.Context, dto *models.UserDTO)
 		return fmt.Errorf("failed to create user in keycloak. error: %w", err)
 	}
 	dto.Realm = s.keycloak.Realm
-	dto.Password = ""
+	// dto.Password = ""
 	dto.ProviderId = id
 	return nil
 }
@@ -230,6 +233,7 @@ func (s *UserService) Create(ctx context.Context, dto *models.UserDTO) error {
 		return models.ErrUserExist
 	}
 
+	dto.Id = uuid.NewString()
 	if err := s.createInProvider(ctx, dto); err != nil {
 		return err
 	}
@@ -270,6 +274,24 @@ func (s *UserService) Create(ctx context.Context, dto *models.UserDTO) error {
 	return nil
 }
 
+func (s *UserService) Confirm(ctx context.Context, code string) (*models.User, error) {
+	data, err := s.confirm.Get(ctx, code)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.GetById(ctx, &models.GetUserByIdDTO{Id: data.UserId})
+	if err != nil {
+		return nil, err
+	}
+
+	dto := &models.ConfirmUserDTO{Id: data.UserId}
+	if err := s.repo.Confirm(ctx, dto); err != nil {
+		return nil, fmt.Errorf("failed to confirm user. error: %w", err)
+	}
+	return user, nil
+}
+
 func (s *UserService) Update(ctx context.Context, dto *models.UserDTO) error {
 	err := s.repo.Update(ctx, dto)
 	if err != nil {
@@ -281,6 +303,59 @@ func (s *UserService) Update(ctx context.Context, dto *models.UserDTO) error {
 func (s *UserService) SetManager(ctx context.Context, dto *models.ChangeManagerDTO) error {
 	if err := s.repo.SetManager(ctx, dto); err != nil {
 		return fmt.Errorf("failed to change manager. error: %w", err)
+	}
+	return nil
+}
+
+func (s *UserService) Recovery(ctx context.Context, dto *models.RecoveryDTO) error {
+	user, err := s.repo.GetByNick(ctx, &models.GetUserByNickDTO{Nickname: dto.Email})
+	if err != nil {
+		return err
+	}
+
+	code, err := s.confirm.Create(ctx, user.Id)
+	if err != nil {
+		return err
+	}
+
+	mail := &mail_models.RecoveryDTO{
+		Email: user.Email,
+		Link:  fmt.Sprintf("%s/auth/recovery/%s", s.links.App, code),
+	}
+	if err := s.mail.User.Recovery(mail); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UserService) UpgradePassword(ctx context.Context, dto *models.UpgradePasswordDTO) error {
+	data, err := s.confirm.Get(ctx, dto.Code)
+	if err != nil {
+		return err
+	}
+
+	user, err := s.GetById(ctx, &models.GetUserByIdDTO{Id: data.UserId})
+	if err != nil {
+		return err
+	}
+
+	token, err := s.keycloak.GetToken(ctx)
+	if err != nil {
+		return err
+	}
+
+	u := gocloak.User{
+		ID: &user.ProviderId,
+		Credentials: &[]gocloak.CredentialRepresentation{
+			{
+				Type:  gocloak.StringP("password"),
+				Value: &dto.Password,
+			},
+		},
+	}
+
+	if err := s.keycloak.Client.UpdateUser(ctx, token, s.keycloak.Realm, u); err != nil {
+		return fmt.Errorf("failed to upgrade password: %w", err)
 	}
 	return nil
 }

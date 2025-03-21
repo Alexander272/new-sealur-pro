@@ -16,6 +16,7 @@ type Services struct {
 	Session
 	User
 
+	Feedback
 	FlangeStandard
 	Materials
 	Mounting
@@ -55,6 +56,8 @@ func NewServices(deps Deps) *Services {
 		User:     user,
 	})
 
+	feedback := NewFeedbackService(deps.Mail)
+
 	standard := NewStandardService(deps.Repos.Standard)
 	flangeStandard := NewFlangeStandardService(deps.Repos.FlangeStandard)
 	materials := NewMaterialsService(deps.Repos.Material)
@@ -67,6 +70,7 @@ func NewServices(deps Deps) *Services {
 		User:    user,
 		Session: session,
 
+		Feedback:       feedback,
 		FlangeStandard: flangeStandard,
 		Materials:      materials,
 		Mounting:       mounting,

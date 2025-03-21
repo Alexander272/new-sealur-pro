@@ -23,7 +23,7 @@ type Confirm interface {
 	Create(ctx context.Context, data *models.ConfirmData) error
 }
 
-func (r *ConfirmRepo) Get(ctx context.Context, code string) (data *models.ConfirmData, err error) {
+func (r *ConfirmRepo) Get(ctx context.Context, code string) (*models.ConfirmData, error) {
 	cmd := r.client.Get(ctx, code)
 	if cmd.Err() != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", cmd.Err())
@@ -33,9 +33,11 @@ func (r *ConfirmRepo) Get(ctx context.Context, code string) (data *models.Confir
 	if err != nil {
 		return nil, fmt.Errorf("failed to get result. error: %w", err)
 	}
+	data := &models.ConfirmData{}
 
-	data.UnMarshalBinary(str)
-
+	if err := data.UnMarshalBinary(str); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal binary. error: %w", err)
+	}
 	return data, nil
 }
 
