@@ -6,6 +6,7 @@ import type {
 	IFullOrder,
 	IOrderCount,
 	IOrderMangerDTO,
+	IOrderParams,
 	IOrderResponse,
 	IOrderWithCompany,
 	ISaveOrder,
@@ -13,6 +14,7 @@ import type {
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 import { saveAs } from '../files/utils/save'
+import { buildSiUrlParams } from './utils/buildUrlParams'
 
 export const ordersApiSlice = apiSlice.injectEndpoints({
 	overrideExisting: false,
@@ -30,7 +32,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение всех прошлых заявок
-		getAllOrders: builder.query<{ data: IFullOrder[] }, null>({
+		getOrdersByUser: builder.query<{ data: IFullOrder[] }, null>({
 			query: () => API.orders.base,
 			providesTags: [{ type: 'Orders', id: 'all' }],
 			onQueryStarted: async (_arg, api) => {
@@ -122,7 +124,20 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 			invalidatesTags: [{ type: 'Orders', id: 'current' }],
 		}),
 
-		// получение последних заявок
+		getAllOrders: builder.query<{ data: IOrderWithCompany[]; total: number }, IOrderParams>({
+			query: params => ({
+				url: API.orders.all,
+				params: buildSiUrlParams(params),
+			}),
+			providesTags: [{ type: 'Orders', id: 'all' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить список заявок', { autoClose: false })
+				}
+			},
+		}),
 		// getLastOrders: builder.query<{ data: { orders: IFullOrder[] } }, null>({
 		// 	query: () => API.orders.last,
 		// 	onQueryStarted: async (_arg, api) => {
@@ -195,14 +210,14 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 export const {
 	useGetOrderQuery,
 	useSaveOrderMutation,
-	useGetAllOrdersQuery,
+	useGetOrdersByUserQuery,
 	useGetOrderByIdQuery,
 	useGetOrdersByManagerQuery,
 	useDownloadOrderQuery,
 	useLazyDownloadOrderQuery,
 	useSaveInfoMutation,
 	useCopyOrderMutation,
-	// useGetLastOrdersQuery,
+	useGetAllOrdersQuery,
 	useGetOrderByNumberQuery,
 	useGetOrdersCountQuery,
 	useFinishOrderMutation,

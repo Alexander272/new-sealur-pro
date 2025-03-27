@@ -9,6 +9,7 @@ export const API = Object.freeze({
 		base: 'users' as const,
 		confirm: 'users/confirm' as const,
 		recovery: 'users/recovery' as const,
+		info: 'users/info' as const,
 		managers: 'users/managers' as const,
 		changeManager: 'users/manager/change' as const,
 	},
@@ -16,8 +17,17 @@ export const API = Object.freeze({
 	feedback: 'feedback' as const,
 	analytics: {
 		base: 'analytics' as const,
-		users: 'analytics/users' as const,
 		orders: 'analytics/orders' as const,
+		ordersCount: 'analytics/orders/count' as const,
+		ordersStats: {
+			base: 'analytics/orders/stats' as const,
+			grouped: 'analytics/orders/stats/grouped' as const,
+		},
+		users: {
+			base: 'analytics/users' as const,
+			info: 'analytics/users/info' as const,
+			stats: 'analytics/users/stats' as const,
+		},
 	},
 	orders: {
 		base: 'orders' as const,

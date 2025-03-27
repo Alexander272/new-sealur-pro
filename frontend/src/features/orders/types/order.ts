@@ -57,7 +57,9 @@ export interface IOrderWithCompany {
 	status: Status
 	company: string
 	userId: string
+	user: string
 	managerId: string
+	manager: string
 }
 
 export interface ISaveOrder {
@@ -103,4 +105,20 @@ export interface IOrderMangerDTO {
 	managerId: string
 	managerEmail: string
 	oldManagerId: string
+}
+
+export interface IOrderParams {
+	page?: number
+	limit?: number
+	sort?: ISort
+	filters?: IFilter[]
+}
+export type ISort = {
+	[K in string]?: 'DESC' | 'ASC'
+}
+export type CompareTypes = 'con' | 'start' | 'end' | 'like' | 'in' | 'eq' | 'gte' | 'lte' | 'range' | 'null'
+export interface IFilter {
+	field: string
+	compareType: CompareTypes
+	value: string
 }

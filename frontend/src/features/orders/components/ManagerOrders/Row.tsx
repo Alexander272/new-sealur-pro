@@ -24,7 +24,7 @@ export const Row: FC<Props> = ({ data }) => {
 			<TableCell>{data.company}</TableCell>
 			<TableCell>{stampToDate(+data.date)}</TableCell>
 			<TableCell>{data.countPosition}</TableCell>
-			<TableCell width={20} align='right'>
+			<TableCell width={20} align='right' onClick={e => e.stopPropagation()}>
 				<OrderMenu data={data} />
 			</TableCell>
 		</TableRow>

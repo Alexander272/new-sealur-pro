@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify'
 
 import type { IBaseFetchError } from '@/app/types/error'
-import type { IUser } from './types/user'
+import type { IUser, IUserInfo } from './types/user'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 
@@ -11,6 +11,18 @@ export const userApiSlice = apiSlice.injectEndpoints({
 		// получение полных данных о пользователе
 		getUser: builder.query<{ data: IUser }, string>({
 			query: userId => `${API.users.base}/${userId}`,
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch (error) {
+					const fetchError = (error as IBaseFetchError).error
+					toast.error(fetchError.data.message, { autoClose: false })
+				}
+			},
+		}),
+
+		getUserInfo: builder.query<{ data: IUserInfo }, string>({
+			query: userId => `${API.users.info}/${userId}`,
 			onQueryStarted: async (_arg, api) => {
 				try {
 					await api.queryFulfilled
@@ -31,4 +43,4 @@ export const userApiSlice = apiSlice.injectEndpoints({
 	}),
 })
 
-export const { useGetUserQuery, useConfirmMutation } = userApiSlice
+export const { useGetUserQuery, useGetUserInfoQuery, useConfirmMutation } = userApiSlice

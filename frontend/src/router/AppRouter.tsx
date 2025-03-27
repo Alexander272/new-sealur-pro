@@ -15,6 +15,11 @@ import { Putg } from '@/pages/gaskets/putg/PutgLazy'
 import { Orders } from '@/pages/orders/orders/OrdersLazy'
 import { Orders as ManagerOrders } from '@/pages/orders/byManager/OrdersLazy'
 import { Order as ManagerOrder } from '@/pages/orders/byManager/OrderLazy'
+import { OrdersList } from '@/pages/orders/list/ListLazy'
+import { Analytics } from '@/pages/analytics/AnalyticsLazy'
+import { UsersInfo } from '@/pages/users/usersInfo/UsersInfoLazy'
+import { UserInfo } from '@/pages/users/userInfo/UserInfoLazy'
+import { OrdersCount } from '@/pages/orders/count/OrdersCountLazy'
 import { Main } from '@/components/Layout/Main/MainLazy'
 import { Base } from '@/components/Layout/Base/Base'
 import { Fallback } from '@/components/Fallback/Fallback'
@@ -80,13 +85,13 @@ export const AppRouter = () => {
 					>
 						<Route path={PathRoutes.Manager.Orders.Base} element={<ManagerOrders />} />
 						<Route path={PathRoutes.Manager.Orders.Order} element={<ManagerOrder />} />
-						{/*<Route path={PathRoutes.Manager.Orders.Last} element={<LastOrders />} />
+						<Route path={PathRoutes.Manager.Orders.List} element={<OrdersList />} />
 
 						<Route path={PathRoutes.Manager.Analytics.Base} element={<Analytics />} />
-						<Route path={PathRoutes.Manager.Analytics.Users} element={<AnalyticsUsers />} />
-						<Route path={PathRoutes.Manager.Analytics.Orders} element={<AnalyticsOrders />} />
-						<Route path={PathRoutes.Manager.Analytics.Count} element={<AnalyticsCount />} />
-						<Route path={PathRoutes.Manager.Analytics.User} element={<AnalyticsUser />} />*/}
+						<Route path={PathRoutes.Manager.Analytics.Users} element={<UsersInfo />} />
+						<Route path={PathRoutes.Manager.Analytics.User} element={<UserInfo />} />
+						<Route path={PathRoutes.Manager.Analytics.Count} element={<OrdersCount />} />
+						{/*<Route path={PathRoutes.Manager.Analytics.Orders} element={<AnalyticsOrders />} />*/}
 					</Route>
 				</Route>
 			</Routes>

@@ -1,23 +1,59 @@
 import { toast } from 'react-toastify'
 
 import type { IBaseFetchError } from '@/app/types/error'
-import type { IAnalyticFullClient, IAnalyticFullOrder, IAnalytics, IOrderParams, IUserParams } from './types/analytics'
+import type {
+	IGroupedOrderStatistics,
+	IOrderCount,
+	IOrderStatistics,
+	IUserParams,
+	IUsersInfo,
+	IUsersStatistics,
+} from './types/analytics'
+import type { PositionType } from '../card/types/card'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 
 export const analyticsApiSlice = apiSlice.injectEndpoints({
 	overrideExisting: false,
 	endpoints: builder => ({
-		// получение аналитики
-		getAnalytics: builder.query<{ data: IAnalytics }, { periodAt: string; periodEnd: string }>({
-			query: req => ({
-				url: API.analytics.base,
+		getOrdersStats: builder.query<{ data: IOrderStatistics }, null>({
+			query: () => ({
+				url: API.analytics.ordersStats.base,
 				method: 'GET',
-				params: new URLSearchParams([
-					['periodAt', req.periodAt],
-					['periodEnd', req.periodEnd],
-				]),
 			}),
+			providesTags: [{ type: 'Analytics', id: 'OrdersStats' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch (error) {
+					const fetchError = (error as IBaseFetchError).error
+					toast.error(fetchError.data.message, { autoClose: false })
+				}
+			},
+		}),
+		getGroupedOrdersStats: builder.query<{ data: IGroupedOrderStatistics[] }, { from: string; to: string } | null>({
+			query: req => ({
+				url: API.analytics.ordersStats.grouped,
+				method: 'GET',
+				params: req ? { 'period[from]': req.from, 'period[to]': req.to } : undefined,
+			}),
+			providesTags: [{ type: 'Analytics', id: 'GroupedOrdersStats' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch (error) {
+					const fetchError = (error as IBaseFetchError).error
+					toast.error(fetchError.data.message, { autoClose: false })
+				}
+			},
+		}),
+		getOrdersCount: builder.query<{ data: IOrderCount[] }, PositionType | undefined>({
+			query: req => ({
+				url: API.analytics.ordersCount,
+				method: 'GET',
+				params: req ? { type: req } : undefined,
+			}),
+			providesTags: [{ type: 'Analytics', id: 'OrdersCount' }],
 			onQueryStarted: async (_arg, api) => {
 				try {
 					await api.queryFulfilled
@@ -28,18 +64,13 @@ export const analyticsApiSlice = apiSlice.injectEndpoints({
 			},
 		}),
 
-		// получение аналитики по пользователям
-		getAnalyticUsers: builder.query<{ data: IAnalyticFullClient[] }, IUserParams | null>({
+		getUsersStats: builder.query<{ data: IUsersStatistics }, { from: string; to: string } | null>({
 			query: req => ({
-				url: API.analytics.users,
+				url: API.analytics.users.stats,
 				method: 'GET',
-				params: new URLSearchParams([
-					['periodAt', req?.periodAt?.toString() || ''],
-					['periodEnd', req?.periodEnd?.toString() || ''],
-					['useLink', `${req?.useLink != undefined ? req?.useLink : ''}`],
-					['hasOrder', `${req?.hasOrders || ''}`],
-				]),
+				params: req ? { 'period[from]': req.from, 'period[to]': req.to } : undefined,
 			}),
+			providesTags: [{ type: 'Analytics', id: 'UsersStats' }],
 			onQueryStarted: async (_arg, api) => {
 				try {
 					await api.queryFulfilled
@@ -49,18 +80,19 @@ export const analyticsApiSlice = apiSlice.injectEndpoints({
 				}
 			},
 		}),
-
-		// получение аналитики по заявкам
-		getAnalyticsOrders: builder.query<{ data: IAnalyticFullOrder[] }, IOrderParams | null>({
+		getUsersInfo: builder.query<{ data: IUsersInfo[] }, IUserParams | null>({
 			query: req => ({
-				url: API.analytics.orders,
+				url: API.analytics.users.info,
 				method: 'GET',
-				params: new URLSearchParams([
-					['periodAt', req?.periodAt?.toString() || ''],
-					['periodEnd', req?.periodEnd?.toString() || ''],
-					['userId', req?.userId || ''],
-				]),
+				params: new URLSearchParams({
+					'period[from]': req?.from || '',
+					'period[to]': req?.to || '',
+					fromManager: `${req?.fromManager == undefined ? '' : req?.fromManager}`,
+					withOrders: `${req?.withOrders == undefined ? '' : req?.withOrders}`,
+					confirmed: `${req?.confirmed == undefined ? '' : req?.confirmed}`,
+				}),
 			}),
+			providesTags: [{ type: 'Analytics', id: 'UsersInfo' }],
 			onQueryStarted: async (_arg, api) => {
 				try {
 					await api.queryFulfilled
@@ -70,12 +102,13 @@ export const analyticsApiSlice = apiSlice.injectEndpoints({
 				}
 			},
 		}),
-
-		// получение данных о пользователе
-		// getUserData: builder.query<UserResponse, string>({
-		// 	query: userId => `users/full/${userId}`,
-		// }),
 	}),
 })
 
-export const { useGetAnalyticsQuery, useGetAnalyticUsersQuery, useGetAnalyticsOrdersQuery } = analyticsApiSlice
+export const {
+	useGetOrdersStatsQuery,
+	useGetGroupedOrdersStatsQuery,
+	useGetOrdersCountQuery,
+	useGetUsersStatsQuery,
+	useGetUsersInfoQuery,
+} = analyticsApiSlice

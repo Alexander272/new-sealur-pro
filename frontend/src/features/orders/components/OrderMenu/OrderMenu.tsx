@@ -60,7 +60,7 @@ export const OrderMenu: FC<Props> = ({ data }) => {
 					<CircularProgress size={18} />
 				</Box>
 			) : (
-				<IconButton ref={anchor} onClick={toggle}>
+				<IconButton size='large' ref={anchor} onClick={toggle}>
 					<DotsIcon fontSize={18} />
 				</IconButton>
 			)}

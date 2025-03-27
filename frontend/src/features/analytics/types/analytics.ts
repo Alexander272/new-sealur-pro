@@ -1,3 +1,73 @@
+// export const IOrderStatistic = {
+// 	id: string
+// 	Manager   string         `json:"manager" db:"manager"`
+// 	ManagerId string         `json:"managerId" db:"manager_id"`
+// 	UserId    string         `json:"userId" db:"user_id"`
+// 	User      string         `json:"user" db:"name"`
+// 	Company   string         `json:"company" db:"company"`
+// 	Count     int            `json:"count" db:"count"`
+// 	Position  *PositionStats `json:"positions"`
+// }
+
+export interface IGroupedOrderStatistics {
+	id: string
+	manager: string
+	managerId: string
+	userId: string
+	user: string
+	company: string
+	count: number
+	positions: IPositionStatistics | null
+}
+export interface IPositionStatistics {
+	count: number
+	snp: number
+	putg: number
+	wave: number
+	rings: number
+	kit: number
+}
+
+export interface IOrderStatistics {
+	ordersCount: number
+	usersCount: number
+	positions: IPositionStatistics | null
+}
+
+export interface IOrderCount {
+	userId: string
+	name: string
+	company: string
+	orders: number
+	positions: number
+	average: number
+}
+
+export interface IUsersStatistics {
+	companyCount: number
+	usersCount: number
+	notConfirmedUsers: number
+	usersFromManager: number
+}
+
+export interface IUserParams {
+	from?: string
+	to?: string
+	fromManager?: boolean
+	withOrders?: boolean
+	confirmed?: boolean
+}
+
+export interface IUsersInfo {
+	id: string
+	company: string
+	user: string
+	manager: string
+	fromManager: boolean
+	ordersCount: number
+	hasOrders: boolean
+}
+
 export interface IAnalytics {
 	ordersCount: number
 	usersCountRegister: number
@@ -24,17 +94,10 @@ export interface IAnalyticClient {
 	snpPositionCount: number
 }
 
-export interface IUserParams {
-	periodAt?: number
-	periodEnd?: number
-	useLink?: boolean
-	hasOrders?: boolean
-}
-
 export interface IOrderParams {
 	userId?: string
-	periodAt?: number
-	periodEnd?: number
+	from?: string
+	to?: string
 }
 
 export interface IAnalyticFullClient {

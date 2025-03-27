@@ -8,7 +8,7 @@ export const Base = styled.div`
 	background-color: #fbfbfb;
 `
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ disabled?: boolean }>`
 	/* padding: 0 6px; */
 	padding-left: 12px;
 	/* max-width: 1200px; */
@@ -18,7 +18,7 @@ export const Wrapper = styled.div`
 	gap: 12px;
 	display: flex;
 	/* flex-direction: column; */
-	user-select: none;
+	user-select: ${props => (props.disabled ? 'inherit' : 'none')};
 	position: relative;
 	justify-content: flex-end;
 `

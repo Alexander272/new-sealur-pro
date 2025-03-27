@@ -17,6 +17,28 @@ export interface IUser {
 	token: string
 }
 
+export interface IUserInfo {
+	id: string
+	nickname: string
+	email: string
+	name: string
+	company: string
+	address: string
+	inn: string
+	kpp: string
+	region: string
+	city: string
+	position: string
+	phone: string
+	manager: string
+	fromManager: boolean
+	fromLanding: boolean
+	confirmed: boolean
+	date: number
+	orderDate: number
+	visitDate: number
+}
+
 export interface IRefreshUser {
 	id: string
 	nickname: string

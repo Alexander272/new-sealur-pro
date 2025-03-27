@@ -7,8 +7,8 @@ import { PathRoutes } from '@/constants/routes'
 import { useAppDispatch } from '@/hooks/redux'
 import { useConfirmMutation } from '@/features/user/userApiSlice'
 import { setUser } from '@/features/user/userSlice'
-import { Container, Wrapper } from '../auth/auth.style'
 import { Loader } from '@/components/Fallback/Loader'
+import { Container, Wrapper } from '../auth/auth.style'
 
 const mutex = new Mutex()
 

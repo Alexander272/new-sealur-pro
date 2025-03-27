@@ -2,11 +2,11 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow }
 
 import { TopFallback } from '@/components/Fallback/TopFallback'
 import { NoRowsOverlay } from '@/components/NoRowsOverlay/NoRowsOverlay'
-import { useGetAllOrdersQuery } from '../../ordersApiSlice'
+import { useGetOrdersByUserQuery } from '../../ordersApiSlice'
 import { Row } from './Row'
 
 export const UserOrders = () => {
-	const { data, isFetching } = useGetAllOrdersQuery(null)
+	const { data, isFetching } = useGetOrdersByUserQuery(null)
 
 	if (!data || data.data.length === 0)
 		return (

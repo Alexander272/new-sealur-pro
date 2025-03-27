@@ -17,7 +17,7 @@ export default function Main({ disableCard }: Props) {
 	return (
 		<>
 			<Header disableCard={disableCard} />
-			<Wrapper>
+			<Wrapper disabled={disableCard}>
 				<Suspense fallback={<Fallback alignSelf={'center'} />}>
 					<Outlet />
 				</Suspense>
