@@ -51,7 +51,7 @@ type (
 
 	AuthConfig struct {
 		AccessTokenTTL  time.Duration `yaml:"access_token_ttl" env-default:"10m"`
-		RefreshTokenTTL time.Duration `yaml:"refresh_token_ttl" env-default:"12h"`
+		RefreshTokenTTL time.Duration `yaml:"refresh_token_ttl" env-default:"24h"`
 		LimitAuthTTL    time.Duration `yaml:"limit_auth_ttl" env-default:"30m"`
 		CountAttempt    int32         `yaml:"count_attempt" env-default:"5"`
 		ConfirmTTL      time.Duration `yaml:"confirm_ttl" env-default:"1h"`

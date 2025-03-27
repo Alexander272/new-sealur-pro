@@ -25,8 +25,11 @@ type OrderWithCompany struct {
 	Number        int64  `json:"number" db:"number"`
 	Status        Status `json:"status" db:"status"`
 	UserId        string `json:"userId" db:"user_id"`
+	User          string `json:"user" db:"user"`
+	Manager       string `json:"manager" db:"manager"`
 	Company       string `json:"company" db:"company"`
 	ManagerId     string `json:"managerId" db:"manager_id"`
+	Total         int64  `json:"-" db:"total"`
 }
 
 type GetOrderDTO struct {
@@ -38,7 +41,7 @@ type GetCurrentOrderDTO struct {
 	ManagerId string `json:"managerId"`
 }
 
-type GetAllOrdersDTO struct {
+type GetOrdersByUserDTO struct {
 	UserId string `json:"userId"`
 }
 
@@ -87,4 +90,22 @@ type SetManagerDTO struct {
 	ManagerEmail string `json:"managerEmail"`
 	UserId       string `json:"userId"`
 	OldManagerId string `json:"oldManagerId"`
+}
+
+type GetAllOrdersDTO struct {
+	Sort    []*Sort   `json:"sort"`
+	Filters []*Filter `json:"filters"`
+	Limit   int       `json:"limit"`
+	Offset  int       `json:"offset"`
+}
+
+type Sort struct {
+	Field string `json:"field"`
+	Type  string `json:"type"`
+}
+
+type Filter struct {
+	Field       string `json:"field"`
+	CompareType string `json:"compareType"`
+	Value       string `json:"value"`
 }

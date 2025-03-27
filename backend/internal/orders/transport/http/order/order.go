@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Alexander272/new-sealur-pro/internal/constants"
@@ -33,7 +35,7 @@ func Register(api *gin.RouterGroup, service services.Order, middleware *middlewa
 
 	orders := api.Group("")
 	{
-		orders.GET("", handler.get)
+		orders.GET("", handler.getByUser)
 		orders.GET("/current", handler.getCurrent)
 		orders.PUT("/info", handler.setInfo)
 		orders.POST("/save", handler.save)
@@ -43,6 +45,7 @@ func Register(api *gin.RouterGroup, service services.Order, middleware *middlewa
 		{
 			manager.GET("/:id", handler.getById)
 			manager.GET("/:id/download", handler.download)
+			manager.GET("/all", handler.getAll)
 			manager.GET("/by-manager", handler.getByManager)
 			manager.POST("/finish", handler.finish)
 			manager.POST("/manager/change", handler.changeManager)
@@ -50,14 +53,14 @@ func Register(api *gin.RouterGroup, service services.Order, middleware *middlewa
 	}
 }
 
-func (h *Handler) get(c *gin.Context) {
+func (h *Handler) getByUser(c *gin.Context) {
 	u, exists := c.Get(constants.CtxUser)
 	if !exists {
 		response.NewErrorResponse(c, http.StatusUnauthorized, "empty user", "сессия не найдена")
 		return
 	}
 	user := u.(base.User)
-	dto := &models.GetAllOrdersDTO{UserId: user.Id}
+	dto := &models.GetOrdersByUserDTO{UserId: user.Id}
 
 	data, err := h.service.Get(c, dto)
 	if err != nil {
@@ -102,6 +105,58 @@ func (h *Handler) getById(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, response.DataResponse{Data: data})
+}
+
+func (h *Handler) getAll(c *gin.Context) {
+	page, size := c.DefaultQuery("page", "1"), c.DefaultQuery("size", "15")
+	sortLine := c.Query("sort_by")
+	filters := c.QueryMap("filters")
+
+	limit, _ := strconv.Atoi(size)
+	offset, _ := strconv.Atoi(page)
+	params := &models.GetAllOrdersDTO{
+		Limit:   limit,
+		Offset:  (offset - 1) * limit,
+		Sort:    []*models.Sort{},
+		Filters: []*models.Filter{},
+	}
+
+	if sortLine != "" {
+		for _, v := range strings.Split(sortLine, ",") {
+			t := "ASC"
+			if strings.HasPrefix(v, "-") {
+				v = strings.TrimPrefix(v, "-")
+				t = "DESC"
+			}
+			params.Sort = append(params.Sort, &models.Sort{Field: v, Type: t})
+		}
+	}
+
+	for k := range filters {
+		valueMap := c.QueryMap(k)
+		for key, value := range valueMap {
+			f := &models.Filter{
+				Field:       k,
+				CompareType: key,
+				Value:       value,
+			}
+
+			params.Filters = append(params.Filters, f)
+		}
+	}
+
+	data, err := h.service.GetAll(c, params)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка: "+err.Error())
+		error_bot.Send(c, err.Error(), params)
+		return
+	}
+
+	total := 0
+	if len(data) > 0 {
+		total = int(data[0].Total)
+	}
+	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: total})
 }
 
 func (h *Handler) getByManager(c *gin.Context) {

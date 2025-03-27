@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -48,11 +49,13 @@ func Register(api *gin.RouterGroup, deps *Deps) {
 		auth := users.Group("", deps.Middleware.VerifyToken)
 		{
 			auth.GET("/:id", handler.getById)
-		}
-		manager := users.Group("", deps.Middleware.CheckAccess(constants.AllowManager))
-		{
-			manager.GET("/managers", handler.getManagers)
-			manager.POST("/manager/change", handler.changeManager)
+
+			manager := auth.Group("", deps.Middleware.CheckAccess(constants.AllowManager))
+			{
+				manager.GET("/info/:id", handler.getInfoById)
+				manager.GET("/managers", handler.getManagers)
+				manager.POST("/manager/change", handler.changeManager)
+			}
 		}
 	}
 }
@@ -67,6 +70,31 @@ func (h *Handler) getById(c *gin.Context) {
 	dto := &models.GetUserByIdDTO{Id: id}
 	data, err := h.service.GetById(c, dto)
 	if err != nil {
+		if errors.Is(err, models.ErrUserNotFound) {
+			response.NewErrorResponse(c, http.StatusNotFound, err.Error(), "Пользователь не найден")
+			return
+		}
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
+		error_bot.Send(c, err.Error(), dto)
+		return
+	}
+	c.JSON(http.StatusOK, response.DataResponse{Data: data})
+}
+
+func (h *Handler) getInfoById(c *gin.Context) {
+	id := c.Param("id")
+	if err := uuid.Validate(id); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
+		return
+	}
+
+	dto := &models.GetUserByIdDTO{Id: id}
+	data, err := h.service.GetInfoById(c, dto)
+	if err != nil {
+		if errors.Is(err, models.ErrUserNotFound) {
+			response.NewErrorResponse(c, http.StatusNotFound, err.Error(), "Пользователь не найден")
+			return
+		}
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return

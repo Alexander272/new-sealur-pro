@@ -25,6 +25,29 @@ type User struct {
 	RefreshToken string `json:"-"`
 }
 
+type UserInfo struct {
+	Id          string `json:"id" db:"id"`
+	Nickname    string `json:"nickname" db:"nickname"`
+	Email       string `json:"email" db:"email"`
+	Role        string `json:"role" db:"role"`
+	Name        string `json:"name" db:"name"`
+	Company     string `json:"company" db:"company"`
+	Address     string `json:"address" db:"address"`
+	Inn         string `json:"inn" db:"inn"`
+	Kpp         string `json:"kpp" db:"kpp"`
+	Region      string `json:"region" db:"region"`
+	City        string `json:"city" db:"city"`
+	Position    string `json:"position" db:"position"`
+	Phone       string `json:"phone" db:"phone"`
+	Manager     string `json:"manager" db:"manager"`
+	FromManager bool   `json:"fromManager" db:"use_link"`
+	FromLanding bool   `json:"fromLanding" db:"use_landing"`
+	Confirmed   bool   `json:"confirmed" db:"confirmed"`
+	Date        int64  `json:"date" db:"date"`
+	OrderDate   int64  `json:"orderDate" db:"order_date"`
+	VisitDate   int64  `json:"visitDate" db:"visit_date"`
+}
+
 type GetUsersDTO struct{}
 
 type GetUserByIdDTO struct {

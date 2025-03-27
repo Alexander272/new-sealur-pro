@@ -52,6 +52,7 @@ func NewUserService(deps *UserDeps) *UserService {
 type User interface {
 	GetById(ctx context.Context, req *models.GetUserByIdDTO) (*models.User, error)
 	GetByIdWithManager(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserWithManager, error)
+	GetInfoById(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserInfo, error)
 	GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error)
 	GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error)
 	CreateInProvider(ctx context.Context, user *models.User, req *models.SignInDTO) error
@@ -83,6 +84,17 @@ func (s *UserService) GetByIdWithManager(ctx context.Context, req *models.GetUse
 			return nil, err
 		}
 		return nil, fmt.Errorf("failed to get user with manager by id. error: %w", err)
+	}
+	return data, nil
+}
+
+func (s *UserService) GetInfoById(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserInfo, error) {
+	data, err := s.repo.GetInfoById(ctx, req)
+	if err != nil {
+		if errors.Is(err, models.ErrUserNotFound) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("failed to get user info by id. error: %w", err)
 	}
 	return data, nil
 }

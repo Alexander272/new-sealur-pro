@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	base "github.com/Alexander272/new-sealur-pro/internal/models"
@@ -25,7 +26,8 @@ func NewOrderRepo(db *sqlx.DB) *OrderRepo {
 type Order interface {
 	GetCurrent(ctx context.Context, req *models.GetCurrentOrderDTO) (*models.Order, error)
 	GetById(ctx context.Context, req *models.GetOrderDTO) (*models.Order, error)
-	Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error)
+	Get(ctx context.Context, req *models.GetOrdersByUserDTO) ([]*models.Order, error)
+	GetAll(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.OrderWithCompany, error)
 	GetByManager(ctx context.Context, req *models.GetOrdersByManagerDTO) ([]*models.OrderWithCompany, error)
 	Create(ctx context.Context, dto *models.OrderDTO) error
 	Save(ctx context.Context, dto *models.SaveOrderDTO) error
@@ -33,6 +35,13 @@ type Order interface {
 	SetStatus(ctx context.Context, dto *models.SetStatusDTO) error
 	SetManager(ctx context.Context, dto *models.SetManagerDTO) error
 }
+
+/*
+TODO обновить поле created_at после его создания
+UPDATE public."order"
+	SET created_at=TO_TIMESTAMP(CAST(date as bigint) / 1000)
+	WHERE date!='';
+*/
 
 func (r *OrderRepo) GetCurrent(ctx context.Context, req *models.GetCurrentOrderDTO) (*models.Order, error) {
 	query := fmt.Sprintf(`SELECT id, number, info FROM "%s" WHERE user_id=$1 AND date=''`, OrderTable)
@@ -60,7 +69,7 @@ func (r *OrderRepo) GetById(ctx context.Context, req *models.GetOrderDTO) (*mode
 	return data, nil
 }
 
-func (r *OrderRepo) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error) {
+func (r *OrderRepo) Get(ctx context.Context, req *models.GetOrdersByUserDTO) ([]*models.Order, error) {
 	query := fmt.Sprintf(`SELECT o.id, date, o.info, count_position, number, p.id as position_id, title, amount, p.count as position_count, type
 		FROM "%s" AS o INNER JOIN %s AS p on order_id=o.id WHERE user_id=$1 AND date != '' ORDER BY number DESC, position_count`,
 		OrderTable, PositionTable,
@@ -95,6 +104,42 @@ func (r *OrderRepo) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*mo
 			})
 		}
 
+	}
+	return data, nil
+}
+
+func (r *OrderRepo) GetAll(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.OrderWithCompany, error) {
+	order := "ORDER BY "
+	for _, s := range req.Sort {
+		order += fmt.Sprintf("%s %s, ", formatField(s.Field), s.Type)
+	}
+	order += "date DESC"
+
+	params := []interface{}{models.StatusFinish}
+	count := len(params) + 1
+
+	filter := ""
+	for _, ns := range req.Filters {
+		filter += " AND " + getFilterLine(ns.CompareType, formatField(ns.Field), count)
+		if ns.CompareType == "in" {
+			ns.Value = strings.ReplaceAll(ns.Value, ",", "|")
+		}
+		params = append(params, ns.Value)
+		count++
+	}
+	params = append(params, req.Limit, req.Offset)
+
+	query := fmt.Sprintf(`SELECT o.id, o.date, count_position, number, u.company, u.user, manager, status, user_id, u.manager_id,  COUNT(*) OVER() AS total
+		FROM "%s" AS o
+		INNER JOIN LATERAL (SELECT u.name AS user, u.company, m.name AS manager, u.manager_id FROM "%s" AS u 
+			INNER JOIN "%s" AS m ON u.manager_id=m.id WHERE u.id=o.user_id) AS u ON true
+		WHERE o.date != '' AND status!=$1 %s %s LIMIT $%d OFFSET $%d`,
+		OrderTable, UserTable, UserTable, filter, order, count, count+1,
+	)
+	data := []*models.OrderWithCompany{}
+
+	if err := r.db.SelectContext(ctx, &data, query, params...); err != nil {
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 	return data, nil
 }
@@ -138,6 +183,7 @@ func (r *OrderRepo) Create(ctx context.Context, dto *models.OrderDTO) error {
 
 func (r *OrderRepo) Save(ctx context.Context, dto *models.SaveOrderDTO) error {
 	query := fmt.Sprintf(`UPDATE "%s" SET date=:date, count_position=:count_position WHERE id=:id`, OrderTable)
+	//TODO возможно стоит перевести дату из миллисекунд в секунды и сменить тип со строки на число
 	dto.Date = fmt.Sprintf("%d", time.Now().UnixMilli())
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)

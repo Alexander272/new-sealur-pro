@@ -24,6 +24,7 @@ func NewUserRepo(db *sqlx.DB) *UserRepo {
 type User interface {
 	GetById(ctx context.Context, req *models.GetUserByIdDTO) (*models.User, error)
 	GetByIdWithManager(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserWithManager, error)
+	GetInfoById(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserInfo, error)
 	GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error)
 	GetByRegion(ctx context.Context, req *models.GetUserByRegionDTO) (*models.User, error)
 	GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error)
@@ -70,6 +71,29 @@ func (r *UserRepo) GetByIdWithManager(ctx context.Context, req *models.GetUserBy
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 	return user, nil
+}
+
+func (r *UserRepo) GetInfoById(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserInfo, error) {
+	query := fmt.Sprintf(`SELECT u.id, company, "position", phone, u.email, u.name, nickname, m.name AS manager,
+		inn, kpp, region, city, address, date, confirmed, use_link, use_landing, visit_date
+		FROM "%s" AS u 
+		INNER JOIN LATERAL (SELECT name FROM "%s" AS m WHERE u.manager_id=m.id) AS m ON true
+		LEFT JOIN LATERAL (SELECT DIV(date::numeric, 1000) AS order_date FROM "%s" 
+			WHERE user_id=u.id AND date!='' ORDER BY date DESC LIMIT 1) AS o ON true
+		-- LEFT JOIN LATERAL (SELECT date AS order_date FROM "" WHERE user_id=u.id AND date!=0 ORDER BY date DESC LIMIT 1) AS o ON true
+		WHERE u.id::text=$1 OR provider_id::text=$2`,
+		UserTable, UserTable, OrderTable,
+	)
+	data := &models.UserInfo{}
+
+	err := r.db.GetContext(ctx, data, query, req.Id, req.ProviderId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrUserNotFound
+		}
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return data, nil
 }
 
 func (r *UserRepo) GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error) {
@@ -146,6 +170,7 @@ func (r *UserRepo) Create(ctx context.Context, dto *models.UserDTO) error {
 
 func (r *UserRepo) Confirm(ctx context.Context, dto *models.ConfirmUserDTO) error {
 	query := fmt.Sprintf(`UPDATE "%s" SET confirmed=true, password='', date=:date WHERE id=:id`, UserTable)
+	//TODO возможно стоит перевести дату из миллисекунд в секунды и сменить тип со строки на число
 	dto.Date = fmt.Sprintf("%d", time.Now().UnixMilli())
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)

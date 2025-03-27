@@ -42,7 +42,8 @@ func NewOrderService(deps *OrderDeps) *OrderService {
 type Order interface {
 	GetCurrent(ctx context.Context, req *models.GetCurrentOrderDTO) (*models.Order, error)
 	GetById(ctx context.Context, req *models.GetOrderDTO) (*models.Order, error)
-	Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error)
+	Get(ctx context.Context, req *models.GetOrdersByUserDTO) ([]*models.Order, error)
+	GetAll(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.OrderWithCompany, error)
 	GetByManager(ctx context.Context, req *models.GetOrdersByManagerDTO) ([]*models.OrderWithCompany, error)
 	Download(ctx context.Context, req *models.GetOrderDTO) (*models.File, error)
 	Copy(ctx context.Context, dto *models.CopyOrderDTO) error
@@ -91,10 +92,18 @@ func (s *OrderService) GetById(ctx context.Context, req *models.GetOrderDTO) (*m
 	return data, nil
 }
 
-func (s *OrderService) Get(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.Order, error) {
+func (s *OrderService) Get(ctx context.Context, req *models.GetOrdersByUserDTO) ([]*models.Order, error) {
 	data, err := s.repo.Get(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get orders. error: %w", err)
+	}
+	return data, nil
+}
+
+func (s *OrderService) GetAll(ctx context.Context, req *models.GetAllOrdersDTO) ([]*models.OrderWithCompany, error) {
+	data, err := s.repo.GetAll(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get all orders. error: %w", err)
 	}
 	return data, nil
 }

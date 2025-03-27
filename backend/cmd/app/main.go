@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Alexander272/new-sealur-pro/internal/analytics"
 	"github.com/Alexander272/new-sealur-pro/internal/config"
 	"github.com/Alexander272/new-sealur-pro/internal/files"
 	"github.com/Alexander272/new-sealur-pro/internal/mail"
@@ -104,10 +105,13 @@ func main() {
 		Mail:  mailModule.Services,
 		User:  services.User,
 	})
+	analyticsModule := analytics.NewAnalyticsModule(db, conf)
 
 	// handlers.Modules = append(handlers.Modules, snpModule)
 
-	handlers.Modules = []transport.Modules{snpModule, putgModule, filesModule, mailModule, ordersModule}
+	handlers.Modules = []transport.Modules{
+		snpModule, putgModule, filesModule, mailModule, ordersModule, analyticsModule,
+	}
 
 	//* HTTP Server
 	srv := server.NewServer(&conf.Http, handlers.Init(conf))

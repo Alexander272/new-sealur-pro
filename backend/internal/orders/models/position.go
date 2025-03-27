@@ -3,11 +3,12 @@ package models
 type PositionType string
 
 const (
-	PositionTypeSnp   PositionType = "Snp"
-	PositionTypePutg  PositionType = "Putg"
-	PositionTypePutgm PositionType = "Putgm"
-	PositionTypeRing  PositionType = "Ring"
-	PositionTypeKit   PositionType = "RingsKit"
+	PositionTypeSnp  PositionType = "Snp"
+	PositionTypePutg PositionType = "Putg"
+	PositionTypeWave PositionType = "Wave"
+	// PositionTypePutgm PositionType = "Putgm"
+	PositionTypeRing PositionType = "Ring"
+	PositionTypeKit  PositionType = "RingsKit"
 )
 
 type ShortPosition struct {

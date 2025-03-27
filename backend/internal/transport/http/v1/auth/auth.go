@@ -80,7 +80,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		)
 
 		if errors.Is(err, models.ErrUserNotVerified) {
-			response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(),
+			response.NewErrorResponse(c, http.StatusBadRequest, err.Error(),
 				"Учетная запись не активирована. Для активации учетной записи перейдите по ссылке, отправленной вам в письме.")
 			return
 		}
@@ -89,6 +89,7 @@ func (h *Handler) signIn(c *gin.Context) {
 			response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 			return
 		}
+
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return
@@ -206,6 +207,7 @@ func (h *Handler) refresh(c *gin.Context) {
 	logger.Info("Пользователь успешно обновил сессию",
 		logger.StringAttr("section", "auth"),
 		logger.StringAttr("ip", c.ClientIP()),
+		//TODO данных о пользователе нет (user.Name пустое)
 		logger.StringAttr("user", user.Name),
 		logger.StringAttr("user_id", user.Id),
 	)
