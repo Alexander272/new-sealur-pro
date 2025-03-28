@@ -1,21 +1,12 @@
 import { FC } from 'react'
-import {
-	SxProps,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Theme,
-	Typography,
-} from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 import type { PositionType } from '@/features/card/types/card'
 import { PathRoutes } from '@/constants/routes'
 import { Fallback } from '@/components/Fallback/Fallback'
 import { useGetOrdersCountQuery } from '../../analyticsApiSlice'
+import { HoverCell } from '../styled/HoverCell'
 
 type Props = {
 	type?: PositionType
@@ -29,21 +20,16 @@ const titles = new Map<PositionType, string>([
 	// ['Kit', 'Комплект'],
 ])
 
-const CellStyle: SxProps<Theme> = {
-	cursor: 'pointer',
-	transition: '0.3s all ease-in-out',
-	borderRadius: 3,
-	':hover': {
-		background: '#eee',
-	},
-}
-
 export const OrdersCount: FC<Props> = ({ type }) => {
 	const navigate = useNavigate()
 	const { data, isFetching } = useGetOrdersCountQuery(type)
 
 	const showInfo = (id: string) => () => {
 		navigate(PathRoutes.Manager.Analytics.User, { state: id })
+	}
+
+	const showOrders = (id: string) => () => {
+		navigate(PathRoutes.Manager.Analytics.Orders, { state: { userId: id } })
 	}
 
 	return (
@@ -68,11 +54,11 @@ export const OrdersCount: FC<Props> = ({ type }) => {
 				<TableBody>
 					{data?.data.map(item => (
 						<TableRow key={item.userId}>
-							<TableCell sx={CellStyle} onClick={showInfo(item.userId)}>
-								{item.company}
-							</TableCell>
+							<HoverCell onClick={showInfo(item.userId)}>{item.company}</HoverCell>
 							<TableCell>{item.name}</TableCell>
-							<TableCell align='center'>{item.orders}</TableCell>
+							<HoverCell onClick={showOrders(item.userId)} align='center'>
+								{item.orders}
+							</HoverCell>
 							<TableCell align='center'>{item.positions}</TableCell>
 							<TableCell align='center'>{item.average}</TableCell>
 						</TableRow>

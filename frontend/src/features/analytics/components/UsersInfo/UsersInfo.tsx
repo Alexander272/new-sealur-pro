@@ -1,34 +1,16 @@
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-	SxProps,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Theme,
-	Typography,
-} from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 
 import type { IUserParams } from '../../types/analytics'
+import { PathRoutes } from '@/constants/routes'
 import { stampToDate } from '@/utils/date'
 import { Fallback } from '@/components/Fallback/Fallback'
 import { useGetUsersInfoQuery } from '../../analyticsApiSlice'
-import { PathRoutes } from '@/constants/routes'
+import { HoverCell } from '../styled/HoverCell'
 
 type Props = {
 	params: IUserParams | null
-}
-
-const CellStyle: SxProps<Theme> = {
-	cursor: 'pointer',
-	transition: '0.3s all ease-in-out',
-	borderRadius: 3,
-	':hover': {
-		background: '#eee',
-	},
 }
 
 export const UsersInfo: FC<Props> = ({ params }) => {
@@ -69,9 +51,7 @@ export const UsersInfo: FC<Props> = ({ params }) => {
 				<TableBody>
 					{data?.data.map(item => (
 						<TableRow key={item.id}>
-							<TableCell sx={CellStyle} onClick={showInfo(item.id)}>
-								{item.company}
-							</TableCell>
+							<HoverCell onClick={showInfo(item.id)}>{item.company}</HoverCell>
 							<TableCell>{item.user}</TableCell>
 							<TableCell>{item.manager}</TableCell>
 							<TableCell align='center'>{item.ordersCount}</TableCell>

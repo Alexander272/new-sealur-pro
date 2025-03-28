@@ -20,6 +20,7 @@ import { Analytics } from '@/pages/analytics/AnalyticsLazy'
 import { UsersInfo } from '@/pages/users/usersInfo/UsersInfoLazy'
 import { UserInfo } from '@/pages/users/userInfo/UserInfoLazy'
 import { OrdersCount } from '@/pages/orders/count/OrdersCountLazy'
+import { OrdersByUser } from '@/pages/orders/byUser/OrdersLazy'
 import { Main } from '@/components/Layout/Main/MainLazy'
 import { Base } from '@/components/Layout/Base/Base'
 import { Fallback } from '@/components/Fallback/Fallback'
@@ -91,7 +92,7 @@ export const AppRouter = () => {
 						<Route path={PathRoutes.Manager.Analytics.Users} element={<UsersInfo />} />
 						<Route path={PathRoutes.Manager.Analytics.User} element={<UserInfo />} />
 						<Route path={PathRoutes.Manager.Analytics.Count} element={<OrdersCount />} />
-						{/*<Route path={PathRoutes.Manager.Analytics.Orders} element={<AnalyticsOrders />} />*/}
+						<Route path={PathRoutes.Manager.Analytics.Orders} element={<OrdersByUser />} />
 					</Route>
 				</Route>
 			</Routes>

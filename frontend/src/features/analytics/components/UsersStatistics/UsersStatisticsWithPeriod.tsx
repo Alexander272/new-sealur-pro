@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { SxProps, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Theme } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 import type { IUserParams } from '../../types/analytics'
@@ -7,19 +7,11 @@ import { PathRoutes } from '@/constants/routes'
 import { FormatNumber } from '@/utils/numbers'
 import { Fallback } from '@/components/Fallback/Fallback'
 import { useGetUsersStatsQuery } from '../../analyticsApiSlice'
+import { HoverCell } from '../styled/HoverCell'
 
 type Props = {
 	from: string
 	to: string
-}
-
-const CellStyle: SxProps<Theme> = {
-	cursor: 'pointer',
-	transition: '0.3s all ease-in-out',
-	borderRadius: 3,
-	':hover': {
-		background: '#eee',
-	},
 }
 
 export const UsersStatisticsWithPeriod: FC<Props> = ({ from, to }) => {
@@ -46,23 +38,15 @@ export const UsersStatisticsWithPeriod: FC<Props> = ({ from, to }) => {
 				<TableBody>
 					<TableRow>
 						<TableCell align='center'>{FormatNumber(data?.data.companyCount)}</TableCell>
-						<TableCell align='center' sx={CellStyle} onClick={navigateHandler({ from, to })}>
+						<HoverCell align='center' onClick={navigateHandler({ from, to })}>
 							{FormatNumber(data?.data.usersCount)}
-						</TableCell>
-						<TableCell
-							align='center'
-							sx={CellStyle}
-							onClick={navigateHandler({ from, to, fromManager: true })}
-						>
+						</HoverCell>
+						<HoverCell align='center' onClick={navigateHandler({ from, to, fromManager: true })}>
 							{FormatNumber(data?.data.usersFromManager)}
-						</TableCell>
-						<TableCell
-							align='center'
-							sx={CellStyle}
-							onClick={navigateHandler({ from, to, fromManager: false })}
-						>
+						</HoverCell>
+						<HoverCell align='center' onClick={navigateHandler({ from, to, fromManager: false })}>
 							{FormatNumber(data ? data.data.usersCount - data.data.usersFromManager : 0)}
-						</TableCell>
+						</HoverCell>
 					</TableRow>
 				</TableBody>
 			</Table>

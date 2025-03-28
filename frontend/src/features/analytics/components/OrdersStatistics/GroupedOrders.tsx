@@ -1,9 +1,12 @@
 import { FC } from 'react'
 import { Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
+import { PathRoutes } from '@/constants/routes'
+import { FormatNumber } from '@/utils/numbers'
 import { Fallback } from '@/components/Fallback/Fallback'
 import { useGetGroupedOrdersStatsQuery } from '../../analyticsApiSlice'
-import { FormatNumber } from '@/utils/numbers'
+import { HoverCell } from '../styled/HoverCell'
 
 type Props = {
 	from: string
@@ -11,7 +14,12 @@ type Props = {
 }
 
 export const GroupedOrders: FC<Props> = ({ from, to }) => {
+	const navigate = useNavigate()
 	const { data, isFetching } = useGetGroupedOrdersStatsQuery({ from, to }, { skip: !from || !to })
+
+	const showOrders = (id: string) => () => {
+		navigate(PathRoutes.Manager.Analytics.Orders, { state: { userId: id, from, to } })
+	}
 
 	const total = data?.data.reduce(
 		(acc, item) => {
@@ -59,7 +67,9 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 							<TableCell>
 								{item.company} ({item.user})
 							</TableCell>
-							<TableCell align='center'>{FormatNumber(item.count)}</TableCell>
+							<HoverCell align='center' onClick={showOrders(item.userId)}>
+								{FormatNumber(item.count)}
+							</HoverCell>
 							<TableCell align='center'>{FormatNumber(item.positions?.snp)}</TableCell>
 							<TableCell align='center'>{FormatNumber(item.positions?.putg)}</TableCell>
 							{/* <TableCell align='center'>{FormatNumber(item.positions?.rings)}</TableCell>

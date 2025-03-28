@@ -1,7 +1,9 @@
 import { ChangeEvent, FC, useState } from 'react'
 import { Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 import type { IFilter } from '../../types/order'
+import { PathRoutes } from '@/constants/routes'
 import { stampToDate } from '@/utils/date'
 import { useDebounce } from '@/hooks/debounce'
 import { TopFallback } from '@/components/Fallback/TopFallback'
@@ -10,29 +12,26 @@ import { Size } from '../../constants/default'
 import { useGetAllOrdersQuery } from '../../ordersApiSlice'
 
 type Props = {
-	filers?: IFilter[]
+	filters?: IFilter[]
 }
 
-export const OrdersList: FC<Props> = () => {
+export const OrdersList: FC<Props> = ({ filters = [] }) => {
+	const navigate = useNavigate()
 	const [number, setNumber] = useState('')
 	const [page, setPage] = useState(1)
 	const search = useDebounce(number, 500)
 
 	const { data, isFetching } = useGetAllOrdersQuery({
 		page,
-		filters: search
-			? [
-					{
-						field: 'number',
-						compareType: 'con',
-						value: search,
-					},
-			  ]
-			: [],
+		filters: search ? [...filters, { field: 'number', compareType: 'con', value: search }] : filters,
 	})
 
 	const searchHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		setNumber(event.target.value)
+	}
+
+	const showOrder = (id: string) => () => {
+		navigate(PathRoutes.Manager.Orders.Base + '/' + id)
 	}
 
 	const totalPages = Math.ceil((data?.total || 1) / Size)
@@ -48,7 +47,7 @@ export const OrdersList: FC<Props> = () => {
 				placeholder='№ заявки'
 			/>
 
-			<TableContainer sx={{ position: 'relative' }}>
+			<TableContainer sx={{ position: 'relative', mt: 1 }}>
 				{isFetching ? <TopFallback /> : null}
 
 				<Table>
@@ -67,7 +66,7 @@ export const OrdersList: FC<Props> = () => {
 					</TableHead>
 					<TableBody>
 						{data?.data.map(d => (
-							<TableRow key={d.id}>
+							<TableRow key={d.id} onClick={showOrder(d.id)} hover sx={{ cursor: 'pointer' }}>
 								<TableCell>{d.manager}</TableCell>
 								<TableCell>{d.company}</TableCell>
 								<TableCell>{d.user}</TableCell>

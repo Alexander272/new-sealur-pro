@@ -1,10 +1,9 @@
 import { toast } from 'react-toastify'
 
-import type { IBaseFetchError, IFetchError } from '@/app/types/error'
+import type { IFetchError } from '@/app/types/error'
 import type {
 	ICopyOrder,
 	IFullOrder,
-	IOrderCount,
 	IOrderMangerDTO,
 	IOrderParams,
 	IOrderResponse,
@@ -151,29 +150,29 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 		// }),
 
 		// получение заявки по номеру
-		getOrderByNumber: builder.query<{ data: IFullOrder }, string>({
-			query: number => `${API.orders.number}/${number}`,
-			onQueryStarted: async (_arg, api) => {
-				try {
-					await api.queryFulfilled
-				} catch (error) {
-					const fetchError = (error as IBaseFetchError).error
-					toast.error(fetchError.data.message, { autoClose: false })
-				}
-			},
-		}),
+		// getOrderByNumber: builder.query<{ data: IFullOrder }, string>({
+		// 	query: number => `${API.orders.number}/${number}`,
+		// 	onQueryStarted: async (_arg, api) => {
+		// 		try {
+		// 			await api.queryFulfilled
+		// 		} catch (error) {
+		// 			const fetchError = (error as IBaseFetchError).error
+		// 			toast.error(fetchError.data.message, { autoClose: false })
+		// 		}
+		// 	},
+		// }),
 
-		getOrdersCount: builder.query<{ data: IOrderCount[] }, null>({
-			query: () => API.orders.count,
-			onQueryStarted: async (_arg, api) => {
-				try {
-					await api.queryFulfilled
-				} catch (error) {
-					const fetchError = (error as IBaseFetchError).error
-					toast.error(fetchError.data.message, { autoClose: false })
-				}
-			},
-		}),
+		// getOrdersCount: builder.query<{ data: IOrderCount[] }, null>({
+		// 	query: () => API.orders.count,
+		// 	onQueryStarted: async (_arg, api) => {
+		// 		try {
+		// 			await api.queryFulfilled
+		// 		} catch (error) {
+		// 			const fetchError = (error as IBaseFetchError).error
+		// 			toast.error(fetchError.data.message, { autoClose: false })
+		// 		}
+		// 	},
+		// }),
 
 		// // получение всех открытых заявок конкретного менеджера
 		// getOpen: builder.query<{ data: IManagerOrder[] }, null>({
@@ -218,8 +217,8 @@ export const {
 	useSaveInfoMutation,
 	useCopyOrderMutation,
 	useGetAllOrdersQuery,
-	useGetOrderByNumberQuery,
-	useGetOrdersCountQuery,
+	// useGetOrderByNumberQuery,
+	// useGetOrdersCountQuery,
 	useFinishOrderMutation,
 	useChangeOrderManagerMutation,
 } = ordersApiSlice
