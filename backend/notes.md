@@ -1,0 +1,4 @@
+goose -dir internal/migrate/postgres/migrations postgres "postgresql://postgres:postgres@127.0.0.1:5436/pro?sslmode=disable" down
+goose -dir internal/migrate/postgres/migrations create new_table sql
+scp -r ./dist administrator@pro:/home/administrator/apps/pro
+npx vite-bundle-visualizer

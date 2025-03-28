@@ -14,6 +14,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/config"
 	"github.com/Alexander272/new-sealur-pro/internal/files"
 	"github.com/Alexander272/new-sealur-pro/internal/mail"
+	"github.com/Alexander272/new-sealur-pro/internal/migrate"
 	"github.com/Alexander272/new-sealur-pro/internal/orders"
 	"github.com/Alexander272/new-sealur-pro/internal/putg"
 	"github.com/Alexander272/new-sealur-pro/internal/repository"
@@ -77,6 +78,10 @@ func main() {
 		AdminName: conf.Keycloak.Root,
 		AdminPass: conf.Keycloak.RootPass,
 	})
+
+	if err := migrate.Migrate(db.DB); err != nil {
+		log.Fatalf("failed to migrate: %s", err.Error())
+	}
 
 	//* Services, Repos & API Handlers
 	repos := repository.NewRepository(db, memDB)
