@@ -10,7 +10,7 @@ var columns = map[string]string{
 	"status":        "o.status",
 	"countPosition": "count_position",
 	"info":          "o.info",
-	"user_id":       "o.user_id",
+	"userId":        "o.user_id",
 	"user":          "user",
 }
 
