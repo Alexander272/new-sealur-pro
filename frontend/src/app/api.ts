@@ -76,4 +76,10 @@ export const API = Object.freeze({
 		materials: 'putg/materials' as const,
 		sizes: 'putg/sizes' as const,
 	},
+	wave: {
+		standards: 'wave/standard-info' as const,
+		flangeTypes: 'wave/flange-types' as const,
+		types: 'wave/types' as const,
+		constructions: 'wave/constructions' as const,
+	},
 })

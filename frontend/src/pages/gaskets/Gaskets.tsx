@@ -39,6 +39,13 @@ export default function Gaskets() {
 				>
 					ПУТГ
 				</RadioItem>
+				<RadioItem
+					size='large'
+					value={PathRoutes.Gasket.Wave}
+					active={location.pathname == PathRoutes.Gasket.Wave}
+				>
+					Волновые
+				</RadioItem>
 			</RadioGroup>
 
 			<Suspense fallback={<GasketSkeleton />}>

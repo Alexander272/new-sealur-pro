@@ -11,6 +11,7 @@ export const PathRoutes = Object.freeze({
 		Base: '/' as const,
 		SNP: '/snp' as const,
 		PUTG: '/putg' as const,
+		Wave: '/wave' as const,
 	},
 	// Gasket: {
 	// 	Base: '/gaskets' as const,
