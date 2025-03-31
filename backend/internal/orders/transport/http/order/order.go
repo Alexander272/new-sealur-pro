@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/Alexander272/new-sealur-pro/internal/constants"
 	base "github.com/Alexander272/new-sealur-pro/internal/models"
@@ -267,7 +266,6 @@ func (h *Handler) finish(c *gin.Context) {
 	}
 
 	dto.Status = models.StatusFinish
-	dto.Date = fmt.Sprintf("%d", time.Now().UnixMilli())
 
 	if err := h.service.SetStatus(c, dto); err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")

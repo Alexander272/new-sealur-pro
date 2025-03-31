@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.flange_type
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.flange_type
+    OWNER to postgres;
 -- +goose StatementEnd
 
 -- +goose Down

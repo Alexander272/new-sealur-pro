@@ -12,7 +12,7 @@ type Order struct {
 	Id            string      `json:"id" db:"id"`
 	UserId        string      `json:"userId" db:"user_id"`
 	Number        int64       `json:"number" db:"number"`
-	Date          string      `json:"date" db:"date"`
+	Date          int64       `json:"date" db:"date"`
 	CountPosition int64       `json:"countPosition" db:"count_position"`
 	Info          string      `json:"info" db:"info"`
 	Positions     []*Position `json:"positions"`
@@ -20,7 +20,7 @@ type Order struct {
 
 type OrderWithCompany struct {
 	Id            string `json:"id" db:"id"`
-	Date          string `json:"date" db:"date"`
+	Date          int64  `json:"date" db:"date"`
 	CountPosition int64  `json:"countPosition" db:"count_position"`
 	Number        int64  `json:"number" db:"number"`
 	Status        Status `json:"status" db:"status"`
@@ -60,14 +60,14 @@ type OrderDTO struct {
 	ManagerId string         `json:"managerId" db:"manager_id"`
 	Count     int64          `json:"count" db:"count_position"`
 	Info      string         `json:"info" db:"info"`
-	Date      string         `json:"date" db:"date"`
+	Date      int64          `json:"date" db:"date"`
 	Positions []*PositionDTO `json:"positions" db:"positions"`
 }
 
 type SaveOrderDTO struct {
 	Id            string `json:"id" db:"id" binding:"required"`
 	CountPosition int64  `json:"count" db:"count_position" binding:"required"`
-	Date          string `json:"date" db:"date"`
+	Date          int64  `json:"date" db:"date"`
 	UserId        string
 }
 
@@ -82,7 +82,7 @@ type SetInfoDTO struct {
 type SetStatusDTO struct {
 	Status  Status `json:"status" db:"status"`
 	OrderId string `json:"orderId" db:"id"`
-	Date    string `json:"date" db:"date"`
+	Date    int64  `json:"date" db:"date"`
 }
 type SetManagerDTO struct {
 	OrderId      string `json:"orderId" db:"id"`

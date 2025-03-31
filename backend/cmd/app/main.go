@@ -22,6 +22,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/services"
 	"github.com/Alexander272/new-sealur-pro/internal/snp"
 	transport "github.com/Alexander272/new-sealur-pro/internal/transport/http"
+	"github.com/Alexander272/new-sealur-pro/internal/wave"
 	"github.com/Alexander272/new-sealur-pro/pkg/auth"
 	"github.com/Alexander272/new-sealur-pro/pkg/database/postgres"
 	"github.com/Alexander272/new-sealur-pro/pkg/database/redis"
@@ -88,6 +89,7 @@ func main() {
 
 	snpModule := snp.NewSnpModule(db, conf)
 	putgModule := putg.NewPutgModule(db, conf)
+	waveModule := wave.NewWaveModule(db)
 	filesModule := files.NewFilesModule(db, conf)
 	mailModule := mail.NewMailModule(conf)
 
@@ -115,7 +117,9 @@ func main() {
 	// handlers.Modules = append(handlers.Modules, snpModule)
 
 	handlers.Modules = []transport.Modules{
-		snpModule, putgModule, filesModule, mailModule, ordersModule, analyticsModule,
+		snpModule, putgModule, waveModule,
+		filesModule, mailModule,
+		ordersModule, analyticsModule,
 	}
 
 	//* HTTP Server

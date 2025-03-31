@@ -4,12 +4,12 @@ ALTER TABLE public."user"
 RENAME COLUMN date TO date_text;
 
 ALTER TABLE public."user"
-ADD COLUMN nickname text COLLATE pg_catalog."default" DEFAULT ''::text,
-ADD COLUMN realm text COLLATE pg_catalog."default" DEFAULT ''::text,
-ADD COLUMN provider_id uuid DEFAULT '00000000-0000-0000-0000-000000000000'::uuid,
-ADD COLUMN date integer DEFAULT 0,
-ADD COLUMN visit_date integer DEFAULT 0;
-ADD COLUMN created_at timestamp with time zone DEFAULT now(),
+ADD COLUMN IF NOT EXISTS nickname text COLLATE pg_catalog."default" DEFAULT ''::text,
+ADD COLUMN IF NOT EXISTS realm text COLLATE pg_catalog."default" DEFAULT ''::text,
+ADD COLUMN IF NOT EXISTS provider_id uuid DEFAULT '00000000-0000-0000-0000-000000000000'::uuid,
+ADD COLUMN IF NOT EXISTS date integer DEFAULT 0,
+ADD COLUMN IF NOT EXISTS visit_date integer DEFAULT 0,
+ADD COLUMN IF NOT EXISTS created_at timestamp with time zone DEFAULT now();
 
 UPDATE public."user"
 	SET created_at=TO_TIMESTAMP(CAST(date_text as bigint) / 1000), date=CAST(date_text as bigint) / 1000

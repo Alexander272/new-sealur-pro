@@ -44,7 +44,7 @@ UPDATE public."order"
 */
 
 func (r *OrderRepo) GetCurrent(ctx context.Context, req *models.GetCurrentOrderDTO) (*models.Order, error) {
-	query := fmt.Sprintf(`SELECT id, number, info FROM "%s" WHERE user_id=$1 AND date=''`, OrderTable)
+	query := fmt.Sprintf(`SELECT id, number, info FROM "%s" WHERE user_id=$1 AND date=0`, OrderTable)
 	data := &models.Order{}
 
 	if err := r.db.GetContext(ctx, data, query, req.UserId); err != nil {
@@ -71,7 +71,7 @@ func (r *OrderRepo) GetById(ctx context.Context, req *models.GetOrderDTO) (*mode
 
 func (r *OrderRepo) Get(ctx context.Context, req *models.GetOrdersByUserDTO) ([]*models.Order, error) {
 	query := fmt.Sprintf(`SELECT o.id, date, o.info, count_position, number, p.id as position_id, title, amount, p.count as position_count, type
-		FROM "%s" AS o INNER JOIN %s AS p on order_id=o.id WHERE user_id=$1 AND date != '' ORDER BY number DESC, position_count`,
+		FROM "%s" AS o INNER JOIN %s AS p on order_id=o.id WHERE user_id=$1 AND date != 0 ORDER BY number DESC, position_count`,
 		OrderTable, PositionTable,
 	)
 	tmp := []*pq_models.OrderWithPosition{}
@@ -133,7 +133,7 @@ func (r *OrderRepo) GetAll(ctx context.Context, req *models.GetAllOrdersDTO) ([]
 		FROM "%s" AS o
 		INNER JOIN LATERAL (SELECT u.name AS user, u.company, m.name AS manager, u.manager_id FROM "%s" AS u 
 			INNER JOIN "%s" AS m ON u.manager_id=m.id WHERE u.id=o.user_id) AS u ON true
-		WHERE o.date != '' AND status!=$1 %s %s LIMIT $%d OFFSET $%d`,
+		WHERE o.date != 0 AND status!=$1 %s %s LIMIT $%d OFFSET $%d`,
 		OrderTable, UserTable, UserTable, filter, order, count, count+1,
 	)
 	data := []*models.OrderWithCompany{}
@@ -155,7 +155,7 @@ func (r *OrderRepo) GetByManager(ctx context.Context, req *models.GetOrdersByMan
 	query := fmt.Sprintf(`SELECT o.id, o.date, count_position, number, u.company, status, user_id, u.manager_id
 		FROM "%s" AS o
 		INNER JOIN "%s" AS u on o.user_id=u.id 
-		WHERE o.manager_id=$1 AND o.date != '' %s ORDER BY o.date DESC`,
+		WHERE o.manager_id=$1 AND o.date != 0 %s ORDER BY o.date DESC`,
 		OrderTable, UserTable, condition,
 	)
 	data := []*models.OrderWithCompany{}
@@ -183,8 +183,7 @@ func (r *OrderRepo) Create(ctx context.Context, dto *models.OrderDTO) error {
 
 func (r *OrderRepo) Save(ctx context.Context, dto *models.SaveOrderDTO) error {
 	query := fmt.Sprintf(`UPDATE "%s" SET date=:date, count_position=:count_position WHERE id=:id`, OrderTable)
-	//TODO возможно стоит перевести дату из миллисекунд в секунды и сменить тип со строки на число
-	dto.Date = fmt.Sprintf("%d", time.Now().UnixMilli())
+	dto.Date = time.Now().Unix()
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)
 	if err != nil {

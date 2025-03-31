@@ -35,7 +35,7 @@ func (r *OrderRepo) GetOrdersStats(ctx context.Context, req *models.GetOrdersSta
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS ring_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS kit_count
 		FROM "%s" as o
-		INNER JOIN "%s" AS p ON order_id=o.id WHERE date != ''`,
+		INNER JOIN "%s" AS p ON order_id=o.id WHERE date != 0`,
 		orders.PositionTypeSnp, orders.PositionTypePutg, orders.PositionTypeWave, orders.PositionTypeRing, orders.PositionTypeKit,
 		OrderTable, PositionTable,
 	)
@@ -129,7 +129,7 @@ func (r *OrderRepo) GetOrdersCount(ctx context.Context, req *models.GetOrdersCou
 		FROM "%s" AS o
 		INNER JOIN LATERAL (SELECT amount, type FROM "%s" WHERE order_id=o.id) AS p ON true
 		INNER JOIN LATERAL (SELECT name, company FROM "%s" WHERE id=o.user_id) AS u ON true
-		WHERE o.date != '' GROUP BY user_id, company, name 
+		WHERE o.date != 0 GROUP BY user_id, company, name 
 		HAVING COUNT(DISTINCT CASE WHEN type LIKE $1 THEN o.id END)>0
 		ORDER BY company DESC`,
 		OrderTable, PositionTable, UserTable,

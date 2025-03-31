@@ -1,15 +1,14 @@
 -- +goose Up
 -- +goose StatementBegin
-ALTER TABLE public."order"
-RENAME COLUMN date TO date_text,
-RENAME COLUMN work_date TO work_date_text,
-RENAME COLUMN finish_date TO finish_date_text;
+ALTER TABLE public."order" RENAME COLUMN date TO date_text;
+ALTER TABLE public."order" RENAME COLUMN work_date TO work_date_text;
+ALTER TABLE public."order" RENAME COLUMN finish_date TO finish_date_text;
 
 ALTER TABLE public."order"
-ADD COLUMN date integer DEFAULT 0,
-ADD COLUMN work_date integer DEFAULT 0,
-ADD COLUMN finish_date integer DEFAULT 0,
-ADD COLUMN created_at timestamp with time zone DEFAULT now();
+ADD COLUMN IF NOT EXISTS date integer DEFAULT 0,
+ADD COLUMN IF NOT EXISTS work_date integer DEFAULT 0,
+ADD COLUMN IF NOT EXISTS finish_date integer DEFAULT 0,
+ADD COLUMN IF NOT EXISTS created_at timestamp with time zone DEFAULT now();
 
 UPDATE public."order"
 	SET created_at=TO_TIMESTAMP(CAST(date_text as bigint) / 1000), date=CAST(date_text as bigint) / 1000

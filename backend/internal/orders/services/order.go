@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	mail_models "github.com/Alexander272/new-sealur-pro/internal/mail/models"
 	mail "github.com/Alexander272/new-sealur-pro/internal/mail/services"
@@ -122,6 +123,10 @@ func (s *OrderService) Download(ctx context.Context, req *models.GetOrderDTO) (*
 		return nil, err
 	}
 
+	if err := s.SetStatus(ctx, &models.SetStatusDTO{Status: models.StatusWork, OrderId: req.Id}); err != nil {
+		return nil, err
+	}
+
 	file, err := s.export.Prepare(ctx, data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to download order. error: %w", err)
@@ -176,6 +181,7 @@ func (s *OrderService) SetInfo(ctx context.Context, dto *models.SetInfoDTO) erro
 	return nil
 }
 func (s *OrderService) SetStatus(ctx context.Context, dto *models.SetStatusDTO) error {
+	dto.Date = time.Now().Unix()
 	if err := s.repo.SetStatus(ctx, dto); err != nil {
 		return fmt.Errorf("failed to set status. error: %w", err)
 	}
