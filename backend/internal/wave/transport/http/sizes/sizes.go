@@ -1,4 +1,4 @@
-package construction
+package sizes
 
 import (
 	"net/http"
@@ -15,20 +15,21 @@ import (
 )
 
 type Handler struct {
-	service services.Construction
+	service services.Size
 }
 
-func NewHandler(service services.Construction) *Handler {
+func NewHandler(service services.Size) *Handler {
 	return &Handler{service: service}
 }
 
-func Register(api *gin.RouterGroup, service services.Construction, middleware *middleware.Middleware) {
+func Register(api *gin.RouterGroup, service services.Size, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	construction := api.Group("/constructions")
+	sizes := api.Group("/sizes")
 	{
-		construction.GET("", handler.get)
-		write := construction.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		sizes.GET("", handler.get)
+		sizes.GET("/dn", handler.getDn)
+		write := sizes.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)
 			write.PUT("/:id", handler.update)
@@ -37,14 +38,36 @@ func Register(api *gin.RouterGroup, service services.Construction, middleware *m
 	}
 }
 
-func (h *Handler) get(c *gin.Context) {
-	typeId := c.Query("type")
-	if err := uuid.Validate(typeId); err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
+func (h *Handler) getDn(c *gin.Context) {
+	flange := c.Query("flange")
+	if err := uuid.Validate(flange); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Отправлены некорректные данные")
 		return
 	}
 
-	req := &models.GetConstructionDTO{TypeId: typeId}
+	req := &models.GetDnDTO{FlangeId: flange}
+	data, err := h.service.GetDn(c, req)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить размеры")
+		error_bot.Send(c, err.Error(), req)
+		return
+	}
+	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
+}
+
+func (h *Handler) get(c *gin.Context) {
+	typeId := c.Query("type")
+	if err := uuid.Validate(typeId); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Отправлены некорректные данные")
+		return
+	}
+	dn := c.Query("dn")
+	if dn == "" {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Dn не задан")
+		return
+	}
+
+	req := &models.GetSizeDTO{TypeId: typeId, Dn: dn}
 	data, err := h.service.Get(c, req)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить данные")
@@ -55,19 +78,19 @@ func (h *Handler) get(c *gin.Context) {
 }
 
 func (h *Handler) create(c *gin.Context) {
-	dto := &models.ConstructionDTO{}
+	dto := &models.SizeDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
 	}
 
 	if err := h.service.Create(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось создать конструкцию")
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось создать размер")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Info("Конструкция создана", logger.AnyAttr("dto", dto))
-	c.JSON(http.StatusCreated, response.IdResponse{Message: "Конструкция создана"})
+	logger.Info("Размер создан", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusCreated, response.IdResponse{Message: "Размер создан"})
 }
 
 func (h *Handler) update(c *gin.Context) {
@@ -77,7 +100,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	dto := &models.ConstructionDTO{}
+	dto := &models.SizeDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
@@ -85,12 +108,12 @@ func (h *Handler) update(c *gin.Context) {
 	dto.Id = id
 
 	if err := h.service.Update(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось обновить конструкцию")
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось обновить размер")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Info("Конструкция обновлена", logger.AnyAttr("dto", dto))
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Конструкция обновлена"})
+	logger.Info("Размер обновлен", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Размер обновлен"})
 }
 
 func (h *Handler) delete(c *gin.Context) {
@@ -100,11 +123,11 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.Delete(c, &models.DeleteConstructionDTO{Id: id}); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить конструкцию")
+	if err := h.service.Delete(c, &models.DeleteSizeDTO{Id: id}); err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить размер")
 		error_bot.Send(c, err.Error(), id)
 		return
 	}
-	logger.Info("Конструкция удалена", logger.StringAttr("id", id))
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Конструкция удалена"})
+	logger.Info("Размер удален", logger.StringAttr("id", id))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Размер удален"})
 }

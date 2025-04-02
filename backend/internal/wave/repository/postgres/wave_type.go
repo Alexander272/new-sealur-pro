@@ -28,13 +28,14 @@ type WaveType interface {
 }
 
 func (r *TypeRepo) Get(ctx context.Context, req *models.GetWaveTypesDTO) ([]*models.WaveType, error) {
-	query := fmt.Sprintf(`SELECT t.id, b.id AS base_id, title, code, description, priority, dn_range FROM %s AS t LEFT JOIN %s AS b ON t.base_id = b.id
-		WHERE standard_id=$1 ORDER BY priority`,
+	query := fmt.Sprintf(`SELECT t.id, b.id AS base_id, title, code, description, priority, dn_range, has_d4, has_d3, has_d2, has_d1
+		FROM %s AS t LEFT JOIN %s AS b ON t.base_id = b.id
+		WHERE flange_id=$1 ORDER BY priority, dn_range`,
 		WaveTypeTable, WaveTypeBaseTable,
 	)
 	tmp := []*pq_models.WaveType{}
 
-	if err := r.db.SelectContext(ctx, &tmp, query, req.StandardId); err != nil {
+	if err := r.db.SelectContext(ctx, &tmp, query, req.FlangeId); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 
@@ -42,25 +43,38 @@ func (r *TypeRepo) Get(ctx context.Context, req *models.GetWaveTypesDTO) ([]*mod
 	for _, v := range tmp {
 		data = append(data, &models.WaveType{
 			Id:          v.Id,
-			StandardId:  v.StandardId,
+			FlangeId:    v.FlangeId,
 			BaseId:      v.BaseId,
 			Title:       v.Title,
 			Code:        v.Code,
 			Description: v.Description,
 			Priority:    v.Priority,
 			DnRange:     v.DnRange,
+			HasD4:       v.HasD4,
+			HasD3:       v.HasD3,
+			HasD2:       v.HasD2,
+			HasD1:       v.HasD1,
 		})
 	}
 	return data, nil
 }
 
 func (r *TypeRepo) Create(ctx context.Context, dto *models.WaveTypeDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s (id, standard_id, base_id, priority) VALUES (:id, :standard_id, :base_id, :priority)`,
+	query := fmt.Sprintf(`INSERT INTO %s (id, flange_id, base_id, priority, dn_range) 
+		VALUES (:id, :flange_id, :base_id, :priority, :dn_range)`,
 		WaveTypeTable,
 	)
 	dto.Id = uuid.NewString()
 
-	_, err := r.db.NamedExecContext(ctx, query, dto)
+	tmp := pq_models.WaveTypeDTO{
+		Id:       dto.Id,
+		FlangeId: dto.FlangeId,
+		BaseId:   dto.BaseId,
+		Priority: dto.Priority,
+		DnRange:  dto.DnRange,
+	}
+
+	_, err := r.db.NamedExecContext(ctx, query, tmp)
 	if err != nil {
 		return fmt.Errorf("failed to execute query. error: %w", err)
 	}
@@ -68,11 +82,19 @@ func (r *TypeRepo) Create(ctx context.Context, dto *models.WaveTypeDTO) error {
 }
 
 func (r *TypeRepo) Update(ctx context.Context, dto *models.WaveTypeDTO) error {
-	query := fmt.Sprintf(`UPDATE %s SET standard_id=:standard_id, base_id=:base_id, priority=:priority WHERE id=:id`,
+	query := fmt.Sprintf(`UPDATE %s SET flange_id=:flange_id, base_id=:base_id, priority=:priority WHERE id=:id`,
 		WaveTypeTable,
 	)
 
-	_, err := r.db.NamedExecContext(ctx, query, dto)
+	tmp := pq_models.WaveTypeDTO{
+		Id:       dto.Id,
+		FlangeId: dto.FlangeId,
+		BaseId:   dto.BaseId,
+		Priority: dto.Priority,
+		DnRange:  dto.DnRange,
+	}
+
+	_, err := r.db.NamedExecContext(ctx, query, tmp)
 	if err != nil {
 		return fmt.Errorf("failed to execute query. error: %w", err)
 	}

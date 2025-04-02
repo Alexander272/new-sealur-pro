@@ -8,6 +8,7 @@ type Services struct {
 	WaveTypeBase
 	WaveType
 	Construction
+	Size
 }
 
 type Deps struct {
@@ -20,6 +21,7 @@ func NewServices(deps *Deps) *Services {
 	baseWaveType := NewWaveTypeBaseService(deps.Repos.WaveTypeBase)
 	waveType := NewWaveTypeService(deps.Repos.WaveType)
 	construction := NewConstructionService(deps.Repos.Construction)
+	sizes := NewSizeService(deps.Repos.Size)
 
 	return &Services{
 		StandardInfo: standardInfo,
@@ -27,5 +29,6 @@ func NewServices(deps *Deps) *Services {
 		WaveTypeBase: baseWaveType,
 		WaveType:     waveType,
 		Construction: construction,
+		Size:         sizes,
 	}
 }

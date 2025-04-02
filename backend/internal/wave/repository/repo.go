@@ -20,6 +20,9 @@ type WaveTypeBase interface {
 type Construction interface {
 	postgres.Construction
 }
+type Size interface {
+	postgres.Size
+}
 
 type Repository struct {
 	StandardInfo
@@ -27,6 +30,7 @@ type Repository struct {
 	WaveTypeBase
 	WaveType
 	Construction
+	Size
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -36,5 +40,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		WaveTypeBase: postgres.NewWaveTypeBaseRepo(db),
 		WaveType:     postgres.NewTypeRepo(db),
 		Construction: postgres.NewConstructionRepo(db),
+		Size:         postgres.NewSizeRepo(db),
 	}
 }

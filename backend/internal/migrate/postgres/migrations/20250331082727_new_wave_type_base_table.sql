@@ -6,7 +6,10 @@ CREATE TABLE IF NOT EXISTS public.wave_type_base
     title text COLLATE pg_catalog."default" NOT NULL,
     code text COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" DEFAULT ''::text,
-    dn_range text[] COLLATE pg_catalog."default" NOT NULL,
+    has_d4 boolean DEFAULT false,
+    has_d3 boolean DEFAULT true,
+    has_d2 boolean DEFAULT true,
+    has_d1 boolean DEFAULT false,
     CONSTRAINT wave_type_base_pkey PRIMARY KEY (id)
 )
 

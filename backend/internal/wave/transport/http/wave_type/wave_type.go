@@ -41,12 +41,12 @@ func Register(api *gin.RouterGroup, services *services.Services, middleware *mid
 }
 
 func (h *Handler) get(c *gin.Context) {
-	standard := c.Query("standard")
-	if err := uuid.Validate(standard); err != nil {
+	flange := c.Query("flange")
+	if err := uuid.Validate(flange); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, "empty params", "Отправлены некорректные данные")
 		return
 	}
-	req := &models.GetWaveTypesDTO{StandardId: standard}
+	req := &models.GetWaveTypesDTO{FlangeId: flange}
 
 	data, err := h.service.Get(c, req)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/wave/services"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/construction"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/flange_type"
+	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/sizes"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/standard_info"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/wave_type"
 	"github.com/gin-gonic/gin"
@@ -26,4 +27,5 @@ func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) 
 	flange_type.Register(wave, h.services.FlangeType, middleware)
 	wave_type.Register(wave, h.services, middleware)
 	construction.Register(wave, h.services.Construction, middleware)
+	sizes.Register(wave, h.services.Size, middleware)
 }
