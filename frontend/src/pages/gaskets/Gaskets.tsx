@@ -48,7 +48,7 @@ export default function Gaskets() {
 				</RadioItem>
 			</RadioGroup>
 
-			<Suspense fallback={<GasketSkeleton />}>
+			<Suspense key={location.pathname} fallback={<GasketSkeleton />}>
 				<Outlet />
 			</Suspense>
 		</Container>

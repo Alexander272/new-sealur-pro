@@ -1,6 +1,7 @@
-import { Content } from '@/components/Layout/Header/header.style'
-import { PageTitle } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { Content, PageTitle } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { Materials } from '@/features/gaskets/modules/wave/components/Material/Materials'
 import { Main } from '@/features/gaskets/modules/wave/components/Main/Main'
+import { Size } from '@/features/gaskets/modules/wave/components/Size/Size'
 
 export default function Wave() {
 	return (
@@ -8,10 +9,10 @@ export default function Wave() {
 			<PageTitle>Волновые прокладки</PageTitle>
 			<Content>
 				<Main />
-				{/* <Materials />
+				<Materials />
 				<Size />
-				<Design />
-				<Result /> */}
+				{/* <Design />
+				<Result />*/}
 			</Content>
 		</>
 	)

@@ -96,6 +96,9 @@ export const AsideContainer = styled(BaseContainer)`
 	grid-column-start: 8;
 	/* grid-row-end: 2;
 	grid-row-start: 1; */
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 	grid-row-start: ${props => props.rowStart || 'auto'};
 	grid-row-end: ${props => props.rowEnd || 'auto'};
 

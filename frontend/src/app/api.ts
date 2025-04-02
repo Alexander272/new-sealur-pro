@@ -81,5 +81,9 @@ export const API = Object.freeze({
 		flangeTypes: 'wave/flange-types' as const,
 		types: 'wave/types' as const,
 		constructions: 'wave/constructions' as const,
+		sizes: {
+			base: 'wave/sizes' as const,
+			dn: 'wave/sizes/dn' as const,
+		},
 	},
 })

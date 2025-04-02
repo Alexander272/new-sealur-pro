@@ -3,12 +3,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/app/store'
 import type { IDrawing } from '../../types/drawing'
 import type { IConstruction, IFlangeType, IMainWave, IWaveStandard, IWaveType } from './types/main'
+import type { ISize, ISizeWave } from './types/sizes'
 
 export interface IWaveState {
 	amount: string
 	info: string
 
 	main: IMainWave
+	size: ISizeWave
 
 	drawing?: IDrawing
 }
@@ -18,6 +20,16 @@ const initialState: IWaveState = {
 	info: '',
 
 	main: {},
+	size: {
+		dn: '',
+		pnMpa: '',
+		pnKg: '',
+		d4: '',
+		d3: '',
+		d2: '',
+		d1: '',
+		h: '3,0',
+	},
 }
 
 export const waveSlice = createSlice({
@@ -40,6 +52,16 @@ export const waveSlice = createSlice({
 		setConstruction: (state, action: PayloadAction<IConstruction>) => {
 			state.main.construction = action.payload
 		},
+		//
+		setDn: (state, action: PayloadAction<string>) => {
+			state.size.dn = action.payload
+		},
+		setSize: (state, action: PayloadAction<ISize>) => {
+			state.size = { ...state.size, ...action.payload }
+		},
+		setThickness: (state, action: PayloadAction<string>) => {
+			state.size.h = action.payload
+		},
 	},
 })
 
@@ -52,4 +74,11 @@ export const getFlangeType = (state: RootState) => state.wave.main.flangeType
 export const getType = (state: RootState) => state.wave.main.type
 export const getConstruction = (state: RootState) => state.wave.main.construction
 
-export const { setMainStandard, setMainFlangeType, setType, setConstruction } = waveSlice.actions
+export const getSize = (state: RootState) => state.wave.size
+export const getSizeId = (state: RootState) => state.wave.size.id
+export const getDn = (state: RootState) => state.wave.size.dn
+export const getPnMpa = (state: RootState) => state.wave.size.pnMpa
+export const getH = (state: RootState) => state.wave.size.h
+
+export const { setMainStandard, setMainFlangeType, setType, setConstruction, setDn, setSize, setThickness } =
+	waveSlice.actions

@@ -1,8 +1,9 @@
 import { toast } from 'react-toastify'
 
+import type { IConstruction, IFlangeType, IWaveStandard, IWaveType } from './types/main'
+import type { IDn, ISize } from './types/sizes'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
-import { IConstruction, IFlangeType, IWaveStandard, IWaveType } from './types/main'
 
 export const waveApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
@@ -36,9 +37,9 @@ export const waveApi = apiSlice.injectEndpoints({
 		}),
 		// получение типов прокладок
 		getWaveTypes: builder.query<{ data: IWaveType[] }, string>({
-			query: standard => ({
+			query: flange => ({
 				url: API.wave.types,
-				params: new URLSearchParams({ standard }),
+				params: new URLSearchParams({ flange }),
 			}),
 			providesTags: [{ type: 'Wave', id: 'types' }],
 			onQueryStarted: async (_arg, api) => {
@@ -64,6 +65,40 @@ export const waveApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+
+		// получение условного прохода
+		getWaveDn: builder.query<{ data: IDn[] }, string>({
+			query: flange => ({
+				url: API.wave.sizes.dn,
+				params: new URLSearchParams({ flange }),
+			}),
+			providesTags: [{ type: 'Wave', id: 'dn' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить условный проход', { autoClose: false })
+				}
+			},
+		}),
+		// получение размеров
+		getWaveSizes: builder.query<{ data: ISize[] }, { type: string; dn: string }>({
+			query: req => ({
+				url: API.wave.sizes.base,
+				params: new URLSearchParams({
+					type: req.type,
+					dn: req.dn,
+				}),
+			}),
+			providesTags: [{ type: 'Wave', id: 'sizes' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить условный проход', { autoClose: false })
+				}
+			},
+		}),
 	}),
 })
 
@@ -72,4 +107,6 @@ export const {
 	useGetWaveFlangeTypesQuery,
 	useGetWaveTypesQuery,
 	useGetWaveConstructionsQuery,
+	useGetWaveDnQuery,
+	useGetWaveSizesQuery,
 } = waveApi
