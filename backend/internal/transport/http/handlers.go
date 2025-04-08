@@ -9,6 +9,7 @@ import (
 	http_v1 "github.com/Alexander272/new-sealur-pro/internal/transport/http/v1"
 	"github.com/Alexander272/new-sealur-pro/pkg/auth"
 	"github.com/Alexander272/new-sealur-pro/pkg/limiter"
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,6 +37,7 @@ func (h *Handler) Init(conf *config.Config) *gin.Engine {
 	router := gin.Default()
 
 	router.Use(
+		static.Serve("/", static.LocalFile("../frontend/dist/", true)),
 		limiter.Limit(conf.Limiter.RPS, conf.Limiter.Burst, conf.Limiter.TTL),
 	)
 

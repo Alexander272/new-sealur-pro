@@ -8,4 +8,5 @@ type ConstructionDTO struct {
 	Code         string         `db:"code"`
 	Description  string         `db:"description"`
 	AllowedTypes pq.StringArray `db:"allowed_types"`
+	HasMaterial  bool           `db:"has_material"`
 }

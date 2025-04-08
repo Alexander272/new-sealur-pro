@@ -14,9 +14,7 @@ const (
 	WaveTypeBaseTable     = "wave_type_base"
 	WaveConstructionTable = "wave_construction"
 	SizeTable             = "wave_size"
-	// PutgConstructionBaseTable = "putg_construction_base"
-	// PutgFillerTable           = "putg_filler"
-	// PutgFillerBaseTable       = "putg_filler_base"
-	// PutgDataTable             = "putg_data"
-	// PutgMaterialTable         = "putg_material"
+	PlatingTable          = "wave_plating"
+	WaveMaterialTable     = "wave_material"
+	ConfigurationTable    = "wave_configuration"
 )

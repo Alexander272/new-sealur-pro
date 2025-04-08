@@ -3,8 +3,11 @@ package http
 import (
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/services"
+	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/configuration"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/construction"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/flange_type"
+	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/materials"
+	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/plating"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/sizes"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/standard_info"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/wave_type"
@@ -28,4 +31,7 @@ func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) 
 	wave_type.Register(wave, h.services, middleware)
 	construction.Register(wave, h.services.Construction, middleware)
 	sizes.Register(wave, h.services.Size, middleware)
+	plating.Register(wave, h.services.Plating, middleware)
+	materials.Register(wave, h.services.Material, middleware)
+	configuration.Register(wave, h.services.Configuration, middleware)
 }

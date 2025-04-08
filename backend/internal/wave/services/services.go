@@ -9,6 +9,9 @@ type Services struct {
 	WaveType
 	Construction
 	Size
+	Plating
+	Material
+	Configuration
 }
 
 type Deps struct {
@@ -22,13 +25,19 @@ func NewServices(deps *Deps) *Services {
 	waveType := NewWaveTypeService(deps.Repos.WaveType)
 	construction := NewConstructionService(deps.Repos.Construction)
 	sizes := NewSizeService(deps.Repos.Size)
+	plating := NewPlatingService(deps.Repos.Plating)
+	material := NewMaterialService(deps.Repos.Material)
+	configuration := NewConfigurationService(deps.Repos.Configuration)
 
 	return &Services{
-		StandardInfo: standardInfo,
-		FlangeType:   flangeType,
-		WaveTypeBase: baseWaveType,
-		WaveType:     waveType,
-		Construction: construction,
-		Size:         sizes,
+		StandardInfo:  standardInfo,
+		FlangeType:    flangeType,
+		WaveTypeBase:  baseWaveType,
+		WaveType:      waveType,
+		Construction:  construction,
+		Size:          sizes,
+		Plating:       plating,
+		Material:      material,
+		Configuration: configuration,
 	}
 }

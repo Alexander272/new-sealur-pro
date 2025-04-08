@@ -28,7 +28,7 @@ type Construction interface {
 }
 
 func (r *ConstructionRepo) Get(ctx context.Context, req *models.GetConstructionDTO) ([]*models.Construction, error) {
-	query := fmt.Sprintf(`SELECT id, title, code, description FROM %s WHERE $1::text=ANY(allowed_types)`, WaveConstructionTable)
+	query := fmt.Sprintf(`SELECT id, title, code, description, has_material FROM %s WHERE $1::text=ANY(allowed_types) ORDER BY code`, WaveConstructionTable)
 
 	data := []*models.Construction{}
 	if err := r.db.SelectContext(ctx, &data, query, req.TypeId); err != nil {
@@ -38,7 +38,8 @@ func (r *ConstructionRepo) Get(ctx context.Context, req *models.GetConstructionD
 }
 
 func (r *ConstructionRepo) Create(ctx context.Context, dto *models.ConstructionDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s (id, title, code, description, allowed_types) VALUES (:id, :title, :code, :description, :allowed_types)`,
+	query := fmt.Sprintf(`INSERT INTO %s (id, title, code, description, allowed_types, has_material) 
+		VALUES (:id, :title, :code, :description, :allowed_types, :has_material)`,
 		WaveConstructionTable,
 	)
 	dto.Id = uuid.NewString()
@@ -49,6 +50,7 @@ func (r *ConstructionRepo) Create(ctx context.Context, dto *models.ConstructionD
 		Code:         dto.Code,
 		Description:  dto.Description,
 		AllowedTypes: dto.AllowedTypes,
+		HasMaterial:  dto.HasMaterial,
 	}
 
 	_, err := r.db.NamedExecContext(ctx, query, tmp)
@@ -59,7 +61,8 @@ func (r *ConstructionRepo) Create(ctx context.Context, dto *models.ConstructionD
 }
 
 func (r *ConstructionRepo) Update(ctx context.Context, dto *models.ConstructionDTO) error {
-	query := fmt.Sprintf(`UPDATE %s SET title=:title, code=:code, description=:description, allowed_types=:allowed_types WHERE id=:id`,
+	query := fmt.Sprintf(`UPDATE %s SET title=:title, code=:code, description=:description, allowed_types=:allowed_types, 
+		has_material=:has_material WHERE id=:id`,
 		WaveConstructionTable,
 	)
 
@@ -69,6 +72,7 @@ func (r *ConstructionRepo) Update(ctx context.Context, dto *models.ConstructionD
 		Code:         dto.Code,
 		Description:  dto.Description,
 		AllowedTypes: dto.AllowedTypes,
+		HasMaterial:  dto.HasMaterial,
 	}
 
 	_, err := r.db.NamedExecContext(ctx, query, tmp)

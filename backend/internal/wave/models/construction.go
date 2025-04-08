@@ -5,6 +5,7 @@ type Construction struct {
 	Title       string `json:"title" db:"title"`
 	Code        string `json:"code" db:"code"`
 	Description string `json:"description" db:"description"`
+	HasMaterial bool   `json:"hasMaterial" db:"has_material"`
 }
 
 type GetConstructionDTO struct {
@@ -17,6 +18,7 @@ type ConstructionDTO struct {
 	Code         string   `json:"code" db:"code"`
 	Description  string   `json:"description" db:"description"`
 	AllowedTypes []string `json:"allowedTypes" db:"allowed_types"`
+	HasMaterial  bool     `json:"hasMaterial" db:"has_material"`
 }
 
 type DeleteConstructionDTO struct {
