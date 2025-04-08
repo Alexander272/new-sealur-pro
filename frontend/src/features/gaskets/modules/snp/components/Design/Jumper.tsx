@@ -30,6 +30,7 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 	}
 	const jumperSelectHandler = (jumper: IMainJumper) => {
 		dispatch(setDesignJumper({ code: jumper.code, hasDrawing: jumper.hasDrawing }))
+		if (jumper.code == 'M') setValue('')
 	}
 	const jumperWidthHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		const regex = /(^\d{1,3})$/
@@ -54,7 +55,7 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 					<Input
 						value={value}
 						onChange={jumperWidthHandler}
-						disabled={disabled}
+						disabled={disabled || jumper.code == 'M'}
 						placeholder='Ширина перемычки'
 					/>
 				</>

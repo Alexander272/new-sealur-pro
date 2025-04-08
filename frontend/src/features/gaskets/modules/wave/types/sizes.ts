@@ -8,6 +8,8 @@ export interface ISizeWave {
 	d2: string
 	d1: string
 	h: string
+	useDimensions?: boolean
+	hasRounding?: boolean
 }
 
 export interface IDn {
@@ -25,3 +27,5 @@ export interface ISize {
 	d2: string
 	d1: string
 }
+
+export type DSize = 'd4' | 'd3' | 'd2' | 'd1'

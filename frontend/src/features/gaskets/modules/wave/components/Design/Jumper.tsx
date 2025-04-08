@@ -7,15 +7,15 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { JumperSelect } from '@/components/Jumper/Jumper'
 import { Input } from '@/components/Input/input.style'
-import { getConstruction, getJumper, getSizes, setDesignJumper } from '../../putgSlice'
+import { getJumper, setJumper } from '../../waveSlice'
 
 type Props = {
 	disabled?: boolean
 }
 
 export const Jumper: FC<Props> = ({ disabled }) => {
-	const construction = useAppSelector(getConstruction)
-	const sizes = useAppSelector(getSizes)
+	// const construction = useAppSelector(getConstruction)
+	// const sizes = useAppSelector(getSize)
 	const jumper = useAppSelector(getJumper)
 	const [value, setValue] = useState(jumper.width)
 
@@ -24,14 +24,14 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 	const debounced = useDebounce(value, 500)
 
 	useEffect(() => {
-		dispatch(setDesignJumper({ width: value }))
+		dispatch(setJumper({ width: value }))
 	}, [debounced, dispatch, value])
 
 	const jumperHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		dispatch(setDesignJumper({ hasJumper: event.target.checked }))
+		dispatch(setJumper({ hasJumper: event.target.checked }))
 	}
 	const jumperSelectHandler = (jumper: IMainJumper) => {
-		dispatch(setDesignJumper({ code: jumper.code, hasDrawing: jumper.hasDrawing }))
+		dispatch(setJumper({ code: jumper.code, hasDrawing: jumper.hasDrawing }))
 		if (jumper.code == 'M') setValue('')
 	}
 	const jumperWidthHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -40,15 +40,15 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 		if (event.target.value === '') setValue(event.target.value)
 	}
 
-	const jumperInRange = () => {
-		if (!construction || !construction.jumperRange) return false
+	// const jumperInRange = () => {
+	// 	if (!construction || !construction.jumperRange) return false
 
-		if (+sizes.d2 >= construction.jumperRange[0] && construction.jumperRange[1] == -1) return true
-		if (+sizes.d2 >= construction.jumperRange[0] && +sizes.d2 < construction.jumperRange[1]) return true
+	// 	if (+sizes.d2 >= construction.jumperRange[0] && construction.jumperRange[1] == -1) return true
+	// 	if (+sizes.d2 >= construction.jumperRange[0] && +sizes.d2 < construction.jumperRange[1]) return true
 
-		return false
-	}
-	const jumperDisable = !jumperInRange()
+	// 	return false
+	// }
+	// const jumperDisable = !jumperInRange()
 
 	return (
 		<Stack direction='row' spacing={2} marginBottom={3}>
@@ -56,8 +56,8 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 				id='jumper'
 				name='jumper'
 				label='Перемычка'
-				checked={jumper.hasJumper}
-				disabled={disabled || jumperDisable}
+				checked={jumper.hasJumper || false}
+				// disabled={disabled || jumperDisable}
 				onChange={jumperHandler}
 			/>
 

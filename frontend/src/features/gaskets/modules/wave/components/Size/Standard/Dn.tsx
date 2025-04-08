@@ -50,12 +50,12 @@ export const Dn = () => {
 
 					{data?.data.map(f => {
 						let color = ''
-						if (+f.dn < +(type?.dnRange[0] || 0) || +f.dn > +(type?.dnRange[1] || 0)) color = '#707070'
+						if (f.alt < +(type?.dnRange[0] || 0) || f.alt > +(type?.dnRange[1] || 0)) color = '#707070'
 
 						return (
 							<MenuItem
 								key={f.dn}
-								value={f.dn}
+								value={f.alt}
 								sx={{
 									color: color,
 								}}

@@ -1,10 +1,19 @@
 import type { IFlangeStandard, IStandard } from '@/features/gaskets/modules/snp/types/snp'
 
 export interface IMainWave {
+	configuration?: IConfiguration
 	standard?: IWaveStandard
 	flangeType?: IFlangeType
 	type?: IWaveType
 	construction?: IConstruction
+}
+
+export interface IConfiguration {
+	id: string
+	title: string
+	code: 'rectangular' | 'round' | 'oval'
+	hasDrawing?: boolean
+	hasStandard?: boolean
 }
 
 export interface IWaveStandard {
@@ -36,4 +45,5 @@ export interface IConstruction {
 	title: string
 	code: string
 	description: string
+	hasMaterial: boolean
 }

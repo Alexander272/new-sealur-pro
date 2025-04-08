@@ -4,10 +4,11 @@ import { FormControl, MenuItem, Select, SelectChangeEvent, Skeleton, Typography 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetWaveStandardQuery } from '../../waveApiSlice'
-import { getStandard, setMainStandard } from '../../waveSlice'
+import { getConfiguration, getStandard, setMainStandard } from '../../waveSlice'
 
 export const Standards = () => {
 	const active = useAppSelector(getActive)
+	const configuration = useAppSelector(getConfiguration)
 	const standard = useAppSelector(getStandard)
 	const dispatch = useAppDispatch()
 
@@ -35,6 +36,7 @@ export const Standards = () => {
 		dispatch(setMainStandard(standard))
 	}
 
+	if (configuration?.code != 'round') return null
 	return (
 		<>
 			<Typography fontWeight='bold' mt={1}>

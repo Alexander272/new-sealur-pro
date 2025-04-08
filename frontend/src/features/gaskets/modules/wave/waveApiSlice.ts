@@ -1,13 +1,26 @@
 import { toast } from 'react-toastify'
 
-import type { IConstruction, IFlangeType, IWaveStandard, IWaveType } from './types/main'
+import type { IConfiguration, IConstruction, IFlangeType, IWaveStandard, IWaveType } from './types/main'
 import type { IDn, ISize } from './types/sizes'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
+import { IMaterials, IPlating } from './types/material'
 
 export const waveApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
 	endpoints: builder => ({
+		// получение конфигураций прокладок
+		getWaveConfigurations: builder.query<{ data: IConfiguration[] }, null>({
+			query: () => API.wave.configurations,
+			providesTags: [{ type: 'Wave', id: 'configurations' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось конфигурации прокладок', { autoClose: false })
+				}
+			},
+		}),
 		// получение стандартов на прокладки и фланцы
 		getWaveStandard: builder.query<{ data: IWaveStandard[] }, null>({
 			query: () => API.wave.standards,
@@ -95,7 +108,30 @@ export const waveApi = apiSlice.injectEndpoints({
 				try {
 					await api.queryFulfilled
 				} catch {
-					toast.error('Не удалось получить условный проход', { autoClose: false })
+					toast.error('Не удалось получить размеры', { autoClose: false })
+				}
+			},
+		}),
+
+		getWavePlating: builder.query<{ data: IPlating[] }, null>({
+			query: () => API.wave.plating,
+			providesTags: [{ type: 'Wave', id: 'plating' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить материалы основания', { autoClose: false })
+				}
+			},
+		}),
+		getWaveMaterials: builder.query<{ data: IMaterials }, null>({
+			query: () => API.wave.materials,
+			providesTags: [{ type: 'Wave', id: 'materials' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить материалы', { autoClose: false })
 				}
 			},
 		}),
@@ -103,10 +139,13 @@ export const waveApi = apiSlice.injectEndpoints({
 })
 
 export const {
+	useGetWaveConfigurationsQuery,
 	useGetWaveStandardQuery,
 	useGetWaveFlangeTypesQuery,
 	useGetWaveTypesQuery,
 	useGetWaveConstructionsQuery,
+	useGetWavePlatingQuery,
+	useGetWaveMaterialsQuery,
 	useGetWaveDnQuery,
 	useGetWaveSizesQuery,
 } = waveApi

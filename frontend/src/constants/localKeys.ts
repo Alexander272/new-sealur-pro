@@ -1,4 +1,5 @@
 export const localKeys = Object.freeze({
-	putgDrawing: 'pro/putg/drawing' as const,
 	snpDrawing: 'pro/snp/drawing' as const,
+	putgDrawing: 'pro/putg/drawing' as const,
+	waveDrawing: 'pro/wave/drawing' as const,
 })

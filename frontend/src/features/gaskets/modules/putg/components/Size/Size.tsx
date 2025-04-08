@@ -1,29 +1,14 @@
-import { Skeleton, Typography } from '@mui/material'
-
 import { useAppSelector } from '@/hooks/redux'
-import { Column, Image, ImageContainer, SizeContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { Column, SizeContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
 import { SizeSkeleton } from '@/features/gaskets/components/Skeletons/SizeSkeleton'
-import { StandardImage } from './Image/StandardImage'
-import { SizesBlock } from './SizeBlock/SizesBlock'
-import { NotStandardImage } from './Image/NotStandardImage'
-import { AnotherSizeBlock } from './SizeBlock/AnotherSizeBlock'
-import { getConfiguration, getConstruction, getStandard, getType } from '../../putgSlice'
+import { getConfiguration, getStandard } from '../../putgSlice'
 import { Configuration } from './Configuration/Configuration'
 import { Standard } from './Standard/Standard'
 import { Another } from './Another/Another'
-
-import ovalImage from '@/assets/putg/ov.webp'
-import rectangularImage from '@/assets/putg/pr.webp'
-
-const images = {
-	oval: ovalImage,
-	rectangular: rectangularImage,
-}
+import { Drawing } from './Drawing'
 
 export const Size = () => {
 	const configuration = useAppSelector(getConfiguration)
-	const construction = useAppSelector(getConstruction)
-	const type = useAppSelector(getType)
 	const standard = useAppSelector(getStandard)
 
 	return (
@@ -42,41 +27,7 @@ export const Size = () => {
 				<SizeSkeleton />
 			)}
 
-			<Column width={60}>
-				<Typography fontWeight='bold'>Чертеж прокладки</Typography>
-				{!configuration || !construction || !type ? (
-					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
-				) : (
-					<>
-						{configuration?.code == 'round' && (
-							<ImageContainer>
-								<StandardImage type={type} construction={construction} />
-								<SizesBlock />
-							</ImageContainer>
-						)}
-
-						{configuration?.code != 'round' && (
-							<>
-								<ImageContainer padding='0'>
-									<NotStandardImage type={type} construction={construction} />
-								</ImageContainer>
-
-								<Typography fontWeight='bold'>Размеры прокладки</Typography>
-								<ImageContainer padding='0 20px'>
-									<Image
-										src={images[configuration?.code || 'rectangular']}
-										alt='gasket drawing'
-										maxWidth={'400px'}
-										width={600}
-										height={255}
-									/>
-									<AnotherSizeBlock />
-								</ImageContainer>
-							</>
-						)}
-					</>
-				)}
-			</Column>
+			<Drawing />
 		</SizeContainer>
 	)
 }
