@@ -38,6 +38,11 @@ export interface IWaveType {
 	description: string
 	priority: number
 	dnRange: string[]
+	widthRange: number[]
+	hasD4: boolean
+	hasD3: boolean
+	hasD2: boolean
+	hasD1: boolean
 }
 
 export interface IConstruction {

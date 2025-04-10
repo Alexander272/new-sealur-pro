@@ -8,9 +8,11 @@ import { Coating } from './Coating'
 import { Jumper } from './Jumper'
 import { Files } from './Files'
 import { Retainer } from './Retainer'
+import { getDesignErrors } from '../../waveSlice'
 
 export const Design = () => {
 	const role = useAppSelector(getRole)
+	const errors = useAppSelector(getDesignErrors)
 
 	return (
 		<AsideContainer>
@@ -22,12 +24,11 @@ export const Design = () => {
 			<Jumper />
 			<Files disabled={role != 'user'} />
 
-			{/* //TODO check errors */}
-			{/* {hasDesignError && (
+			{Object.values(errors).some(v => v) && (
 				<Typography sx={{ marginTop: 1, color: 'var(--danger-color)', fontSize: '1.4rem' }}>
 					К заявке приложите файл с чертежом.
 				</Typography>
-			)} */}
+			)}
 		</AsideContainer>
 	)
 }

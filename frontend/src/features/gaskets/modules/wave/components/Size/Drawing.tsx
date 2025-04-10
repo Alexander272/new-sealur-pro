@@ -1,23 +1,31 @@
-import { Typography } from '@mui/material'
+import { Skeleton, Typography } from '@mui/material'
 
-import { Column } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { useAppSelector } from '@/hooks/redux'
+import { Column, ImageContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { getConfiguration, getConstruction, getType } from '../../waveSlice'
+import { StandardImage } from './Image/StandardImage'
+import { Dimensions } from './Dimensions/Dimensions'
 
 export const Drawing = () => {
+	const configuration = useAppSelector(getConfiguration)
+	const type = useAppSelector(getType)
+	const construction = useAppSelector(getConstruction)
+
 	return (
 		<Column width={60}>
 			<Typography fontWeight='bold'>Чертеж прокладки</Typography>
-			{/*{!configuration || !construction || !type ? (
-					<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
-				) : (
-					<>
-						{configuration?.code == 'round' && (
-							<ImageContainer>
-								<StandardImage type={type} construction={construction} />
-								<SizesBlock />
-							</ImageContainer>
-						)}
+			{!configuration || !construction || !type ? (
+				<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
+			) : (
+				<>
+					{configuration?.code == 'round' && (
+						<ImageContainer>
+							<StandardImage type={type} construction={construction} />
+							<Dimensions />
+						</ImageContainer>
+					)}
 
-						{configuration?.code != 'round' && (
+					{/* {configuration?.code != 'round' && (
 							<>
 								<ImageContainer padding='0'>
 									<NotStandardImage type={type} construction={construction} />
@@ -35,9 +43,9 @@ export const Drawing = () => {
 									<AnotherSizeBlock />
 								</ImageContainer>
 							</>
-						)}
-					</>
-				)}*/}
+						)} */}
+				</>
+			)}
 		</Column>
 	)
 }

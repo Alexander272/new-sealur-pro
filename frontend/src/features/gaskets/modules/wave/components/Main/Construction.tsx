@@ -17,8 +17,14 @@ export const Construction = () => {
 	})
 
 	useEffect(() => {
-		if (data && !active?.id && !isFetching) dispatch(setConstruction(data.data[0]))
-	}, [data, active, isFetching, dispatch])
+		if (!data || active?.id || isFetching) return
+		if (construction) {
+			let idx = data.data.findIndex(c => c.code === construction?.code)
+			if (idx == -1) idx = 0
+			dispatch(setConstruction(data.data[idx]))
+		} else dispatch(setConstruction(data.data[0]))
+	}, [data, active, isFetching, dispatch, construction])
+
 	useEffect(() => {
 		if (!data || !active || isFetching || !type?.id) return
 		let idx = construction ? data.data.findIndex(c => c.id === construction?.id) : 0

@@ -2,12 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import type { RootState } from '@/app/store'
 import type { IDrawing } from '../../types/drawing'
+import type { IMaterial } from '../../types/material'
 import type { IConfiguration, IConstruction, IFlangeType, IMainWave, IWaveStandard, IWaveType } from './types/main'
 import type { DSize, ISize, ISizeWave } from './types/sizes'
 import type { IDesignWave } from './types/design'
 import type { IMaterialsWave, IPlating, TypeMaterial } from './types/material'
-import type { IMaterial } from '../../types/material'
+import type { IDesignErrors, ISizeErrors } from './types/errors'
 import { localKeys } from '@/constants/localKeys'
+import { setActive } from '@/features/card/cardSlice'
 
 export interface IWaveState {
 	amount: string
@@ -17,6 +19,9 @@ export interface IWaveState {
 	material: IMaterialsWave
 	size: ISizeWave
 	design: IDesignWave
+
+	designErrors: IDesignErrors
+	sizeErrors: ISizeErrors
 
 	drawing?: IDrawing
 }
@@ -45,6 +50,14 @@ const initialState: IWaveState = {
 			hasDrawing: false,
 		},
 	},
+
+	designErrors: {
+		hole: false,
+		jumper: false,
+		rounding: false,
+		configuration: false,
+	},
+	sizeErrors: {},
 }
 
 export const waveSlice = createSlice({
@@ -63,8 +76,7 @@ export const waveSlice = createSlice({
 			// state.sizeError.minWidth = false
 			// state.sizeError.maxSize = false
 			// state.hasSizeError = false
-			// state.designError.emptyDrawingForm = action.payload.hasDrawing || false
-			// state.hasDesignError = Object.values(state.designError).some(v => v)
+			state.designErrors.configuration = !state.drawing && (action.payload.hasDrawing || false)
 		},
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<IWaveStandard>) => {
@@ -121,20 +133,19 @@ export const waveSlice = createSlice({
 			// state.sizeError.maxSize = false
 			// state.hasSizeError = false
 		},
+		setSizeErrors: (state, action: PayloadAction<ISizeErrors>) => {
+			state.sizeErrors = { ...state.sizeErrors, ...action.payload }
+		},
 		// есть скругления (для прямоугольной)
 		setHasRounding: (state, action: PayloadAction<boolean>) => {
 			state.size.hasRounding = action.payload
-
-			// state.designError.emptyDrawingRounding = !state.drawing && (state.size.hasRounding || false)
-			// state.hasDesignError = Object.values(state.designError).some(v => v)
+			state.designErrors.rounding = !state.drawing && (state.size.hasRounding || false)
 		},
 
 		// установка отверстия
 		setHasHole: (state, action: PayloadAction<boolean>) => {
 			state.design.hasHole = action.payload
-			// state.designError.emptyDrawingHole = !state.drawing && action.payload
-
-			// state.hasDesignError = Object.values(state.designError).some(v => v)
+			state.designErrors.hole = !state.drawing && action.payload
 		},
 		// самоклеящееся покрытие
 		setHasCoating: (state, action: PayloadAction<boolean>) => {
@@ -152,13 +163,10 @@ export const waveSlice = createSlice({
 			if (action.payload.hasJumper != undefined) state.design.jumper.hasJumper = action.payload.hasJumper
 			if (action.payload.code != undefined) state.design.jumper.code = action.payload.code
 			if (action.payload.width != undefined) state.design.jumper.width = action.payload.width
-			if (action.payload.hasDrawing != undefined) {
-				state.design.jumper.hasDrawing = action.payload.hasDrawing
-			}
-			// state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
+			if (action.payload.hasDrawing != undefined) state.design.jumper.hasDrawing = action.payload.hasDrawing
 
-			// if (!state.design.jumper.hasJumper) state.designError.emptyDrawingJumper = false
-			// state.hasDesignError = Object.values(state.designError).some(v => v)
+			state.designErrors.jumper =
+				!state.drawing && (state.design.jumper.hasJumper || false) && (state.design.jumper.hasDrawing || false)
 		},
 		// установка чертежа
 		setDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {
@@ -166,12 +174,10 @@ export const waveSlice = createSlice({
 			state.design.drawing = action.payload?.link
 			localStorage.setItem(localKeys.waveDrawing, JSON.stringify(action.payload || ''))
 
-			// state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
-			// state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
-			// state.designError.emptyDrawingRemovable = !state.drawing && (state.design.hasRemovable || false)
-			// state.designError.emptyDrawingRounding = !state.drawing && (state.size.hasRounding || false)
-			// state.designError.emptyDrawingForm = !state.drawing && (state.main.configuration?.hasDrawing || false)
-			// state.hasDesignError = Object.values(state.designError).some(v => v)
+			state.designErrors.hole = !state.drawing && (state.design.hasHole || false)
+			state.designErrors.jumper = !state.drawing && (state.design.jumper.hasDrawing || false)
+			state.designErrors.rounding = !state.drawing && (state.size.hasRounding || false)
+			state.designErrors.configuration = !state.drawing && (state.main.configuration?.hasDrawing || false)
 		},
 
 		// установка доп. инфы
@@ -183,6 +189,13 @@ export const waveSlice = createSlice({
 			state.amount = action.payload
 		},
 	},
+	extraReducers: builder =>
+		builder.addCase(setActive, (state, action) => {
+			if (!action.payload) {
+				state.drawing = JSON.parse(localStorage.getItem(localKeys.waveDrawing) || 'null') || undefined
+				state.design.drawing = state.drawing?.origName
+			}
+		}),
 })
 
 export const wavePath = waveSlice.name
@@ -213,6 +226,9 @@ export const getWithRetainer = (state: RootState) => state.wave.design.withRetai
 export const getJumper = (state: RootState) => state.wave.design.jumper
 export const getDrawing = (state: RootState) => state.wave.drawing
 
+export const getDesignErrors = (state: RootState) => state.wave.designErrors
+export const getSizeErrors = (state: RootState) => state.wave.sizeErrors
+
 export const getInfo = (state: RootState) => state.wave.info
 export const getAmount = (state: RootState) => state.wave.amount
 
@@ -228,6 +244,7 @@ export const {
 	setSize,
 	setDSize,
 	setThickness,
+	setSizeErrors,
 	setUseDimensions,
 	setHasRounding,
 	setHasHole,

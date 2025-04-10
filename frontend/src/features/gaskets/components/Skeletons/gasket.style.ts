@@ -136,7 +136,7 @@ type ImageContainerProps = {
 }
 export const ImageContainer = styled.div<ImageContainerProps>`
 	position: relative;
-	margin: auto;
+	/* margin: auto; */
 	padding: ${props => (props.padding ? props.padding : '20px 0')};
 	width: fit-content;
 	/* width: 100%;

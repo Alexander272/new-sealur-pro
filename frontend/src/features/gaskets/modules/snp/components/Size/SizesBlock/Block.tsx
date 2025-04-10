@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { Tooltip } from '@mui/material'
 
 import type { ISizeBlockSnp } from '../../../types/snp'
-import { Description, SizesProps, Size, Container, Question } from './sizes.style'
+import { Description, SizesProps, Size, Container, Question } from '@/components/Size/size.style'
 
 type Position = {
 	frame: SizesProps

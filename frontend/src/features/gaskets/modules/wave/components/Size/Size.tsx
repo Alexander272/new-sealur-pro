@@ -4,6 +4,7 @@ import { Standard } from './Standard/Standard'
 import { Configuration } from './Configuration/Configuration'
 import { getConfiguration, getStandard } from '../../waveSlice'
 import { Drawing } from './Drawing'
+import { Another } from './Another/Another'
 
 export const Size = () => {
 	const configuration = useAppSelector(getConfiguration)
@@ -12,11 +13,13 @@ export const Size = () => {
 	return (
 		<SizeContainer>
 			<Column width={40}>
-				{configuration?.code !== 'round' ? (
+				{configuration && configuration?.code !== 'round' ? (
 					<Configuration />
 				) : standard?.flangeStandard.code ? (
 					<Standard />
-				) : null}
+				) : (
+					<Another />
+				)}
 			</Column>
 
 			<Drawing />

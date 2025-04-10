@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
 import { useAppSelector } from '@/hooks/redux'
-import { Container, Description, Size } from './size.style'
+import { Container, Description, Size } from '@/components/Size/size.style'
 import { getSizes } from '../../../putgSlice'
 
 type Props = unknown

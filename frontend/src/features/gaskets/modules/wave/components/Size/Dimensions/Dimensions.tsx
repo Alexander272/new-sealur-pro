@@ -1,30 +1,30 @@
 import { useAppSelector } from '@/hooks/redux'
 import { Container, Description, Size } from '@/components/Size/size.style'
-import { getConstruction, getSizes } from '../../../putgSlice'
+import { getSize, getType } from '../../../waveSlice'
 
-export const SizesBlock = () => {
-	const construction = useAppSelector(getConstruction)
-	const sizes = useAppSelector(getSizes)
+export const Dimensions = () => {
+	const type = useAppSelector(getType)
+	const sizes = useAppSelector(getSize)
 
 	return (
 		<Container>
-			{construction?.hasD4 && (
-				<Size top={'77%'}>
+			{type?.hasD4 && (
+				<Size bottom={'14%'}>
 					{sizes.d4?.replace('.', ',')} <Description>(D4)</Description>
 				</Size>
 			)}
-			{construction?.hasD3 && (
-				<Size top={'64%'}>
+			{type?.hasD3 && (
+				<Size bottom={'30%'}>
 					{sizes.d3.replace('.', ',')} <Description>(D3)</Description>
 				</Size>
 			)}
-			{construction?.hasD2 && (
-				<Size top={'51%'}>
+			{type?.hasD2 && (
+				<Size bottom={'45%'}>
 					{sizes.d2.replace('.', ',')} <Description>(D2)</Description>
 				</Size>
 			)}
-			{construction?.hasD1 && (
-				<Size top={'38%'}>
+			{type?.hasD1 && (
+				<Size bottom={'59%'}>
 					{sizes.d1?.replace('.', ',')} <Description>(D1)</Description>
 				</Size>
 			)}

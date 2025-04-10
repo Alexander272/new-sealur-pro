@@ -10,9 +10,10 @@ export const Description = () => {
 	const design = useAppSelector(getDesign)
 
 	const renderDescription = () => {
-		const form = ''
-
-		//TODO надо отдельно выводить размеры по госту (если он есть)
+		let form = ''
+		if (main.configuration?.code !== 'round') {
+			form = main.configuration?.code == 'oval' ? 'овальной формы ' : 'прямоугольной формы '
+		}
 
 		const type = (main.type?.description || '')
 			.replace('@material', material.base?.title || '')

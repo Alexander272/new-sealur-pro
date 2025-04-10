@@ -3,11 +3,12 @@ import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
-import { getConstruction, getFiller, getFlangeType, setConstruction } from '../../putgSlice'
+import { getConfiguration, getConstruction, getFiller, getFlangeType, setConstruction } from '../../putgSlice'
 import { useGetPutgConstructionsQuery } from '../../putgApiSlice'
 
 export const Construction = () => {
 	const active = useAppSelector(getActive)
+	const configuration = useAppSelector(getConfiguration)
 	const construction = useAppSelector(getConstruction)
 	const filler = useAppSelector(getFiller)
 	const flangeType = useAppSelector(getFlangeType)
@@ -48,11 +49,15 @@ export const Construction = () => {
 					Выберите тип конструкции
 				</MenuItem>
 
-				{data?.data.map(f => (
-					<MenuItem key={f.id} value={f.code}>
-						{f.code} - {f.title}
-					</MenuItem>
-				))}
+				{data?.data.map(f => {
+					// TODO сделать бы это как-то нормально, не переписывая кучу вещей
+					if (configuration?.code != 'round' && f.baseId == '3b4c6497-7b53-42ba-9800-c1055ca90412') return
+					return (
+						<MenuItem key={f.id} value={f.code}>
+							{f.code} - {f.title}
+						</MenuItem>
+					)
+				})}
 			</Select>
 		</>
 	)
