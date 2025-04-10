@@ -28,7 +28,7 @@ type WaveType interface {
 }
 
 func (r *TypeRepo) Get(ctx context.Context, req *models.GetWaveTypesDTO) ([]*models.WaveType, error) {
-	query := fmt.Sprintf(`SELECT t.id, b.id AS base_id, title, code, description, priority, dn_range, has_d4, has_d3, has_d2, has_d1
+	query := fmt.Sprintf(`SELECT t.id, b.id AS base_id, title, code, description, priority, dn_range, width_range, has_d4, has_d3, has_d2, has_d1
 		FROM %s AS t LEFT JOIN %s AS b ON t.base_id = b.id
 		WHERE flange_id=$1 ORDER BY priority, dn_range`,
 		WaveTypeTable, WaveTypeBaseTable,
@@ -50,6 +50,7 @@ func (r *TypeRepo) Get(ctx context.Context, req *models.GetWaveTypesDTO) ([]*mod
 			Description: v.Description,
 			Priority:    v.Priority,
 			DnRange:     v.DnRange,
+			WidthRange:  v.WidthRange,
 			HasD4:       v.HasD4,
 			HasD3:       v.HasD3,
 			HasD2:       v.HasD2,

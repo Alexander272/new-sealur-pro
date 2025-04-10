@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS public.wave_type_base
     has_d3 boolean DEFAULT true,
     has_d2 boolean DEFAULT true,
     has_d1 boolean DEFAULT false,
+    width_range integer[] DEFAULT '{}'::integer[],
     CONSTRAINT wave_type_base_pkey PRIMARY KEY (id)
 )
 
