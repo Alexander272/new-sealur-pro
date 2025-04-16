@@ -98,7 +98,7 @@ type (
 
 	LimiterConfig struct {
 		RPS   int           `yaml:"rps" env:"RPS" env-default:"10"`
-		Burst int           `yaml:"burst" env:"BURST" env-default:"20"`
+		Burst int           `yaml:"burst" env:"BURST" env-default:"30"`
 		TTL   time.Duration `yaml:"ttl" env:"TTL" env-default:"10m"`
 	}
 

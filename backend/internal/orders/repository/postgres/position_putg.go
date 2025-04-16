@@ -11,7 +11,6 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository/postgres/pq_models"
 	putg_models "github.com/Alexander272/new-sealur-pro/internal/putg/models"
-	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -250,7 +249,6 @@ func (r *PositionPutgRepo) Create(ctx context.Context, dto *models.PositionPutgD
 		HasRemovable:    dto.Design.HasRemovable,
 		Drawing:         dto.Design.Drawing,
 	}
-	logger.Debug("create position putg", logger.AnyAttr("data", data))
 
 	_, err := r.db.NamedExecContext(ctx, query, data)
 	if err != nil {
@@ -333,7 +331,6 @@ func (r *PositionPutgRepo) Update(ctx context.Context, dto *models.PositionPutgD
 		WHERE position_id=:position_id`, PositionPutgTable,
 	)
 
-	dto.Id = uuid.NewString()
 	nilId := uuid.Nil.String()
 	if dto.Size.SizeId == "" {
 		dto.Size.SizeId = nilId

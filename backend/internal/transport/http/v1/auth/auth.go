@@ -207,9 +207,9 @@ func (h *Handler) refresh(c *gin.Context) {
 	logger.Info("Пользователь успешно обновил сессию",
 		logger.StringAttr("section", "auth"),
 		logger.StringAttr("ip", c.ClientIP()),
-		//TODO данных о пользователе нет (user.Name пустое)
-		logger.StringAttr("user", user.Name),
+		logger.StringAttr("username", user.Nickname),
 		logger.StringAttr("user_id", user.Id),
+		// logger.AnyAttr("user", user),
 	)
 
 	c.SetSameSite(http.SameSiteLaxMode)

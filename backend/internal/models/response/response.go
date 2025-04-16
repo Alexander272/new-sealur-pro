@@ -30,7 +30,7 @@ type FileResponse struct {
 	Id       string `json:"id,omitempty"`
 	Name     string `json:"name"`
 	OrigName string `json:"origName"`
-	Link     string `json:"link"`
+	Link     string `json:"src"`
 	Group    string `json:"group"`
 }
 

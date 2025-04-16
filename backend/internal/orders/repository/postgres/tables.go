@@ -16,6 +16,7 @@ const (
 	PositionMaterialPutgTable = "position_putg_material"
 	PositionDesignPutgTable   = "position_putg_design"
 
+	PositionWaveTable     = "position_wave"
 	PositionRingTable     = "position_ring"
 	PositionRingsKitTable = "position_rings_kit"
 
@@ -27,6 +28,9 @@ const (
 	PutgFillerTable       = "putg_filler"
 	BaseFillerTable       = "putg_filler_base"
 	PutgMaterialTable     = "putg_material"
+
+	WaveSizeTable = "wave_size"
+	WaveTypeTable = "wave_type"
 
 	FlangeTypeTable  = "flange_type"
 	SnpFillerTable   = "snp_filler_new"

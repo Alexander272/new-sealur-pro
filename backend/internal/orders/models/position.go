@@ -54,6 +54,7 @@ type PositionDTO struct {
 	Info     string           `json:"info" db:"info"`
 	SnpData  *PositionSnpDTO  `json:"snpData"`
 	PutgData *PositionPutgDTO `json:"putgData"`
+	WaveData *PositionWaveDTO `json:"waveData"`
 	// RingData *PositionRingDTO     `json:"ringData"`
 	// KitData  *PositionRingsKitDTO `json:"kitData"`
 }

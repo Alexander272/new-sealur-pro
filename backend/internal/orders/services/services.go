@@ -8,7 +8,6 @@ import (
 )
 
 type Services struct {
-	PositionSnp
 	Position
 	Order
 	Zip
@@ -25,16 +24,21 @@ type Deps struct {
 func NewServices(deps *Deps) *Services {
 	snp := NewPositionSnpService(deps.Repos.PositionSnp, deps.Files.Files)
 	putg := NewPositionPutgService(deps.Repos.PositionPutg, deps.Files.Files)
-	position := NewPositionService(&PositionDeps{Repo: deps.Repos.Position, Snp: snp, Putg: putg, Files: deps.Files.Files})
+	wave := NewPositionWaveService(deps.Repos.PositionWave, deps.Files.Files)
+	position := NewPositionService(&PositionDeps{
+		Repo: deps.Repos.Position,
+		Snp:  snp, Putg: putg, Wave: wave,
+		Files: deps.Files.Files,
+	})
 	zip := NewZipService()
 	export := NewExportService(&ExportDeps{Snp: snp, Putg: putg, Files: deps.Files.Files, Zip: zip})
 	order := NewOrderService(&OrderDeps{Repo: deps.Repos.Order, Mail: deps.Mail, User: deps.User, Position: position, Export: export})
 
 	return &Services{
-		PositionSnp: snp,
-		Position:    position,
-		Order:       order,
-		Zip:         zip,
-		Export:      export,
+		// PositionSnp: snp,
+		Position: position,
+		Order:    order,
+		Zip:      zip,
+		Export:   export,
 	}
 }

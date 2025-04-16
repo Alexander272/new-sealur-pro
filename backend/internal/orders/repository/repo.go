@@ -17,12 +17,16 @@ type PositionSnp interface {
 type PositionPutg interface {
 	postgres.PositionPutg
 }
+type PositionWave interface {
+	postgres.PositionWave
+}
 
 type Repository struct {
 	Order
 	Position
 	PositionSnp
 	PositionPutg
+	PositionWave
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -31,5 +35,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Position:     postgres.NewPositionRepo(db),
 		PositionSnp:  postgres.NewPositionSnpRepo(db),
 		PositionPutg: postgres.NewPositionPutgRepo(db),
+		PositionWave: postgres.NewPositionWaveRepo(db),
 	}
 }
