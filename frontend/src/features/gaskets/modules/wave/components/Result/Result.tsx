@@ -1,11 +1,11 @@
 import { Stack } from '@mui/material'
 
 import { ResultContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
-import { Information } from './Information'
-import { Amount } from './Amount'
-// import { Buttons } from './Buttons'
 import { Description } from './Description'
 import { Designation } from './Designation'
+import { Information } from './Information'
+import { Amount } from './Amount'
+import { Buttons } from './Buttons'
 
 export const Result = () => {
 	return (
@@ -21,7 +21,7 @@ export const Result = () => {
 				justifyContent='space-between'
 			>
 				<Amount />
-				{/* <Buttons /> */}
+				<Buttons />
 			</Stack>
 		</ResultContainer>
 	)

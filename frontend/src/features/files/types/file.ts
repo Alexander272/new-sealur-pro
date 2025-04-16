@@ -2,7 +2,7 @@ export interface IFile {
 	id: string
 	name: string
 	origName: string
-	link: string
+	src: string
 	group: string
 }
 

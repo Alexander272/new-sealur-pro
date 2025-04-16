@@ -10,6 +10,7 @@ import type { IMaterialsWave, IPlating, TypeMaterial } from './types/material'
 import type { IDesignErrors, ISizeErrors } from './types/errors'
 import { localKeys } from '@/constants/localKeys'
 import { setActive } from '@/features/card/cardSlice'
+import { IWave } from './types/wave'
 
 export interface IWaveState {
 	amount: string
@@ -49,7 +50,9 @@ const initialState: IWaveState = {
 			width: '',
 			hasDrawing: false,
 		},
+		drawing: JSON.parse(localStorage.getItem(localKeys.waveDrawing) || 'null')?.src || undefined,
 	},
+	drawing: JSON.parse(localStorage.getItem(localKeys.waveDrawing) || 'null') || undefined,
 
 	designErrors: {
 		hole: false,
@@ -66,16 +69,16 @@ export const waveSlice = createSlice({
 	reducers: {
 		// установка конфигурации
 		setConfiguration: (state, action: PayloadAction<IConfiguration>) => {
+			const hasChange = state.main.configuration?.id != action.payload.id
 			state.main.configuration = action.payload
-			// state.size.useDimensions = (action.payload.code != 'round' && state.size.useDimensions) || false
-			// state.sizeError.emptyD1 = false
-			// state.sizeError.emptyD2 = false
-			// state.sizeError.emptyD3 = false
-			// state.sizeError.emptyD4 = false
-			// state.sizeError.emptySize = false
-			// state.sizeError.minWidth = false
-			// state.sizeError.maxSize = false
-			// state.hasSizeError = false
+			if (!hasChange) return
+			state.material = initialState.material
+			state.design = { ...initialState.design }
+			state.design.drawing = state.drawing?.src
+			state.size = { ...initialState.size }
+			state.size.useDimensions = (action.payload.code != 'round' && state.size.useDimensions) || false
+			state.sizeErrors = initialState.sizeErrors
+			state.designErrors = { ...initialState.designErrors }
 			state.designErrors.configuration = !state.drawing && (action.payload.hasDrawing || false)
 		},
 		// установка стандарта
@@ -110,7 +113,6 @@ export const waveSlice = createSlice({
 		},
 		setDSize: (state, action: PayloadAction<{ name: DSize; value: string }>) => {
 			state.size[action.payload.name] = action.payload.value
-			//TODO валидация
 		},
 		setThickness: (state, action: PayloadAction<string>) => {
 			state.size.h = action.payload
@@ -124,13 +126,13 @@ export const waveSlice = createSlice({
 			state.size.d2 = ''
 			state.size.d1 = ''
 
-			// state.sizeError.emptyD1 = false
-			// state.sizeError.emptyD2 = false
-			// state.sizeError.emptyD3 = false
-			// state.sizeError.emptyD4 = false
+			state.sizeErrors.emptyD1 = false
+			state.sizeErrors.emptyD2 = false
+			state.sizeErrors.emptyD3 = false
+			state.sizeErrors.emptyD4 = false
 			// state.sizeError.emptySize = false
-			// state.sizeError.minWidth = false
-			// state.sizeError.maxSize = false
+			state.sizeErrors.minWidth = false
+			state.sizeErrors.maxSize = false
 			// state.hasSizeError = false
 		},
 		setSizeErrors: (state, action: PayloadAction<ISizeErrors>) => {
@@ -171,7 +173,7 @@ export const waveSlice = createSlice({
 		// установка чертежа
 		setDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {
 			state.drawing = action.payload
-			state.design.drawing = action.payload?.link
+			state.design.drawing = action.payload?.src
 			localStorage.setItem(localKeys.waveDrawing, JSON.stringify(action.payload || ''))
 
 			state.designErrors.hole = !state.drawing && (state.design.hasHole || false)
@@ -188,12 +190,51 @@ export const waveSlice = createSlice({
 		setAmount: (state, action: PayloadAction<string>) => {
 			state.amount = action.payload
 		},
+
+		setWave: (state, action: PayloadAction<{ data: IWave; amount: string; info?: string }>) => {
+			state.main = action.payload.data.main
+			state.size = action.payload.data.size
+			state.material = action.payload.data.material
+
+			state.design.hasHole = action.payload.data.design.hasHole || false
+			state.design.hasCoating = action.payload.data.design.hasCoating || false
+			state.design.withRetainer = action.payload.data.design.withRetainer || false
+			state.design.jumper.hasJumper = action.payload.data.design.jumper.hasJumper || false
+			state.design.jumper.code = action.payload.data.design.jumper.code
+			state.design.jumper.width = action.payload.data.design.jumper.width
+			state.design.drawing = action.payload.data.design.drawing
+
+			if (action.payload.data.design.drawing) {
+				const params = new URLSearchParams(action.payload.data.design.drawing.split('?')[1])
+				const id = params.get('name')?.split('_')[0]
+				const drawing: IDrawing = {
+					id: id || '',
+					name: params.get('name') || '',
+					origName: params.get('orig') || '',
+					src: action.payload.data.design.drawing,
+					group: params.get('group') || '',
+				}
+				state.drawing = drawing
+			} else {
+				state.drawing = undefined
+			}
+
+			state.amount = action.payload.amount
+			state.info = action.payload.info || ''
+		},
+		// сброс выбранной позиции
+		clearWave: state => {
+			state.drawing = JSON.parse(localStorage.getItem(localKeys.waveDrawing) || 'null') || undefined
+			state.design.drawing = state.drawing?.src
+		},
+		// сброс стейта
+		resetWave: () => initialState,
 	},
 	extraReducers: builder =>
 		builder.addCase(setActive, (state, action) => {
 			if (!action.payload) {
 				state.drawing = JSON.parse(localStorage.getItem(localKeys.waveDrawing) || 'null') || undefined
-				state.design.drawing = state.drawing?.origName
+				state.design.drawing = state.drawing?.src
 			}
 		}),
 })
@@ -254,4 +295,7 @@ export const {
 	setDrawing,
 	setInfo,
 	setAmount,
+	setWave,
+	clearWave,
+	resetWave,
 } = waveSlice.actions

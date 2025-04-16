@@ -15,12 +15,14 @@ import type {
 	IMaterialBlockSnpDTO,
 	ISizeBlockSnp,
 } from '@/features/gaskets/modules/snp/types/snp'
+import type { IWave, IWaveDTO } from '@/features/gaskets/modules/wave/types/wave'
 
 export type SnpType = 'Snp'
 export type PutgType = 'Putg'
 export type PutgmType = 'Putgm'
+export type WaveType = 'Wave'
 
-export type PositionType = SnpType | PutgType
+export type PositionType = SnpType | PutgType | WaveType
 
 export type PositionBase<Type, ExtraProps> = {
 	id: string
@@ -63,14 +65,16 @@ export type PositionPutg = PositionBase<
 	}
 >
 
-export type PositionDTO = PositionSnpDTO | PositionPutgDTO
+export type PositionWaveDTO = PositionBase<WaveType, { waveData: IWaveDTO }>
+export type PositionWave = PositionBase<WaveType, { data: IWave }>
 
-export type Position = PositionSnp | PositionPutg
+export type PositionDTO = PositionSnpDTO | PositionPutgDTO | PositionWaveDTO
+export type Position = PositionSnp | PositionPutg | PositionWave
 
 export interface IActive {
 	index: number
 	id: string
-	type: SnpType | PutgType
+	type: SnpType | PutgType | WaveType
 }
 
 export interface ICopyPosition {

@@ -3,11 +3,12 @@ import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
-import { getFiller, getType, setType } from '../../putgSlice'
+import { getConfiguration, getFiller, getType, setType } from '../../putgSlice'
 import { useGetPutgTypesQuery } from '../../putgApiSlice'
 
 export const Gasket = () => {
 	const active = useAppSelector(getActive)
+	const configuration = useAppSelector(getConfiguration)
 	const type = useAppSelector(getType)
 	const filler = useAppSelector(getFiller)
 	const dispatch = useAppDispatch()
@@ -16,7 +17,7 @@ export const Gasket = () => {
 
 	useEffect(() => {
 		if (data && !active?.id && !isFetching) dispatch(setType(data.data[0]))
-	}, [data, active, isFetching, dispatch])
+	}, [data, active, isFetching, configuration, dispatch])
 	useEffect(() => {
 		if (!data || !active || isFetching) return
 		let idx = data.data.findIndex(c => c.id === type?.id)

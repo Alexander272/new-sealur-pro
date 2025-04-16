@@ -30,10 +30,10 @@ export const Another = () => {
 					title='D3, мм'
 					name='d3'
 					errorText={
+						(errors.emptyD3 && 'размер не задан') ||
 						(errors.maxSize && 'Прокладка слишком большая для выбранной конструкции') ||
-						(errors.minWidth && 'Поле прокладки слишком маленькое') ||
 						(errors.d3Err && 'D3 должен быть больше, чем D2') ||
-						(errors.emptyD3 && 'размер не задан')
+						(errors.minWidth && 'Поле прокладки слишком маленькое')
 					}
 				/>
 			)}
@@ -42,9 +42,9 @@ export const Another = () => {
 					title='D2, мм'
 					name='d2'
 					errorText={
-						(errors.minWidth && 'Поле прокладки слишком маленькое') ||
+						(errors.emptyD2 && 'размер не задан') ||
 						(errors.d2Err && 'D2 должен быть больше, чем D1') ||
-						(errors.emptyD2 && 'размер не задан')
+						(errors.minWidth && 'Поле прокладки слишком маленькое')
 					}
 				/>
 			)}

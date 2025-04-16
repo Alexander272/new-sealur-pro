@@ -13,7 +13,7 @@ export default function Gaskets() {
 	// const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		if (location.pathname == PathRoutes.Gasket.Base) navigate(PathRoutes.Gasket.SNP, { replace: true })
+		if (location.pathname == PathRoutes.Gasket.Base) navigate(PathRoutes.Gasket.Snp, { replace: true })
 	}, [location.pathname, navigate])
 
 	const navigateHandler = (path: string) => {
@@ -27,15 +27,15 @@ export default function Gaskets() {
 			<RadioGroup onChange={navigateHandler}>
 				<RadioItem
 					size='large'
-					value={PathRoutes.Gasket.SNP}
-					active={location.pathname == PathRoutes.Gasket.SNP}
+					value={PathRoutes.Gasket.Snp}
+					active={location.pathname == PathRoutes.Gasket.Snp}
 				>
 					СНП
 				</RadioItem>
 				<RadioItem
 					size='large'
-					value={PathRoutes.Gasket.PUTG}
-					active={location.pathname == PathRoutes.Gasket.PUTG}
+					value={PathRoutes.Gasket.Putg}
+					active={location.pathname == PathRoutes.Gasket.Putg}
 				>
 					ПУТГ
 				</RadioItem>

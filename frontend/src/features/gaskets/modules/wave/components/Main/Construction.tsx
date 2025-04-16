@@ -4,10 +4,11 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetWaveConstructionsQuery } from '../../waveApiSlice'
-import { getConstruction, getType, setConstruction } from '../../waveSlice'
+import { getConfiguration, getConstruction, getType, setConstruction } from '../../waveSlice'
 
 export const Construction = () => {
 	const active = useAppSelector(getActive)
+	const configuration = useAppSelector(getConfiguration)
 	const construction = useAppSelector(getConstruction)
 	const type = useAppSelector(getType)
 	const dispatch = useAppDispatch()
@@ -31,6 +32,11 @@ export const Construction = () => {
 		if (idx == -1) idx = 0
 		dispatch(setConstruction(data.data[idx]))
 	}, [data, construction, active, isFetching, dispatch, type])
+
+	useEffect(() => {
+		if (!data || !configuration || active || isFetching) return
+		dispatch(setConstruction(data.data[0]))
+	}, [data, configuration, active, isFetching, dispatch])
 
 	const constructionHandler = (event: SelectChangeEvent<string>) => {
 		const construction = data?.data.find(s => s.code === event.target.value)

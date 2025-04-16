@@ -35,11 +35,12 @@ export const Description = () => {
 		const sizes = [size?.d4, size.d3, size.d2, size?.d1].filter(Boolean).join('x')
 		const fullSizes = `${sizes}-${size.h.replace('.', ',')} мм`
 		let standard = ''
-		if (main.standard?.standard.id == '793de235-19d6-43e8-9807-4382923235a2') {
+		if (main.standard?.standard?.id == '793de235-19d6-43e8-9807-4382923235a2') {
 			standard = `, на условный проход ${size.dn} мм, номинальное давление ${size.pnMpa} МПа по ${main.standard?.standard.title}`
 		}
+		const sizeStr = sizes ? `, с размерами ${fullSizes}` : ''
 
-		return `Прокладка для уплотнения фланцевого соединения типа «${main.flangeType?.title}»${form} ${type}, ${materials}${coating}${hole}${retainer}${jumper}${standard}, с размерами ${fullSizes}`
+		return `Прокладка для уплотнения фланцевого соединения типа «${main.flangeType?.title}»${form} ${type}, ${materials}${coating}${hole}${retainer}${jumper}${standard}${sizeStr}`
 	}
 
 	return (

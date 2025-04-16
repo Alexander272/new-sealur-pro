@@ -44,7 +44,8 @@ export const Thickness = () => {
 
 	const anotherThicknessHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const regex = /(^([5][0-9]|[1-4][0-9]|[0-9])([.,](\d{1})?)?)$/
-		if (regex.test(event.target.value)) dispatch(setSizeThickness({ another: event.target.value }))
+		if (regex.test(event.target.value))
+			dispatch(setSizeThickness({ another: event.target.value.replace(',', '.') }))
 		if (event.target.value === '') dispatch(setSizeThickness({ another: event.target.value }))
 	}
 

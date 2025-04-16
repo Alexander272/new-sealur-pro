@@ -36,15 +36,15 @@ export const useDesignation = () => {
 
 		const res = `Прокладка ПУТГм-${main.flangeType?.code}-${main.type?.code}-${main.construction?.code}`
 
-		if (main.standard?.standard.id == '793de235-19d6-43e8-9807-4382923235a2') {
-			setValue(`${res}-${size.dn}-${size.pnMpa}-${h} (${main.standard.standard.title}) ТУ 5728-013-93978201-2008`)
+		if (main.configuration?.code == 'oval') {
+			setValue(`${res}-...x...-...${coating}${parts}${materialsStr} ${designStr} ТУ 5728-006-93978201-2008`)
 			return
 		}
 
-		// if (main.configuration?.code != 'round') {
-		// 	setValue(`${res}-${sizes}-${h}${coating}${jumper}${materialsStr} ${designStr}ТУ 5728-006-93978201-2008`)
-		// 	return
-		// }
+		if (main.standard?.standard?.id == '793de235-19d6-43e8-9807-4382923235a2') {
+			setValue(`${res}-${size.dn}-${size.pnMpa}-${h} (${main.standard.standard.title}) ТУ 5728-013-93978201-2008`)
+			return
+		}
 
 		//* ТУ 5728-013-93978201-2008
 		setValue(`${res}-${sizes}-${h}${coating}${parts}${materialsStr} ${designStr} ТУ 5728-013-93978201-2008`)

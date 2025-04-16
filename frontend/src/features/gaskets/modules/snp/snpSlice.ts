@@ -129,7 +129,9 @@ const initialState: ISNPState = {
 			hasMounting: false,
 			code: '',
 		},
+		drawing: JSON.parse(localStorage.getItem(localKeys.snpDrawing) || 'null')?.src || undefined,
 	},
+	drawing: JSON.parse(localStorage.getItem(localKeys.snpDrawing) || 'null') || undefined,
 	// доп. информация к позиции
 	info: '',
 	// количество прокладок
@@ -294,7 +296,7 @@ export const snpSlice = createSlice({
 		// установка чертежа
 		setDesignDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {
 			state.drawing = action.payload
-			state.design.drawing = action.payload?.link
+			state.design.drawing = action.payload?.src
 			localStorage.setItem(localKeys.snpDrawing, JSON.stringify(action.payload || ''))
 
 			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
@@ -336,7 +338,7 @@ export const snpSlice = createSlice({
 					id: id || '',
 					name: params.get('name') || '',
 					origName: params.get('orig') || '',
-					link: action.payload.data.design.drawing,
+					src: action.payload.data.design.drawing,
 					group: params.get('group') || '',
 				}
 				state.drawing = drawing
@@ -352,7 +354,7 @@ export const snpSlice = createSlice({
 			// state.drawing = undefined
 			// state.design.drawing = undefined
 			state.drawing = JSON.parse(localStorage.getItem(localKeys.snpDrawing) || 'null') || undefined
-			state.design.drawing = state.drawing?.origName
+			state.design.drawing = state.drawing?.src
 		},
 		// сброс стейта
 		resetSnp: () => initialState,
@@ -361,7 +363,7 @@ export const snpSlice = createSlice({
 		builder.addCase(setActive, (state, action) => {
 			if (!action.payload) {
 				state.drawing = JSON.parse(localStorage.getItem(localKeys.snpDrawing) || 'null') || undefined
-				state.design.drawing = state.drawing?.origName
+				state.design.drawing = state.drawing?.src
 			}
 		}),
 })

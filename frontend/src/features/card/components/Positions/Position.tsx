@@ -22,6 +22,7 @@ import { setSnp } from '@/features/gaskets/modules/snp/snpSlice'
 import { PathRoutes } from '@/constants/routes'
 import { setPutg } from '@/features/gaskets/modules/putg/putgSlice'
 import { WarningIcon } from '@/components/Icons/WarningIcon'
+import { setWave } from '@/features/gaskets/modules/wave/waveSlice'
 
 type Props = {
 	idx: number
@@ -77,13 +78,19 @@ export const Position: FC<Props> = ({ idx, data }) => {
 		if (payload.data.type == 'Snp') {
 			console.log('set snp')
 			dispatch(setSnp(payload.data))
-			if (location.pathname !== PathRoutes.Gasket.SNP) navigate(PathRoutes.Gasket.SNP)
+			// if (location.pathname !== PathRoutes.Gasket.Snp) navigate(PathRoutes.Gasket.Snp)
 		}
 		if (payload.data.type == 'Putg') {
 			console.log('set putg')
 			dispatch(setPutg(payload.data))
-			if (location.pathname !== PathRoutes.Gasket.PUTG) navigate(PathRoutes.Gasket.PUTG)
+			// if (location.pathname !== PathRoutes.Gasket.Putg) navigate(PathRoutes.Gasket.Putg)
 		}
+		if (payload.data.type == 'Wave') {
+			console.log('set wave')
+			dispatch(setWave(payload.data))
+			// if (location.pathname !== PathRoutes.Gasket.Wave) navigate(PathRoutes.Gasket.Wave)
+		}
+		if (location.pathname !== PathRoutes.Gasket[payload.data.type]) navigate(PathRoutes.Gasket[payload.data.type])
 	}
 
 	if (isLoading) return <Skeleton animation='wave' height={30} sx={{ transform: 'none', mt: 0.5, mb: 1, mr: 1 }} />

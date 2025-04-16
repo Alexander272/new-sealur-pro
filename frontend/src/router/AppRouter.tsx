@@ -65,8 +65,8 @@ export const AppRouter = () => {
 						{/* <Route index element={<Home />} /> */}
 
 						<Route path={PathRoutes.Gasket.Base} element={<Gaskets />}>
-							<Route path={PathRoutes.Gasket.SNP} element={<Snp />} />
-							<Route path={PathRoutes.Gasket.PUTG} element={<Putg />} />
+							<Route path={PathRoutes.Gasket.Snp} element={<Snp />} />
+							<Route path={PathRoutes.Gasket.Putg} element={<Putg />} />
 							<Route path={PathRoutes.Gasket.Wave} element={<Wave />} />
 						</Route>
 

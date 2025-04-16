@@ -123,7 +123,7 @@ const initialState: IPutgState = {
 		// 	hasMounting: false,
 		// 	code: '',
 		// },
-		drawing: JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null')?.origName,
+		drawing: JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null')?.src,
 	},
 	drawing: JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null') || undefined,
 	// доп. информация к позиции
@@ -138,7 +138,9 @@ export const putgSlice = createSlice({
 	reducers: {
 		// установка конфигурации
 		setMainConfiguration: (state, action: PayloadAction<IPutgConfiguration>) => {
+			const hasChange = state.main.configuration?.id != action.payload.id
 			state.main.configuration = action.payload
+			if (!hasChange) return
 			// if (action.payload.code != 'round') {
 			// 	state.main.standard = state.standards[state.standards.length - 1]
 			// }
@@ -147,15 +149,20 @@ export const putgSlice = createSlice({
 			// state.size.d3 = ''
 			// state.size.d2 = ''
 			// state.size.d1 = ''
+			state.material = initialState.material
+			state.design = initialState.design
+			state.size = { ...initialState.size }
 			state.size.useDimensions = (action.payload.code != 'round' && state.size.useDimensions) || false
-			state.sizeError.emptyD1 = false
-			state.sizeError.emptyD2 = false
-			state.sizeError.emptyD3 = false
-			state.sizeError.emptyD4 = false
-			state.sizeError.emptySize = false
-			state.sizeError.minWidth = false
-			state.sizeError.maxSize = false
+			state.sizeError = initialState.sizeError
+			// state.sizeError.emptyD1 = false
+			// state.sizeError.emptyD2 = false
+			// state.sizeError.emptyD3 = false
+			// state.sizeError.emptyD4 = false
+			// state.sizeError.emptySize = false
+			// state.sizeError.minWidth = false
+			// state.sizeError.maxSize = false
 			state.hasSizeError = false
+			state.designError = { ...initialState.designError }
 			state.designError.emptyDrawingForm = action.payload.hasDrawing || false
 			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
@@ -292,7 +299,7 @@ export const putgSlice = createSlice({
 		// установка чертежа
 		setDesignDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {
 			state.drawing = action.payload
-			state.design.drawing = action.payload?.link
+			state.design.drawing = action.payload?.src
 			localStorage.setItem(localKeys.putgDrawing, JSON.stringify(action.payload || ''))
 
 			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
@@ -543,7 +550,7 @@ export const putgSlice = createSlice({
 					id: id || '',
 					name: params.get('name') || '',
 					origName: params.get('orig') || '',
-					link: action.payload.data.design.drawing,
+					src: action.payload.data.design.drawing,
 					group: params.get('group') || '',
 				}
 				state.drawing = drawing
@@ -559,7 +566,7 @@ export const putgSlice = createSlice({
 			// state.cardIndex = undefined
 			// state.positionId = undefined
 			state.drawing = JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null') || undefined
-			state.design.drawing = state.drawing?.origName
+			state.design.drawing = state.drawing?.src
 		},
 		// сброс стейта
 		resetPutg: () => initialState,
@@ -568,7 +575,7 @@ export const putgSlice = createSlice({
 		builder.addCase(setActive, (state, action) => {
 			if (!action.payload) {
 				state.drawing = JSON.parse(localStorage.getItem(localKeys.putgDrawing) || 'null') || undefined
-				state.design.drawing = state.drawing?.origName
+				state.design.drawing = state.drawing?.src
 			}
 		}),
 })

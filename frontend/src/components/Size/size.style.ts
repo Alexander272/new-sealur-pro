@@ -23,7 +23,8 @@ export const Size = styled.p<SizesProps>`
 	top: ${props => (props.top ? props.top : 'auto')};
 	bottom: ${props => (props.bottom ? props.bottom : 'auto')};
 	left: ${props => (props.left ? props.left : 'auto')};
-	transform: ${props => props.hasRotate && 'rotate(-90deg)'};
+	writing-mode: ${props => props.hasRotate && 'sideways-lr'};
+	/* transform: ${props => props.hasRotate && 'rotate(-90deg)'}; */
 	text-align: center;
 `
 

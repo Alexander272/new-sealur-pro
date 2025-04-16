@@ -9,14 +9,15 @@ export const PathRoutes = Object.freeze({
 	Connect: '/connect' as const,
 	Gasket: {
 		Base: '/' as const,
-		SNP: '/snp' as const,
-		PUTG: '/putg' as const,
+		Snp: '/snp' as const,
+		Putg: '/putg' as const,
 		Wave: '/wave' as const,
 	},
 	// Gasket: {
 	// 	Base: '/gaskets' as const,
-	// 	SNP: '/gaskets/snp' as const,
-	// 	PUTG: '/gaskets/putg' as const,
+	// 	Snp: '/gaskets/snp' as const,
+	// 	Putg: '/gaskets/putg' as const,
+	//	Wave: '/gaskets/wave' as const,
 	// },
 	Rings: {
 		Base: '/rings' as const,

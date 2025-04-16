@@ -16,12 +16,17 @@ export const Plating = () => {
 	useEffect(() => {
 		if (data && !active?.id && !isFetching) dispatch(setPlating(data.data[0]))
 	}, [data, active, isFetching, dispatch])
+
 	useEffect(() => {
 		if (!data || !active || isFetching) return
 		let idx = data.data.findIndex(c => c.id === plating?.id)
 		if (idx == -1) idx = 0
 		dispatch(setPlating(data.data[idx]))
 	}, [data, plating, active, isFetching, dispatch])
+
+	useEffect(() => {
+		if (!plating && data) dispatch(setPlating(data.data[0]))
+	}, [data, plating, dispatch])
 
 	const platingHandler = (event: SelectChangeEvent<string>) => {
 		const plating = data?.data.find(m => m.id === event.target.value)

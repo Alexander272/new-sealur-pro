@@ -14,7 +14,7 @@ export const Size = () => {
 		<SizeContainer>
 			<Column width={40}>
 				{configuration && configuration?.code !== 'round' ? (
-					<Configuration />
+					configuration.code == 'rectangular' && <Configuration />
 				) : standard?.flangeStandard.code ? (
 					<Standard />
 				) : (

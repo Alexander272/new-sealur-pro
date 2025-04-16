@@ -4,10 +4,11 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetWaveTypesQuery } from '../../waveApiSlice'
-import { getFlangeType, getType, setType } from '../../waveSlice'
+import { getConfiguration, getFlangeType, getType, setType } from '../../waveSlice'
 
 export const Gasket = () => {
 	const active = useAppSelector(getActive)
+	const configuration = useAppSelector(getConfiguration)
 	const flange = useAppSelector(getFlangeType)
 	const type = useAppSelector(getType)
 	const dispatch = useAppDispatch()
@@ -18,7 +19,8 @@ export const Gasket = () => {
 
 	useEffect(() => {
 		if (data && !active?.id && !isFetching) dispatch(setType(data.data[0]))
-	}, [data, active, isFetching, dispatch])
+	}, [data, active, isFetching, configuration, dispatch])
+
 	useEffect(() => {
 		if (!data || !active || isFetching) return
 		let idx = data.data.findIndex(c => c.id === type?.id)

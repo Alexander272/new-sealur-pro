@@ -16,6 +16,9 @@ export const Pn = () => {
 
 	const { data, isFetching } = useGetWaveSizesQuery({ type: type?.id || '', dn: dn }, { skip: !type?.id || !dn })
 
+	// useEffect(() => {
+	// 	if (!data || !active) return
+	// }, [data, active, dispatch, pnMpa])
 	useEffect(() => {
 		if (!data || active) return
 		const idx = data.data.findIndex(s => s.pnMpa === pnMpa)
