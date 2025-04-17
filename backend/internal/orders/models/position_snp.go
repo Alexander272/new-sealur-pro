@@ -21,20 +21,20 @@ type PositionSnp_Main struct {
 }
 
 type PositionSnp_Size struct {
-	Id      string         `json:"sizeId"`
-	Dn      string         `json:"dn"`
-	DnMm    string         `json:"dnMm"`
-	Pn      *snp_models.Pn `json:"pn"`
-	PnIndex int            `json:"pnIndex"`
-	D4      string         `json:"d4"`
-	D3      string         `json:"d3"`
-	D2      string         `json:"d2"`
-	D1      string         `json:"d1"`
-	H       string         `json:"h"`
-	HIndex  int            `json:"hIndex"`
-	S2      string         `json:"s2"`
-	S3      string         `json:"s3"`
-	Another string         `json:"another"`
+	Id      string `json:"id"`
+	Dn      string `json:"dn"`
+	DnAlt   int    `json:"dnAlt"`
+	Pn      string `json:"pn"`
+	PnAlt   string `json:"pnAlt"`
+	D4      string `json:"d4"`
+	D3      string `json:"d3"`
+	D2      string `json:"d2"`
+	D1      string `json:"d1"`
+	H       string `json:"h"`
+	HIndex  int    `json:"hIndex"`
+	S2      string `json:"s2"`
+	S3      string `json:"s3"`
+	Another string `json:"another"`
 }
 
 type PositionSnp_Material struct {
@@ -76,8 +76,7 @@ type PositionSnpDTO_Main struct {
 }
 
 type PositionSnpDTO_Size struct {
-	SizeId  string `json:"sizeId"`
-	PnIndex int    `json:"pnIndex"`
+	SizeId  string `json:"id"`
 	HIndex  int    `json:"hIndex"`
 	Another string `json:"another"`
 	D4      string `json:"d4"`

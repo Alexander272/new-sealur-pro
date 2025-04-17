@@ -29,6 +29,8 @@ func Register(api *gin.RouterGroup, service services.Size, middleware *middlewar
 	sizes := api.Group("sizes")
 	{
 		sizes.GET("", handler.get)
+		sizes.GET("/dn", handler.getDn)
+		sizes.GET("/grouped", handler.getGrouped)
 		write := sizes.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)
@@ -40,6 +42,46 @@ func Register(api *gin.RouterGroup, service services.Size, middleware *middlewar
 }
 
 func (h *Handler) get(c *gin.Context) {
+	typeId := c.Query("type")
+	if err := uuid.Validate(typeId); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Отправлены некорректные данные")
+		return
+	}
+	dn := c.Query("dn")
+	if dn == "" {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Dn не задан")
+		return
+	}
+
+	req := &models.GetSizeDTO{TypeId: typeId, Dn: dn}
+	data, err := h.service.Get(c, req)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить данные")
+		error_bot.Send(c, err.Error(), req)
+		return
+	}
+	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
+}
+
+func (h *Handler) getDn(c *gin.Context) {
+	typeId := c.Query("typeId")
+	if err := uuid.Validate(typeId); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Отправлены некорректные данные")
+		return
+	}
+	hasD2 := c.Query("hasD2")
+
+	req := &models.GetDnDTO{TypeId: typeId, HasD2: hasD2 == "true"}
+	data, err := h.service.GetDn(c, req)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить данные")
+		error_bot.Send(c, err.Error(), req)
+		return
+	}
+	c.JSON(http.StatusOK, response.DataResponse{Data: data})
+}
+
+func (h *Handler) getGrouped(c *gin.Context) {
 	typeId := c.Query("typeId")
 	if typeId == "" {
 		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "тип снп не задан")
@@ -48,7 +90,7 @@ func (h *Handler) get(c *gin.Context) {
 	hasD2 := c.Query("hasD2")
 
 	dto := &models.GetGroupedSize{TypeId: typeId, HasD2: hasD2 == "true"}
-	sizes, err := h.service.Get(c, dto)
+	sizes, err := h.service.GetGrouped(c, dto)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить размеры")
 		error_bot.Send(c, err.Error(), dto)

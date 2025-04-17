@@ -19,15 +19,33 @@ func NewSizeService(repo repository.Size) *SizeService {
 }
 
 type Size interface {
-	Get(ctx context.Context, req *models.GetGroupedSize) ([]*models.GroupedSize, error)
+	GetDn(ctx context.Context, req *models.GetDnDTO) ([]*models.Dn, error)
+	Get(ctx context.Context, req *models.GetSizeDTO) ([]*models.Size, error)
+	GetGrouped(ctx context.Context, req *models.GetGroupedSize) ([]*models.GroupedSize, error)
 	Create(ctx context.Context, dto *models.SizeDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.SizeDTO) error
 	Update(ctx context.Context, dto *models.SizeDTO) error
 	Delete(ctx context.Context, dto *models.DeleteSizeDTO) error
 }
 
-func (s *SizeService) Get(ctx context.Context, req *models.GetGroupedSize) ([]*models.GroupedSize, error) {
-	sizes, err := s.repo.Get(ctx, req)
+func (s *SizeService) GetDn(ctx context.Context, req *models.GetDnDTO) ([]*models.Dn, error) {
+	data, err := s.repo.GetDn(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get snp dn. error: %w", err)
+	}
+	return data, nil
+}
+
+func (s *SizeService) Get(ctx context.Context, req *models.GetSizeDTO) ([]*models.Size, error) {
+	data, err := s.repo.Get(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get snp sizes. error: %w", err)
+	}
+	return data, nil
+}
+
+func (s *SizeService) GetGrouped(ctx context.Context, req *models.GetGroupedSize) ([]*models.GroupedSize, error) {
+	sizes, err := s.repo.GetGrouped(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get snp sizes. error: %w", err)
 	}

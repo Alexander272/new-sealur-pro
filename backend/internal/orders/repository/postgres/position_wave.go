@@ -24,11 +24,17 @@ func NewPositionWaveRepo(db *sqlx.DB) *PositionWaveRepo {
 }
 
 type PositionWave interface {
+	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionWave, error)
 	Create(ctx context.Context, dto *models.PositionWaveDTO) error
 	Update(ctx context.Context, dto *models.PositionWaveDTO) error
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error)
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
+}
+
+func (r *PositionWaveRepo) Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error) {
+	//TODO implement get wave positions
+	return nil, fmt.Errorf("not implemented")
 }
 
 func (r *PositionWaveRepo) GetByPosition(ctx context.Context, positionId string) (*models.PositionWave, error) {

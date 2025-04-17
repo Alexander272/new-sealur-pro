@@ -1,14 +1,44 @@
 package models
 
-type GroupedSize struct {
-	Id    string  `json:"id"`
-	Dn    string  `json:"dn"`
-	DnMm  string  `json:"dnMm"`
-	D2    string  `json:"d2"`
-	Sizes []*Size `json:"sizes"`
+type GetDnDTO struct {
+	TypeId string `json:"typeId"`
+	HasD2  bool   `json:"hasD2"`
+}
+
+type GetSizeDTO struct {
+	TypeId string `json:"typeId"`
+	Dn     string `json:"dn"`
+}
+
+type Dn struct {
+	Dn  string `json:"dn" db:"dn"`
+	Alt int    `json:"alt" db:"dn_alt"`
+	D2  string `json:"d2" db:"d2"`
 }
 
 type Size struct {
+	Id    string   `json:"id"`
+	Dn    string   `json:"dn"`
+	Pn    string   `json:"pn"`
+	PnAlt string   `json:"pnAlt"`
+	D4    string   `json:"d4"`
+	D3    string   `json:"d3"`
+	D2    string   `json:"d2"`
+	D1    string   `json:"d1"`
+	H     []string `json:"h"`
+	S2    []string `json:"s2"`
+	S3    []string `json:"s3"`
+}
+
+type GroupedSize struct {
+	Id    string      `json:"id"`
+	Dn    string      `json:"dn"`
+	DnMm  string      `json:"dnMm"`
+	D2    string      `json:"d2"`
+	Sizes []*SizeItem `json:"sizes"`
+}
+
+type SizeItem struct {
 	Id string   `json:"id"`
 	Pn []*Pn    `json:"pn"`
 	D4 string   `json:"d4"`
@@ -35,8 +65,9 @@ type SizeDTO struct {
 	SnpTypeId string   `json:"snpTypeId"`
 	Count     int64    `json:"count"`
 	Dn        string   `json:"dn"`
-	DnMm      string   `json:"dnMm"`
-	Pn        []*Pn    `json:"pn"`
+	DnAlt     int      `json:"dnMm"`
+	Pn        string   `json:"pn"`
+	PnAlt     string   `json:"pnAlt"`
 	D4        string   `json:"d4"`
 	D3        string   `json:"d3"`
 	D2        string   `json:"d2"`

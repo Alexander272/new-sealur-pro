@@ -14,5 +14,5 @@ const (
 	SnpStandardTable   = "snp_standard"
 	SnpTypeTable       = "snp_type"
 	InfoTable          = "snp_data"
-	SnpSizeTable       = "snp_size"
+	SizeTable          = "snp_size"
 )

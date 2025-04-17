@@ -289,22 +289,29 @@ func (s *PositionService) Update(ctx context.Context, dto *models.PositionDTO) e
 }
 
 func (s *PositionService) Delete(ctx context.Context, dto *models.DeletePositionDTO) error {
-	drawing := ""
-	if dto.Type == models.PositionTypeSnp {
-		data, err := s.snp.GetByPosition(ctx, dto.Id)
-		if err != nil {
-			return err
+	var drawing string
+	var err error
+
+	switch dto.Type {
+	case models.PositionTypeSnp:
+		var data *models.PositionSnp
+		if data, err = s.snp.GetByPosition(ctx, dto.Id); err == nil {
+			drawing = data.Design.Drawing
 		}
-		drawing = data.Design.Drawing
-	}
-	if dto.Type == models.PositionTypePutg {
-		data, err := s.putg.GetByPosition(ctx, dto.Id)
-		if err != nil {
-			return err
+	case models.PositionTypePutg:
+		var data *models.PositionPutg
+		if data, err = s.putg.GetByPosition(ctx, dto.Id); err == nil {
+			drawing = data.Design.Drawing
 		}
-		drawing = data.Design.Drawing
+	case models.PositionTypeWave:
+		var data *models.PositionWave
+		if data, err = s.wave.GetByPosition(ctx, dto.Id); err == nil {
+			drawing = data.Design.Drawing
+		}
 	}
-	//TODO add wave
+	if err != nil {
+		return err
+	}
 
 	if drawing != "" {
 		u, err := url.Parse(drawing)
@@ -312,16 +319,16 @@ func (s *PositionService) Delete(ctx context.Context, dto *models.DeletePosition
 			return fmt.Errorf("failed to parse url. error: %w", err)
 		}
 
-		q, err := url.ParseQuery(u.RawQuery)
-		if err != nil {
-			return fmt.Errorf("failed to parse query. error: %w", err)
+		q := u.Query()
+		nameParts := strings.Split(q.Get("name"), "_")
+		if len(nameParts) != 2 {
+			return fmt.Errorf("invalid name format")
 		}
 
-		name := q.Get("name")
 		file := &file_models.DeleteFileDTO{
 			Group: q.Get("group"),
-			Name:  strings.Split(name, "_")[1],
-			Id:    strings.Split(name, "_")[0],
+			Name:  nameParts[1],
+			Id:    nameParts[0],
 		}
 		if err := s.files.Delete(ctx, file); err != nil {
 			return fmt.Errorf("failed to delete file. error: %w", err)

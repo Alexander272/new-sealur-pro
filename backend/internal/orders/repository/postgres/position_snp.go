@@ -112,14 +112,14 @@ func (r *PositionSnpRepo) Get(ctx context.Context, req *models.GetPositionsDTO) 
 
 func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error) {
 	query := fmt.Sprintf(`SELECT id, position_id, snp_standard_id, snp_type_id, flange_type_id,
-		size_id, pn_index, h_index, another, COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, 
-		COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, COALESCE(dn, '') AS dn, COALESCE(dn_mm, '') AS dn_mm, 
-		COALESCE(pn_mpa[pn_index+1], '') AS pn_mpa, COALESCE(pn_kg[pn_index+1], '') AS pn_kg, 
+		size_id, h_index, another, COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, 
+		COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, COALESCE(dn, '') AS dn, COALESCE(dn_alt, 0) AS dn_alt, 
+		COALESCE(pn, '') AS pn, COALESCE(pn_alt, '') AS pn_alt, 
 		COALESCE(h[h_index+1], '') AS h, COALESCE(s2[h_index+1], '') AS s2, COALESCE(s3[h_index+1], '') AS s3,
 		filler_id, f.filler_code, m.arr_mat_code, frame_id, inner_ring_id, outer_ring_id,
 		jumper, jumper_width, has_hole, mounting, drawing
 		FROM %s AS ps
-		LEFT JOIN LATERAL (SELECT dn, dn_mm, pn_mpa, pn_kg, d4, d3, d2, d1, h, s2, s3 FROM %s WHERE id=ps.size_id) AS s ON true
+		LEFT JOIN LATERAL (SELECT dn, dn_alt, pn, pn_alt, d4, d3, d2, d1, h, s2, s3 FROM %s WHERE id=ps.size_id) AS s ON true
 		LEFT JOIN LATERAL (SELECT code AS filler_code FROM %s WHERE id=ps.filler_id) AS f ON true
 		LEFT JOIN LATERAL (SELECT ARRAY_AGG(code) AS arr_mat_code FROM %s
 			WHERE id=ANY(ARRAY[ps.frame_id, ps.inner_ring_id, ps.outer_ring_id])
@@ -159,11 +159,11 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 		},
 		Size: &models.PositionSnp_Size{
 			Id:      tmp.SizeId,
-			PnIndex: tmp.PnIndex,
 			Dn:      tmp.Dn,
-			DnMm:    tmp.DnMm,
-			Pn:      &snp_models.Pn{Mpa: tmp.PnMpa, Kg: tmp.PnKg},
-			HIndex:  tmp.HIndex,
+			DnAlt:   tmp.DnAlt,
+			Pn:      tmp.Pn,
+			PnAlt:   tmp.PnAlt,
+			HIndex:  tmp.HIndex - 1,
 			D4:      tmp.D4,
 			D3:      tmp.D3,
 			D2:      tmp.D2,
@@ -205,9 +205,9 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 
 func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionSnpDTO) error {
 	query := fmt.Sprintf(`INSERT INTO %s(id, position_id, snp_standard_id, snp_type_id, flange_type_id, 
-		size_id, pn_index, h_index, another, d4, d3, d2, d1,
+		size_id, h_index, another, d4, d3, d2, d1,
 		filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing)
-		VALUES (:id, :position_id, :snp_standard_id, :snp_type_id, :flange_type_id, :size_id, :pn_index, :h_index, :another,
+		VALUES (:id, :position_id, :snp_standard_id, :snp_type_id, :flange_type_id, :size_id, :h_index, :another,
 		:d4, :d3, :d2, :d1,	:filler_id, :frame_id, :inner_ring_id, :outer_ring_id, :jumper, :jumper_width, 
 		:has_hole, :mounting, :drawing)`,
 		PositionSnpTable,
@@ -230,7 +230,6 @@ func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionSnpDTO
 		SnpTypeId:     dto.Main.SnpTypeId,
 		FlangeTypeId:  dto.Main.FlangeTypeId,
 		SizeId:        dto.Size.SizeId,
-		PnIndex:       dto.Size.PnIndex,
 		HIndex:        dto.Size.HIndex,
 		Another:       dto.Size.Another,
 		D4:            dto.Size.D4,
@@ -257,9 +256,9 @@ func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionSnpDTO
 }
 
 func (r *PositionSnpRepo) CreateSeveral(ctx context.Context, dto []*models.PositionSnpDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s(id, position_id, snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another, 
+	query := fmt.Sprintf(`INSERT INTO %s(id, position_id, snp_standard_id, snp_type_id, flange_type_id, size_id, h_index, another, 
 		filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing)
-		VALUES (:id, :position_id, :snp_standard_id, :snp_type_id, :flange_type_id, :size_id, :pn_index, :h_index, :another,
+		VALUES (:id, :position_id, :snp_standard_id, :snp_type_id, :flange_type_id, :size_id, :h_index, :another,
 		:filler_id, :frame_id, :inner_ring_id, :outer_ring_id, :jumper, :jumper_width, :has_hole, :mounting, :drawing)`,
 		PositionSnpTable,
 	)
@@ -284,7 +283,6 @@ func (r *PositionSnpRepo) CreateSeveral(ctx context.Context, dto []*models.Posit
 			SnpTypeId:     d.Main.SnpTypeId,
 			FlangeTypeId:  d.Main.FlangeTypeId,
 			SizeId:        d.Size.SizeId,
-			PnIndex:       d.Size.PnIndex,
 			HIndex:        d.Size.HIndex,
 			Another:       d.Size.Another,
 			D4:            d.Size.D4,
@@ -312,7 +310,7 @@ func (r *PositionSnpRepo) CreateSeveral(ctx context.Context, dto []*models.Posit
 
 func (r *PositionSnpRepo) Update(ctx context.Context, dto *models.PositionSnpDTO) error {
 	query := fmt.Sprintf(`UPDATE %s SET snp_standard_id=:snp_standard_id, snp_type_id=:snp_type_id, flange_type_id=:flange_type_id, 
-		size_id=:size_id, pn_index=:pn_index, h_index=:h_index, another=:another, d4=:d4, d3=:d3, d2=:d2, d1=:d1,
+		size_id=:size_id, h_index=:h_index, another=:another, d4=:d4, d3=:d3, d2=:d2, d1=:d1,
 		filler_id=:filler_id, frame_id=:frame_id, inner_ring_id=:inner_ring_id, outer_ring_id=:outer_ring_id, 
 		jumper=:jumper, jumper_width=:jumper_width, has_hole=:has_hole, mounting=:mounting, drawing=:drawing
 		WHERE position_id=:position_id`,
@@ -336,7 +334,6 @@ func (r *PositionSnpRepo) Update(ctx context.Context, dto *models.PositionSnpDTO
 		SnpTypeId:     dto.Main.SnpTypeId,
 		FlangeTypeId:  dto.Main.FlangeTypeId,
 		SizeId:        dto.Size.SizeId,
-		PnIndex:       dto.Size.PnIndex,
 		HIndex:        dto.Size.HIndex,
 		Another:       dto.Size.Another,
 		D4:            dto.Size.D4,
@@ -362,9 +359,9 @@ func (r *PositionSnpRepo) Update(ctx context.Context, dto *models.PositionSnpDTO
 }
 
 func (r *PositionSnpRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error) {
-	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another, 
+	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, snp_standard_id, snp_type_id, flange_type_id, size_id, h_index, another, 
 		filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing)
-		SELECT $1, $2, snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another, filler_id, frame_id, inner_ring_id, 
+		SELECT $1, $2, snp_standard_id, snp_type_id, flange_type_id, size_id, h_index, another, filler_id, frame_id, inner_ring_id, 
 		outer_ring_id, jumper, jumper_width, has_hole, mounting, replace(drawing, $3, $4) FROM %s 
 		WHERE position_id=$5 RETURNING drawing`,
 		PositionSnpTable, PositionSnpTable,
@@ -401,12 +398,12 @@ func (r *PositionSnpRepo) CopySeveral(ctx context.Context, dto []*models.CopyPos
 		values = append(values, fmt.Sprintf("(%s)", strings.Join(numbers, ",")))
 	}
 
-	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another,
+	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, snp_standard_id, snp_type_id, flange_type_id, size_id, h_index, another,
 		filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, drawing)
-		SELECT id::uuid, position_id::uuid, snp_standard_id::uuid, snp_type_id::uuid, flange_type_id::uuid, size_id::uuid, pn_index::integer,
+		SELECT id::uuid, position_id::uuid, snp_standard_id::uuid, snp_type_id::uuid, flange_type_id::uuid, size_id::uuid,
 			h_index::integer, another, filler_id::uuid, frame_id::uuid, inner_ring_id::uuid, outer_ring_id::uuid, jumper, jumper_width,
 			has_hole, mounting, drawing FROM (VALUES %s) AS s(id, position_id, orig_id, from_order_id, order_id)
-		LEFT JOIN LATERAL (SELECT snp_standard_id, snp_type_id, flange_type_id, size_id, pn_index, h_index, another,
+		LEFT JOIN LATERAL (SELECT snp_standard_id, snp_type_id, flange_type_id, size_id, h_index, another,
 			filler_id, frame_id, inner_ring_id, outer_ring_id, jumper, jumper_width, has_hole, mounting, 
 			replace(drawing, s.from_order_id, s.order_id) AS drawing FROM %s
 			WHERE position_id=s.orig_id::uuid) AS m ON true`,

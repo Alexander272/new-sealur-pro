@@ -30,6 +30,7 @@ type Position struct {
 	Info     string        `json:"info" db:"info"`
 	SnpData  *PositionSnp  `json:"snpData"`
 	PutgData *PositionPutg `json:"putgData"`
+	WaveData *PositionWave `json:"waveData"`
 	Data     interface{}   `json:"data"`
 	// RingData *PositionRing     `json:"ringData"`
 	// KitData  *PositionRingsKit `json:"kitData"`
