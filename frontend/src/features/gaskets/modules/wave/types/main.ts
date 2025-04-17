@@ -1,4 +1,4 @@
-import type { IFlangeStandard, IStandard } from '@/features/gaskets/modules/snp/types/snp'
+import type { IFlangeStandard, IStandard } from '@/features/gaskets/modules/snp/types/main'
 
 export interface IMainWave {
 	configuration?: IConfiguration

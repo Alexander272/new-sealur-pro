@@ -1,7 +1,7 @@
 import type { IMaterial } from '@/features/gaskets/types/material'
 import type { PN } from '@/features/gaskets/types/sizes'
 import type { IJumper } from '@/features/gaskets/types/jumper'
-import type { IFlangeStandard, IStandard } from '@/features/gaskets/modules/snp/types/snp'
+import type { IFlangeStandard, IStandard } from '@/features/gaskets/modules/snp/types/main'
 
 export type TypeMaterial = 'innerRing' | 'rotaryPlug' | 'outerRing'
 

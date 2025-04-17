@@ -302,11 +302,12 @@ export const putgSlice = createSlice({
 			state.design.drawing = action.payload?.src
 			localStorage.setItem(localKeys.putgDrawing, JSON.stringify(action.payload || ''))
 
-			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
-			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
-			state.designError.emptyDrawingRemovable = !state.drawing && (state.design.hasRemovable || false)
-			state.designError.emptyDrawingRounding = !state.drawing && (state.size.hasRounding || false)
-			state.designError.emptyDrawingForm = !state.drawing && (state.main.configuration?.hasDrawing || false)
+			state.designError.emptyDrawingHole = Boolean(action.payload) && (state.design.hasHole || false)
+			state.designError.emptyDrawingJumper = Boolean(action.payload) && (state.design.jumper.hasDrawing || false)
+			state.designError.emptyDrawingRemovable = Boolean(action.payload) && (state.design.hasRemovable || false)
+			state.designError.emptyDrawingRounding = Boolean(action.payload) && (state.size.hasRounding || false)
+			state.designError.emptyDrawingForm =
+				Boolean(action.payload) && (state.main.configuration?.hasDrawing || false)
 			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 
@@ -630,6 +631,7 @@ export const {
 	setDesignDrawing,
 
 	setSize,
+	setSizeIdx,
 	setSizePn,
 	setSizeMain,
 	setSizeThickness,

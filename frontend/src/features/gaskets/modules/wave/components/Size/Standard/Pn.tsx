@@ -2,12 +2,10 @@ import { useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getActive } from '@/features/card/cardSlice'
 import { getDn, getPnMpa, getStandard, getType, setSize } from '../../../waveSlice'
 import { useGetWaveSizesQuery } from '../../../waveApiSlice'
 
 export const Pn = () => {
-	const active = useAppSelector(getActive)
 	const standard = useAppSelector(getStandard)
 	const type = useAppSelector(getType)
 	const dn = useAppSelector(getDn)
@@ -20,11 +18,11 @@ export const Pn = () => {
 	// 	if (!data || !active) return
 	// }, [data, active, dispatch, pnMpa])
 	useEffect(() => {
-		if (!data || active) return
+		if (!data || data.data[0].dn != dn) return
 		const idx = data.data.findIndex(s => s.pnMpa === pnMpa)
 		if (idx != -1) dispatch(setSize(data.data[idx]))
 		else dispatch(setSize(data.data[0]))
-	}, [data, active, dispatch, pnMpa])
+	}, [data, dispatch, pnMpa, dn])
 
 	const pnHandler = (event: SelectChangeEvent) => {
 		if (!data) return

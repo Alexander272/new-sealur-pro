@@ -1,47 +1,32 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
-import type { ISnpSize } from '@/features/gaskets/modules/snp/types/size'
-import type { ISizeBlockSnp } from '@/features/gaskets/modules/snp/types/snp'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getDn, getStandard, setSize } from '@/features/gaskets/modules/snp/snpSlice'
+import { getActive } from '@/features/card/cardSlice'
+import { getDn, getSnpTypeId, getStandard, setDn } from '@/features/gaskets/modules/snp/snpSlice'
+import { useGetSnpDnQuery } from '../../../snpApiSlice'
 
-type Props = {
-	sizes: ISnpSize[]
-	isFetching?: boolean
-}
+type Props = unknown
 
-export const Dn: FC<Props> = ({ sizes, isFetching }) => {
+export const Dn: FC<Props> = () => {
+	const active = useAppSelector(getActive)
+	const snp = useAppSelector(getSnpTypeId)
 	const standard = useAppSelector(getStandard)
 	const dn = useAppSelector(getDn)
-
 	const dispatch = useAppDispatch()
 
+	const { data, isFetching } = useGetSnpDnQuery(
+		{ typeId: snp, hasD2: standard?.hasD2 },
+		{ skip: snp == 'not_selected' }
+	)
+
+	useEffect(() => {
+		if (!data || active) return
+		dispatch(setDn({ dn: data.data[0].dn }))
+	}, [data, active, dispatch])
+
 	const dnHandler = (event: SelectChangeEvent<string>) => {
-		const idx = sizes.findIndex(s => s.dn === event.target.value)
-		if (idx === -1) return
-
-		const s = sizes[idx]
-		const size: ISizeBlockSnp = {
-			index: idx,
-			sizeId: s.sizes[0].id,
-			dn: s.dn,
-			dnMm: s.dnMm || '',
-			pn: s.sizes[0].pn[0],
-			pnIndex: 0,
-			d4: s.sizes[0].d4,
-			d3: s.sizes[0].d3,
-			d2: s.sizes[0].d2,
-			d1: s.sizes[0].d1,
-			h: s.sizes[0].h[0],
-			hIndex: 0,
-			s2: s.sizes[0].s2[0],
-			s3: s.sizes[0].s3[0],
-			another: '',
-		}
-
-		dispatch(setSize(size))
-		// setCurSize(s)
+		dispatch(setDn({ dn: event.target.value }))
 	}
 
 	return (
@@ -55,9 +40,9 @@ export const Dn: FC<Props> = ({ sizes, isFetching }) => {
 						Выберите значение
 					</MenuItem>
 
-					{sizes.map(f => (
-						<MenuItem key={f.id} value={f.dn}>
-							{f.dn} {f.dnMm && `(${f.dnMm})`}
+					{data?.data.map(f => (
+						<MenuItem key={f.dn} value={f.dn}>
+							{f.dn} {f.dn != f.alt.toString() && `(${f.alt})`}
 						</MenuItem>
 					))}
 				</Select>

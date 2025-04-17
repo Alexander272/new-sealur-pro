@@ -58,7 +58,12 @@ export const API = Object.freeze({
 		types: 'snp/types' as const,
 		fillers: 'snp/fillers' as const,
 		materials: 'snp/materials' as const,
-		sizes: 'snp/sizes' as const,
+		// sizes: 'snp/sizes' as const,
+		sizes: {
+			base: 'snp/sizes' as const,
+			dn: 'snp/sizes/dn' as const,
+			grouped: 'snp/sizes/grouped' as const,
+		},
 	},
 	putg: {
 		base: 'putg' as const,

@@ -49,11 +49,11 @@ export const useDesignation = () => {
 				designationMaterials = ` (${temp.join(', ')}) `
 			}
 
-			let thickness: string | number = size.h != 'another' ? size.h : size.another
+			let thickness: string | number = size.h != 'another' ? size.h : size.another || ''
 			if (thickness) thickness = (+thickness.replace(',', '.'))?.toFixed(1)?.replace('.', ',')
 
 			setValue(
-				`Прокладка СНП-${main.snpType?.code}-${materials.filler.code}-${size.d2}-${size.pn.mpa}-${thickness} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
+				`Прокладка СНП-${main.snpType?.code}-${materials.filler.code}-${size.d2}-${size.pn}-${thickness} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 			)
 			return
 		}
@@ -78,7 +78,7 @@ export const useDesignation = () => {
 			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
 
 			setValue(
-				`Прокладка СНП-${main.snpType?.code}-${size.dn}-${size.pn.kg}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
+				`Прокладка СНП-${main.snpType?.code}-${size.dn}-${size.pnAlt}${y} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 			)
 			return
 		}
@@ -94,7 +94,7 @@ export const useDesignation = () => {
 			}
 
 			setValue(
-				`Прокладка СНП-${main.snpType?.code}-${size.dn}-${size.pn.mpa}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${flange}${main.snpStandard.standard.title}`
+				`Прокладка СНП-${main.snpType?.code}-${size.dn}-${size.pn}${ir}${fr}${materials.filler.code}${or} ${designationDesign}${flange}${main.snpStandard.standard.title}`
 			)
 			return
 		}
@@ -106,7 +106,7 @@ export const useDesignation = () => {
 			const or = materials.outerRing?.code ? `-${materials.outerRing?.code}` : ''
 
 			setValue(
-				`Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dnMm}-Class ${size.pn.mpa}-${ir}${fr}${materials.filler.code}${or} ${designationDesign}`
+				`Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dnAlt}-Class ${size.pn}-${ir}${fr}${materials.filler.code}${or} ${designationDesign}`
 			)
 			return
 		}
@@ -122,7 +122,7 @@ export const useDesignation = () => {
 			if (temp.length) designationMaterials = ` (${temp.join(', ')}) `
 
 			setValue(
-				`Прокладка СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn.mpa} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
+				`Прокладка СНП-${main.snpType?.code}-${materials.filler.code}-${size.dn}-${size.pn} ${designationDesign}${main.snpStandard.standard.title}${designationMaterials}`
 			)
 			return
 		}
@@ -134,7 +134,7 @@ export const useDesignation = () => {
 			const or = materials.outerRing?.code ? `-${materials.outerRing?.code}` : ''
 
 			setValue(
-				`Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dn}-PN ${size.pn.kg}-${ir}${fr}${materials.filler.code}${or} ${designationDesign}`
+				`Gasket ${main.snpStandard.standard.title}-${main.snpType?.code}-DN ${size.dn}-PN ${size.pnAlt}-${ir}${fr}${materials.filler.code}${or} ${designationDesign}`
 			)
 			return
 		}
@@ -149,9 +149,7 @@ export const useDesignation = () => {
 			if (thickness) thickness = (+thickness.replace(',', '.'))?.toFixed(1)?.replace('.', ',')
 
 			//TODO выводить словами материалы (с 09Г2С не очень получается)
-
 			const temp = []
-
 			if (materials.innerRing && !materials.innerRing.isStandard)
 				temp.push(`вн. кольцо - ${materials.innerRing.title}`)
 			if (materials.frame && !materials.frame.isStandard) temp.push(`каркас - ${materials.frame.title}`)

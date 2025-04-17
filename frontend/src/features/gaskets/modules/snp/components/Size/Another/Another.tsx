@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getSizeErr, getSnpType, setSizePn } from '@/features/gaskets/modules/snp/snpSlice'
+import { getSizeErr, getSnpType, setSize } from '@/features/gaskets/modules/snp/snpSlice'
 import { SizeField } from './SizeField'
 import { Thickness } from './Thickness'
 
@@ -11,7 +11,22 @@ export const Another = () => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		dispatch(setSizePn({ pn: { mpa: '', kg: '' }, pnIndex: -1 }))
+		const empty = {
+			id: '',
+			dn: '',
+			pn: '',
+			pnAlt: '',
+			d4: '',
+			d3: '',
+			d2: '',
+			d1: '',
+			hIndex: -1,
+			h: '',
+			s2: '',
+			s3: '',
+			another: '',
+		}
+		dispatch(setSize(empty))
 	}, [dispatch])
 
 	return (

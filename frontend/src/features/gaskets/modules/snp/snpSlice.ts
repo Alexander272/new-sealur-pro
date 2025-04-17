@@ -5,37 +5,18 @@ import type { RootState } from '@/app/store'
 import type { IMaterial } from '@/features/gaskets/types/material'
 import type { IDrawing } from '@/features/gaskets/types/drawing'
 import type { PositionSnp } from '@/features/card/types/card'
-import type { ISizeBlock } from './types/size'
-import type {
-	IDesignBlockSnp,
-	IFiller,
-	IMainSnp,
-	IMaterialBlockSnp,
-	ISizeBlockSnp,
-	ISNPType,
-	IStandardForSNP,
-	IThickness,
-	OpenMaterial,
-	TypeMaterial,
-} from './types/snp'
+import type { IMainData, ISnpStandard, ISnpType } from './types/main'
+import type { ISizeData, IThickness } from './types/size'
+import type { IMaterialData, IFiller, OpenMaterial, TypeMaterial } from './types/material'
+import type { IDesignData } from './types/design'
 import { localKeys } from '@/constants/localKeys'
 import { setActive } from '@/features/card/cardSlice'
 
 export interface ISNPState {
-	// fillers: IFiller[]
-	// mountings: IMounting[]
-	// materialsIr?: ISNPMaterial
-	// materialsFr?: ISNPMaterial
-	// materialsOr?: ISNPMaterial
-	// materials?: ISnpMaterial
-
-	// cardIndex?: number
-	// positionId?: string
-
-	main: IMainSnp
-	material: IMaterialBlockSnp
-	size: ISizeBlockSnp
-	design: IDesignBlockSnp
+	main: IMainData
+	material: IMaterialData
+	size: ISizeData
+	design: IDesignData
 	amount: string
 	info: string
 
@@ -89,8 +70,6 @@ const initialState: ISNPState = {
 		flangeTypeId: 'not_selected',
 		flangeTypeCode: 'not_selected',
 		flangeTypeTitle: '',
-		// snpTypeTitle: 'Д',
-		// snpTypeCode: '',
 	},
 	// флаги об открытии и материалы с наполнителем
 	material: {
@@ -104,17 +83,18 @@ const initialState: ISNPState = {
 	// размеры
 	// TODO надо ли явно указывать пустое значение?
 	size: {
+		id: '',
 		dn: '',
-		dnMm: '',
+		pn: '',
+		pnAlt: '',
 		d4: '',
 		d3: '',
 		d2: '',
 		d1: '',
-		pn: { mpa: '', kg: '' },
 		h: '',
-		another: '',
 		s2: '',
 		s3: '',
+		another: '',
 	},
 	// конструктивные элементы
 	design: {
@@ -144,7 +124,7 @@ export const snpSlice = createSlice({
 	initialState,
 	reducers: {
 		// установка стандарта
-		setMainStandard: (state, action: PayloadAction<{ id: string; standard: IStandardForSNP }>) => {
+		setMainStandard: (state, action: PayloadAction<{ id: string; standard: ISnpStandard }>) => {
 			state.main.snpStandardId = action.payload.id
 			state.main.snpStandard = action.payload.standard
 		},
@@ -155,7 +135,7 @@ export const snpSlice = createSlice({
 			state.main.flangeTypeTitle = action.payload.title
 		},
 		// установка типа прокладки и проверка размеров на ошибку (пустоту)
-		setMainSnpType: (state, action: PayloadAction<{ id: string; type: ISNPType }>) => {
+		setMainSnpType: (state, action: PayloadAction<{ id: string; type: ISnpType }>) => {
 			state.main.snpTypeId = action.payload.id
 			state.main.snpType = action.payload.type
 
@@ -190,33 +170,61 @@ export const snpSlice = createSlice({
 			state.material[action.payload.type] = action.payload.material
 		},
 
-		// установка всех размеров
-		setSize: (state, action: PayloadAction<ISizeBlockSnp>) => {
-			state.size = action.payload
+		setDn: (state, action: PayloadAction<{ dn: string; d2?: string }>) => {
+			state.size.dn = action.payload.dn
+			if (action.payload.d2) state.size.d2 = action.payload.d2
+		},
+		setSize: (state, action: PayloadAction<ISizeData>) => {
+			state.size = { ...state.size, ...action.payload }
 			state.sizeError.emptySize = false
 			state.hasSizeError = false
 		},
-		setSizeIdx: (state, action: PayloadAction<number>) => {
-			state.size.index = action.payload
-		},
-		// установка условного прохода
-		setSizePn: (state, action: PayloadAction<ISizeBlock>) => {
-			state.size.pn = action.payload.pn
-			state.size.pnIndex = action.payload.pnIndex
-			state.size.sizeId = action.payload.sizes?.id
-			if (action.payload.sizes) {
-				state.size.d4 = action.payload.sizes.d4
-				state.size.d3 = action.payload.sizes.d3
-				state.size.d2 = action.payload.sizes.d2
-				state.size.d1 = action.payload.sizes.d1
+		// setDSize: (state, action: PayloadAction<{ name: DSize; value: string }>) => {
+		// 	state.size[action.payload.name] = action.payload.value
+		// },
+		setThickness: (state, action: PayloadAction<IThickness>) => {
+			if (action.payload.h != undefined) {
+				state.size.h = action.payload.h
+				state.size.hIndex = action.payload.hIndex
 			}
-			if (action.payload.thicknesses) {
-				state.size.h = action.payload.thicknesses.h
-				state.size.s2 = action.payload.thicknesses.s2
-				state.size.s3 = action.payload.thicknesses.s3
-				state.size.another = action.payload.thicknesses.another
+			if (action.payload.s2 != undefined) state.size.s2 = action.payload.s2
+			if (action.payload.s3 != undefined) state.size.s3 = action.payload.s3
+			if (action.payload.another != undefined) {
+				state.size.another = action.payload.another
+				state.sizeError.thickness =
+					+action.payload.another.replaceAll(',', '.') < 2.3 ||
+					+action.payload.another.replaceAll(',', '.') > 10
+				state.hasSizeError =
+					state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
 			}
 		},
+		// установка всех размеров
+		// setSize: (state, action: PayloadAction<ISizeBlockSnp>) => {
+		// 	state.size = action.payload
+		// 	state.sizeError.emptySize = false
+		// 	state.hasSizeError = false
+		// },
+		// setSizeIdx: (state, action: PayloadAction<number>) => {
+		// 	state.size.index = action.payload
+		// },
+		// // установка условного прохода
+		// setSizePn: (state, action: PayloadAction<ISizeBlock>) => {
+		// 	state.size.pn = action.payload.pn
+		// 	state.size.pnIndex = action.payload.pnIndex
+		// 	state.size.sizeId = action.payload.sizes?.id
+		// 	if (action.payload.sizes) {
+		// 		state.size.d4 = action.payload.sizes.d4
+		// 		state.size.d3 = action.payload.sizes.d3
+		// 		state.size.d2 = action.payload.sizes.d2
+		// 		state.size.d1 = action.payload.sizes.d1
+		// 	}
+		// 	if (action.payload.thicknesses) {
+		// 		state.size.h = action.payload.thicknesses.h
+		// 		state.size.s2 = action.payload.thicknesses.s2
+		// 		state.size.s3 = action.payload.thicknesses.s3
+		// 		state.size.another = action.payload.thicknesses.another
+		// 	}
+		// },
 		// установка размеров прокладки
 		setSizeMain: (state, action: PayloadAction<{ d4?: string; d3?: string; d2?: string; d1?: string }>) => {
 			if (action.payload.d4 != undefined) state.size.d4 = action.payload.d4
@@ -299,8 +307,8 @@ export const snpSlice = createSlice({
 			state.design.drawing = action.payload?.src
 			localStorage.setItem(localKeys.snpDrawing, JSON.stringify(action.payload || ''))
 
-			state.designError.emptyDrawingHole = !state.drawing && (state.design.hasHole || false)
-			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
+			state.designError.emptyDrawingHole = Boolean(action.payload) && (state.design.hasHole || false)
+			state.designError.emptyDrawingJumper = Boolean(action.payload) && (state.design.jumper.hasDrawing || false)
 			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
 
@@ -384,11 +392,10 @@ export const getMaterials = (state: RootState) => state.snp.material
 
 export const getSize = (state: RootState) => state.snp.size
 export const getSizeErr = (state: RootState) => state.snp.sizeError
-export const getSizeId = (state: RootState) => state.snp.size.sizeId
+export const getSizeId = (state: RootState) => state.snp.size.id
 export const getDn = (state: RootState) => state.snp.size.dn
 export const getD2 = (state: RootState) => state.snp.size.d2
 export const getPn = (state: RootState) => state.snp.size.pn
-export const getSizeIndex = (state: RootState) => state.snp.size.index
 export const getThickness = (state: RootState) => state.snp.size.h
 export const getAnother = (state: RootState) => state.snp.size.another
 
@@ -411,9 +418,13 @@ export const {
 	setMaterialToggle,
 	setMaterialFiller,
 	setMaterial,
+	// setSize,
+	setDn,
 	setSize,
-	setSizeIdx,
-	setSizePn,
+	// setDSize,
+	setThickness,
+	// setSizeIdx,
+	// setSizePn,
 	setSizeMain,
 	setSizeThickness,
 	setHasHole,

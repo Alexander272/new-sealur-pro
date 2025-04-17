@@ -30,7 +30,7 @@ export const Dn = () => {
 
 	const dnHandler = (event: SelectChangeEvent) => {
 		const newDn = event.target.value
-		dispatch(setDn(event.target.value))
+		dispatch(setDn(newDn))
 
 		if (+newDn > +(type?.dnRange[0] || 0) && +newDn < +(type?.dnRange[1] || 0)) return
 		const newType = types?.data.find(f => +f.dnRange[0] <= +newDn && +f.dnRange[1] >= +newDn)

@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
-import type { TypeMaterial } from '../../types/snp'
+import type { TypeMaterial } from '../../types/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetSnpMaterialsQuery } from '../../snpApiSlice'

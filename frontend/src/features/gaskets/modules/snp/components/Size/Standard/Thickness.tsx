@@ -1,45 +1,28 @@
-import { FC, useMemo } from 'react'
+import { FC } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
-import type { ISnpSize } from '@/features/gaskets/modules/snp/types/size'
-import type { IThickness } from '@/features/gaskets/modules/snp/types/snp'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getPn, getSizeIndex, getThickness, setSizeThickness } from '@/features/gaskets/modules/snp/snpSlice'
+import { getDn, getSizeId, getSnpTypeId, getThickness, setThickness } from '@/features/gaskets/modules/snp/snpSlice'
+import { useGetSnpSizesQuery } from '../../../snpApiSlice'
 
-type Props = {
-	sizes: ISnpSize[]
-	isFetching?: boolean
-}
+type Props = unknown
 
-export const Thickness: FC<Props> = ({ sizes, isFetching }) => {
-	const pn = useAppSelector(getPn)
+export const Thickness: FC<Props> = () => {
+	const snp = useAppSelector(getSnpTypeId)
+	const dn = useAppSelector(getDn)
+	const sizeId = useAppSelector(getSizeId)
 	const h = useAppSelector(getThickness)
-	const idx = useAppSelector(getSizeIndex)
 
 	const dispatch = useAppDispatch()
 
-	const size = useMemo(() => sizes[idx || 0]?.sizes.find(s => s.pn.some(d => d.mpa == pn.mpa)), [idx, pn.mpa, sizes])
+	const { data, isFetching } = useGetSnpSizesQuery({ typeId: snp, dn }, { skip: snp == 'not_selected' || !dn })
+	const size = data?.data.find(s => s.id == sizeId)
 
 	const thicknessHandler = (event: SelectChangeEvent<string>) => {
-		if (!size) return
-
-		const newThickness: IThickness = {
-			h: event.target.value,
-			hIndex: -1,
-			s2: '',
-			s3: '',
+		const idx = size?.h.findIndex(h => h === event.target.value)
+		if (idx != undefined && idx != -1) {
+			dispatch(setThickness({ h: event.target.value, hIndex: idx, s2: size?.s2[idx], s3: size?.s3[idx] }))
 		}
-
-		if (event.target.value !== 'another') {
-			const idx = size.h.findIndex(h => h === event.target.value)
-			console.log(size.h, event.target.value, idx)
-			newThickness.h = size.h[idx]
-			newThickness.hIndex = idx
-			newThickness.s2 = size.s2[idx]
-			newThickness.s3 = size.s3[idx]
-		}
-
-		dispatch(setSizeThickness(newThickness))
 	}
 
 	return (

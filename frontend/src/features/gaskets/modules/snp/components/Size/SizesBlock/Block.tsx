@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Tooltip } from '@mui/material'
 
-import type { ISizeBlockSnp } from '../../../types/snp'
+import type { ISizeData } from '../../../types/size'
 import { Description, SizesProps, Size, Container, Question } from '@/components/Size/size.style'
 
 type Position = {
@@ -22,7 +22,7 @@ type HasSizes = {
 }
 
 type Props = {
-	sizes: ISizeBlockSnp
+	sizes: ISizeData
 	hasSizes: HasSizes
 	hasD2?: boolean
 	positions: Position

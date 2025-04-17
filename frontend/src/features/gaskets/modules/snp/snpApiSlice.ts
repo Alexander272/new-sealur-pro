@@ -1,16 +1,10 @@
 import { toast } from 'react-toastify'
 
 import type { IMounting } from '@/features/gaskets/types/mounting'
-import type { ISnpSize } from './types/size'
-import type {
-	IFiller,
-	IFlangeType,
-	ISnp,
-	ISnpDataResponse,
-	ISnpMaterial,
-	ISnpResponse,
-	ISnpStandardResponse,
-} from './types/snp'
+import type { IDn, ISize } from './types/size'
+import type { ISnpStandard, IFlangeType } from './types/main'
+import type { IFiller, ISnpMaterials } from './types/material'
+import type { ISnpInfo } from './types/snp'
 import { apiSlice } from '@/app/apiSlice'
 import { API } from '@/app/api'
 
@@ -19,16 +13,11 @@ type SnpDataRequest = {
 	snpStandardId?: string
 }
 
-type SnpRequest = {
-	typeId: string
-	hasD2?: boolean
-}
-
 export const snpApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
 	endpoints: builder => ({
 		// получение стандартов на прокладки и фланцы
-		getSnpStandard: builder.query<ISnpStandardResponse, null>({
+		getSnpStandard: builder.query<{ data: ISnpStandard[] }, null>({
 			query: () => API.snp.standards,
 			providesTags: [{ type: 'Snp', id: 'standards' }],
 			onQueryStarted: async (_arg, api) => {
@@ -70,7 +59,7 @@ export const snpApi = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение материалов
-		getSnpMaterials: builder.query<{ data: ISnpMaterial }, string>({
+		getSnpMaterials: builder.query<{ data: ISnpMaterials }, string>({
 			query: standardId => ({
 				url: API.snp.materials,
 				params: new URLSearchParams({ standardId }),
@@ -85,7 +74,7 @@ export const snpApi = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение информации о прокладке
-		getSnpInfo: builder.query<{ data: ISnp }, string>({
+		getSnpInfo: builder.query<{ data: ISnpInfo }, string>({
 			query: typeId => ({
 				url: API.snp.info,
 				params: new URLSearchParams({ typeId }),
@@ -99,11 +88,29 @@ export const snpApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
-		// получение размеров
-		getSnpSizes: builder.query<{ data: ISnpSize[] }, SnpRequest>({
+		// получение условного прохода
+		getSnpDn: builder.query<{ data: IDn[] }, { typeId: string; hasD2?: boolean }>({
 			query: req => ({
-				url: API.snp.sizes,
+				url: API.snp.sizes.dn,
 				params: new URLSearchParams({ typeId: req.typeId, hasD2: `${req.hasD2}` }),
+			}),
+			providesTags: [{ type: 'Snp', id: 'dn' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить условный проход', { autoClose: false })
+				}
+			},
+		}),
+		// получение размеров
+		getSnpSizes: builder.query<{ data: ISize[] }, { typeId: string; dn: string }>({
+			query: req => ({
+				url: API.snp.sizes.base,
+				params: new URLSearchParams({
+					type: req.typeId,
+					dn: req.dn,
+				}),
 			}),
 			providesTags: [{ type: 'Snp', id: 'sizes' }],
 			onQueryStarted: async (_arg, api) => {
@@ -131,30 +138,30 @@ export const snpApi = apiSlice.injectEndpoints({
 		}),
 
 		// получение общих данных (материалов, наполнителей, типах фланца, креплений) о типах прокладок (зависит от стандарта)
-		getSnpData: builder.query<ISnpDataResponse, SnpDataRequest>({
-			query: ({ standardId = '', snpStandardId = '' }) => ({
-				url: API.snp.data,
-				method: 'GET',
-				// params: new URLSearchParams([
-				// 	['standardId', standardId],
-				// 	['snpStandardId', snpStandardId],
-				// ]),
-				params: new URLSearchParams({ standardId, snpStandardId }),
-			}),
-		}),
+		// getSnpData: builder.query<ISnpDataResponse, SnpDataRequest>({
+		// 	query: ({ standardId = '', snpStandardId = '' }) => ({
+		// 		url: API.snp.data,
+		// 		method: 'GET',
+		// 		// params: new URLSearchParams([
+		// 		// 	['standardId', standardId],
+		// 		// 	['snpStandardId', snpStandardId],
+		// 		// ]),
+		// 		params: new URLSearchParams({ standardId, snpStandardId }),
+		// 	}),
+		// }),
 
 		// получение данных о выбранной прокладке и ее размеры (зависит от выбранного типа)
-		getSnp: builder.query<ISnpResponse, SnpRequest>({
-			query: ({ typeId, hasD2 }) => ({
-				url: API.snp.base,
-				method: 'GET',
-				// params: new URLSearchParams([
-				// 	['typeId', typeId],
-				// 	['hasD2', `${hasD2 || ''}`],
-				// ]),
-				params: new URLSearchParams({ typeId: typeId, hasD2: `${hasD2 || ''}` }),
-			}),
-		}),
+		// getSnp: builder.query<ISnpResponse, SnpRequest>({
+		// 	query: ({ typeId, hasD2 }) => ({
+		// 		url: API.snp.base,
+		// 		method: 'GET',
+		// 		// params: new URLSearchParams([
+		// 		// 	['typeId', typeId],
+		// 		// 	['hasD2', `${hasD2 || ''}`],
+		// 		// ]),
+		// 		params: new URLSearchParams({ typeId: typeId, hasD2: `${hasD2 || ''}` }),
+		// 	}),
+		// }),
 	}),
 })
 
@@ -164,8 +171,9 @@ export const {
 	useGetSnpFillersQuery,
 	useGetSnpMaterialsQuery,
 	useGetSnpInfoQuery,
+	useGetSnpDnQuery,
 	useGetSnpSizesQuery,
 	useGetFasteningsQuery,
-	useGetSnpDataQuery,
-	useGetSnpQuery,
+	// useGetSnpDataQuery,
+	// useGetSnpQuery,
 } = snpApi

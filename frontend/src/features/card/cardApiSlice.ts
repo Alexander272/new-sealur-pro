@@ -36,7 +36,10 @@ export const cardApiSlice = apiSlice.injectEndpoints({
 				method: 'PUT',
 				body: position,
 			}),
-			invalidatesTags: (_arr, _err, arg) => [{ type: 'Orders', id: 'position_' + arg.id }],
+			invalidatesTags: (_arr, _err, arg) => [
+				{ type: 'Orders', id: 'position_' + arg.id },
+				{ type: 'Orders', id: 'current' },
+			],
 		}),
 
 		// удаление позиции

@@ -1,6 +1,6 @@
 import { MenuItem, Select, SelectChangeEvent, Stack, Typography } from '@mui/material'
 
-import type { IThickness } from '@/features/gaskets/modules/snp/types/snp'
+import type { IThickness } from '@/features/gaskets/modules/snp/types/size'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getAnother, getSizeErr, getThickness, setSizeThickness } from '@/features/gaskets/modules/snp/snpSlice'
 import { Input } from '@/components/Input/input.style'
@@ -31,6 +31,7 @@ export const Thickness = () => {
 
 		const newThickness: IThickness = {
 			// another: event.target.value,
+			hIndex: -1,
 			s2: tmp?.ring || '',
 			s3: tmp?.twisted || '',
 		}

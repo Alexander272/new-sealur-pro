@@ -62,10 +62,10 @@ export const Buttons = () => {
 				main: main,
 				size: {
 					...size,
-					d4: size.sizeId ? '' : size.d4,
-					d3: size.sizeId ? '' : size.d3,
-					d2: size.sizeId ? '' : size.d2,
-					d1: size.sizeId ? '' : size.d1,
+					d4: size.id ? '' : size.d4,
+					d3: size.id ? '' : size.d3,
+					d2: size.id ? '' : size.d2,
+					d1: size.id ? '' : size.d1,
 				},
 				material: {
 					fillerId: materials.filler.id,
