@@ -58,7 +58,7 @@ export const useDesignation = () => {
 			}
 
 			setValue(
-				`${res}-${size.dn}-${size.pn.mpa}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}) ${standard?.standard.title}`
+				`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}) ${standard?.standard.title}`
 			)
 			return
 		}
@@ -73,7 +73,7 @@ export const useDesignation = () => {
 		}
 
 		setValue(
-			`${res}-${size.dn}-${size.pn.mpa}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}, ${title}) ТУ 5728-006-93978201-2008`
+			`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}, ${title}) ТУ 5728-006-93978201-2008`
 		)
 	}, [design, main, material, size])
 

@@ -31,7 +31,9 @@ export const Size: FC<Props> = () => {
 
 	return (
 		<SizeContainer>
-			<Column width={45}>{standard?.flangeStandard.code ? <Standard /> : <Another />}</Column>
+			<Column width={45}>
+				{!standard?.flangeStandard || standard?.flangeStandard?.code ? <Standard /> : <Another />}
+			</Column>
 
 			<Column width={55}>
 				<Typography fontWeight='bold'>Чертеж прокладки</Typography>

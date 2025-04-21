@@ -1,24 +1,17 @@
 import { toast } from 'react-toastify'
 
-import type {
-	IConstruction,
-	IFiller,
-	IFlangeType,
-	IPutgConfiguration,
-	IPutgData,
-	IPutgMaterial,
-	IPutgStandard,
-	IPutgType,
-} from './types/putg'
+import type { IPutgData, IPutgType } from './types/putg'
+import type { IConfiguration, IFlangeType, IPutgStandard } from './types/main'
+import type { IConstruction, IFiller, IPutgMaterials } from './types/materials'
+import type { IDn, IGetDnDTO, IGetSizeDTO, ISize } from './types/size'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
-import { IPutgSize } from '../../types/sizes'
 
 export const putgApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
 	endpoints: builder => ({
 		// получение конфигураций прокладок
-		getPutgConfigurations: builder.query<{ data: IPutgConfiguration[] }, null>({
+		getPutgConfigurations: builder.query<{ data: IConfiguration[] }, null>({
 			query: () => API.putg.configurations,
 			providesTags: [{ type: 'Putg', id: 'configurations' }],
 			onQueryStarted: async (_arg, api) => {
@@ -102,7 +95,7 @@ export const putgApi = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение материалов
-		getPutgMaterials: builder.query<{ data: IPutgMaterial }, string>({
+		getPutgMaterials: builder.query<{ data: IPutgMaterials }, string>({
 			query: standard => ({
 				url: API.putg.materials,
 				params: new URLSearchParams({ standard }),
@@ -116,17 +109,34 @@ export const putgApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
-		// получение размеров
-		getPutgSizes: builder.query<
-			{ data: IPutgSize[] },
-			{ filler: string; flangeType: string; construction: string }
-		>({
+		// получение условного прохода
+		getPutgDn: builder.query<{ data: IDn[] }, IGetDnDTO>({
 			query: req => ({
-				url: API.putg.sizes,
+				url: API.putg.sizes.dn,
 				params: new URLSearchParams({
 					filler: req.filler,
 					flangeType: req.flangeType,
 					construction: req.construction,
+				}),
+			}),
+			providesTags: [{ type: 'Putg', id: 'dn' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить условный проход', { autoClose: false })
+				}
+			},
+		}),
+		// получение размеров
+		getPutgSizes: builder.query<{ data: ISize[] }, IGetSizeDTO>({
+			query: req => ({
+				url: API.putg.sizes.base,
+				params: new URLSearchParams({
+					filler: req.filler,
+					flangeType: req.flangeType,
+					construction: req.construction,
+					dn: req.dn,
 				}),
 			}),
 			providesTags: [{ type: 'Putg', id: 'sizes' }],
@@ -138,6 +148,28 @@ export const putgApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+		// // получение размеров
+		// getPutgSizes: builder.query<
+		// 	{ data: IPutgSize[] },
+		// 	{ filler: string; flangeType: string; construction: string }
+		// >({
+		// 	query: req => ({
+		// 		url: API.putg.sizes.grouped,
+		// 		params: new URLSearchParams({
+		// 			filler: req.filler,
+		// 			flangeType: req.flangeType,
+		// 			construction: req.construction,
+		// 		}),
+		// 	}),
+		// 	providesTags: [{ type: 'Putg', id: 'sizes' }],
+		// 	onQueryStarted: async (_arg, api) => {
+		// 		try {
+		// 			await api.queryFulfilled
+		// 		} catch {
+		// 			toast.error('Не удалось получить размеры', { autoClose: false })
+		// 		}
+		// 	},
+		// }),
 		// получение информации о прокладке
 		getPutgInfo: builder.query<{ data: IPutgData }, string>({
 			query: filler => ({
@@ -164,6 +196,7 @@ export const {
 	useGetPutgConstructionsQuery,
 	useGetPutgFillersQuery,
 	useGetPutgMaterialsQuery,
+	useGetPutgDnQuery,
 	useGetPutgSizesQuery,
 	useGetPutgInfoQuery,
 } = putgApi

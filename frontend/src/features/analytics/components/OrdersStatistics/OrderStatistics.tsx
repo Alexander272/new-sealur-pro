@@ -25,7 +25,6 @@ export const OrderStatistics = () => {
 
 			<Table>
 				<TableBody>
-					{/* //TODO make navigation */}
 					<TableRow hover onClick={navigateUserHandler} sx={{ cursor: 'pointer' }}>
 						<TableCell>Всего пользователей сделало заказ</TableCell>
 						<TableCell sx={{ fontSize: '18px', fontWeight: 'bold', p: '13px 16px' }}>

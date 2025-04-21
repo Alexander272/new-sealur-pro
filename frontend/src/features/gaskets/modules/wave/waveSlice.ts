@@ -176,11 +176,11 @@ export const waveSlice = createSlice({
 			state.design.drawing = action.payload?.src
 			localStorage.setItem(localKeys.waveDrawing, JSON.stringify(action.payload || ''))
 
-			state.designErrors.hole = Boolean(action.payload) && (state.design.hasHole || false)
-			state.designErrors.jumper = Boolean(action.payload) && (state.design.jumper.hasDrawing || false)
-			state.designErrors.rounding = Boolean(action.payload) && (state.size.hasRounding || false)
-			state.designErrors.configuration =
-				Boolean(action.payload) && (state.main.configuration?.hasDrawing || false)
+			state.designErrors.hole = !action.payload && (state.design.hasHole || false)
+			state.designErrors.jumper =
+				!action.payload && ((state.design.jumper.hasJumper && state.design.jumper.hasDrawing) || false)
+			state.designErrors.rounding = !action.payload && (state.size.hasRounding || false)
+			state.designErrors.configuration = !action.payload && (state.main.configuration?.hasDrawing || false)
 		},
 
 		// установка доп. инфы

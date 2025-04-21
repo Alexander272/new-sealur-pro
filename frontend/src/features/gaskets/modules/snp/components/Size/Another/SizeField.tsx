@@ -28,7 +28,7 @@ export const SizeField: FC<Props> = ({ title, name, errorText }) => {
 
 	const sizeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const regex = /^\d{1,4}([.,](\d{1})?)?$/
-		if (regex.test(event.target.value)) setValue(event.target.value.replace(',', '.'))
+		if (regex.test(event.target.value)) setValue(event.target.value.replace(',', '.').replace(/^0+(?=\d)/, ''))
 		if (event.target.value === '') setValue(event.target.value)
 
 		//? это не работает

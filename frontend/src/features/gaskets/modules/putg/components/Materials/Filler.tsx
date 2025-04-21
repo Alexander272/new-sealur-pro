@@ -12,7 +12,6 @@ export const Filler = () => {
 	const standard = useAppSelector(getStandard)
 	const dispatch = useAppDispatch()
 
-	//TODO почему-то для стандарта ТУ 5728-006-93978201-2008/ГОСТ 28759.2 нет данных
 	const { data, isFetching } = useGetPutgFillersQuery(standard?.id || '', { skip: !standard?.id })
 
 	useEffect(() => {

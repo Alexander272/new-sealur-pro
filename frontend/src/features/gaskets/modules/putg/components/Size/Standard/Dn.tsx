@@ -1,41 +1,34 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
-import type { IPutgSize } from '@/features/gaskets/types/sizes'
-import type { ISizeBlockPutg } from '../../../types/putg'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getDn, getStandard, setSize } from '../../../putgSlice'
+import { getActive } from '@/features/card/cardSlice'
+import { useGetPutgDnQuery } from '../../../putgApiSlice'
+import { getConstruction, getDn, getFiller, getFlangeType, getStandard, setDn } from '../../../putgSlice'
 
-type Props = {
-	sizes: IPutgSize[]
-	isFetching: boolean
-}
+type Props = unknown
 
-export const Dn: FC<Props> = ({ sizes, isFetching }) => {
+export const Dn: FC<Props> = () => {
+	const active = useAppSelector(getActive)
 	const standard = useAppSelector(getStandard)
+	const construction = useAppSelector(getConstruction)
+	const filler = useAppSelector(getFiller)
+	const type = useAppSelector(getFlangeType)
 	const dn = useAppSelector(getDn)
-
 	const dispatch = useAppDispatch()
 
-	const dnHandler = (event: SelectChangeEvent<string>) => {
-		const idx = sizes.findIndex(s => s.dn === event.target.value)
-		if (idx === -1) return
+	const { data, isFetching } = useGetPutgDnQuery(
+		{ filler: filler?.baseId || '', flangeType: type?.id || '', construction: construction?.baseId || '' },
+		{ skip: !filler?.baseId || !type || !construction?.baseId }
+	)
 
-		const s = sizes[idx]
-		const size: ISizeBlockPutg = {
-			index: idx,
-			sizeId: s.sizes[0].id,
-			dn: s.dn,
-			dnMm: s.dnMm || '',
-			pn: s.sizes[0].pn[0],
-			pnIndex: 0,
-			d4: s.sizes[0].d4 || '',
-			d3: s.sizes[0].d3,
-			d2: s.sizes[0].d2,
-			d1: s.sizes[0].d1 || '',
-			h: s.sizes[0].h[0],
-		}
-		dispatch(setSize(size))
+	useEffect(() => {
+		if (!data || active) return
+		dispatch(setDn({ dn: data.data[0].dn }))
+	}, [data, active, dispatch])
+
+	const dnHandler = (event: SelectChangeEvent<string>) => {
+		dispatch(setDn({ dn: event.target.value }))
 	}
 
 	return (
@@ -49,9 +42,9 @@ export const Dn: FC<Props> = ({ sizes, isFetching }) => {
 						Выберите значение
 					</MenuItem>
 
-					{sizes.map(f => (
-						<MenuItem key={f.id} value={f.dn}>
-							{f.dn} {f.dnMm && `(${f.dnMm})`}
+					{data?.data.map(f => (
+						<MenuItem key={f.dn} value={f.dn}>
+							{f.dn} {f.dn != f.alt.toString() && `(${f.alt})`}
 						</MenuItem>
 					))}
 				</Select>

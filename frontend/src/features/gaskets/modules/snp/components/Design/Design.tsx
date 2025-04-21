@@ -17,7 +17,6 @@ export const Design = () => {
 
 	const { data, isFetching } = useGetSnpInfoQuery(snp, { skip: snp == 'not_selected' })
 
-	//TODO сбрасывать состояние всех недоступных элементов (например, перемычки)
 	return (
 		<AsideContainer>
 			<Typography fontWeight='bold'>Конструктивные элементы</Typography>

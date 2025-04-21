@@ -118,7 +118,6 @@ const initialState: ISNPState = {
 	amount: '',
 }
 
-// TODO надо удалить лишние поля (все что не используется или то что я могу легко получить)
 export const snpSlice = createSlice({
 	name: 'snp',
 	initialState,
@@ -145,6 +144,10 @@ export const snpSlice = createSlice({
 			const emptyD1 = (state.main.snpType?.hasD1 || false) && !state.size.d1
 
 			state.sizeError.emptySize = emptyD4 || emptyD3 || emptyD2 || emptyD1
+
+			state.design = initialState.design
+			state.designError = initialState.designError
+			state.hasDesignError = false
 
 			state.hasSizeError =
 				state.sizeError.thickness ||
@@ -179,9 +182,6 @@ export const snpSlice = createSlice({
 			state.sizeError.emptySize = false
 			state.hasSizeError = false
 		},
-		// setDSize: (state, action: PayloadAction<{ name: DSize; value: string }>) => {
-		// 	state.size[action.payload.name] = action.payload.value
-		// },
 		setThickness: (state, action: PayloadAction<IThickness>) => {
 			if (action.payload.h != undefined) {
 				state.size.h = action.payload.h
@@ -198,33 +198,6 @@ export const snpSlice = createSlice({
 					state.sizeError.thickness || state.sizeError.d4Err || state.sizeError.d3Err || state.sizeError.d2Err
 			}
 		},
-		// установка всех размеров
-		// setSize: (state, action: PayloadAction<ISizeBlockSnp>) => {
-		// 	state.size = action.payload
-		// 	state.sizeError.emptySize = false
-		// 	state.hasSizeError = false
-		// },
-		// setSizeIdx: (state, action: PayloadAction<number>) => {
-		// 	state.size.index = action.payload
-		// },
-		// // установка условного прохода
-		// setSizePn: (state, action: PayloadAction<ISizeBlock>) => {
-		// 	state.size.pn = action.payload.pn
-		// 	state.size.pnIndex = action.payload.pnIndex
-		// 	state.size.sizeId = action.payload.sizes?.id
-		// 	if (action.payload.sizes) {
-		// 		state.size.d4 = action.payload.sizes.d4
-		// 		state.size.d3 = action.payload.sizes.d3
-		// 		state.size.d2 = action.payload.sizes.d2
-		// 		state.size.d1 = action.payload.sizes.d1
-		// 	}
-		// 	if (action.payload.thicknesses) {
-		// 		state.size.h = action.payload.thicknesses.h
-		// 		state.size.s2 = action.payload.thicknesses.s2
-		// 		state.size.s3 = action.payload.thicknesses.s3
-		// 		state.size.another = action.payload.thicknesses.another
-		// 	}
-		// },
 		// установка размеров прокладки
 		setSizeMain: (state, action: PayloadAction<{ d4?: string; d3?: string; d2?: string; d1?: string }>) => {
 			if (action.payload.d4 != undefined) state.size.d4 = action.payload.d4
@@ -307,8 +280,9 @@ export const snpSlice = createSlice({
 			state.design.drawing = action.payload?.src
 			localStorage.setItem(localKeys.snpDrawing, JSON.stringify(action.payload || ''))
 
-			state.designError.emptyDrawingHole = Boolean(action.payload) && (state.design.hasHole || false)
-			state.designError.emptyDrawingJumper = Boolean(action.payload) && (state.design.jumper.hasDrawing || false)
+			state.designError.emptyDrawingHole = !action.payload && (state.design.hasHole || false)
+			state.designError.emptyDrawingJumper =
+				!action.payload && ((state.design.jumper.hasJumper && state.design.jumper.hasDrawing) || false)
 			state.hasDesignError = state.designError.emptyDrawingJumper || state.designError.emptyDrawingHole
 		},
 

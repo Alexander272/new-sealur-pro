@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getConstruction, getSizeErr, setSizePn } from '../../../putgSlice'
+import { getConstruction, getSizeErr, setSize } from '../../../putgSlice'
 import { Thickness } from '../Thickness/Thickness'
 import { Field } from './Field'
 
@@ -11,7 +11,19 @@ export const Another = () => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		dispatch(setSizePn({ pn: { mpa: '', kg: '' }, pnIndex: -1 }))
+		const newSize = {
+			id: '',
+			dn: '',
+			pn: '',
+			pnAlt: '',
+			d4: '',
+			d3: '',
+			d2: '',
+			d1: '',
+			dnAlt: 0,
+			h: '3,0',
+		}
+		dispatch(setSize(newSize))
 	}, [dispatch])
 
 	return (

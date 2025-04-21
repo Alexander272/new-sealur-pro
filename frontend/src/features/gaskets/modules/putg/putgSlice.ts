@@ -4,28 +4,20 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/app/store'
 import type { IMaterial } from '@/features/gaskets/types/material'
 import type { IDrawing } from '@/features/gaskets/types/drawing'
-import type { ISizeBlock } from './types/size'
-import type {
-	IConstruction,
-	IDesignBlockPutg,
-	IFiller,
-	IFlangeType,
-	IMainBlockPutg,
-	IMaterialBlockPutg,
-	IPutgConfiguration,
-	IPutgStandard,
-	IPutgType,
-	ISizeBlockPutg,
-	TypeMaterial,
-} from './types/putg'
+import type { PositionPutg } from '@/features/card/types/card'
+import type { IConfiguration, IFlangeType, IMainData, IPutgStandard } from './types/main'
+import type { ISizeData } from './types/size'
+import type { IConstruction, IFiller, IMaterialData, TypeMaterial } from './types/materials'
+import type { IDesignData } from './types/design'
+import type { IPutgType } from './types/putg'
 import { localKeys } from '@/constants/localKeys'
 import { setActive } from '@/features/card/cardSlice'
 
 export interface IPutgState {
-	main: IMainBlockPutg
-	material: IMaterialBlockPutg
-	size: ISizeBlockPutg
-	design: IDesignBlockPutg
+	main: IMainData
+	material: IMaterialData
+	size: ISizeData
+	design: IDesignData
 	amount: string
 	info: string
 
@@ -97,13 +89,15 @@ const initialState: IPutgState = {
 	},
 	// размеры
 	size: {
+		id: '',
 		dn: '',
-		dnMm: '',
+		dnAlt: 0,
+		pn: '',
+		pnAlt: '',
 		d4: '',
 		d3: '',
 		d2: '',
 		d1: '',
-		pn: { mpa: '', kg: '' },
 		h: '',
 		useDimensions: false,
 		hasRounding: false,
@@ -137,30 +131,16 @@ export const putgSlice = createSlice({
 	initialState,
 	reducers: {
 		// установка конфигурации
-		setMainConfiguration: (state, action: PayloadAction<IPutgConfiguration>) => {
+		setMainConfiguration: (state, action: PayloadAction<IConfiguration>) => {
 			const hasChange = state.main.configuration?.id != action.payload.id
 			state.main.configuration = action.payload
 			if (!hasChange) return
-			// if (action.payload.code != 'round') {
-			// 	state.main.standard = state.standards[state.standards.length - 1]
-			// }
-			//TODO проблема. при выборе позиции размеры полученные с сервера сбрасываются
-			// state.size.d4 = ''
-			// state.size.d3 = ''
-			// state.size.d2 = ''
-			// state.size.d1 = ''
+
 			state.material = initialState.material
 			state.design = initialState.design
 			state.size = { ...initialState.size }
 			state.size.useDimensions = (action.payload.code != 'round' && state.size.useDimensions) || false
 			state.sizeError = initialState.sizeError
-			// state.sizeError.emptyD1 = false
-			// state.sizeError.emptyD2 = false
-			// state.sizeError.emptyD3 = false
-			// state.sizeError.emptyD4 = false
-			// state.sizeError.emptySize = false
-			// state.sizeError.minWidth = false
-			// state.sizeError.maxSize = false
 			state.hasSizeError = false
 			state.designError = { ...initialState.designError }
 			state.designError.emptyDrawingForm = action.payload.hasDrawing || false
@@ -302,25 +282,22 @@ export const putgSlice = createSlice({
 			state.design.drawing = action.payload?.src
 			localStorage.setItem(localKeys.putgDrawing, JSON.stringify(action.payload || ''))
 
-			state.designError.emptyDrawingHole = Boolean(action.payload) && (state.design.hasHole || false)
-			state.designError.emptyDrawingJumper = Boolean(action.payload) && (state.design.jumper.hasDrawing || false)
-			state.designError.emptyDrawingRemovable = Boolean(action.payload) && (state.design.hasRemovable || false)
-			state.designError.emptyDrawingRounding = Boolean(action.payload) && (state.size.hasRounding || false)
-			state.designError.emptyDrawingForm =
-				Boolean(action.payload) && (state.main.configuration?.hasDrawing || false)
+			state.designError.emptyDrawingHole = !action.payload && (state.design.hasHole || false)
+			state.designError.emptyDrawingJumper =
+				!action.payload && ((state.design.jumper.hasJumper && state.design.jumper.hasDrawing) || false)
+			state.designError.emptyDrawingRemovable = !action.payload && (state.design.hasRemovable || false)
+			state.designError.emptyDrawingRounding = !action.payload && (state.size.hasRounding || false)
+			state.designError.emptyDrawingForm = !action.payload && (state.main.configuration?.hasDrawing || false)
 			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
 
-		// установка всех размеров
-		setSize: (state, action: PayloadAction<ISizeBlockPutg>) => {
-			state.size = action.payload
-			state.sizeError.emptyD1 = false
-			state.sizeError.emptyD2 = false
-			state.sizeError.emptyD3 = false
-			state.sizeError.emptyD4 = false
-			state.sizeError.emptySize = false
-			state.sizeError.minWidth = false
-			state.sizeError.maxSize = false
+		setDn: (state, action: PayloadAction<{ dn: string; d2?: string }>) => {
+			state.size.dn = action.payload.dn
+			if (action.payload.d2) state.size.d2 = action.payload.d2
+		},
+		setSize: (state, action: PayloadAction<ISizeData>) => {
+			state.size = { ...state.size, ...action.payload }
+			state.sizeError = initialState.sizeError
 			state.hasSizeError = false
 
 			if (!action.payload.h) {
@@ -335,31 +312,55 @@ export const putgSlice = createSlice({
 			}
 			state.hasDesignError = Object.values(state.designError).some(v => v)
 		},
-		setSizeIdx: (state, action: PayloadAction<number>) => {
-			state.size.index = action.payload
-		},
-		// установка условного прохода
-		setSizePn: (state, action: PayloadAction<ISizeBlock>) => {
-			state.size.pn = action.payload.pn
-			state.size.pnIndex = action.payload.pnIndex
-			state.size.sizeId = action.payload.sizes?.id
-			if (action.payload.sizes) {
-				state.size.d4 = action.payload.sizes.d4 || ''
-				state.size.d3 = action.payload.sizes.d3
-				state.size.d2 = action.payload.sizes.d2
-				state.size.d1 = action.payload.sizes.d1 || ''
-			}
-			if (action.payload.thickness) {
-				state.size.h = action.payload.thickness.h
-				// state.size.another = action.payload.thickness.another
-			}
+		// установка всех размеров
+		// setSize: (state, action: PayloadAction<ISizeData>) => {
+		// 	state.size = action.payload
+		// 	state.sizeError.emptyD1 = false
+		// 	state.sizeError.emptyD2 = false
+		// 	state.sizeError.emptyD3 = false
+		// 	state.sizeError.emptyD4 = false
+		// 	state.sizeError.emptySize = false
+		// 	state.sizeError.minWidth = false
+		// 	state.sizeError.maxSize = false
+		// 	state.hasSizeError = false
 
-			if (+state.size.d3.replace(',', '.') >= 2000) {
-				state.design.hasRemovable = true
-				state.designError.emptyDrawingRemovable = !state.drawing
-			}
-			state.hasDesignError = Object.values(state.designError).some(v => v)
-		},
+		// 	if (!action.payload.h) {
+		// 		state.size.h = '3.0'
+		// 	} else {
+		// 		state.size.h = action.payload.h.replace(',', '.')
+		// 	}
+
+		// 	if (+state.size.d3 >= 2000) {
+		// 		state.design.hasRemovable = true
+		// 		state.designError.emptyDrawingRemovable = !state.drawing
+		// 	}
+		// 	state.hasDesignError = Object.values(state.designError).some(v => v)
+		// },
+		// setSizeIdx: (state, action: PayloadAction<number>) => {
+		// 	state.size.index = action.payload
+		// },
+		// установка условного прохода
+		// setSizePn: (state, action: PayloadAction<ISizeData>) => {
+		// 	state.size.pn = action.payload.pn
+		// 	state.size.pnIndex = action.payload.pnIndex
+		// 	state.size.sizeId = action.payload.sizes?.id
+		// 	if (action.payload.sizes) {
+		// 		state.size.d4 = action.payload.sizes.d4 || ''
+		// 		state.size.d3 = action.payload.sizes.d3
+		// 		state.size.d2 = action.payload.sizes.d2
+		// 		state.size.d1 = action.payload.sizes.d1 || ''
+		// 	}
+		// 	if (action.payload.thickness) {
+		// 		state.size.h = action.payload.thickness.h
+		// 		// state.size.another = action.payload.thickness.another
+		// 	}
+
+		// 	if (+state.size.d3.replace(',', '.') >= 2000) {
+		// 		state.design.hasRemovable = true
+		// 		state.designError.emptyDrawingRemovable = !state.drawing
+		// 	}
+		// 	state.hasDesignError = Object.values(state.designError).some(v => v)
+		// },
 		// установка размеров прокладки
 		setSizeMain: (state, action: PayloadAction<{ d4?: string; d3?: string; d2?: string; d1?: string }>) => {
 			if (action.payload.d4 != undefined) state.size.d4 = action.payload.d4
@@ -512,21 +513,7 @@ export const putgSlice = createSlice({
 		},
 
 		// выбор позиции (для редактирования)
-		setPutg: (
-			state,
-			action: PayloadAction<{
-				data: {
-					main: IMainBlockPutg
-					size: ISizeBlockPutg
-					material: IMaterialBlockPutg
-					design: IDesignBlockPutg
-				}
-				amount: string
-				info?: string
-				// cardIndex: number
-				// positionId: string
-			}>
-		) => {
+		setPutg: (state, action: PayloadAction<PositionPutg>) => {
 			// state.cardIndex = action.payload.cardIndex
 			// state.positionId = action.payload.positionId
 
@@ -596,8 +583,8 @@ export const getType = (state: RootState) => state.putg.material.putgType
 
 export const getSizes = (state: RootState) => state.putg.size
 export const getSizeErr = (state: RootState) => state.putg.sizeError
-export const getSizeIdx = (state: RootState) => state.putg.size.index
-export const getSizeId = (state: RootState) => state.putg.size.sizeId
+// export const getSizeIdx = (state: RootState) => state.putg.size.index
+export const getSizeId = (state: RootState) => state.putg.size.id
 export const getDn = (state: RootState) => state.putg.size.dn
 export const getPn = (state: RootState) => state.putg.size.pn
 export const getH = (state: RootState) => state.putg.size.h
@@ -631,8 +618,9 @@ export const {
 	setDesignDrawing,
 
 	setSize,
-	setSizeIdx,
-	setSizePn,
+	setDn,
+	// setSizeIdx,
+	// setSizePn,
 	setSizeMain,
 	setSizeThickness,
 	setUseDimensions,

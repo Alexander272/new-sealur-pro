@@ -101,12 +101,15 @@ export const Buttons = () => {
 				dispatch(clearActive())
 			} else {
 				await create(position).unwrap()
-				//TODO после сохранения позиции с чертежом появляется надпись о необходимости загрузить чертеж, что не правильно
 			}
 			dispatch(setDrawing())
 			toast.success(active?.index ? 'Позиция успешно обновлена' : 'Позиция успешно добавлена')
 		} catch (error) {
 			const fetchError = error as IFetchError
+			if (fetchError.status === 400) {
+				toast.warn(fetchError.data.message)
+				return
+			}
 			toast.error(
 				active?.index
 					? 'Не удалось обновить позицию'

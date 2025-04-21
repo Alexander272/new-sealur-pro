@@ -10,11 +10,12 @@ import { getMaterials, getStandard, setMaterial, setMaterialToggle } from '../..
 type Props = {
 	title: string
 	type: TypeMaterial
+	related?: TypeMaterial
 	disabled?: boolean
 	isEmpty?: boolean
 }
 
-export const Material: FC<Props> = ({ title, type, disabled, isEmpty }) => {
+export const Material: FC<Props> = ({ title, type, related, disabled, isEmpty }) => {
 	const active = useAppSelector(getActive)
 	const standard = useAppSelector(getStandard)
 	const material = useAppSelector(getMaterials)
@@ -54,9 +55,9 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty }) => {
 		const current = data?.data?.[type].find(m => m.materialId === event.target.value)
 		if (!current) return
 		dispatch(setMaterial({ type, material: current }))
-		if (type == 'frame' && material?.innerRing?.materialId) {
-			const current = data?.data?.innerRing.find(m => m.materialId === event.target.value)
-			dispatch(setMaterial({ type: 'innerRing', material: current }))
+		if (related && material?.[related]?.materialId) {
+			const current = data?.data?.[related].find(m => m.materialId === event.target.value)
+			dispatch(setMaterial({ type: related, material: current }))
 		}
 	}
 

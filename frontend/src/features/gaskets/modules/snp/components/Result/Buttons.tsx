@@ -88,18 +88,20 @@ export const Buttons = () => {
 			if (active?.index !== undefined) {
 				position.id = positions[active.index].id
 				position.count = positions[active.index].count
-				// dispatch(updatePosition({ index: cardIndex, position: position }))
 				await update(position).unwrap()
 				dispatch(clearSnp())
 				dispatch(clearActive())
 			} else {
 				await create(position).unwrap()
-				// dispatch(addPosition(position))
 			}
 			dispatch(setDesignDrawing())
 			toast.success(active?.index ? 'Позиция успешно обновлена' : 'Позиция успешно добавлена')
 		} catch (error) {
 			const fetchError = error as IFetchError
+			if (fetchError.status === 400) {
+				toast.warn(fetchError.data.message)
+				return
+			}
 			toast.error(
 				active?.index
 					? 'Не удалось обновить позицию'

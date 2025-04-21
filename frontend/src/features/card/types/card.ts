@@ -1,11 +1,4 @@
-import type {
-	IDesignBlockPutg,
-	IMainBlockPutg,
-	IMainPutgDTO,
-	IMaterialBlockPutg,
-	IMaterialPutgDTO,
-	ISizeBlockPutg,
-} from '@/features/gaskets/modules/putg/types/putg'
+import type { IPutg, IPutgDTO } from '@/features/gaskets/modules/putg/types/putg'
 import type { ISnp, ISnpDTO } from '@/features/gaskets/modules/snp/types/snp'
 import type { IWave, IWaveDTO } from '@/features/gaskets/modules/wave/types/wave'
 
@@ -29,23 +22,8 @@ export type PositionBase<Type, ExtraProps> = {
 export type PositionSnpDTO = PositionBase<SnpType, { snpData: ISnpDTO }>
 export type PositionSnp = PositionBase<SnpType, { data: ISnp }>
 
-export type PositionPutgDTO = PositionBase<
-	PutgType,
-	{
-		putgData: { main: IMainPutgDTO; size: ISizeBlockPutg; material: IMaterialPutgDTO; design: IDesignBlockPutg }
-	}
->
-export type PositionPutg = PositionBase<
-	PutgType,
-	{
-		data: {
-			main: IMainBlockPutg
-			size: ISizeBlockPutg
-			material: IMaterialBlockPutg
-			design: IDesignBlockPutg
-		}
-	}
->
+export type PositionPutgDTO = PositionBase<PutgType, { putgData: IPutgDTO }>
+export type PositionPutg = PositionBase<PutgType, { data: IPutg }>
 
 export type PositionWaveDTO = PositionBase<WaveType, { waveData: IWaveDTO }>
 export type PositionWave = PositionBase<WaveType, { data: IWave }>

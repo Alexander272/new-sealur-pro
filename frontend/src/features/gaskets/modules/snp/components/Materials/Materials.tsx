@@ -34,6 +34,7 @@ export const Materials: FC<Props> = () => {
 			<Material
 				title='Материал каркаса'
 				type='frame'
+				related='innerRing'
 				disabled={!data?.data.hasFrame || isFetching}
 				isEmpty={!data?.data.hasFrame}
 			/>

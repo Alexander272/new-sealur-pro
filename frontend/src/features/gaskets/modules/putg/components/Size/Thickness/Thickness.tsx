@@ -23,7 +23,7 @@ export const Thickness: FC<Props> = ({ disabled }) => {
 	const thicknessHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const regex = /(^\d+[.,]?(\d{1})?)$/
 		if (regex.test(event.target.value))
-			dispatch(setSizeThickness({ h: (+event.target.value.replace(',', '.')).toString() }))
+			dispatch(setSizeThickness({ h: event.target.value.replace(',', '.').replace(/^0+(?=\d)/, '') }))
 		if (event.target.value === '') dispatch(setSizeThickness({ h: event.target.value }))
 	}
 

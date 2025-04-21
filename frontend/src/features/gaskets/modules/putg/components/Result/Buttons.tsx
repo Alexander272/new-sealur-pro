@@ -66,10 +66,10 @@ export const Buttons = () => {
 				},
 				size: {
 					...size,
-					d4: size.sizeId ? '' : size.d4,
-					d3: size.sizeId ? '' : size.d3,
-					d2: size.sizeId ? '' : size.d2,
-					d1: size.sizeId ? '' : size.d1,
+					d4: size.id ? '' : size.d4,
+					d3: size.id ? '' : size.d3,
+					d2: size.id ? '' : size.d2,
+					d1: size.id ? '' : size.d1,
 				},
 				material: {
 					fillerId: materials.filler?.id || '',
@@ -100,12 +100,15 @@ export const Buttons = () => {
 				dispatch(clearActive())
 			} else {
 				await create(position).unwrap()
-				//TODO после сохранения позиции с чертежом появляется надпись о необходимости загрузить чертеж, что не правильно
 			}
 			dispatch(setDesignDrawing())
 			toast.success(active?.index ? 'Позиция успешно обновлена' : 'Позиция успешно добавлена')
 		} catch (error) {
 			const fetchError = error as IFetchError
+			if (fetchError.status === 400) {
+				toast.warn(fetchError.data.message)
+				return
+			}
 			toast.error(
 				active?.index
 					? 'Не удалось обновить позицию'

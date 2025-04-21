@@ -1,43 +1,67 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material'
 
-import type { IPutgSize, PN } from '@/features/gaskets/types/sizes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getPn, getSizeIdx, getStandard, setSizePn } from '../../../putgSlice'
+import { getConstruction, getDn, getFiller, getFlangeType, getPn, getStandard, setSize } from '../../../putgSlice'
+import { useGetPutgSizesQuery } from '../../../putgApiSlice'
 
-type Props = {
-	sizes: IPutgSize[]
-	isFetching?: boolean
-}
+type Props = unknown
 
-export const Pn: FC<Props> = ({ sizes, isFetching }) => {
+export const Pn: FC<Props> = () => {
 	const standard = useAppSelector(getStandard)
-	const idx = useAppSelector(getSizeIdx)
+	const construction = useAppSelector(getConstruction)
+	const filler = useAppSelector(getFiller)
+	const type = useAppSelector(getFlangeType)
+	const dn = useAppSelector(getDn)
 	const pn = useAppSelector(getPn)
 
 	const dispatch = useAppDispatch()
 
-	const pnHandler = (event: SelectChangeEvent<string>) => {
-		if (idx == undefined) return
+	const { data, isFetching } = useGetPutgSizesQuery(
+		{ filler: filler?.baseId || '', flangeType: type?.id || '', construction: construction?.baseId || '', dn: dn },
+		{ skip: !filler?.baseId || !type || !construction?.baseId || !dn }
+	)
 
-		let sizeIdx = 0
-		let pnIndex = -1
-		let pn: PN = {} as PN
-		sizes[idx].sizes.forEach((s, i) => {
-			const idx = s.pn.findIndex(pn => pn.mpa === event.target.value)
-			if (idx != -1) {
-				pn = s.pn[idx]
-				pnIndex = idx
-				sizeIdx = i
-			}
-		})
-
-		const sizePn = {
-			pn,
-			pnIndex: pnIndex,
-			sizes: sizes[idx].sizes[sizeIdx],
+	useEffect(() => {
+		if (!data || data.data[0].dn != dn) return
+		let idx = data.data.findIndex(s => s.pn === pn)
+		if (idx == -1) idx = 0
+		const newSize = {
+			id: data.data[idx].id,
+			dn: data.data[idx].dn,
+			dnAlt: data.data[idx].dnAlt,
+			pn: data.data[idx].pn,
+			pnAlt: data.data[idx].pnAlt,
+			d4: data.data[idx].d4,
+			d3: data.data[idx].d3,
+			d2: data.data[idx].d2,
+			d1: data.data[idx].d1,
+			h: data.data[idx].h[0] || '3,0',
+			another: '',
 		}
-		dispatch(setSizePn(sizePn))
+		dispatch(setSize(newSize))
+	}, [data, dispatch, dn, pn])
+
+	const pnHandler = (event: SelectChangeEvent<string>) => {
+		if (!data) return
+
+		const size = data.data.find(s => s.pn === event.target.value)
+		if (size) {
+			const newSize = {
+				id: size.id,
+				dn: size.dn,
+				dnAlt: size.dnAlt,
+				pn: size.pn,
+				pnAlt: size.pnAlt,
+				d4: size.d4,
+				d3: size.d3,
+				d2: size.d2,
+				d1: size.d1,
+				h: '3,0',
+				another: '',
+			}
+			dispatch(setSize(newSize))
+		}
 	}
 
 	return (
@@ -46,18 +70,16 @@ export const Pn: FC<Props> = ({ sizes, isFetching }) => {
 			{isFetching ? (
 				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
 			) : (
-				<Select value={pn.mpa || 'not_selected'} onChange={pnHandler}>
+				<Select value={pn || 'not_selected'} onChange={pnHandler}>
 					<MenuItem disabled value='not_selected'>
 						Выберите значение
 					</MenuItem>
 
-					{sizes[idx || 0]?.sizes.map(s =>
-						s.pn.map(pn => (
-							<MenuItem key={pn.mpa} value={pn.mpa}>
-								{pn.mpa} {pn.kg ? `(${pn.kg})` : ''}
-							</MenuItem>
-						))
-					)}
+					{data?.data.map(d => (
+						<MenuItem key={d.id} value={d.pn}>
+							{d.pn} {d.pnAlt ? `(${d.pnAlt})` : ''}
+						</MenuItem>
+					))}
 				</Select>
 			)}
 		</>
