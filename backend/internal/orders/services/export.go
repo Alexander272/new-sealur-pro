@@ -245,10 +245,13 @@ func (s *ExportService) prepareBase(dto *models.Base) error {
 	for i, p := range dto.Order.Positions {
 		extra := dto.Extra[p.Id]
 
-		price := "=" + extra.PriceCell
-		cost := "=" + extra.CostCell
-		template := "=" + extra.TemplateCell
-		sum := fmt.Sprintf("=%s%d*%s", countColumn, i+2, extra.PriceCell)
+		var sum, cost, price, template string
+		if extra != nil {
+			price = "=" + extra.PriceCell
+			cost = "=" + extra.CostCell
+			template = "=" + extra.TemplateCell
+			sum = fmt.Sprintf("=%s%d*%s", countColumn, i+2, extra.PriceCell)
+		}
 		line := []interface{}{p.Count, p.Title, p.Info, p.Amount, sum, cost, price, template}
 
 		row := &models.Row{

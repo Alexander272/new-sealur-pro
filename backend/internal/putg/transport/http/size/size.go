@@ -28,6 +28,8 @@ func Register(api *gin.RouterGroup, service services.Size, middleware *middlewar
 	size := api.Group("/sizes")
 	{
 		size.GET("", handler.get)
+		size.GET("/dn", handler.getDn)
+		size.GET("grouped", handler.getGrouped)
 		write := size.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)
@@ -37,7 +39,59 @@ func Register(api *gin.RouterGroup, service services.Size, middleware *middlewar
 	}
 }
 
+func (h *Handler) getDn(c *gin.Context) {
+	flangeType := c.Query("flangeType")
+	baseConstruction := c.Query("construction")
+	baseFiller := c.Query("filler")
+	if uuid.Validate(flangeType) != nil || uuid.Validate(baseConstruction) != nil || uuid.Validate(baseFiller) != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty params", "Отправлены некорректные данные")
+		return
+	}
+
+	dto := &models.GetDnDTO{
+		FlangeTypeId:       flangeType,
+		BaseConstructionId: baseConstruction,
+		BaseFillerId:       baseFiller,
+	}
+	data, err := h.service.GetDn(c, dto)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить размеры")
+		error_bot.Send(c, err.Error(), dto)
+		return
+	}
+	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
+}
+
 func (h *Handler) get(c *gin.Context) {
+	flangeType := c.Query("flangeType")
+	baseConstruction := c.Query("construction")
+	baseFiller := c.Query("filler")
+	if uuid.Validate(flangeType) != nil || uuid.Validate(baseConstruction) != nil || uuid.Validate(baseFiller) != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty params", "Отправлены некорректные данные")
+		return
+	}
+	dn := c.Query("dn")
+	if dn == "" {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Dn не задан")
+		return
+	}
+
+	dto := &models.GetSizeDTO{
+		FlangeTypeId:       flangeType,
+		BaseConstructionId: baseConstruction,
+		BaseFillerId:       baseFiller,
+		Dn:                 dn,
+	}
+	data, err := h.service.Get(c, dto)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить размеры")
+		error_bot.Send(c, err.Error(), dto)
+		return
+	}
+	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
+}
+
+func (h *Handler) getGrouped(c *gin.Context) {
 	flangeType := c.Query("flangeType")
 	baseConstruction := c.Query("construction")
 	baseFiller := c.Query("filler")
@@ -51,7 +105,7 @@ func (h *Handler) get(c *gin.Context) {
 		BaseConstructionId: baseConstruction,
 		BaseFillerId:       baseFiller,
 	}
-	data, err := h.service.Get(c, dto)
+	data, err := h.service.GetGrouped(c, dto)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить размеры")
 		error_bot.Send(c, err.Error(), dto)

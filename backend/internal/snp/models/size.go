@@ -65,7 +65,7 @@ type SizeDTO struct {
 	SnpTypeId string   `json:"snpTypeId"`
 	Count     int64    `json:"count"`
 	Dn        string   `json:"dn"`
-	DnAlt     int      `json:"dnMm"`
+	DnAlt     int      `json:"dnAlt"`
 	Pn        string   `json:"pn"`
 	PnAlt     string   `json:"pnAlt"`
 	D4        string   `json:"d4"`

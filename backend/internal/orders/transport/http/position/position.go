@@ -1,8 +1,10 @@
 package position
 
 import (
+	"errors"
 	"net/http"
 
+	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/services"
@@ -128,6 +130,10 @@ func (h *Handler) create(c *gin.Context) {
 	}
 
 	if err := h.service.Create(c, dto); err != nil {
+		if errors.Is(err, base.ErrPositionExists) {
+			response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Такая позиция уже добавлена")
+			return
+		}
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось создать позицию")
 		error_bot.Send(c, err.Error(), dto)
 		return

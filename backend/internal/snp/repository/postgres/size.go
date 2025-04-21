@@ -48,7 +48,7 @@ func (r *SizeRepo) Get(ctx context.Context, req *models.GetSizeDTO) ([]*models.S
 		FROM %s WHERE snp_type_id=$1 AND dn=$2 ORDER BY count`,
 		SizeTable,
 	)
-	tmp := []*pq_models.NewSize{}
+	tmp := []*pq_models.Size{}
 
 	if err := r.db.SelectContext(ctx, &tmp, query, req.TypeId, req.Dn); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
@@ -79,7 +79,7 @@ func (r *SizeRepo) GetGrouped(ctx context.Context, req *models.GetGroupedSize) (
 		FROM %s WHERE snp_type_id=$1 ORDER BY count`,
 		SizeTable,
 	)
-	data := []*pq_models.Size{}
+	data := []*pq_models.OldSize{}
 
 	if err := r.db.SelectContext(ctx, &data, query, req.TypeId); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)

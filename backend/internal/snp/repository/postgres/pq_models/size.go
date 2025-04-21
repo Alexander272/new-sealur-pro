@@ -2,7 +2,7 @@ package pq_models
 
 import "github.com/lib/pq"
 
-type NewSize struct {
+type Size struct {
 	Id    string         `db:"id"`
 	Dn    string         `db:"dn"`
 	DnAlt int            `db:"dn_alt"`
@@ -17,7 +17,8 @@ type NewSize struct {
 	S3    pq.StringArray `db:"s3"`
 }
 
-type Size struct {
+// DEPRECATED
+type OldSize struct {
 	Id    string         `db:"id"`
 	Dn    string         `db:"dn"`
 	DnMm  string         `db:"dn_mm"`

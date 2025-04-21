@@ -41,11 +41,10 @@ type PositionPutg struct {
 	FlangeTypeId    string `db:"flange_type_id"`
 	ConfigurationId string `db:"configuration_id"`
 	SizeId          string `db:"size_id"`
-	PnIndex         int    `db:"pn_index"`
 	Dn              string `db:"dn"`
-	DnMm            string `db:"dn_mm"`
-	PnMpa           string `db:"pn_mpa"`
-	PnKg            string `db:"pn_kg"`
+	DnAlt           string `db:"dn_alt"`
+	Pn              string `db:"pn"`
+	PnAlt           string `db:"pn_alt"`
 	D4              string `db:"d4"`
 	D3              string `db:"d3"`
 	D2              string `db:"d2"`
@@ -75,7 +74,6 @@ type PositionPutgDTO struct {
 	FlangeTypeId    string `db:"flange_type_id"`
 	ConfigurationId string `db:"configuration_id"`
 	SizeId          string `db:"size_id"`
-	PnIndex         int    `db:"pn_index"`
 	D4              string `db:"d4"`
 	D3              string `db:"d3"`
 	D2              string `db:"d2"`

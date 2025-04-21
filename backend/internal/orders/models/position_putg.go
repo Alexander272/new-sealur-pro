@@ -19,19 +19,19 @@ type PositionPutg_Main struct {
 }
 
 type PositionPutg_Size struct {
-	Id            string          `json:"sizeId"`
-	Dn            string          `json:"dn"`
-	DnMm          string          `json:"dnMm"`
-	Pn            *putg_models.Pn `json:"pn"`
-	PnIndex       int             `json:"pnIndex"`
-	D4            string          `json:"d4"`
-	D3            string          `json:"d3"`
-	D2            string          `json:"d2"`
-	D1            string          `json:"d1"`
-	H             string          `json:"h"`
-	Another       string          `json:"another"`
-	UseDimensions bool            `json:"useDimensions"`
-	HasRounding   bool            `json:"hasRounding"`
+	Id            string `json:"id"`
+	Dn            string `json:"dn"`
+	DnAlt         string `json:"dnAlt"`
+	Pn            string `json:"pn"`
+	PnAlt         string `json:"pnAlt"`
+	D4            string `json:"d4"`
+	D3            string `json:"d3"`
+	D2            string `json:"d2"`
+	D1            string `json:"d1"`
+	H             string `json:"h"`
+	Another       string `json:"another"`
+	UseDimensions bool   `json:"useDimensions"`
+	HasRounding   bool   `json:"hasRounding"`
 }
 
 type PositionPutg_Material struct {
@@ -79,8 +79,7 @@ type PositionPutgDTO_Main struct {
 }
 
 type PositionPutgDTO_Size struct {
-	SizeId        string `json:"sizeId"`
-	PnIndex       int    `json:"pnIndex"`
+	SizeId        string `json:"id"`
 	D4            string `json:"d4"`
 	D3            string `json:"d3"`
 	D2            string `json:"d2"`

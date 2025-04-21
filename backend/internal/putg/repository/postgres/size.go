@@ -6,6 +6,7 @@ import (
 
 	"github.com/Alexander272/new-sealur-pro/internal/putg/models"
 	"github.com/Alexander272/new-sealur-pro/internal/putg/repository/postgres/pg_models"
+	"github.com/Alexander272/new-sealur-pro/internal/snp/repository/postgres/pq_models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
@@ -20,19 +21,64 @@ func NewSizeRepo(db *sqlx.DB) *SizeRepo {
 }
 
 type Size interface {
-	Get(ctx context.Context, req *models.GetGroupedSizeDTO) ([]*models.GroupedSize, error)
+	GetDn(ctx context.Context, req *models.GetDnDTO) ([]*models.Dn, error)
+	Get(ctx context.Context, req *models.GetSizeDTO) ([]*models.Size, error)
+	GetGrouped(ctx context.Context, req *models.GetGroupedSizeDTO) ([]*models.GroupedSize, error)
 	Create(ctx context.Context, dto *models.SizeDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.SizeDTO) error
 	Update(ctx context.Context, dto *models.SizeDTO) error
 	Delete(ctx context.Context, dto *models.DeleteSizeDTO) error
 }
 
-func (r *SizeRepo) Get(ctx context.Context, req *models.GetGroupedSizeDTO) ([]*models.GroupedSize, error) {
-	query := fmt.Sprintf(`SELECT id, dn, dn_mm, pn_mpa, pn_kg, d4, d3, d2, d1, h FROM %s
-		WHERE putg_flange_type_id=$1 AND base_construction_id=$2 AND base_fillers_id @> $3::uuid[] ORDER BY count`,
+func (r *SizeRepo) GetDn(ctx context.Context, req *models.GetDnDTO) ([]*models.Dn, error) {
+	query := fmt.Sprintf(`SELECT DISTINCT(dn), dn_alt FROM %s AS s WHERE flange_type_id=$1 AND base_construction_id=$2 
+		AND $3=ANY(base_fillers_id) ORDER BY dn_alt`,
 		PutgSizeTable,
 	)
-	data := []*pg_models.Size{}
+	data := []*models.Dn{}
+
+	if err := r.db.SelectContext(ctx, &data, query, req.FlangeTypeId, req.BaseConstructionId, req.BaseFillerId); err != nil {
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return data, nil
+}
+
+func (r *SizeRepo) Get(ctx context.Context, req *models.GetSizeDTO) ([]*models.Size, error) {
+	query := fmt.Sprintf(`SELECT id, dn, dn_alt, pn, pn_alt, d4, d3, d2, d1, h FROM %s
+		WHERE flange_type_id=$1 AND base_construction_id=$2 AND $3=ANY(base_fillers_id) AND dn=$4 ORDER BY count`,
+		PutgSizeTable,
+	)
+	tmp := []*pq_models.Size{}
+
+	if err := r.db.SelectContext(ctx, &tmp, query, req.FlangeTypeId, req.BaseConstructionId, req.BaseFillerId, req.Dn); err != nil {
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
+	}
+
+	data := []*models.Size{}
+	for _, item := range tmp {
+		data = append(data, &models.Size{
+			Id:    item.Id,
+			Dn:    item.Dn,
+			DnAlt: item.DnAlt,
+			Pn:    item.Pn,
+			PnAlt: item.PnAlt,
+			D4:    item.D4,
+			D3:    item.D3,
+			D2:    item.D2,
+			D1:    item.D1,
+			H:     item.H,
+		})
+	}
+	return data, nil
+}
+
+// DEPRECATED
+func (r *SizeRepo) GetGrouped(ctx context.Context, req *models.GetGroupedSizeDTO) ([]*models.GroupedSize, error) {
+	query := fmt.Sprintf(`SELECT id, dn, dn_mm, pn_mpa, pn_kg, d4, d3, d2, d1, h FROM %s
+		WHERE flange_type_id=$1 AND base_construction_id=$2 AND base_fillers_id @> $3::uuid[] ORDER BY count`,
+		PutgSizeTable,
+	)
+	data := []*pg_models.OldSize{}
 
 	if err := r.db.SelectContext(ctx, &data, query, req.FlangeTypeId, req.BaseConstructionId, pq.Array([]string{req.BaseFillerId})); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
@@ -50,7 +96,7 @@ func (r *SizeRepo) Get(ctx context.Context, req *models.GetGroupedSizeDTO) ([]*m
 			Pn[j].Kg = v
 		}
 
-		data := &models.Size{
+		data := &models.SizeItem{
 			Id: s.Id,
 			Pn: Pn,
 			D4: s.D4,
@@ -67,7 +113,7 @@ func (r *SizeRepo) Get(ctx context.Context, req *models.GetGroupedSizeDTO) ([]*m
 				Id:    s.Id,
 				Dn:    s.Dn,
 				DnMm:  s.DnMm,
-				Sizes: []*models.Size{data},
+				Sizes: []*models.SizeItem{data},
 			})
 		}
 	}
@@ -76,25 +122,15 @@ func (r *SizeRepo) Get(ctx context.Context, req *models.GetGroupedSizeDTO) ([]*m
 }
 
 func (r *SizeRepo) Create(ctx context.Context, dto *models.SizeDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s(id, putg_flange_type_id, base_construction_id, base_fillers_id, count, dn, dn_mm, pn_mpa, 
-		pn_kg, d4, d3, d2, d1, h)
+	query := fmt.Sprintf(`INSERT INTO %s(id, flange_type_id, base_construction_id, base_fillers_id, count, dn, dn_alt, pn, 
+		pn_alt, d4, d3, d2, d1, h)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
 		PutgSizeTable,
 	)
 	dto.Id = uuid.NewString()
 
-	pnMpa := pq.StringArray{}
-	pnKg := pq.StringArray{}
-
-	for _, p := range dto.Pn {
-		pnMpa = append(pnMpa, p.Mpa)
-		if p.Kg != "" {
-			pnKg = append(pnKg, p.Kg)
-		}
-	}
-
 	_, err := r.db.ExecContext(ctx, query, dto.Id, dto.FlangeTypeId, dto.BaseConstructionId, pq.Array(dto.BaseFillerId), dto.Count,
-		dto.Dn, dto.DnMm, pnMpa, pnKg, dto.D4, dto.D3, dto.D2, dto.D1, pq.Array(dto.H),
+		dto.Dn, dto.DnAlt, dto.Pn, dto.PnAlt, dto.D4, dto.D3, dto.D2, dto.D1, pq.Array(dto.H),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to execute query. error: %w", err)
@@ -103,22 +139,13 @@ func (r *SizeRepo) Create(ctx context.Context, dto *models.SizeDTO) error {
 }
 
 func (r *SizeRepo) CreateSeveral(ctx context.Context, dto []*models.SizeDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s(id, putg_flange_type_id, base_construction_id, base_fillers_id, count, dn, dn_mm, pn_mpa, 
-		pn_kg, d4, d3, d2, d1, h) VALUES (:id, :putg_flange_type_id, :base_construction_id, :base_fillers_id, :count, :dn, :dn_mm, :pn_mpa, 
+	query := fmt.Sprintf(`INSERT INTO %s(id, flange_type_id, base_construction_id, base_fillers_id, count, dn, dn_mm, pn_mpa, 
+		pn_kg, d4, d3, d2, d1, h) VALUES (:id, :flange_type_id, :base_construction_id, :base_fillers_id, :count, :dn, :dn_mm, :pn_mpa, 
 		:pn_kg, :d4, :d3, :d2, :d1, :h)`,
 		PutgSizeTable,
 	)
 	data := []*pg_models.SizeDTO{}
 	for _, d := range dto {
-		pnMpa := pq.StringArray{}
-		pnKg := pq.StringArray{}
-		for _, p := range d.Pn {
-			pnMpa = append(pnMpa, p.Mpa)
-			if p.Kg != "" {
-				pnKg = append(pnKg, p.Kg)
-			}
-		}
-
 		data = append(data, &pg_models.SizeDTO{
 			Id:                 d.Id,
 			FlangeTypeId:       d.FlangeTypeId,
@@ -126,9 +153,9 @@ func (r *SizeRepo) CreateSeveral(ctx context.Context, dto []*models.SizeDTO) err
 			BaseFillerId:       pq.StringArray(d.BaseFillerId),
 			Count:              d.Count,
 			Dn:                 d.Dn,
-			DnMm:               d.DnMm,
-			PnMpa:              pnMpa,
-			PnKg:               pnKg,
+			DnAlt:              d.DnAlt,
+			Pn:                 d.Pn,
+			PnAlt:              d.PnAlt,
 			D4:                 d.D4,
 			D3:                 d.D3,
 			D2:                 d.D2,
@@ -145,21 +172,11 @@ func (r *SizeRepo) CreateSeveral(ctx context.Context, dto []*models.SizeDTO) err
 }
 
 func (r *SizeRepo) Update(ctx context.Context, dto *models.SizeDTO) error {
-	query := fmt.Sprintf(`UPDATE %s SET putg_flange_type_id=$1, count=$2, dn=$3, dn_mm=$4, pn_mpa=$5, pn_kg=$6, d4=$7, d3=$8, d2=$9, d1=$10,
+	query := fmt.Sprintf(`UPDATE %s SET flange_type_id=$1, count=$2, dn=$3, dn_alt=$4, pn=$5, pn_alt=$6, d4=$7, d3=$8, d2=$9, d1=$10,
 		h=$11, base_construction_id=$12, base_fillers_id=$13 WHERE id=$14`, PutgSizeTable,
 	)
 
-	pnMpa := pq.StringArray{}
-	pnKg := pq.StringArray{}
-
-	for _, p := range dto.Pn {
-		pnMpa = append(pnMpa, p.Mpa)
-		if p.Kg != "" {
-			pnKg = append(pnKg, p.Kg)
-		}
-	}
-
-	_, err := r.db.ExecContext(ctx, query, dto.FlangeTypeId, dto.Count, dto.Dn, dto.DnMm, pnMpa, pnKg, dto.D4, dto.D3, dto.D2, dto.D1,
+	_, err := r.db.ExecContext(ctx, query, dto.FlangeTypeId, dto.Count, dto.Dn, dto.DnAlt, dto.Pn, dto.PnAlt, dto.D4, dto.D3, dto.D2, dto.D1,
 		pq.Array(dto.H), dto.BaseConstructionId, pq.Array(dto.BaseFillerId), dto.Id,
 	)
 	if err != nil {

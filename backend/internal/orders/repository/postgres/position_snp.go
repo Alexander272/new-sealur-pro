@@ -163,7 +163,7 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 			DnAlt:   tmp.DnAlt,
 			Pn:      tmp.Pn,
 			PnAlt:   tmp.PnAlt,
-			HIndex:  tmp.HIndex - 1,
+			HIndex:  tmp.HIndex,
 			D4:      tmp.D4,
 			D3:      tmp.D3,
 			D2:      tmp.D2,
