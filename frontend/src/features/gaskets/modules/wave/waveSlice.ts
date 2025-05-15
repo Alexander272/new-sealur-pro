@@ -35,8 +35,9 @@ const initialState: IWaveState = {
 	material: {},
 	size: {
 		dn: '',
-		pnMpa: '',
-		pnKg: '',
+		dnAlt: 0,
+		pn: '',
+		pnAlt: '',
 		d4: '',
 		d3: '',
 		d2: '',
@@ -105,8 +106,8 @@ export const waveSlice = createSlice({
 			state.material[action.payload.type] = action.payload.material
 		},
 		//
-		setDn: (state, action: PayloadAction<string>) => {
-			state.size.dn = action.payload
+		setDn: (state, action: PayloadAction<number>) => {
+			state.size.dnAlt = action.payload
 		},
 		setSize: (state, action: PayloadAction<ISize>) => {
 			state.size = { ...state.size, ...action.payload }
@@ -255,8 +256,8 @@ export const getPlating = (state: RootState) => state.wave.material.plating
 
 export const getSize = (state: RootState) => state.wave.size
 export const getSizeId = (state: RootState) => state.wave.size.id
-export const getDn = (state: RootState) => state.wave.size.dn
-export const getPnMpa = (state: RootState) => state.wave.size.pnMpa
+export const getDn = (state: RootState) => state.wave.size.dnAlt
+export const getPn = (state: RootState) => state.wave.size.pn
 export const getH = (state: RootState) => state.wave.size.h
 export const getUseDimensions = (state: RootState) => state.wave.size.useDimensions
 export const getHasRounding = (state: RootState) => state.wave.size.hasRounding

@@ -61,7 +61,7 @@ export const Row: FC<Props> = ({ data, open: defaultOpen }) => {
 				<TableCell component='th' scope='row' align='center'>
 					{data.number}
 				</TableCell>
-				<TableCell align='center'>{stampToDate(+(data.date || 0))}</TableCell>
+				<TableCell align='center'>{stampToDate(+(data.date || 0) * 1000)}</TableCell>
 				<TableCell align='center'>{data.countPosition}</TableCell>
 				<TableCell align='right'>
 					{isLoading && <TopFallback />}

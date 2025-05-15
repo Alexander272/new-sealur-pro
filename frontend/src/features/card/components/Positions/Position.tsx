@@ -75,21 +75,20 @@ export const Position: FC<Props> = ({ idx, data }) => {
 		if (!payload) return
 
 		dispatch(setActive({ index: idx, id: data.id, type: payload.data.type }))
+		console.log('set', payload.data.type)
 		if (payload.data.type == 'Snp') {
-			console.log('set snp')
 			dispatch(setSnp(payload.data))
 			// if (location.pathname !== PathRoutes.Gasket.Snp) navigate(PathRoutes.Gasket.Snp)
 		}
 		if (payload.data.type == 'Putg') {
-			console.log('set putg')
 			dispatch(setPutg(payload.data))
 			// if (location.pathname !== PathRoutes.Gasket.Putg) navigate(PathRoutes.Gasket.Putg)
 		}
 		if (payload.data.type == 'Wave') {
-			console.log('set wave')
 			dispatch(setWave(payload.data))
 			// if (location.pathname !== PathRoutes.Gasket.Wave) navigate(PathRoutes.Gasket.Wave)
 		}
+		//TODO эта строка работает только для прокладок, но когда нибудь тут будут и кольца
 		if (location.pathname !== PathRoutes.Gasket[payload.data.type]) navigate(PathRoutes.Gasket[payload.data.type])
 	}
 

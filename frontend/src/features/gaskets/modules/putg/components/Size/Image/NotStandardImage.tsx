@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import type { IConstruction, IPutgType } from '../../../types/putg'
+import type { IConstruction, IPutgType } from '../../../types/materials'
 import { CompositeImage, Image } from '@/features/gaskets/components/Skeletons/gasket.style'
 
 import type200 from '@/assets/putg/200_part.webp'

@@ -22,7 +22,7 @@ export const Row: FC<Props> = ({ data }) => {
 		<TableRow hover role='checkbox' tabIndex={-1} onClick={selectHandler} sx={{ cursor: 'pointer' }}>
 			<TableCell>№{data.number}</TableCell>
 			<TableCell>{data.company}</TableCell>
-			<TableCell>{stampToDate(+data.date)}</TableCell>
+			<TableCell>{stampToDate(+data.date * 1000)}</TableCell>
 			<TableCell>{data.countPosition}</TableCell>
 			<TableCell width={20} align='right' onClick={e => e.stopPropagation()}>
 				<OrderMenu data={data} />

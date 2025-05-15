@@ -10,7 +10,7 @@ export interface IDesignData {
 }
 
 export interface IDesignDataDTO {
-	jumper: IJumper
+	jumper?: IJumper
 	hasHole?: boolean
 	hasCoating?: boolean
 	hasRemovable?: boolean

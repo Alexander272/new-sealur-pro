@@ -25,13 +25,3 @@ export interface IPutgData {
 	hasMounting?: boolean
 	hasCoating?: boolean
 }
-
-export interface IPutgType {
-	id: string
-	title: string
-	code: string
-	minThickness: number
-	maxThickness: number
-	description: string
-	typeCode: string
-}

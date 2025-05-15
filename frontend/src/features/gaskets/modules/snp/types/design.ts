@@ -9,7 +9,7 @@ export interface IDesignData {
 }
 
 export interface IDesignDataDTO {
-	jumper: IJumper
+	jumper?: IJumper
 	hasHole?: boolean
 	mounting: string
 	drawing?: string

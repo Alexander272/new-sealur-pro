@@ -75,10 +75,9 @@ export const Buttons = () => {
 				},
 				design: {
 					hasHole: design.hasHole,
-					jumper: {
-						code: design.jumper.hasJumper ? design.jumper.code : '',
-						width: design.jumper.width,
-					},
+					jumper: design.jumper.hasJumper
+						? { code: design.jumper.code, width: design.jumper.width }
+						: undefined,
 					mounting: design.mounting.hasMounting ? design.mounting.code : '',
 					drawing: design.drawing,
 				},

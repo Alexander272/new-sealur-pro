@@ -42,7 +42,7 @@ export const useDesignation = () => {
 		}
 
 		if (main.standard?.standard?.id == '793de235-19d6-43e8-9807-4382923235a2') {
-			setValue(`${res}-${size.dn}-${size.pnMpa}-${h} (${main.standard.standard.title}) ТУ 5728-013-93978201-2008`)
+			setValue(`${res}-${size.dn}-${size.pn}-${h} (${main.standard.standard.title}) ТУ 5728-013-93978201-2008`)
 			return
 		}
 

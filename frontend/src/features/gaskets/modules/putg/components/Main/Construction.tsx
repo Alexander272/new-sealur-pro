@@ -14,7 +14,7 @@ export const Construction = () => {
 	const flangeType = useAppSelector(getFlangeType)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetPutgConstructionsQuery(
+	const { data, isFetching } = useGetPutgConstructionsQuery(
 		{ filler: filler?.baseId || '', flangeType: flangeType?.id || '' },
 		{ skip: !filler?.baseId || !flangeType?.id }
 	)
@@ -22,6 +22,16 @@ export const Construction = () => {
 	useEffect(() => {
 		if (data && !active?.id && !isFetching) dispatch(setConstruction(data.data[0]))
 	}, [data, active, isFetching, dispatch])
+
+	useEffect(() => {
+		if (!data || active?.id || isFetching) return
+		if (construction) {
+			let idx = data.data.findIndex(c => c.code === construction?.code)
+			if (idx == -1) idx = 0
+			dispatch(setConstruction(data.data[idx]))
+		} else dispatch(setConstruction(data.data[0]))
+	}, [data, active, isFetching, dispatch, construction])
+
 	useEffect(() => {
 		if (!data || !active || isFetching || !filler?.baseId || !flangeType?.id) return
 		let idx = construction ? data.data.findIndex(c => c.id === construction?.id) : 0
@@ -40,11 +50,7 @@ export const Construction = () => {
 			<Typography fontWeight='bold' mt={1}>
 				Тип конструкции
 			</Typography>
-			<Select
-				value={construction?.code || 'not_selected'}
-				onChange={constructionHandler}
-				disabled={isFetching || isUninitialized}
-			>
+			<Select value={construction?.code || 'not_selected'} onChange={constructionHandler} disabled={isFetching}>
 				<MenuItem disabled value='not_selected'>
 					Выберите тип конструкции
 				</MenuItem>

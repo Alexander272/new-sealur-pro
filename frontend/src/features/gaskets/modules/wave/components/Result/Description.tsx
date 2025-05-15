@@ -36,7 +36,7 @@ export const Description = () => {
 		const fullSizes = `${sizes}-${size.h.replace('.', ',')} мм`
 		let standard = ''
 		if (main.standard?.standard?.id == '793de235-19d6-43e8-9807-4382923235a2') {
-			standard = `, на условный проход ${size.dn} мм, номинальное давление ${size.pnMpa} МПа по ${main.standard?.standard.title}`
+			standard = `, на условный проход ${size.dn} мм, номинальное давление ${size.pn} МПа по ${main.standard?.standard.title}`
 		}
 		const sizeStr = sizes ? `, с размерами ${fullSizes}` : ''
 

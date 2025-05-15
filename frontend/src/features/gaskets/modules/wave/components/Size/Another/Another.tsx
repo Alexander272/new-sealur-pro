@@ -13,7 +13,7 @@ export const Another = () => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		dispatch(setSize({ id: '', dn: '', pnMpa: '', pnKg: '', d4: '', d3: '', d2: '', d1: '' }))
+		dispatch(setSize({ id: '', dn: '', dnAlt: 0, pn: '', pnAlt: '', d4: '', d3: '', d2: '', d1: '' }))
 	}, [dispatch, type])
 
 	useEffect(() => {

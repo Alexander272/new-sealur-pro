@@ -80,10 +80,9 @@ export const Buttons = () => {
 					outerRingId: materials.outerRing?.id || '',
 				},
 				design: {
-					jumper: {
-						code: design.jumper.hasJumper ? design.jumper.code : '',
-						width: design.jumper.width,
-					},
+					jumper: design.jumper.hasJumper
+						? { code: design.jumper.code, width: design.jumper.width }
+						: undefined,
 					hasHole: design.hasHole,
 					hasCoating: design.hasCoating,
 					hasRemovable: design.hasRemovable,

@@ -13,7 +13,7 @@ export const Gasket = () => {
 	const filler = useAppSelector(getFiller)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetPutgTypesQuery(filler?.baseId || '', { skip: !filler?.baseId })
+	const { data, isFetching } = useGetPutgTypesQuery(filler?.baseId || '', { skip: !filler?.baseId })
 
 	useEffect(() => {
 		if (data && !active?.id && !isFetching) dispatch(setType(data.data[0]))
@@ -36,11 +36,7 @@ export const Gasket = () => {
 			<Typography fontWeight='bold' mt={1}>
 				Тип прокладки
 			</Typography>
-			<Select
-				value={type?.code || 'not_selected'}
-				onChange={typeHandler}
-				disabled={isFetching || isUninitialized}
-			>
+			<Select value={type?.code || 'not_selected'} onChange={typeHandler} disabled={isFetching}>
 				<MenuItem disabled value='not_selected'>
 					Выберите тип прокладки
 				</MenuItem>

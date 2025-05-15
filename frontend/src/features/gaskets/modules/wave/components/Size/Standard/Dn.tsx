@@ -20,20 +20,20 @@ export const Dn = () => {
 	useEffect(() => {
 		if (!data || !type || active) return
 		if (!dn) {
-			dispatch(setDn(type.dnRange[0]))
+			dispatch(setDn(+type.dnRange[0]))
 			return
 		}
 		if (+dn < +(type?.dnRange[0] || 0) || +dn > +(type?.dnRange[1] || 0)) {
-			dispatch(setDn(type.dnRange[0]))
+			dispatch(setDn(+type.dnRange[0]))
 		}
 	}, [data, dn, type, active, dispatch])
 
 	const dnHandler = (event: SelectChangeEvent) => {
-		const newDn = event.target.value
+		const newDn = +event.target.value
 		dispatch(setDn(newDn))
 
-		if (+newDn > +(type?.dnRange[0] || 0) && +newDn < +(type?.dnRange[1] || 0)) return
-		const newType = types?.data.find(f => +f.dnRange[0] <= +newDn && +f.dnRange[1] >= +newDn)
+		if (newDn > +(type?.dnRange[0] || 0) && newDn < +(type?.dnRange[1] || 0)) return
+		const newType = types?.data.find(f => +f.dnRange[0] <= newDn && +f.dnRange[1] >= newDn)
 		if (newType) dispatch(setType(newType))
 	}
 
@@ -43,7 +43,7 @@ export const Dn = () => {
 			{isFetching ? (
 				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
 			) : (
-				<Select value={dn || 'not_selected'} onChange={dnHandler}>
+				<Select value={dn.toString() || 'not_selected'} onChange={dnHandler}>
 					<MenuItem disabled value='not_selected'>
 						Выберите значение
 					</MenuItem>

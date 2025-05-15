@@ -1,8 +1,8 @@
 import { toast } from 'react-toastify'
 
-import type { IPutgData, IPutgType } from './types/putg'
+import type { IPutgData } from './types/putg'
 import type { IConfiguration, IFlangeType, IPutgStandard } from './types/main'
-import type { IConstruction, IFiller, IPutgMaterials } from './types/materials'
+import type { IConstruction, IFiller, IPutgMaterials, IPutgType } from './types/materials'
 import type { IDn, IGetDnDTO, IGetSizeDTO, ISize } from './types/size'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'

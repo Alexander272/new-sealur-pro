@@ -12,6 +12,8 @@ const images = {
 	А: FlangeA,
 	Б: FlangeB,
 	В: FlangeV,
+	'В (LTG)': FlangeV,
+	'В (STG)': FlangeV,
 }
 
 export const Drawing = () => {

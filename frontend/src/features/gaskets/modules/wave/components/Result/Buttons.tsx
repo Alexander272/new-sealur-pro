@@ -81,10 +81,9 @@ export const Buttons = () => {
 					rotaryPlugId: materials.rotaryPlug?.id || '',
 				},
 				design: {
-					jumper: {
-						code: design.jumper.hasJumper ? design.jumper.code : '',
-						width: design.jumper.width,
-					},
+					jumper: design.jumper.hasJumper
+						? { code: design.jumper.code, width: design.jumper.width }
+						: undefined,
 					hasHole: design.hasHole || false,
 					hasCoating: design.hasCoating || false,
 					withRetainer: design.withRetainer || false,

@@ -71,7 +71,7 @@ export const OrdersList: FC<Props> = ({ filters = [] }) => {
 								<TableCell>{d.company}</TableCell>
 								<TableCell>{d.user}</TableCell>
 								<TableCell align='center'>{d.number}</TableCell>
-								<TableCell align='center'>{stampToDate(+d.date)}</TableCell>
+								<TableCell align='center'>{stampToDate(+d.date * 1000)}</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
