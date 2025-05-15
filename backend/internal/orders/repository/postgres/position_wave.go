@@ -33,17 +33,92 @@ type PositionWave interface {
 }
 
 func (r *PositionWaveRepo) Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error) {
-	//TODO implement get wave positions
-	return nil, fmt.Errorf("not implemented")
+	query := fmt.Sprintf(`SELECT p.id, title, amount, type, count, info,
+		configuration_code, type_code, construction_code, plating_code,
+		base_id, rotary_plug_id, m.arr_mat_code,
+		COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, h,
+		has_rounding, jumper, jumper_width, has_hole, has_coating, with_retainer, drawing
+		FROM %s AS p INNER JOIN %s AS ps ON p.id=ps.position_id
+		LEFT JOIN LATERAL (SELECT code AS configuration_code FROM %s WHERE id=ps.configuration_id) AS c ON true
+		LEFT JOIN LATERAL (SELECT code AS construction_code FROM %s WHERE id=ps.construction_id) AS con ON true
+		LEFT JOIN LATERAL (SELECT code AS plating_code FROM %s WHERE id=ps.plating_id) AS pl ON true
+		LEFT JOIN LATERAL (SELECT code AS type_code FROM %s AS c INNER JOIN %s AS b ON base_id=b.id 
+			WHERE c.id=ps.type_id) AS t ON true
+		LEFT JOIN LATERAL (SELECT dn, dn_alt, pn, pn_alt, d4, d3, d2, d1 FROM %s WHERE id=ps.size_id) AS s ON true 
+		LEFT JOIN LATERAL (SELECT COALESCE(ARRAY_AGG(m.code),'{}') AS arr_mat_code FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id
+			WHERE sm.id=ANY(ARRAY[ps.base_id, ps.rotary_plug_id])
+		) AS m ON true
+		WHERE order_id=$1 AND type=$2 ORDER BY configuration_code DESC, length(construction_code), count`,
+		PositionTable, PositionWaveTable, WaveConfigurationTable, WaveConstructionTable, WavePlatingTable, WaveTypeTable, WaveBaseTypeTable,
+		WaveSizeTable, WaveMaterialTable, MaterialTable,
+	)
+	tmp := []*pq_models.BasePositionWave{}
+
+	if err := r.db.SelectContext(ctx, &tmp, query, req.OrderId, models.PositionTypeWave); err != nil {
+		return nil, fmt.Errorf("failed to execute query. error: %w", err)
+	}
+
+	data := []*models.Position{}
+	for _, d := range tmp {
+		base := &wave_models.Material{}
+		rotary := &wave_models.Material{}
+		if d.BaseId != uuid.Nil.String() {
+			base = &wave_models.Material{Id: d.BaseId, Code: d.ArrMaterials[0]}
+		}
+		if d.RotaryPlugId != uuid.Nil.String() {
+			rotary = &wave_models.Material{Code: d.ArrMaterials[len(d.ArrMaterials)-1]}
+		}
+
+		data = append(data, &models.Position{
+			Id:     d.Id,
+			Count:  d.Count,
+			Title:  d.Title,
+			Amount: d.Amount,
+			Info:   d.Info,
+			Type:   models.PositionType(d.Type),
+			WaveData: &models.PositionWave{
+				Main: &models.PositionWave_Main{
+					Configuration: &wave_models.Configuration{Code: d.ConfigurationCode},
+					WaveType:      &wave_models.WaveType{Code: d.TypeCode},
+					Construction:  &wave_models.Construction{Code: d.ConstructionCode},
+				},
+				Size: &models.PositionWave_Size{
+					D4:          d.D4,
+					D3:          d.D3,
+					D2:          d.D2,
+					D1:          d.D1,
+					H:           d.H,
+					HasRounding: d.HasRounding,
+				},
+				Material: &models.PositionWave_Material{
+					Plating:    &wave_models.Plating{Code: d.PlatingCode},
+					Base:       base,
+					RotaryPlug: rotary,
+				},
+				Design: &models.PositionWave_Design{
+					Jumper: &models.PositionWave_Jumper{
+						HasJumper: d.Jumper != "",
+						Code:      d.Jumper,
+						Width:     d.JumperWidth,
+					},
+					HasHole:      d.HasHole,
+					HasCoating:   d.HasCoating,
+					WithRetainer: d.WithRetainer,
+					Drawing:      d.Drawing,
+				},
+			},
+		})
+	}
+	return data, nil
 }
 
 func (r *PositionWaveRepo) GetByPosition(ctx context.Context, positionId string) (*models.PositionWave, error) {
 	query := fmt.Sprintf(`SELECT id, position_id, configuration_id, standard_id, flange_type_id, type_id, construction_id, plating_id, 
 		base_id, rotary_plug_id, size_id, COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, COALESCE(s.d2, ps.d2) AS d2, 
-		COALESCE(s.d1, ps.d1) AS d1, COALESCE(dn, '') AS dn, COALESCE(dn_alt, 0) AS dn_alt, COALESCE(pn_mpa, '') AS pn_mpa, 
-		COALESCE(pn_kg, '') AS pn_kg, h, has_rounding, use_dimensions, jumper, jumper_width, has_hole, has_coating, with_retainer, 
+		COALESCE(s.d1, ps.d1) AS d1, COALESCE(dn, '') AS dn, COALESCE(dn_alt, 0) AS dn_alt, COALESCE(pn, '') AS pn, 
+		COALESCE(pn_alt, '') AS pn_alt, h, has_rounding, use_dimensions, jumper, jumper_width, has_hole, has_coating, with_retainer, 
 		drawing FROM %s AS ps
-		LEFT JOIN LATERAL (SELECT dn, dn_alt, pn_mpa, pn_kg, d4, d3, d2, d1 FROM %s WHERE id=ps.size_id) AS s ON true 
+		LEFT JOIN LATERAL (SELECT dn, dn_alt, pn, pn_alt, d4, d3, d2, d1 FROM %s WHERE id=ps.size_id) AS s ON true 
 		WHERE position_id=$1`,
 		PositionWaveTable, WaveSizeTable,
 	)
@@ -69,8 +144,8 @@ func (r *PositionWaveRepo) GetByPosition(ctx context.Context, positionId string)
 			Id:          tmp.SizeId,
 			Dn:          tmp.Dn,
 			DnAlt:       tmp.DnAlt,
-			PnMpa:       tmp.PnMpa,
-			PnKg:        tmp.PnKg,
+			Pn:          tmp.Pn,
+			PnAlt:       tmp.PnAlt,
 			D4:          tmp.D4,
 			D3:          tmp.D3,
 			D2:          tmp.D2,

@@ -51,7 +51,7 @@ func (r *PositionPutgRepo) Get(ctx context.Context, req *models.GetPositionsDTO)
 			WHERE sm.id=ANY(ARRAY[ps.rotary_plug_id, ps.inner_ring_id, ps.outer_ring_id])
 		) AS m ON true
 		WHERE order_id=$1 AND type=$2 ORDER BY configuration_code DESC, length(construction_code), count`,
-		PositionTable, PositionPutgTable, ConfigurationTable, ConstructionTable, BaseConstructionTable, PutgFillerTable, BaseFillerTable,
+		PositionTable, PositionPutgTable, PutgConfigurationTable, PutgConstructionTable, BaseConstructionTable, PutgFillerTable, BaseFillerTable,
 		PutgTypeTable, PutgSizeTable, PutgMaterialTable, MaterialTable,
 	)
 	tmp := []*pq_models.BasePositionPutg{}

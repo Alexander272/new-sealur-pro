@@ -12,8 +12,9 @@ type GetDnDTO struct {
 type Size struct {
 	Id    string `json:"id" db:"id"`
 	Dn    string `json:"dn" db:"dn"`
-	PnMpa string `json:"pnMpa" db:"pn_mpa"`
-	PnKg  string `json:"pnKg" db:"pn_kg"`
+	DnAlt int    `json:"dnAlt" db:"dn_alt"`
+	Pn    string `json:"pn" db:"pn"`
+	PnAlt string `json:"pnAlt" db:"pn_alt"`
 	D4    string `json:"d4" db:"d4"`
 	D3    string `json:"d3" db:"d3"`
 	D2    string `json:"d2" db:"d2"`
@@ -30,9 +31,9 @@ type SizeDTO struct {
 	TypeId string `json:"typeId" db:"type_id"`
 	Count  int    `json:"count" db:"count"`
 	Dn     string `json:"dn" db:"dn"`
-	AltDn  int    `json:"altDn" db:"dn_alt"`
-	PnMpa  string `json:"pnMpa" db:"pn_mpa"`
-	PnKg   string `json:"pnKg" db:"pn_kg"`
+	DnAlt  int    `json:"dnAlt" db:"dn_alt"`
+	Pn     string `json:"pn" db:"pn"`
+	PnAlt  string `json:"pnAlt" db:"pn_alt"`
 	D4     string `json:"d4" db:"d4"`
 	D3     string `json:"d3" db:"d3"`
 	D2     string `json:"d2" db:"d2"`

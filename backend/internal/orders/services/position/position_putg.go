@@ -1,4 +1,4 @@
-package services
+package position
 
 import (
 	"context"
@@ -11,44 +11,44 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
 )
 
-type PositionWaveService struct {
-	repo  repository.PositionWave
+type PositionPutgService struct {
+	repo  repository.PositionPutg
 	files services.Files
 }
 
-func NewPositionWaveService(repo repository.PositionWave, files services.Files) *PositionWaveService {
-	return &PositionWaveService{
+func NewPositionPutgService(repo repository.PositionPutg, files services.Files) *PositionPutgService {
+	return &PositionPutgService{
 		repo:  repo,
 		files: files,
 	}
 }
 
-type PositionWave interface {
+type PositionPutg interface {
 	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
-	GetByPosition(ctx context.Context, positionId string) (*models.PositionWave, error)
+	GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
 	Update(ctx context.Context, dto *models.PositionDTO) error
 }
 
-func (s *PositionWaveService) Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error) {
+func (s *PositionPutgService) Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error) {
 	data, err := s.repo.Get(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get wave positions by order. error: %w", err)
+		return nil, fmt.Errorf("failed to get putg positions by order. error: %w", err)
 	}
 	return data, nil
 }
 
-func (s *PositionWaveService) GetByPosition(ctx context.Context, positionId string) (*models.PositionWave, error) {
+func (s *PositionPutgService) GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error) {
 	data, err := s.repo.GetByPosition(ctx, positionId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get position wave by position id. error: %w", err)
+		return nil, fmt.Errorf("failed to get position putg by position id. error: %w", err)
 	}
 	return data, nil
 }
 
-func (s *PositionWaveService) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {
+func (s *PositionPutgService) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {
 	drawing, err := s.repo.Copy(ctx, dto)
 	if err != nil {
 		return fmt.Errorf("failed to copy position putg. error: %w", err)
@@ -79,20 +79,27 @@ func (s *PositionWaveService) Copy(ctx context.Context, dto *models.CopyPosition
 	return nil
 }
 
-func (s *PositionWaveService) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
+func (s *PositionPutgService) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
 	if err := s.repo.CopySeveral(ctx, dto); err != nil {
 		return fmt.Errorf("failed to copy several positions putg. error: %w", err)
 	}
 	return nil
 }
 
-func (s *PositionWaveService) Create(ctx context.Context, dto *models.PositionDTO) error {
-	tmp := &models.PositionWaveDTO{
+func (s *PositionPutgService) Create(ctx context.Context, dto *models.PositionDTO) error {
+	if dto.PutgData.Size.SizeId != "" {
+		dto.PutgData.Size.D4 = ""
+		dto.PutgData.Size.D3 = ""
+		dto.PutgData.Size.D2 = ""
+		dto.PutgData.Size.D1 = ""
+	}
+
+	tmp := &models.PositionPutgDTO{
 		PositionId: dto.Id,
-		Main:       dto.WaveData.Main,
-		Size:       dto.WaveData.Size,
-		Material:   dto.WaveData.Material,
-		Design:     dto.WaveData.Design,
+		Main:       dto.PutgData.Main,
+		Size:       dto.PutgData.Size,
+		Material:   dto.PutgData.Material,
+		Design:     dto.PutgData.Design,
 	}
 	if err := s.repo.Create(ctx, tmp); err != nil {
 		return fmt.Errorf("failed to create position putg. error: %w", err)
@@ -100,13 +107,20 @@ func (s *PositionWaveService) Create(ctx context.Context, dto *models.PositionDT
 	return nil
 }
 
-func (s *PositionWaveService) Update(ctx context.Context, dto *models.PositionDTO) error {
-	tmp := &models.PositionWaveDTO{
+func (s *PositionPutgService) Update(ctx context.Context, dto *models.PositionDTO) error {
+	if dto.PutgData.Size.SizeId != "" {
+		dto.PutgData.Size.D4 = ""
+		dto.PutgData.Size.D3 = ""
+		dto.PutgData.Size.D2 = ""
+		dto.PutgData.Size.D1 = ""
+	}
+
+	tmp := &models.PositionPutgDTO{
 		PositionId: dto.Id,
-		Main:       dto.WaveData.Main,
-		Size:       dto.WaveData.Size,
-		Material:   dto.WaveData.Material,
-		Design:     dto.WaveData.Design,
+		Main:       dto.PutgData.Main,
+		Size:       dto.PutgData.Size,
+		Material:   dto.PutgData.Material,
+		Design:     dto.PutgData.Design,
 	}
 	if err := s.repo.Update(ctx, tmp); err != nil {
 		return fmt.Errorf("failed to update position putg. error: %w", err)

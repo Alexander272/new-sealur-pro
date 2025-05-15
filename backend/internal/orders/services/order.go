@@ -11,6 +11,8 @@ import (
 	base_models "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
+	"github.com/Alexander272/new-sealur-pro/internal/orders/services/export"
+	"github.com/Alexander272/new-sealur-pro/internal/orders/services/position"
 	base "github.com/Alexander272/new-sealur-pro/internal/services"
 )
 
@@ -18,16 +20,16 @@ type OrderService struct {
 	repo     repository.Order
 	mail     *mail.Services
 	user     base.User
-	position Position
-	export   Export
+	position position.Position
+	export   export.Export
 }
 
 type OrderDeps struct {
 	Repo     repository.Order
 	Mail     *mail.Services
 	User     base.User
-	Position Position
-	Export   Export
+	Position position.Position
+	Export   export.Export
 }
 
 func NewOrderService(deps *OrderDeps) *OrderService {

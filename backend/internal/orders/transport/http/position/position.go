@@ -7,7 +7,7 @@ import (
 	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
-	"github.com/Alexander272/new-sealur-pro/internal/orders/services"
+	"github.com/Alexander272/new-sealur-pro/internal/orders/services/position"
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/pkg/error_bot"
 	"github.com/Alexander272/new-sealur-pro/pkg/logger"
@@ -16,16 +16,16 @@ import (
 )
 
 type Handler struct {
-	service services.Position
+	service position.Position
 }
 
-func NewHandler(service services.Position) *Handler {
+func NewHandler(service position.Position) *Handler {
 	return &Handler{
 		service: service,
 	}
 }
 
-func Register(api *gin.RouterGroup, service services.Position, middleware *middleware.Middleware) {
+func Register(api *gin.RouterGroup, service position.Position, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
 	positions := api.Group("/positions")

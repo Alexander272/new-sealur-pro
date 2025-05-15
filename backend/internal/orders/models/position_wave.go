@@ -21,8 +21,8 @@ type PositionWave_Size struct {
 	Id          string `json:"id"`
 	Dn          string `json:"dn"`
 	DnAlt       int64  `json:"dnAlt"`
-	PnMpa       string `json:"pnMpa"`
-	PnKg        string `json:"pnKg"`
+	Pn          string `json:"pn"`
+	PnAlt       string `json:"pnAlt"`
 	D4          string `json:"d4"`
 	D3          string `json:"d3"`
 	D2          string `json:"d2"`

@@ -38,8 +38,8 @@ func (r *SizeRepo) GetDn(ctx context.Context, req *models.GetDnDTO) ([]*models.D
 }
 
 func (r *SizeRepo) Get(ctx context.Context, req *models.GetSizeDTO) ([]*models.Size, error) {
-	query := fmt.Sprintf(`SELECT id, dn, pn_mpa, pn_kg, d4, d3, d2, d1
-		FROM %s WHERE type_id=$1 AND dn=$2 ORDER BY count`,
+	query := fmt.Sprintf(`SELECT id, dn, dn_alt, pn, pn_alt, d4, d3, d2, d1
+		FROM %s WHERE type_id=$1 AND dn_alt=$2 ORDER BY count`,
 		SizeTable,
 	)
 
@@ -51,8 +51,8 @@ func (r *SizeRepo) Get(ctx context.Context, req *models.GetSizeDTO) ([]*models.S
 }
 
 func (r *SizeRepo) Create(ctx context.Context, dto *models.SizeDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s (id, count, dn, dn_alt, pn_mpa, pn_kg, d4, d3, d2, d1, type_id) 
-		VALUES (:id, :count, :dn, :dn_alt, :pn_mpa, :pn_kg, :d4, :d3, :d2, :d1, :type_id)`,
+	query := fmt.Sprintf(`INSERT INTO %s (id, count, dn, dn_alt, pn, pn_alt, d4, d3, d2, d1, type_id) 
+		VALUES (:id, :count, :dn, :dn_alt, :pn, :pn_alt, :d4, :d3, :d2, :d1, :type_id)`,
 		SizeTable,
 	)
 
@@ -64,7 +64,7 @@ func (r *SizeRepo) Create(ctx context.Context, dto *models.SizeDTO) error {
 }
 
 func (r *SizeRepo) Update(ctx context.Context, dto *models.SizeDTO) error {
-	query := fmt.Sprintf(`UPDATE %s SET count=:count, dn=:dn, dn_alt=:dn_alt, pn_mpa=:pn_mpa, pn_kg=:pn_kg, 
+	query := fmt.Sprintf(`UPDATE %s SET count=:count, dn=:dn, dn_alt=:dn_alt, pn=:pn, pn_alt=:pn_alt, 
 		d4=:d4, d3=:d3, d2=:d2, d1=:d1 WHERE id=:id`,
 		SizeTable,
 	)

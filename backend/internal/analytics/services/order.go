@@ -35,7 +35,7 @@ func (s *OrderService) GetOrdersStats(ctx context.Context, req *models.GetOrders
 func (s *OrderService) GetGroupedOrdersStats(ctx context.Context, req *models.Period) ([]*models.GroupedOrdersStats, error) {
 	data, err := s.repo.GetGroupedOrdersStats(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get orders statistics. error: %w", err)
+		return nil, fmt.Errorf("failed to get grouped orders statistics. error: %w", err)
 	}
 	return data, nil
 }
