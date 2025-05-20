@@ -6,6 +6,7 @@ import { resetUser } from '@/features/user/userSlice'
 import { dadataApi } from '@/features/auth/modules/dadata/dadataApiSlice'
 import { resetSnp } from '@/features/gaskets/modules/snp/snpSlice'
 import { resetPutg } from '@/features/gaskets/modules/putg/putgSlice'
+import { resetWave } from '@/features/gaskets/modules/wave/waveSlice'
 import { resetCard } from '@/features/card/cardSlice'
 import { resetDialog } from '@/features/dialogs/dialogSlice'
 
@@ -22,6 +23,7 @@ startResetStoreListener({
 		listenerApi.dispatch(dadataApi.util.resetApiState())
 		listenerApi.dispatch(resetSnp())
 		listenerApi.dispatch(resetPutg())
+		listenerApi.dispatch(resetWave())
 		listenerApi.dispatch(resetCard())
 		listenerApi.dispatch(resetDialog())
 	},

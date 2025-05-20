@@ -27,11 +27,12 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 			acc.orders += item.count
 			acc.positions.snp += item.positions?.snp || 0
 			acc.positions.putg += item.positions?.putg || 0
+			acc.positions.wave += item.positions?.wave || 0
 			acc.positions.rings += item.positions?.rings || 0
 			acc.positions.kit += item.positions?.kit || 0
 			return acc
 		},
-		{ clients: 0, orders: 0, positions: { snp: 0, putg: 0, rings: 0, kit: 0 } }
+		{ clients: 0, orders: 0, positions: { snp: 0, putg: 0, wave: 0, rings: 0, kit: 0 } }
 	)
 
 	return (
@@ -51,6 +52,9 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 						</TableCell>
 						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
 							Кол-во ПУТГ
+						</TableCell>
+						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
+							Кол-во волновых
 						</TableCell>
 						{/* <TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
 							Кол-во колец
@@ -72,6 +76,7 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 							</HoverCell>
 							<TableCell align='center'>{FormatNumber(item.positions?.snp)}</TableCell>
 							<TableCell align='center'>{FormatNumber(item.positions?.putg)}</TableCell>
+							<TableCell align='center'>{FormatNumber(item.positions?.wave)}</TableCell>
 							{/* <TableCell align='center'>{FormatNumber(item.positions?.rings)}</TableCell>
                             <TableCell align='center'>{FormatNumber(item.positions?.kit)}</TableCell> */}
 						</TableRow>
@@ -84,6 +89,7 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 						<TableCell align='center'>{total?.orders}</TableCell>
 						<TableCell align='center'>{total?.positions.snp}</TableCell>
 						<TableCell align='center'>{total?.positions.putg}</TableCell>
+						<TableCell align='center'>{total?.positions.wave}</TableCell>
 						{/* <TableCell align='center'>{total?.positions.rings}</TableCell>
 						<TableCell align='center'>{total?.positions.kit}</TableCell> */}
 					</TableRow>

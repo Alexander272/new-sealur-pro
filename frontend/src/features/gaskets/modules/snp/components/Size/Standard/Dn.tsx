@@ -15,14 +15,11 @@ export const Dn: FC<Props> = () => {
 	const dn = useAppSelector(getDn)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetSnpDnQuery(
-		{ typeId: snp, hasD2: standard?.hasD2 },
-		{ skip: snp == 'not_selected' }
-	)
+	const { data, isFetching } = useGetSnpDnQuery({ typeId: snp }, { skip: snp == 'not_selected' })
 
 	useEffect(() => {
 		if (!data || active) return
-		dispatch(setDn({ dn: data.data[0].dn }))
+		dispatch(setDn({ dn: data.data[0]?.dn }))
 	}, [data, active, dispatch])
 
 	const dnHandler = (event: SelectChangeEvent<string>) => {

@@ -15,8 +15,10 @@ export const Configuration = () => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		dispatch(setSize({ id: '', dn: '', dnAlt: 0, pn: '', pnAlt: '', d4: '', d3: '', d2: '', d1: '' }))
-	}, [dispatch])
+		if (sizes.id != '') {
+			dispatch(setSize({ id: '', dn: '', dnAlt: 0, pn: '', pnAlt: '', d4: '', d3: '', d2: '', d1: '' }))
+		}
+	}, [dispatch, sizes])
 
 	useEffect(() => {
 		const err: ISizeErrors = {
@@ -32,10 +34,10 @@ export const Configuration = () => {
 		if (sizes.d3 != '' && sizes.d2 != '') {
 			err.d3 = +sizes.d3 <= +sizes.d2
 		}
-		err.maxSize = +sizes.d3 >= 4100
+		err.maxSize = +sizes.d3 > 4100
 
 		if (type) {
-			err.minWidth = width < type.widthRange[0]
+			err.minWidth = width < type?.widthRange[0]
 			err.maxWidth = maxWidth > 100
 		}
 		dispatch(setSizeErrors(err))

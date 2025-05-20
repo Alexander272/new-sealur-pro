@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getConfiguration, getSizeErr, getUseDimensions, setSize } from '../../../putgSlice'
+import { getConfiguration, getSizeErr, getSizeId, getUseDimensions, setSize } from '../../../putgSlice'
 import { Field } from '../Another/Field'
 import { Thickness } from '../Thickness/Thickness'
 import { Dimensions } from './Dimensions'
@@ -10,6 +10,7 @@ import { Round } from './Round'
 export const Configuration = () => {
 	const configuration = useAppSelector(getConfiguration)
 	const useDimensions = useAppSelector(getUseDimensions)
+	const sizeId = useAppSelector(getSizeId)
 	const errors = useAppSelector(getSizeErr)
 	const dispatch = useAppDispatch()
 
@@ -26,8 +27,8 @@ export const Configuration = () => {
 			dnAlt: 0,
 			h: '3,0',
 		}
-		dispatch(setSize(newSize))
-	}, [dispatch])
+		if (sizeId != '') dispatch(setSize(newSize))
+	}, [dispatch, sizeId])
 
 	let A1Err = (errors.d3Err && 'A1 должен быть больше, чем B1') || (errors.emptyD3 && 'размер не задан')
 	if (useDimensions) {

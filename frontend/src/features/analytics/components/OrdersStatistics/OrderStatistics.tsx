@@ -49,6 +49,12 @@ export const OrderStatistics = () => {
 							{FormatNumber(data?.data.positions?.putg)}
 						</TableCell>
 					</TableRow>
+					<TableRow hover onClick={navigateHandler('Wave')} sx={{ cursor: 'pointer' }}>
+						<TableCell>Всего волновых прокладок заказано</TableCell>
+						<TableCell sx={{ fontSize: '18px', fontWeight: 'bold', p: '13px 16px' }}>
+							{FormatNumber(data?.data.positions?.wave)}
+						</TableCell>
+					</TableRow>
 					{/* <TableRow hover onClick={navigateHandler('ring')} sx={{ cursor: 'pointer' }}>
 						<TableCell>Всего колец заказано</TableCell>
 						<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>

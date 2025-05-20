@@ -52,24 +52,24 @@ export const useDesignation = () => {
 			// == нестандартные фланцы
 			if (standard.flangeStandard.id == '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7') {
 				setValue(
-					`${res}-${sizes}-${h}${coating}${jumper}${materialsStr} ${designStr}${standard?.standard.title}`
+					`${res}-${sizes}-${h}${coating}${jumper}${materialsStr} ${designStr}${standard?.standard?.title}`
 				)
 				return
 			}
 
 			setValue(
-				`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}) ${standard?.standard.title}`
+				`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}) ${standard?.standard?.title}`
 			)
 			return
 		}
 
-		let title = standard?.standard.title
+		let title = standard?.standard?.title
 		//  == ASME B 16.21 && != ASME B 16.5
 		if (
 			standard?.standard.id == '2f4150f0-9ab7-409a-815e-6bcc60cb5d86' &&
-			standard.flangeStandard.id != '7d832d51-7645-4394-94dc-261959d9e374'
+			standard?.flangeStandard.id != '7d832d51-7645-4394-94dc-261959d9e374'
 		) {
-			title = standard.flangeStandard.title
+			title = standard?.flangeStandard.title
 		}
 
 		setValue(

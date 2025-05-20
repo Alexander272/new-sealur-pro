@@ -13,8 +13,10 @@ export const Another = () => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		dispatch(setSize({ id: '', dn: '', dnAlt: 0, pn: '', pnAlt: '', d4: '', d3: '', d2: '', d1: '' }))
-	}, [dispatch, type])
+		if (sizes.id != '') {
+			dispatch(setSize({ id: '', dn: '', dnAlt: 0, pn: '', pnAlt: '', d4: '', d3: '', d2: '', d1: '' }))
+		}
+	}, [dispatch, sizes, type])
 
 	useEffect(() => {
 		const err: ISizeErrors = {}
@@ -27,7 +29,7 @@ export const Another = () => {
 		err.emptyD2 = (type?.hasD2 || false) && !sizes.d2
 		err.emptyD1 = (type?.hasD1 || false) && !sizes.d1
 
-		err.maxSize = 2000 < +sizes.d3
+		err.maxSize = 3900 <= +sizes.d3
 
 		if (type) {
 			const width = (+sizes.d3 - +sizes.d2) / 2

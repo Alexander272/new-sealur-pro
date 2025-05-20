@@ -1,5 +1,15 @@
 import { FC } from 'react'
-import { Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import {
+	Divider,
+	Stack,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Typography,
+} from '@mui/material'
 
 import type { IFullOrder } from '../../types/order'
 
@@ -27,7 +37,8 @@ export const Positions: FC<Props> = ({ data }) => {
 					<Typography variant='h6' align='center'>
 						Дополнительная информация
 					</Typography>
-					<Typography marginBottom={2}>{data.info}</Typography>
+					<Typography>{data.info}</Typography>
+					<Divider sx={{ width: '50%', marginX: 'auto', mt: 1, mb: 2 }} />
 				</>
 			)}
 

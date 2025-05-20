@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getConstruction, getSizeErr, setSize } from '../../../putgSlice'
+import { getConstruction, getSizeErr, getSizeId, setSize } from '../../../putgSlice'
 import { Thickness } from '../Thickness/Thickness'
 import { Field } from './Field'
 
 export const Another = () => {
 	const construction = useAppSelector(getConstruction)
+	const sizeId = useAppSelector(getSizeId)
 	const errors = useAppSelector(getSizeErr)
 	const dispatch = useAppDispatch()
 
@@ -23,8 +24,8 @@ export const Another = () => {
 			dnAlt: 0,
 			h: '3,0',
 		}
-		dispatch(setSize(newSize))
-	}, [dispatch])
+		if (sizeId != '') dispatch(setSize(newSize))
+	}, [dispatch, sizeId])
 
 	return (
 		<>

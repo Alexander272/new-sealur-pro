@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { FormControl, TextField } from '@mui/material'
 import { toast } from 'react-toastify'
 
@@ -11,6 +11,7 @@ type Props = {
 }
 
 export const Info: FC<Props> = ({ order, data }) => {
+	const infoChanged = useRef(false)
 	const [info, setInfo] = useState(data)
 	const newInfo = useDebounce(info, 2000) //2 секунды
 
@@ -25,12 +26,14 @@ export const Info: FC<Props> = ({ order, data }) => {
 	}, [newInfo, order, save])
 
 	useEffect(() => {
-		if (data != newInfo) {
-			saveInfo()
-		}
-	}, [newInfo, data, saveInfo])
+		if (infoChanged.current) saveInfo()
+	}, [newInfo, saveInfo])
+	useEffect(() => {
+		if (data == '') setInfo('')
+	}, [data])
 
 	const infoHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+		infoChanged.current = true
 		setInfo(event.target.value)
 	}
 

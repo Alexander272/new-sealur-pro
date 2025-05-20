@@ -24,7 +24,7 @@ export const Dn: FC<Props> = () => {
 
 	useEffect(() => {
 		if (!data || active) return
-		dispatch(setDn({ dn: data.data[0].dn }))
+		dispatch(setDn({ dn: data.data[0]?.dn }))
 	}, [data, active, dispatch])
 
 	const dnHandler = (event: SelectChangeEvent<string>) => {

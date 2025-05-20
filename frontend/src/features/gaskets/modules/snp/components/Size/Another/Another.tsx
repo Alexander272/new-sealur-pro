@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getSizeErr, getSnpType, setSize } from '@/features/gaskets/modules/snp/snpSlice'
+import { getSizeErr, getSizeId, getSnpType, setSize } from '@/features/gaskets/modules/snp/snpSlice'
 import { SizeField } from './SizeField'
 import { Thickness } from './Thickness'
 
 export const Another = () => {
 	const snp = useAppSelector(getSnpType)
+	const sizeId = useAppSelector(getSizeId)
 	const errors = useAppSelector(getSizeErr)
 	const dispatch = useAppDispatch()
 
@@ -26,8 +27,8 @@ export const Another = () => {
 			s3: '',
 			another: '',
 		}
-		dispatch(setSize(empty))
-	}, [dispatch])
+		if (sizeId != '') dispatch(setSize(empty))
+	}, [dispatch, sizeId])
 
 	return (
 		<>

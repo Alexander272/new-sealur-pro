@@ -15,7 +15,7 @@ type Props = {
 const titles = new Map<PositionType, string>([
 	['Snp', 'с СНП'],
 	['Putg', 'с ПУТГ'],
-	// ['Wave', 'с волновыми'],
+	['Wave', 'с волновыми прокладками'],
 	// ['Rings', 'Кольца'],
 	// ['Kit', 'Комплект'],
 ])

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 // import styled from 'styled-components'
 import styled from '@emotion/styled'
+import { Box, styled as MStyled } from '@mui/material'
 
 export const Container = styled.header`
 	width: 100%;
@@ -63,13 +64,28 @@ export const NavLink = styled(Link)`
 	width: 32px;
 `
 
-export const Icon = styled.div`
-	margin-right: 20px;
-	height: 100%;
-	width: 32px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	position: relative;
-`
+export const NavBox = MStyled(Box)(() => ({
+	width: 46,
+	height: '100%',
+	display: 'flex',
+	justifyContent: 'center',
+	alignItems: 'center',
+	cursor: 'pointer',
+	borderRadius: 12,
+	transition: '.3s all ease-in-out',
+
+	':hover': {
+		background: '#eee',
+	},
+}))
+
+// export const Icon = styled.div`
+// 	margin-right: 20px;
+// 	height: 100%;
+// 	width: 32px;
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: center;
+// 	cursor: pointer;
+// 	position: relative;
+// `

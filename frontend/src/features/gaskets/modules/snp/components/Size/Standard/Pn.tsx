@@ -18,7 +18,7 @@ export const Pn: FC<Props> = () => {
 	const { data, isFetching } = useGetSnpSizesQuery({ typeId: snp, dn }, { skip: snp == 'not_selected' || !dn })
 
 	useEffect(() => {
-		if (!data || data.data[0].dn != dn) return
+		if (!data || data.data[0]?.dn != dn) return
 		let idx = data.data.findIndex(s => s.pn === pn)
 		if (idx == -1) idx = 0
 		const newSize = {

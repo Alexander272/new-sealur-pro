@@ -15,14 +15,14 @@ import { toast } from 'react-toastify'
 import CloseIcon from '@mui/icons-material/Close'
 
 import type { Position as PositionType } from '../../types/card'
+import { PathRoutes } from '@/constants/routes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { setSnp } from '@/features/gaskets/modules/snp/snpSlice'
+import { setPutg } from '@/features/gaskets/modules/putg/putgSlice'
+import { setWave } from '@/features/gaskets/modules/wave/waveSlice'
+import { WarningIcon } from '@/components/Icons/WarningIcon'
 import { getActive, setActive } from '../../cardSlice'
 import { useDeletePositionMutation, useLazyGetPositionByIdQuery } from '../../cardApiSlice'
-import { setSnp } from '@/features/gaskets/modules/snp/snpSlice'
-import { PathRoutes } from '@/constants/routes'
-import { setPutg } from '@/features/gaskets/modules/putg/putgSlice'
-import { WarningIcon } from '@/components/Icons/WarningIcon'
-import { setWave } from '@/features/gaskets/modules/wave/waveSlice'
 
 type Props = {
 	idx: number

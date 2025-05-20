@@ -1,15 +1,20 @@
 import { FC, memo, useState } from 'react'
-import { Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
+import { Badge, Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 import { useAppSelector, useAppDispatch } from '@/hooks/redux'
 import { PathRoutes } from '@/constants/routes'
-import { toggle } from '@/features/card/cardSlice'
 import { useSignOutMutation } from '@/features/auth/authApiSlice'
+import { getPositions, toggle } from '@/features/card/cardSlice'
+import { getRole, getUserId } from '@/features/user/userSlice'
 // import { sendMetric } from '@/services/metrics'
-import { Content, Container, LogoLink, Logo, Icon, Nav, BarLink } from './header.style'
+import { Content, Container, LogoLink, Logo, Nav, BarLink, NavBox } from './header.style'
 
 import Instruction from '@/assets/files/instruction.pdf'
+import { HomeIcon } from '@/components/Icons/HomeIcon'
+import { UserIcon } from '@/components/Icons/UserIcon'
+import { CartIcon } from '@/components/Icons/CartIcon'
+import { HelpIcon } from '@/components/Icons/HelpIcon'
 
 type Props = {
 	disableCard?: boolean
@@ -18,8 +23,9 @@ type Props = {
 const Header: FC<Props> = ({ disableCard }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
-	const userId = useAppSelector(state => state.user.id)
-	const role = useAppSelector(state => state.user.role)
+	const userId = useAppSelector(getUserId)
+	const role = useAppSelector(getRole)
+	const positions = useAppSelector(getPositions)
 
 	const [signOut] = useSignOutMutation()
 
@@ -73,36 +79,42 @@ const Header: FC<Props> = ({ disableCard }) => {
 				</LogoLink>
 
 				<Nav>
-					<Tooltip title='Инструкция'>
-						<Icon>
+					<Tooltip enterDelay={500} title='Инструкция'>
+						<NavBox width={50}>
 							<BarLink href={Instruction} onClick={readHandler} target='_blank'>
-								<img src='/image/question-icon.svg' alt='Инструкция' width='30' height='30' />
+								<HelpIcon sx={{ fill: 'var(--primary-color)', fontSize: 30 }} />
 							</BarLink>
-						</Icon>
+						</NavBox>
 					</Tooltip>
 
 					{userId && (
 						<>
 							{!disableCard && (
-								<Tooltip title='Заявка'>
-									<Icon onClick={basketHandler}>
-										<img src='/image/basket.svg' alt='Заявка' width='30' height='30' />
-									</Icon>
+								<Tooltip enterDelay={800} title='Заявка'>
+									<NavBox onClick={basketHandler}>
+										<Badge
+											color='primary'
+											badgeContent={positions.length}
+											invisible={!positions.length}
+										>
+											<CartIcon sx={{ fill: 'var(--primary-color)', fontSize: 30 }} />
+										</Badge>
+									</NavBox>
 								</Tooltip>
 							)}
 
-							<Tooltip title='Профиль'>
-								<Icon onClick={handleClick}>
-									<img src='/image/person-profile.svg' alt='Профиль' width='30' height='30' />
-								</Icon>
+							<Tooltip enterDelay={800} title='Профиль'>
+								<NavBox onClick={handleClick}>
+									<UserIcon sx={{ fill: 'var(--primary-color)', fontSize: 30 }} />
+								</NavBox>
 							</Tooltip>
 						</>
 					)}
 
-					<Tooltip title='Главная страница'>
-						<Icon onClick={homeHandler}>
-							<img src='/image/home-icon.svg' alt='Главная' width='30' height='30' />
-						</Icon>
+					<Tooltip enterDelay={800} title='Главная страница'>
+						<NavBox onClick={homeHandler}>
+							<HomeIcon fill={'var(--primary-color)'} sx={{ fontSize: 30 }} />
+						</NavBox>
 					</Tooltip>
 				</Nav>
 
@@ -126,7 +138,7 @@ const Header: FC<Props> = ({ disableCard }) => {
 									display: 'block',
 									position: 'absolute',
 									top: 0,
-									right: 14,
+									right: 18,
 									width: 10,
 									height: 10,
 									bgcolor: 'background.paper',
