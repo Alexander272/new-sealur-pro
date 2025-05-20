@@ -147,6 +147,11 @@ func (r *PositionPutgRepo) GetByPosition(ctx context.Context, positionId string)
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 
+	sizeId := ""
+	if tmp.SizeId != uuid.Nil.String() {
+		sizeId = tmp.SizeId
+	}
+
 	data := &models.PositionPutg{
 		Main: &models.PositionPutg_Main{
 			Standard:      &putg_models.StandardInfo{Id: tmp.PutgStandardId},
@@ -154,7 +159,7 @@ func (r *PositionPutgRepo) GetByPosition(ctx context.Context, positionId string)
 			Configuration: &putg_models.Configuration{Id: tmp.ConfigurationId},
 		},
 		Size: &models.PositionPutg_Size{
-			Id:            tmp.SizeId,
+			Id:            sizeId,
 			Dn:            tmp.Dn,
 			DnAlt:         tmp.DnAlt,
 			Pn:            tmp.Pn,

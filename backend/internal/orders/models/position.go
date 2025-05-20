@@ -1,5 +1,7 @@
 package models
 
+import "fmt"
+
 type PositionType string
 
 const (
@@ -58,6 +60,24 @@ type PositionDTO struct {
 	WaveData *PositionWaveDTO `json:"waveData"`
 	// RingData *PositionRingDTO     `json:"ringData"`
 	// KitData  *PositionRingsKitDTO `json:"kitData"`
+}
+
+func (d *PositionDTO) Validate() error {
+	switch d.Type {
+	case PositionTypeSnp:
+		if d.SnpData.Main == nil || d.SnpData.Material == nil || d.SnpData.Size == nil || d.SnpData.Design == nil {
+			return fmt.Errorf("the data sent was not correct")
+		}
+	case PositionTypePutg:
+		if d.PutgData.Main == nil || d.PutgData.Material == nil || d.PutgData.Size == nil || d.PutgData.Design == nil {
+			return fmt.Errorf("the data sent was not correct")
+		}
+	case PositionTypeWave:
+		if d.WaveData.Main == nil || d.WaveData.Material == nil || d.WaveData.Size == nil || d.WaveData.Design == nil {
+			return fmt.Errorf("the data sent was not correct")
+		}
+	}
+	return nil
 }
 
 type CopyPositionDTO struct {

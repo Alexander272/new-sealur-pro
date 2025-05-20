@@ -129,6 +129,11 @@ func (h *Handler) create(c *gin.Context) {
 		return
 	}
 
+	if err := dto.Validate(); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
+		return
+	}
+
 	if err := h.service.Create(c, dto); err != nil {
 		if errors.Is(err, base.ErrPositionExists) {
 			response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Такая позиция уже добавлена")

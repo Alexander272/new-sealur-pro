@@ -39,11 +39,11 @@ func (s *ZipService) Create(dto *models.ZipDTO) (*models.File, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to open file. error: %w", err)
 			}
-			defer file.Close()
 
 			if _, err := io.Copy(zipFile, file); err != nil {
 				return nil, fmt.Errorf("failed to copy file. error: %w", err)
 			}
+			file.Close()
 		} else {
 			if _, err := zipFile.Write(f.Bytes); err != nil {
 				return nil, fmt.Errorf("failed to write zip file. error: %w", err)

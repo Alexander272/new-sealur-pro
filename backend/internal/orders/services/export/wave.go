@@ -74,7 +74,8 @@ func (s *ExportService) prepareWave(ctx context.Context, dto *models.Detail) err
 
 		jumper := ""
 		if data.Design.Jumper.HasJumper {
-			jumper = fmt.Sprintf("%s/%s", data.Design.Jumper.Code, data.Design.Jumper.Width)
+			// jumper = fmt.Sprintf("%s/%s", data.Design.Jumper.Code, data.Design.Jumper.Width)
+			jumper = data.Design.Jumper.Code
 		}
 		hole := ""
 		if data.Design.HasHole {

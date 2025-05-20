@@ -96,12 +96,6 @@ type PositionPutgDTO_Material struct {
 	RotaryPlugId   string `json:"rotaryPlugId"`
 	InnerRingId    string `json:"innerRingId"`
 	OuterRingId    string `json:"outerRingId"`
-	// Filler       *putg_models.Filler       `json:"filler"`
-	// PutgType     *putg_models.PutgType     `json:"putgType"`
-	// Construction *putg_models.Construction `json:"construction"`
-	// RotaryPlug   *putg_models.Material     `json:"rotaryPlug,omitempty"`
-	// InnerRing    *putg_models.Material     `json:"innerRing,omitempty"`
-	// OuterRing    *putg_models.Material     `json:"outerRing,omitempty"`
 }
 
 type PositionPutgDTO_Design struct {

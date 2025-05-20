@@ -2,11 +2,14 @@ package position
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/url"
 
 	file_models "github.com/Alexander272/new-sealur-pro/internal/files/models"
 	"github.com/Alexander272/new-sealur-pro/internal/files/services"
+	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
 )
@@ -43,6 +46,9 @@ func (s *PositionPutgService) Get(ctx context.Context, req *models.GetPositionsD
 func (s *PositionPutgService) GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error) {
 	data, err := s.repo.GetByPosition(ctx, positionId)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, base.ErrNoRows
+		}
 		return nil, fmt.Errorf("failed to get position putg by position id. error: %w", err)
 	}
 	return data, nil
@@ -93,6 +99,9 @@ func (s *PositionPutgService) Create(ctx context.Context, dto *models.PositionDT
 		dto.PutgData.Size.D2 = ""
 		dto.PutgData.Size.D1 = ""
 	}
+	if dto.PutgData.Design.Jumper == nil {
+		dto.PutgData.Design.Jumper = &models.PositionPutgDTO_Design_Jumper{}
+	}
 
 	tmp := &models.PositionPutgDTO{
 		PositionId: dto.Id,
@@ -113,6 +122,9 @@ func (s *PositionPutgService) Update(ctx context.Context, dto *models.PositionDT
 		dto.PutgData.Size.D3 = ""
 		dto.PutgData.Size.D2 = ""
 		dto.PutgData.Size.D1 = ""
+	}
+	if dto.PutgData.Design.Jumper == nil {
+		dto.PutgData.Design.Jumper = &models.PositionPutgDTO_Design_Jumper{}
 	}
 
 	tmp := &models.PositionPutgDTO{

@@ -309,7 +309,7 @@ func (s *PositionService) Delete(ctx context.Context, dto *models.DeletePosition
 			drawing = data.Design.Drawing
 		}
 	}
-	if err != nil {
+	if err != nil && !errors.Is(err, base.ErrNoRows) {
 		return err
 	}
 

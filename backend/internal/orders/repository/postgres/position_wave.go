@@ -132,6 +132,11 @@ func (r *PositionWaveRepo) GetByPosition(ctx context.Context, positionId string)
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 
+	sizeId := ""
+	if tmp.SizeId != uuid.Nil.String() {
+		sizeId = tmp.SizeId
+	}
+
 	data := &models.PositionWave{
 		Main: &models.PositionWave_Main{
 			Configuration: &wave_models.Configuration{Id: tmp.ConfigurationId},
@@ -141,7 +146,7 @@ func (r *PositionWaveRepo) GetByPosition(ctx context.Context, positionId string)
 			Construction:  &wave_models.Construction{Id: tmp.ConstructionId},
 		},
 		Size: &models.PositionWave_Size{
-			Id:          tmp.SizeId,
+			Id:          sizeId,
 			Dn:          tmp.Dn,
 			DnAlt:       tmp.DnAlt,
 			Pn:          tmp.Pn,

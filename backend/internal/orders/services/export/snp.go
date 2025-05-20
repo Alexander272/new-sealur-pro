@@ -52,7 +52,8 @@ func (s *ExportService) prepareSnp(ctx context.Context, dto *models.Detail) erro
 		}
 		jumper := ""
 		if d.SnpData.Design.Jumper.HasJumper {
-			jumper = fmt.Sprintf("%s/%s", d.SnpData.Design.Jumper.Code, d.SnpData.Design.Jumper.Width)
+			// jumper = fmt.Sprintf("%s/%s", d.SnpData.Design.Jumper.Code, d.SnpData.Design.Jumper.Width)
+			jumper = d.SnpData.Design.Jumper.Code
 		}
 		hole := ""
 		if d.SnpData.Design.HasHole {

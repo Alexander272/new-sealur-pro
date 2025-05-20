@@ -151,6 +151,11 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 		}
 	}
 
+	sizeId := ""
+	if tmp.SizeId != uuid.Nil.String() {
+		sizeId = tmp.SizeId
+	}
+
 	data := &models.PositionSnp{
 		Main: &models.PositionSnp_Main{
 			SnpStandardId: tmp.SnpStandardId,
@@ -158,7 +163,7 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 			FlangeTypeId:  tmp.FlangeTypeId,
 		},
 		Size: &models.PositionSnp_Size{
-			Id:      tmp.SizeId,
+			Id:      sizeId,
 			Dn:      tmp.Dn,
 			DnAlt:   tmp.DnAlt,
 			Pn:      tmp.Pn,

@@ -67,7 +67,6 @@ func (r *OrderRepo) GetGroupedOrdersStats(ctx context.Context, req *models.Perio
 		condition = "AND date BETWEEN $1 AND $2"
 		params = append(params, req.Start, req.End)
 	}
-	//TODO этот запрос почему-то начал выдавать ошибку
 
 	query := fmt.Sprintf(`SELECT o.user_id, name, company, manager, manager_id,
 		COUNT(DISTINCT number) AS count, SUM(amount::integer) AS positions_count,
@@ -80,7 +79,7 @@ func (r *OrderRepo) GetGroupedOrdersStats(ctx context.Context, req *models.Perio
 		INNER JOIN "%s" AS p ON order_id=o.id
 		LEFT JOIN LATERAL (SELECT name, company FROM "%s" WHERE id=o.user_id) AS u ON true
 		LEFT JOIN LATERAL (SELECT name AS manager FROM "%s" WHERE id=o.manager_id) AS m ON true
-		WHERE date!='' %s
+		WHERE date!=0 %s
 		GROUP BY user_id, manager_id, name, company, manager
 		ORDER BY company, name`,
 		orders.PositionTypeSnp, orders.PositionTypePutg, orders.PositionTypeWave, orders.PositionTypeRing, orders.PositionTypeKit,

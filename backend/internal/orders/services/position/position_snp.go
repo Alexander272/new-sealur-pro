@@ -2,11 +2,14 @@ package position
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/url"
 
 	file_models "github.com/Alexander272/new-sealur-pro/internal/files/models"
 	"github.com/Alexander272/new-sealur-pro/internal/files/services"
+	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
 )
@@ -44,6 +47,9 @@ func (s *PositionSnpService) Get(ctx context.Context, req *models.GetPositionsDT
 func (s *PositionSnpService) GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error) {
 	data, err := s.repo.GetByPosition(ctx, positionId)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, base.ErrNoRows
+		}
 		return nil, fmt.Errorf("failed to get position snp by position id. error: %w", err)
 	}
 	return data, nil
@@ -93,6 +99,9 @@ func (s *PositionSnpService) Create(ctx context.Context, dto *models.PositionDTO
 		dto.SnpData.Size.D2 = ""
 		dto.SnpData.Size.D1 = ""
 	}
+	if dto.SnpData.Design.Jumper == nil {
+		dto.SnpData.Design.Jumper = &models.PositionSnpDTO_Design_Jumper{}
+	}
 
 	tmp := &models.PositionSnpDTO{
 		PositionId: dto.Id,
@@ -120,6 +129,9 @@ func (s *PositionSnpService) Update(ctx context.Context, dto *models.PositionDTO
 		dto.SnpData.Size.D3 = ""
 		dto.SnpData.Size.D2 = ""
 		dto.SnpData.Size.D1 = ""
+	}
+	if dto.SnpData.Design.Jumper == nil {
+		dto.SnpData.Design.Jumper = &models.PositionSnpDTO_Design_Jumper{}
 	}
 
 	tmp := &models.PositionSnpDTO{

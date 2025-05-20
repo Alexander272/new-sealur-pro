@@ -2,11 +2,14 @@ package position
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/url"
 
 	file_models "github.com/Alexander272/new-sealur-pro/internal/files/models"
 	"github.com/Alexander272/new-sealur-pro/internal/files/services"
+	base "github.com/Alexander272/new-sealur-pro/internal/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/models"
 	"github.com/Alexander272/new-sealur-pro/internal/orders/repository"
 )
@@ -43,6 +46,9 @@ func (s *PositionWaveService) Get(ctx context.Context, req *models.GetPositionsD
 func (s *PositionWaveService) GetByPosition(ctx context.Context, positionId string) (*models.PositionWave, error) {
 	data, err := s.repo.GetByPosition(ctx, positionId)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, base.ErrNoRows
+		}
 		return nil, fmt.Errorf("failed to get position wave by position id. error: %w", err)
 	}
 	return data, nil
@@ -87,6 +93,10 @@ func (s *PositionWaveService) CopySeveral(ctx context.Context, dto []*models.Cop
 }
 
 func (s *PositionWaveService) Create(ctx context.Context, dto *models.PositionDTO) error {
+	if dto.WaveData.Design.Jumper == nil {
+		dto.WaveData.Design.Jumper = &models.PositionWaveDTO_Design_Jumper{}
+	}
+
 	tmp := &models.PositionWaveDTO{
 		PositionId: dto.Id,
 		Main:       dto.WaveData.Main,
@@ -101,6 +111,10 @@ func (s *PositionWaveService) Create(ctx context.Context, dto *models.PositionDT
 }
 
 func (s *PositionWaveService) Update(ctx context.Context, dto *models.PositionDTO) error {
+	if dto.WaveData.Design.Jumper == nil {
+		dto.WaveData.Design.Jumper = &models.PositionWaveDTO_Design_Jumper{}
+	}
+
 	tmp := &models.PositionWaveDTO{
 		PositionId: dto.Id,
 		Main:       dto.WaveData.Main,

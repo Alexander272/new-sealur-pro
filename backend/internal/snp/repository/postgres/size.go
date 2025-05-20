@@ -43,6 +43,10 @@ func (r *SizeRepo) GetDn(ctx context.Context, req *models.GetDnDTO) ([]*models.D
 	return data, nil
 }
 
+// func (r *SizeRepo) GetD2(ctx context.Context, req *models.GetD2DTO) ([]*models.D2, error) {
+// 	query := fmt.Sprintf(`SELECT`)
+// }
+
 func (r *SizeRepo) Get(ctx context.Context, req *models.GetSizeDTO) ([]*models.Size, error) {
 	query := fmt.Sprintf(`SELECT id, dn, pn, pn_alt, d4, d3, d2, d1, h, s2, s3
 		FROM %s WHERE snp_type_id=$1 AND dn=$2 ORDER BY count`,

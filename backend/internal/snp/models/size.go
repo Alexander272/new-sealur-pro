@@ -5,6 +5,10 @@ type GetDnDTO struct {
 	HasD2  bool   `json:"hasD2"`
 }
 
+type GetD2DTO struct {
+	TypeId string `json:"typeId"`
+}
+
 type GetSizeDTO struct {
 	TypeId string `json:"typeId"`
 	Dn     string `json:"dn"`
@@ -14,6 +18,13 @@ type Dn struct {
 	Dn  string `json:"dn" db:"dn"`
 	Alt int    `json:"alt" db:"dn_alt"`
 	D2  string `json:"d2" db:"d2"`
+}
+
+type D2 struct {
+	D2  string `json:"d2" db:"d2"`
+	Dn  string `json:"dn" db:"dn"`
+	Alt int    `json:"alt" db:"dn_alt"`
+	Pn  string `json:"pn" db:"pn"`
 }
 
 type Size struct {
