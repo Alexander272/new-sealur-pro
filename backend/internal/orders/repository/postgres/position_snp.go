@@ -40,7 +40,8 @@ func (r *PositionSnpRepo) Get(ctx context.Context, req *models.GetPositionsDTO) 
 		FROM %s AS p INNER JOIN %s AS ps ON p.id=ps.position_id
 		LEFT JOIN LATERAL (SELECT d4, d3, d2, d1, h FROM %s WHERE id=ps.size_id) AS s ON true
 		LEFT JOIN LATERAL (SELECT base_code AS filler_code FROM %s WHERE id=ps.filler_id) AS f ON true
-		LEFT JOIN LATERAL (SELECT ARRAY_AGG(m.code) AS arr_mat_code FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id
+		LEFT JOIN LATERAL (SELECT ARRAY_AGG(m.code ORDER BY array_position(array['fr','ir','or'], type)) AS arr_mat_code 
+			FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id
 			WHERE sm.id=ANY(ARRAY[ps.frame_id, ps.inner_ring_id, ps.outer_ring_id])
 		) AS m ON true
 		WHERE order_id=$1 AND type=$2 ORDER BY count`,

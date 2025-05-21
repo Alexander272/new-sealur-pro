@@ -44,6 +44,7 @@ type Styles struct {
 	HeaderStyle int
 	RowStyle    int
 	TitleStyle  int
+	WarnStyle   int
 }
 
 type Header struct {

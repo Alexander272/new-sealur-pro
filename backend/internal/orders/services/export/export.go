@@ -147,60 +147,6 @@ func (s *ExportService) Prepare(ctx context.Context, dto *models.Order) (*models
 	return res, nil
 }
 
-func (s *ExportService) prepareStyles(file *excelize.File) (*models.Styles, error) {
-	border := []excelize.Border{
-		{Type: "left", Color: "000000", Style: 7},
-		{Type: "top", Color: "000000", Style: 7},
-		{Type: "bottom", Color: "000000", Style: 7},
-		{Type: "right", Color: "000000", Style: 7},
-	}
-
-	headerStyle, err := file.NewStyle(&excelize.Style{
-		Fill: excelize.Fill{
-			Type:    "pattern",
-			Pattern: 1,
-			Color:   []string{"d9d9d9"},
-		},
-		Alignment: &excelize.Alignment{
-			Horizontal:     "center",
-			Vertical:       "center",
-			RelativeIndent: 1,
-			ShrinkToFit:    true,
-			Indent:         1,
-			ReadingOrder:   0,
-			WrapText:       true,
-		},
-		Border: border,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create header style. error: %w", err)
-	}
-
-	// стиль для наименования прокладки
-	titleStyle, err := file.NewStyle(&excelize.Style{
-		Border: border,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create title style. error: %w", err)
-	}
-
-	cellStyle, err := file.NewStyle(&excelize.Style{
-		Alignment: &excelize.Alignment{
-			Horizontal: "center",
-		},
-		Border: border,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create cell style. error: %w", err)
-	}
-	styles := &models.Styles{
-		HeaderStyle: headerStyle,
-		RowStyle:    cellStyle,
-		TitleStyle:  titleStyle,
-	}
-	return styles, nil
-}
-
 func (s *ExportService) appendHeader(dto *models.Header) error {
 	// получение координат ячейки
 	cell, err := excelize.CoordinatesToCellName(dto.Column, dto.Row)

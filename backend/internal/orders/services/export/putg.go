@@ -162,18 +162,23 @@ func (s *ExportService) preparePutg(ctx context.Context, dto *models.Detail) err
 			d1 = data.Size.D1
 		}
 
+		plug := "2"
+		if data.Material.RotaryPlug.Code != "" {
+			plug = data.Material.RotaryPlug.Code
+		}
+
 		line := []interface{}{}
 		if curType == "notRound" {
 			line = []interface{}{
 				d.Count, d.Title, data.Size.D3, data.Size.D2, field, data.Size.H, construction,
-				reinforce, data.Material.RotaryPlug.Code, mica, inhibitor, jumper, hole, drawing,
+				reinforce, plug, mica, inhibitor, jumper, hole, drawing,
 				0, 0, "",
 			}
 		}
 		if curType == "withRings" {
 			line = []interface{}{
 				d.Count, d.Title, d4, data.Size.D3, data.Size.D2, d1, data.Size.H, construction, reinforce,
-				data.Material.InnerRing.Code, data.Material.RotaryPlug.Code, data.Material.OuterRing.Code,
+				data.Material.InnerRing.Code, plug, data.Material.OuterRing.Code,
 				mica, inhibitor, removable, jumper, hole, drawing,
 				0, 0, "",
 			}
@@ -181,7 +186,7 @@ func (s *ExportService) preparePutg(ctx context.Context, dto *models.Detail) err
 		if curType == "base" {
 			line = []interface{}{
 				d.Count, d.Title, data.Size.D3, data.Size.D2, data.Size.H, construction, reinforce,
-				data.Material.RotaryPlug.Code, mica, inhibitor, removable, jumper, hole, drawing,
+				plug, mica, inhibitor, removable, jumper, hole, drawing,
 				0, 0, "",
 			}
 		}
@@ -200,6 +205,14 @@ func (s *ExportService) preparePutg(ctx context.Context, dto *models.Detail) err
 				},
 			},
 		}
+
+		if !strings.HasPrefix(data.Material.PutgType.Code, "20") && !strings.HasPrefix(data.Material.PutgType.Code, "23") {
+			row.Extra = append(row.Extra, &models.Extra{
+				Column: dto.Column + 1,
+				Style:  dto.Styles.WarnStyle,
+			})
+		}
+
 		if err := s.appendData(row); err != nil {
 			return err
 		}

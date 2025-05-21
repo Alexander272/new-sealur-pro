@@ -112,18 +112,29 @@ func (s *ExportService) prepareWave(ctx context.Context, dto *models.Detail) err
 			d1 = data.Size.D1
 		}
 
+		plug := "2"
+		if data.Material.RotaryPlug.Code != "" {
+			plug = data.Material.RotaryPlug.Code
+		}
+
 		line := []interface{}{}
 		if curType == "base" {
+			if jumper == "" {
+				jumper = "M"
+			}
 			line = []interface{}{
 				d.Count, d.Title, d4, data.Size.D3, data.Size.D2, d1, data.Size.H, waveType, construction, data.Material.Base.Code,
-				data.Material.RotaryPlug.Code, data.Material.Plating.Code, jumper, hole, retainer, drawing,
+				plug, data.Material.Plating.Code, jumper, hole, retainer, drawing,
 				0, 0, "",
 			}
 		}
 		if curType == "notRound" {
+			if jumper == "" {
+				jumper = "0-нет"
+			}
 			line = []interface{}{
 				d.Count, d.Title, "ПУТГм", data.Size.D3, data.Size.D2, data.Size.D1, data.Size.H, construction, data.Material.Base.Code,
-				data.Material.RotaryPlug.Code, data.Material.Plating.Code, jumper, hole, retainer, drawing,
+				plug, data.Material.Plating.Code, jumper, hole, retainer, drawing,
 				0, 0, "",
 			}
 		}

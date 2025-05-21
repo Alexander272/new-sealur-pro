@@ -47,7 +47,8 @@ func (r *PositionPutgRepo) Get(ctx context.Context, req *models.GetPositionsDTO)
 			WHERE f.id=ps.filler_id) AS f ON true
 		LEFT JOIN LATERAL (SELECT code AS type_code FROM %s WHERE id=ps.type_id) AS t ON true
 		LEFT JOIN LATERAL (SELECT dn, dn_alt, pn, pn_alt, d4, d3, d2, d1 FROM %s WHERE id=ps.size_id) AS s ON true
-		LEFT JOIN LATERAL (SELECT COALESCE(ARRAY_AGG(m.code),'{}') AS arr_mat_code FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id
+		LEFT JOIN LATERAL (SELECT COALESCE(ARRAY_AGG(m.code ORDER BY array_position(array['rotaryPlug','innerRing','outerRing'], type)),'{}') AS arr_mat_code 
+			FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id
 			WHERE sm.id=ANY(ARRAY[ps.rotary_plug_id, ps.inner_ring_id, ps.outer_ring_id])
 		) AS m ON true
 		WHERE order_id=$1 AND type=$2 ORDER BY configuration_code DESC, length(construction_code), count`,
