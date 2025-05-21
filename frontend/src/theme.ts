@@ -58,6 +58,9 @@ const theme = createTheme({
 			styleOverrides: {
 				root: {
 					borderRadius: 12,
+					'& fieldset': {
+						transition: 'all 0.3s ease-in-out',
+					},
 				},
 			},
 		},

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Button, Collapse, Divider, IconButton, Stack, Typography } from '@mui/material'
 import { toast } from 'react-toastify'
+import { ym } from 'react-metrika'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import CloseIcon from '@mui/icons-material/Close'
 
+import { MetricId } from '@/constants/metric'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useGetOrderQuery, useSaveOrderMutation } from '@/features/orders/ordersApiSlice'
 import { getRole } from '@/features/user/userSlice'
@@ -43,6 +45,9 @@ export const Card = () => {
 
 	const saveHandler = async () => {
 		if (!data || !data?.data.positions?.length) return
+		console.log('save order')
+		ym(MetricId, 'reachGoal', 'SendOrder')
+
 		try {
 			await save({ id: data.data.id, count: data.data.positions.length }).unwrap()
 			toast.success('Заявка отправлена. Ожидайте ответа менеджера')

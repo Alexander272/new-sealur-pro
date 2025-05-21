@@ -1,20 +1,21 @@
 import { FC, memo, useState } from 'react'
 import { Badge, Divider, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { ym } from 'react-metrika'
 
-import { useAppSelector, useAppDispatch } from '@/hooks/redux'
 import { PathRoutes } from '@/constants/routes'
+import { MetricId } from '@/constants/metric'
+import { useAppSelector, useAppDispatch } from '@/hooks/redux'
 import { useSignOutMutation } from '@/features/auth/authApiSlice'
 import { getPositions, toggle } from '@/features/card/cardSlice'
 import { getRole, getUserId } from '@/features/user/userSlice'
-// import { sendMetric } from '@/services/metrics'
-import { Content, Container, LogoLink, Logo, Nav, BarLink, NavBox } from './header.style'
-
-import Instruction from '@/assets/files/instruction.pdf'
 import { HomeIcon } from '@/components/Icons/HomeIcon'
 import { UserIcon } from '@/components/Icons/UserIcon'
 import { CartIcon } from '@/components/Icons/CartIcon'
 import { HelpIcon } from '@/components/Icons/HelpIcon'
+import { Content, Container, LogoLink, Logo, Nav, BarLink, NavBox } from './header.style'
+
+import Instruction from '@/assets/files/instruction.pdf'
 
 type Props = {
 	disableCard?: boolean
@@ -67,8 +68,8 @@ const Header: FC<Props> = ({ disableCard }) => {
 	}
 
 	const readHandler = () => {
-		// TODO убрать коммент с метрики
-		// sendMetric('reachGoal', 'ReadInstruction')
+		console.log('reading instruction')
+		ym(MetricId, 'reachGoal', 'ReadInstruction')
 	}
 
 	return (
@@ -80,8 +81,8 @@ const Header: FC<Props> = ({ disableCard }) => {
 
 				<Nav>
 					<Tooltip enterDelay={500} title='Инструкция'>
-						<NavBox width={50}>
-							<BarLink href={Instruction} onClick={readHandler} target='_blank'>
+						<NavBox onClick={readHandler}>
+							<BarLink href={Instruction} target='_blank'>
 								<HelpIcon sx={{ fill: 'var(--primary-color)', fontSize: 30 }} />
 							</BarLink>
 						</NavBox>

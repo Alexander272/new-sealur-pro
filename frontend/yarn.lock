@@ -1720,6 +1720,11 @@ react-is@^19.0.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.0.0.tgz#d6669fd389ff022a9684f708cf6fa4962d1fea7a"
   integrity sha512-H91OHcwjZsbq3ClIDHMzBShc1rotbfACdWENsmEf0IFvZ3FgGPtdHMcsv45bQ1hAbgdfiA8SnxTKfDS+x/8m2g==
 
+react-metrika@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/react-metrika/-/react-metrika-0.3.3.tgz#d50529c02cf9253da72c8d03fcaea2a9dc0adf20"
+  integrity sha512-o494gvJaqMJcioWSBESmZ5JpwzuNoiCpqvaIfgXKjggLqb0Xat67K0jXPrWcDc/G1ewGP+qqgw+Rw9usFAVcDg==
+
 react-redux@^9.2.0:
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-9.2.0.tgz#96c3ab23fb9a3af2cb4654be4b51c989e32366f5"

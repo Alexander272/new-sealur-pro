@@ -39,8 +39,6 @@ export const AppRouter = () => {
 
 	return (
 		<BrowserRouter>
-			{/* //TODO убрать коммент с метрики  */}
-			{/* <Metrics />*/}
 			<Routes>
 				<Route path='' element={<Base />}>
 					<Route path={PathRoutes.Auth.Base} element={<Auth />} />
