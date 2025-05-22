@@ -19,6 +19,7 @@ export const Base = () => {
 					options={{
 						trackHash: true,
 						clickmap: true,
+						trackLinks: true,
 						accurateTrackBounce: true,
 					}}
 				/>
