@@ -10,10 +10,10 @@ const (
 
 	SerratedStandardTable   = "serrated_standard"
 	SerratedFlangeTypeTable = "serrated_flange_type"
-	// WaveTypeTable         = "wave_type"
-	// WaveTypeBaseTable     = "wave_type_base"
-	// WaveConstructionTable = "wave_construction"
-	// SizeTable             = "wave_size"
+	TypeTable               = "serrated_type"
+	TypeBaseTable           = "serrated_type_base"
+	ConstructionTable       = "serrated_construction"
+	SizeTable               = "serrated_size"
 	// PlatingTable          = "wave_plating"
 	// WaveMaterialTable     = "wave_material"
 )

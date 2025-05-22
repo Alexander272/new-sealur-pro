@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify'
 
-import type { IFlangeType, ISerratedStandard } from './types/main'
+import type { IConstruction, IFlangeType, ISerratedStandard, ISerratedType } from './types/main'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 
@@ -34,7 +34,42 @@ export const serratedApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+		// получение типов прокладок
+		getSerratedTypes: builder.query<{ data: ISerratedType[] }, string>({
+			query: flange => ({
+				url: API.serrated.types,
+				params: new URLSearchParams({ flange }),
+			}),
+			providesTags: [{ type: 'Serrated', id: 'types' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить типы прокладок', { autoClose: false })
+				}
+			},
+		}),
+		// получение типов конструкций
+		getSerratedConstructions: builder.query<{ data: IConstruction[] }, string>({
+			query: type => ({
+				url: API.serrated.constructions,
+				params: new URLSearchParams({ type }),
+			}),
+			providesTags: [{ type: 'Serrated', id: 'constructions' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить типы конструкций', { autoClose: false })
+				}
+			},
+		}),
 	}),
 })
 
-export const { useGetSerratedStandardQuery, useGetSerratedFlangeTypesQuery } = serratedApi
+export const {
+	useGetSerratedStandardQuery,
+	useGetSerratedFlangeTypesQuery,
+	useGetSerratedTypesQuery,
+	useGetSerratedConstructionsQuery,
+} = serratedApi

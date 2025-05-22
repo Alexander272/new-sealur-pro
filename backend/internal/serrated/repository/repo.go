@@ -11,15 +11,30 @@ type StandardInfo interface {
 type FlangeType interface {
 	postgres.FlangeType
 }
+type SerratedType interface {
+	postgres.SerratedType
+}
+type SerratedTypeBase interface {
+	postgres.SerratedTypeBase
+}
+type Construction interface {
+	postgres.Construction
+}
 
 type Repository struct {
 	StandardInfo
 	FlangeType
+	SerratedType
+	SerratedTypeBase
+	Construction
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		StandardInfo: postgres.NewStandardInfoRepo(db),
-		FlangeType:   postgres.NewFlangeTypeRepo(db),
+		StandardInfo:     postgres.NewStandardInfoRepo(db),
+		FlangeType:       postgres.NewFlangeTypeRepo(db),
+		SerratedType:     postgres.NewTypeRepo(db),
+		SerratedTypeBase: postgres.NewSerratedTypeBaseRepo(db),
+		Construction:     postgres.NewConstructionRepo(db),
 	}
 }

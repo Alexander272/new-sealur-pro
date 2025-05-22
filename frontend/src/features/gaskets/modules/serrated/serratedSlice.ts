@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import type { RootState } from '@/app/store'
 import type { IDrawing } from '../../types/drawing'
-import type { IFlangeType, IMainSerrated, ISerratedStandard } from './types/main'
+import type { IConstruction, IFlangeType, IMainSerrated, ISerratedStandard, ISerratedType } from './types/main'
 import { localKeys } from '@/constants/localKeys'
 
 export interface ISerratedState {
@@ -10,9 +10,9 @@ export interface ISerratedState {
 	info: string
 
 	main: IMainSerrated
-	// material: IMaterialsWave
-	// size: ISizeWave
-	// design: IDesignWave
+	// material: IMaterialsSerrated
+	// size: ISizeSerrated
+	// design: IDesignSerrated
 
 	// designErrors: IDesignErrors
 	// sizeErrors: ISizeErrors
@@ -69,6 +69,14 @@ export const serratedSlice = createSlice({
 		setMainFlangeType: (state, action: PayloadAction<IFlangeType>) => {
 			state.main.flangeType = action.payload
 		},
+		// установка кода типа прокладки
+		setType: (state, action: PayloadAction<ISerratedType>) => {
+			state.main.type = action.payload
+		},
+		// установка тип конструкции
+		setConstruction: (state, action: PayloadAction<IConstruction>) => {
+			state.main.construction = action.payload
+		},
 	},
 })
 
@@ -78,14 +86,14 @@ export const serratedReducer = serratedSlice.reducer
 export const getMain = (state: RootState) => state.serrated.main
 export const getStandard = (state: RootState) => state.serrated.main.standard
 export const getFlangeType = (state: RootState) => state.serrated.main.flangeType
-// export const getType = (state: RootState) => state.wave.serrated.type
-// export const getConstruction = (state: RootState) => state.serrated.main.construction
+export const getType = (state: RootState) => state.serrated.main.type
+export const getConstruction = (state: RootState) => state.serrated.main.construction
 
 export const {
 	setMainStandard,
 	setMainFlangeType,
-	// setType,
-	// setConstruction,
+	setType,
+	setConstruction,
 	// setPlating,
 	// setMaterial,
 	// setDn,

@@ -3,8 +3,8 @@ import type { IFlangeStandard, IStandard } from '@/features/gaskets/modules/snp/
 export interface IMainSerrated {
 	standard?: ISerratedStandard
 	flangeType?: IFlangeType
-	// type?: IWaveType
-	// construction?: IConstruction
+	type?: ISerratedType
+	construction?: IConstruction
 }
 
 export interface ISerratedStandard {
@@ -19,4 +19,24 @@ export interface IFlangeType {
 	id: string
 	title: string
 	code: string
+}
+
+export interface ISerratedType {
+	id: string
+	baseId: string
+	title: string
+	code: string
+	description: string
+	hasD4: boolean
+	hasD3: boolean
+	hasD2: boolean
+	hasD1: boolean
+}
+
+export interface IConstruction {
+	id: string
+	title: string
+	code: string
+	description: string
+	hasMaterial: boolean
 }

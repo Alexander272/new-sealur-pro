@@ -101,5 +101,12 @@ export const API = Object.freeze({
 	serrated: {
 		standards: 'serrated/standard-info' as const,
 		flangeTypes: 'serrated/flange-types' as const,
+		types: 'serrated/types' as const,
+		constructions: 'serrated/constructions' as const,
+		sizes: {
+			base: 'serrated/sizes' as const,
+			dn: 'serrated/sizes/dn' as const,
+		},
+		materials: 'serrated/materials' as const,
 	},
 })

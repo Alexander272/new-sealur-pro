@@ -5,6 +5,9 @@ import "github.com/Alexander272/new-sealur-pro/internal/serrated/repository"
 type Services struct {
 	StandardInfo
 	FlangeType
+	SerratedType
+	SerratedTypeBase
+	Construction
 }
 
 type Deps struct {
@@ -14,9 +17,15 @@ type Deps struct {
 func NewServices(deps *Deps) *Services {
 	standardInfo := NewStandardInfoService(deps.Repos.StandardInfo)
 	flangeType := NewFlangeTypeService(deps.Repos.FlangeType)
+	serratedType := NewSerratedTypeService(deps.Repos.SerratedType)
+	baseSerratedType := NewSerratedTypeBaseService(deps.Repos.SerratedTypeBase)
+	construction := NewConstructionService(deps.Repos.Construction)
 
 	return &Services{
-		StandardInfo: standardInfo,
-		FlangeType:   flangeType,
+		StandardInfo:     standardInfo,
+		FlangeType:       flangeType,
+		SerratedType:     serratedType,
+		SerratedTypeBase: baseSerratedType,
+		Construction:     construction,
 	}
 }
