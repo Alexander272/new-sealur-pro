@@ -20,6 +20,9 @@ type SerratedTypeBase interface {
 type Construction interface {
 	postgres.Construction
 }
+type Size interface {
+	postgres.Size
+}
 
 type Repository struct {
 	StandardInfo
@@ -27,6 +30,7 @@ type Repository struct {
 	SerratedType
 	SerratedTypeBase
 	Construction
+	Size
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -36,5 +40,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		SerratedType:     postgres.NewTypeRepo(db),
 		SerratedTypeBase: postgres.NewSerratedTypeBaseRepo(db),
 		Construction:     postgres.NewConstructionRepo(db),
+		Size:             postgres.NewSizeRepo(db),
 	}
 }

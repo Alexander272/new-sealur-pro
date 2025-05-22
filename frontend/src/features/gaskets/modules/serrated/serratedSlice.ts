@@ -3,19 +3,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/app/store'
 import type { IDrawing } from '../../types/drawing'
 import type { IConstruction, IFlangeType, IMainSerrated, ISerratedStandard, ISerratedType } from './types/main'
+import type { DSize, ISize, ISizeSerrated } from './types/sizes'
 import { localKeys } from '@/constants/localKeys'
+import { ISizeErrors } from './types/errors'
 
 export interface ISerratedState {
 	amount: string
 	info: string
 
 	main: IMainSerrated
+	size: ISizeSerrated
 	// material: IMaterialsSerrated
-	// size: ISizeSerrated
 	// design: IDesignSerrated
 
 	// designErrors: IDesignErrors
-	// sizeErrors: ISizeErrors
+	sizeErrors: ISizeErrors
 
 	drawing?: IDrawing
 }
@@ -25,18 +27,18 @@ const initialState: ISerratedState = {
 	info: '',
 
 	main: {},
+	size: {
+		dn: '',
+		dnAlt: 0,
+		pn: '',
+		pnAlt: '',
+		d4: '',
+		d3: '',
+		d2: '',
+		d1: '',
+		h: '3.0',
+	},
 	// material: {},
-	// size: {
-	// 	dn: '',
-	// 	dnAlt: 0,
-	// 	pn: '',
-	// 	pnAlt: '',
-	// 	d4: '',
-	// 	d3: '',
-	// 	d2: '',
-	// 	d1: '',
-	// 	h: '3.0',
-	// },
 	// design: {
 	// 	jumper: {
 	// 		hasJumper: false,
@@ -54,7 +56,7 @@ const initialState: ISerratedState = {
 	// 	rounding: false,
 	// 	configuration: false,
 	// },
-	// sizeErrors: {},
+	sizeErrors: {},
 }
 
 export const serratedSlice = createSlice({
@@ -77,6 +79,22 @@ export const serratedSlice = createSlice({
 		setConstruction: (state, action: PayloadAction<IConstruction>) => {
 			state.main.construction = action.payload
 		},
+		//
+		setDn: (state, action: PayloadAction<number>) => {
+			state.size.dnAlt = action.payload
+		},
+		setSize: (state, action: PayloadAction<ISize>) => {
+			state.size = { ...state.size, ...action.payload }
+		},
+		setDSize: (state, action: PayloadAction<{ name: DSize; value: string }>) => {
+			state.size[action.payload.name] = action.payload.value
+		},
+		setThickness: (state, action: PayloadAction<string>) => {
+			state.size.h = action.payload
+		},
+		setSizeErrors: (state, action: PayloadAction<ISizeErrors>) => {
+			state.sizeErrors = { ...state.sizeErrors, ...action.payload }
+		},
 	},
 })
 
@@ -89,20 +107,26 @@ export const getFlangeType = (state: RootState) => state.serrated.main.flangeTyp
 export const getType = (state: RootState) => state.serrated.main.type
 export const getConstruction = (state: RootState) => state.serrated.main.construction
 
+export const getSize = (state: RootState) => state.serrated.size
+export const getSizeId = (state: RootState) => state.serrated.size.id
+export const getDn = (state: RootState) => state.serrated.size.dnAlt
+export const getPn = (state: RootState) => state.serrated.size.pn
+export const getH = (state: RootState) => state.serrated.size.h
+
+export const getSizeErrors = (state: RootState) => state.serrated.sizeErrors
+
 export const {
 	setMainStandard,
 	setMainFlangeType,
 	setType,
 	setConstruction,
+	setDn,
+	setSize,
+	setDSize,
+	setThickness,
+	setSizeErrors,
 	// setPlating,
 	// setMaterial,
-	// setDn,
-	// setSize,
-	// setDSize,
-	// setThickness,
-	// setSizeErrors,
-	// setUseDimensions,
-	// setHasRounding,
 	// setHasHole,
 	// setHasCoating,
 	// setWithRetainer,

@@ -8,6 +8,7 @@ type Services struct {
 	SerratedType
 	SerratedTypeBase
 	Construction
+	Size
 }
 
 type Deps struct {
@@ -20,6 +21,7 @@ func NewServices(deps *Deps) *Services {
 	serratedType := NewSerratedTypeService(deps.Repos.SerratedType)
 	baseSerratedType := NewSerratedTypeBaseService(deps.Repos.SerratedTypeBase)
 	construction := NewConstructionService(deps.Repos.Construction)
+	size := NewSizeService(deps.Repos.Size)
 
 	return &Services{
 		StandardInfo:     standardInfo,
@@ -27,5 +29,6 @@ func NewServices(deps *Deps) *Services {
 		SerratedType:     serratedType,
 		SerratedTypeBase: baseSerratedType,
 		Construction:     construction,
+		Size:             size,
 	}
 }
