@@ -46,6 +46,13 @@ export default function Gaskets() {
 				>
 					Волновые
 				</RadioItem>
+				<RadioItem
+					size='large'
+					value={PathRoutes.Gasket.Serrated}
+					active={location.pathname == PathRoutes.Gasket.Serrated}
+				>
+					Зубчатые
+				</RadioItem>
 			</RadioGroup>
 
 			<Suspense key={location.pathname} fallback={<GasketSkeleton />}>

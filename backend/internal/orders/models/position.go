@@ -5,12 +5,12 @@ import "fmt"
 type PositionType string
 
 const (
-	PositionTypeSnp  PositionType = "Snp"
-	PositionTypePutg PositionType = "Putg"
-	PositionTypeWave PositionType = "Wave"
-	// PositionTypePutgm PositionType = "Putgm"
-	PositionTypeRing PositionType = "Ring"
-	PositionTypeKit  PositionType = "RingsKit"
+	PositionTypeSnp      PositionType = "Snp"
+	PositionTypePutg     PositionType = "Putg"
+	PositionTypeWave     PositionType = "Wave"
+	PositionTypeSerrated PositionType = "Serrated"
+	PositionTypeRing     PositionType = "Ring"
+	PositionTypeKit      PositionType = "RingsKit"
 )
 
 type ShortPosition struct {

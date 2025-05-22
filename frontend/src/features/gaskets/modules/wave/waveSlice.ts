@@ -8,9 +8,9 @@ import type { DSize, ISize, ISizeWave } from './types/sizes'
 import type { IDesignWave } from './types/design'
 import type { IMaterialsWave, IPlating, TypeMaterial } from './types/material'
 import type { IDesignErrors, ISizeErrors } from './types/errors'
+import type { IWave } from './types/wave'
 import { localKeys } from '@/constants/localKeys'
 import { setActive } from '@/features/card/cardSlice'
-import { IWave } from './types/wave'
 
 export interface IWaveState {
 	amount: string

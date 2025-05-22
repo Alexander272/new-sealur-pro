@@ -6,6 +6,7 @@ import { cardPath, cardReducer } from '@/features/card/cardSlice'
 import { snpPath, snpReducer } from '@/features/gaskets/modules/snp/snpSlice'
 import { putgPath, putgReducer } from '@/features/gaskets/modules/putg/putgSlice'
 import { wavePath, waveReducer } from '@/features/gaskets/modules/wave/waveSlice'
+import { serratedPath, serratedReducer } from '@/features/gaskets/modules/serrated/serratedSlice'
 import { dialogPath, dialogReducer } from '@/features/dialogs/dialogSlice'
 import { dadataApi } from '@/features/auth/modules/dadata/dadataApiSlice'
 import { resetStoreListener } from './middlewares/resetStore'
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
 	[snpPath]: snpReducer,
 	[putgPath]: putgReducer,
 	[wavePath]: waveReducer,
+	[serratedPath]: serratedReducer,
 })
 
 export const store = configureStore({
