@@ -13,7 +13,7 @@ export const Pn = () => {
 	const dispatch = useAppDispatch()
 
 	const { data, isFetching } = useGetSerratedSizesQuery(
-		{ type: type?.id || '', dn: dn.toString() },
+		{ type: type?.id || '', dn: dn?.toString() },
 		{ skip: !type?.id || !dn }
 	)
 

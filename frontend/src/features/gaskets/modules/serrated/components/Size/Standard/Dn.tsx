@@ -31,7 +31,7 @@ export const Dn = () => {
 			{isFetching ? (
 				<Skeleton animation='wave' variant='rounded' height={40} sx={{ borderRadius: 3 }} />
 			) : (
-				<Select value={dn.toString() || 'not_selected'} onChange={dnHandler}>
+				<Select value={dn?.toString() || 'not_selected'} onChange={dnHandler}>
 					<MenuItem disabled value='not_selected'>
 						Выберите значение
 					</MenuItem>

@@ -1,7 +1,6 @@
 export interface IDesignErrors {
 	hole: boolean
 	jumper: boolean
-	rounding: boolean
 }
 
 export interface ISizeErrors {

@@ -14,6 +14,6 @@ const (
 	TypeBaseTable           = "serrated_type_base"
 	ConstructionTable       = "serrated_construction"
 	SizeTable               = "serrated_size"
-	// PlatingTable          = "wave_plating"
-	// WaveMaterialTable     = "wave_material"
+	PlatingTable            = "serrated_plating"
+	SerratedMaterialTable   = "serrated_material"
 )

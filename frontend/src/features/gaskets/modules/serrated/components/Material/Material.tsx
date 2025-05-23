@@ -4,8 +4,8 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 import type { TypeMaterial } from '../../types/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
-import { useGetWaveMaterialsQuery } from '../../waveApiSlice'
-import { getMaterials, setMaterial } from '../../waveSlice'
+import { useGetSerratedMaterialsQuery } from '../../serratedApiSlice'
+import { getMaterials, setMaterial } from '../../serratedSlice'
 
 type Props = {
 	title: string
@@ -21,7 +21,7 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty, related })
 
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetWaveMaterialsQuery(null)
+	const { data, isFetching, isUninitialized } = useGetSerratedMaterialsQuery(null)
 
 	useEffect(() => {
 		if (!data || isFetching || !active) return

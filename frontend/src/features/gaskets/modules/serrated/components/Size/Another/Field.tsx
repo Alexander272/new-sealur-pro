@@ -4,7 +4,7 @@ import { Typography } from '@mui/material'
 import type { DSize } from '../../../types/sizes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { Input } from '@/components/Input/input.style'
-import { getSize, setDSize } from '../../../waveSlice'
+import { getSize, setDSize } from '../../../serratedSlice'
 
 type Props = {
 	title: string

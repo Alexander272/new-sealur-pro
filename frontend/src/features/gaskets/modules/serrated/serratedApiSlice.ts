@@ -4,6 +4,7 @@ import type { IConstruction, IFlangeType, ISerratedStandard, ISerratedType } fro
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
 import { IDn, ISize } from './types/sizes'
+import { IMaterials, IPlating } from './types/material'
 
 export const serratedApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
@@ -99,6 +100,29 @@ export const serratedApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+
+		getSerratedPlating: builder.query<{ data: IPlating[] }, null>({
+			query: () => API.serrated.plating,
+			providesTags: [{ type: 'Serrated', id: 'plating' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить материалы основания', { autoClose: false })
+				}
+			},
+		}),
+		getSerratedMaterials: builder.query<{ data: IMaterials }, null>({
+			query: () => API.serrated.materials,
+			providesTags: [{ type: 'Serrated', id: 'materials' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить материалы', { autoClose: false })
+				}
+			},
+		}),
 	}),
 })
 
@@ -109,4 +133,6 @@ export const {
 	useGetSerratedConstructionsQuery,
 	useGetSerratedDnQuery,
 	useGetSerratedSizesQuery,
+	useGetSerratedPlatingQuery,
+	useGetSerratedMaterialsQuery,
 } = serratedApi
