@@ -9,16 +9,14 @@ type Construction struct {
 }
 
 type GetConstructionDTO struct {
-	TypeId string `json:"typeId" db:"type_id"`
+	TypeId     string `json:"typeId" db:"type_id"`
+	StandardId string `json:"standardId" db:"standard_id"`
 }
 
 type ConstructionDTO struct {
-	Id           string   `json:"id" db:"id"`
-	Title        string   `json:"title" db:"title"`
-	Code         string   `json:"code" db:"code"`
-	Description  string   `json:"description" db:"description"`
-	AllowedTypes []string `json:"allowedTypes" db:"allowed_types"`
-	HasMaterial  bool     `json:"hasMaterial" db:"has_material"`
+	Id         string `json:"id" db:"id"`
+	BaseId     string `json:"baseId" db:"base_id"`
+	StandardId string `json:"standardId" db:"standard_id"`
 }
 
 type DeleteConstructionDTO struct {

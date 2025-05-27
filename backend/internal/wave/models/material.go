@@ -8,6 +8,7 @@ type Material struct {
 	Code       string `json:"code"`
 	BaseCode   string `json:"baseCode"`
 	Title      string `json:"title"`
+	Short      string `json:"short"`
 }
 
 type Materials struct {

@@ -7,3 +7,11 @@ export interface IDesignWave {
 	withRetainer?: boolean
 	drawing?: string
 }
+
+export interface IWaveInfo {
+	id?: string
+	hasJumper?: boolean
+	hasHole?: boolean
+	hasCoating?: boolean
+	withRetainer?: boolean
+}

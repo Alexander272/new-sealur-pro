@@ -8,6 +8,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/models"
 	"github.com/Alexander272/new-sealur-pro/internal/wave/services"
+	"github.com/Alexander272/new-sealur-pro/internal/wave/transport/http/construction/base"
 	"github.com/Alexander272/new-sealur-pro/pkg/error_bot"
 	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -22,8 +23,8 @@ func NewHandler(service services.Construction) *Handler {
 	return &Handler{service: service}
 }
 
-func Register(api *gin.RouterGroup, service services.Construction, middleware *middleware.Middleware) {
-	handler := NewHandler(service)
+func Register(api *gin.RouterGroup, service *services.Services, middleware *middleware.Middleware) {
+	handler := NewHandler(service.Construction)
 
 	construction := api.Group("/constructions")
 	{
@@ -35,16 +36,22 @@ func Register(api *gin.RouterGroup, service services.Construction, middleware *m
 			write.DELETE("/:id", handler.delete)
 		}
 	}
+
+	base.Register(api, service.BaseConstruction, middleware)
 }
 
 func (h *Handler) get(c *gin.Context) {
 	typeId := c.Query("type")
 	if err := uuid.Validate(typeId); err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Идентификатор не задан")
 		return
 	}
+	standard := c.Query("standard")
+	if err := uuid.Validate(standard); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Стандарт не задан")
+	}
 
-	req := &models.GetConstructionDTO{TypeId: typeId}
+	req := &models.GetConstructionDTO{TypeId: typeId, StandardId: standard}
 	data, err := h.service.Get(c, req)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить данные")

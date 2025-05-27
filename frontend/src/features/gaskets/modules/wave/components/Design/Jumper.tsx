@@ -57,7 +57,7 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 				name='jumper'
 				label='Перемычка'
 				checked={jumper.hasJumper || false}
-				// disabled={disabled || jumperDisable}
+				disabled={disabled}
 				onChange={jumperHandler}
 			/>
 

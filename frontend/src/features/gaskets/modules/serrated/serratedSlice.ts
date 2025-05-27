@@ -8,6 +8,7 @@ import type { DSize, ISize, ISizeSerrated } from './types/sizes'
 import type { IDesignSerrated } from './types/design'
 import type { IDesignErrors, ISizeErrors } from './types/errors'
 import type { IMaterialsSerrated, IPlating, TypeMaterial } from './types/material'
+import type { ISerrated } from './types/serrated'
 import { localKeys } from '@/constants/localKeys'
 import { setActive } from '@/features/card/cardSlice'
 
@@ -137,7 +138,7 @@ export const serratedSlice = createSlice({
 		setDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {
 			state.drawing = action.payload
 			state.design.drawing = action.payload?.src
-			localStorage.setItem(localKeys.waveDrawing, JSON.stringify(action.payload || ''))
+			localStorage.setItem(localKeys.serratedDrawing, JSON.stringify(action.payload || ''))
 
 			state.designErrors.hole = !action.payload && (state.design.hasHole || false)
 			state.designErrors.jumper =
@@ -153,38 +154,37 @@ export const serratedSlice = createSlice({
 			state.amount = action.payload
 		},
 
-		//TODO
-		// setSerrated: (state, action: PayloadAction<{ data: IWave; amount: string; info?: string }>) => {
-		// 	state.main = action.payload.data.main
-		// 	state.size = action.payload.data.size
-		// 	state.material = action.payload.data.material
+		setSerrated: (state, action: PayloadAction<{ data: ISerrated; amount: string; info?: string }>) => {
+			state.main = action.payload.data.main
+			state.size = action.payload.data.size
+			state.material = action.payload.data.material
 
-		// 	state.design.hasHole = action.payload.data.design.hasHole || false
-		// 	state.design.hasCoating = action.payload.data.design.hasCoating || false
-		// 	state.design.withRetainer = action.payload.data.design.withRetainer || false
-		// 	state.design.jumper.hasJumper = action.payload.data.design.jumper.hasJumper || false
-		// 	state.design.jumper.code = action.payload.data.design.jumper.code
-		// 	state.design.jumper.width = action.payload.data.design.jumper.width
-		// 	state.design.drawing = action.payload.data.design.drawing
+			state.design.hasHole = action.payload.data.design.hasHole || false
+			state.design.hasCoating = action.payload.data.design.hasCoating || false
+			state.design.withRetainer = action.payload.data.design.withRetainer || false
+			state.design.jumper.hasJumper = action.payload.data.design.jumper.hasJumper || false
+			state.design.jumper.code = action.payload.data.design.jumper.code
+			state.design.jumper.width = action.payload.data.design.jumper.width
+			state.design.drawing = action.payload.data.design.drawing
 
-		// 	if (action.payload.data.design.drawing) {
-		// 		const params = new URLSearchParams(action.payload.data.design.drawing.split('?')[1])
-		// 		const id = params.get('name')?.split('_')[0]
-		// 		const drawing: IDrawing = {
-		// 			id: id || '',
-		// 			name: params.get('name') || '',
-		// 			origName: params.get('orig') || '',
-		// 			src: action.payload.data.design.drawing,
-		// 			group: params.get('group') || '',
-		// 		}
-		// 		state.drawing = drawing
-		// 	} else {
-		// 		state.drawing = undefined
-		// 	}
+			if (action.payload.data.design.drawing) {
+				const params = new URLSearchParams(action.payload.data.design.drawing.split('?')[1])
+				const id = params.get('name')?.split('_')[0]
+				const drawing: IDrawing = {
+					id: id || '',
+					name: params.get('name') || '',
+					origName: params.get('orig') || '',
+					src: action.payload.data.design.drawing,
+					group: params.get('group') || '',
+				}
+				state.drawing = drawing
+			} else {
+				state.drawing = undefined
+			}
 
-		// 	state.amount = action.payload.amount
-		// 	state.info = action.payload.info || ''
-		// },
+			state.amount = action.payload.amount
+			state.info = action.payload.info || ''
+		},
 		// сброс выбранной позиции
 		clearSerrated: state => {
 			state.drawing = JSON.parse(localStorage.getItem(localKeys.serratedDrawing) || 'null') || undefined
@@ -252,7 +252,7 @@ export const {
 	setDrawing,
 	setInfo,
 	setAmount,
-	// setSerrated,
+	setSerrated,
 	clearSerrated,
 	resetSerrated,
 } = serratedSlice.actions

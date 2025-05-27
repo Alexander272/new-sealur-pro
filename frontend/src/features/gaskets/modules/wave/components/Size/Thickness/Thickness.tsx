@@ -1,11 +1,20 @@
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getH, setThickness } from '../../../waveSlice'
+import { getH, getThicknesses, setThickness } from '../../../waveSlice'
+import { useEffect } from 'react'
+
+const defaultThicknesses = ['3.0', '3.5', '4.0', '4.5']
 
 export const Thickness = () => {
 	const h = useAppSelector(getH)
+	const thicknesses = useAppSelector(getThicknesses)
 	const dispatch = useAppDispatch()
+
+	useEffect(() => {
+		if (thicknesses && thicknesses.length > 0) dispatch(setThickness(thicknesses[0]))
+		else dispatch(setThickness(defaultThicknesses[0]))
+	}, [dispatch, thicknesses])
 
 	// const thicknessHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 	// 	const regex = /(^\d+[.,]?(\d{1})?)$/
@@ -23,15 +32,19 @@ export const Thickness = () => {
 			</Typography>
 
 			<Select
-				value={h || '3.0'}
+				value={h || defaultThicknesses[0]}
 				onChange={thicknessHandler}
-				size='small'
 				sx={{ borderRadius: '12px', width: '100%' }}
 			>
-				<MenuItem value={'3.0'}>3,0</MenuItem>
+				{(thicknesses && thicknesses.length > 0 ? thicknesses : defaultThicknesses).map((v, i) => (
+					<MenuItem key={i + '-' + v} value={v}>
+						{v.replace('.', ',')}
+					</MenuItem>
+				))}
+				{/* <MenuItem value={'3.0'}>3,0</MenuItem>
 				<MenuItem value={'3.5'}>3,5</MenuItem>
 				<MenuItem value={'4.0'}>4,0</MenuItem>
-				<MenuItem value={'4.5'}>4,5</MenuItem>
+				<MenuItem value={'4.5'}>4,5</MenuItem> */}
 			</Select>
 			{/* <Input
 				name='thickness'

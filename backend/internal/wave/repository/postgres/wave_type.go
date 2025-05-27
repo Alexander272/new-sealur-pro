@@ -28,7 +28,8 @@ type WaveType interface {
 }
 
 func (r *TypeRepo) Get(ctx context.Context, req *models.GetWaveTypesDTO) ([]*models.WaveType, error) {
-	query := fmt.Sprintf(`SELECT t.id, b.id AS base_id, title, code, description, priority, dn_range, width_range, has_d4, has_d3, has_d2, has_d1
+	query := fmt.Sprintf(`SELECT t.id, b.id AS base_id, title, COALESCE(NULLIF(t.code,''), b.code) AS code, b.code AS base_code,
+		description, priority, dn_range, width_range, has_d4, has_d3, has_d2, has_d1
 		FROM %s AS t LEFT JOIN %s AS b ON t.base_id = b.id
 		WHERE flange_id=$1 ORDER BY priority, dn_range`,
 		WaveTypeTable, WaveTypeBaseTable,
@@ -47,6 +48,7 @@ func (r *TypeRepo) Get(ctx context.Context, req *models.GetWaveTypesDTO) ([]*mod
 			BaseId:      v.BaseId,
 			Title:       v.Title,
 			Code:        v.Code,
+			BaseCode:    v.BaseCode,
 			Description: v.Description,
 			Priority:    v.Priority,
 			DnRange:     v.DnRange,
@@ -61,8 +63,8 @@ func (r *TypeRepo) Get(ctx context.Context, req *models.GetWaveTypesDTO) ([]*mod
 }
 
 func (r *TypeRepo) Create(ctx context.Context, dto *models.WaveTypeDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s (id, flange_id, base_id, priority, dn_range) 
-		VALUES (:id, :flange_id, :base_id, :priority, :dn_range)`,
+	query := fmt.Sprintf(`INSERT INTO %s (id, flange_id, base_id, code, priority, dn_range) 
+		VALUES (:id, :flange_id, :base_id, :code, :priority, :dn_range)`,
 		WaveTypeTable,
 	)
 	dto.Id = uuid.NewString()
@@ -71,6 +73,7 @@ func (r *TypeRepo) Create(ctx context.Context, dto *models.WaveTypeDTO) error {
 		Id:       dto.Id,
 		FlangeId: dto.FlangeId,
 		BaseId:   dto.BaseId,
+		Code:     dto.Code,
 		Priority: dto.Priority,
 		DnRange:  dto.DnRange,
 	}
@@ -83,7 +86,7 @@ func (r *TypeRepo) Create(ctx context.Context, dto *models.WaveTypeDTO) error {
 }
 
 func (r *TypeRepo) Update(ctx context.Context, dto *models.WaveTypeDTO) error {
-	query := fmt.Sprintf(`UPDATE %s SET flange_id=:flange_id, base_id=:base_id, priority=:priority WHERE id=:id`,
+	query := fmt.Sprintf(`UPDATE %s SET flange_id=:flange_id, base_id=:base_id, code=:code priority=:priority WHERE id=:id`,
 		WaveTypeTable,
 	)
 
@@ -91,6 +94,7 @@ func (r *TypeRepo) Update(ctx context.Context, dto *models.WaveTypeDTO) error {
 		Id:       dto.Id,
 		FlangeId: dto.FlangeId,
 		BaseId:   dto.BaseId,
+		Code:     dto.Code,
 		Priority: dto.Priority,
 		DnRange:  dto.DnRange,
 	}

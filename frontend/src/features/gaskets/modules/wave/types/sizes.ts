@@ -8,6 +8,7 @@ export interface ISizeWave {
 	d3: string
 	d2: string
 	d1: string
+	thicknesses?: string[]
 	h: string
 	useDimensions?: boolean
 	hasRounding?: boolean

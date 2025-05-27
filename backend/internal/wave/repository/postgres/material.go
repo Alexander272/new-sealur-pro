@@ -27,7 +27,7 @@ type Material interface {
 }
 
 func (r *MaterialRepo) Get(ctx context.Context, req *models.GetMaterialsDTO) (*models.Materials, error) {
-	query := fmt.Sprintf(`SELECT pm.id, material_id, type, is_default, pm.code, m.code as base_code, title
+	query := fmt.Sprintf(`SELECT pm.id, material_id, type, is_default, pm.code, m.code as base_code, title, short_en
 		FROM %s AS pm INNER JOIN %s AS m ON material_id=m.id ORDER BY type, count`,
 		WaveMaterialTable, MaterialTable,
 	)
@@ -49,6 +49,7 @@ func (r *MaterialRepo) Get(ctx context.Context, req *models.GetMaterialsDTO) (*m
 			Code:       m.Code,
 			BaseCode:   m.BaseCode,
 			Title:      m.Title,
+			Short:      m.Short,
 		}
 
 		if m.Type == "rotaryPlug" {

@@ -2,6 +2,7 @@ import { Content, PageTitle } from '@/features/gaskets/components/Skeletons/gask
 import { Design } from '@/features/gaskets/modules/serrated/components/Design/Design'
 import { Main } from '@/features/gaskets/modules/serrated/components/Main/Main'
 import { Materials } from '@/features/gaskets/modules/serrated/components/Material/Materials'
+import { Result } from '@/features/gaskets/modules/serrated/components/Result/Result'
 import { Size } from '@/features/gaskets/modules/serrated/components/Size/Size'
 
 export default function Serrated() {
@@ -13,7 +14,7 @@ export default function Serrated() {
 				<Materials />
 				<Size />
 				<Design />
-				{/* <Result /> */}
+				<Result />
 			</Content>
 		</>
 	)

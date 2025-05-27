@@ -56,25 +56,30 @@ export const useDesignation = () => {
 				)
 				return
 			}
+			const title = standard?.flangeStandard?.title.split(' (')[0]
 
 			setValue(
-				`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}) ${standard?.standard?.title}`
+				`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}, ${title}) ${standard?.standard?.title}`
 			)
 			return
 		}
 
-		let title = standard?.standard?.title
-		//  == ASME B 16.21 && != ASME B 16.5
-		if (
-			standard?.standard.id == '2f4150f0-9ab7-409a-815e-6bcc60cb5d86' &&
-			standard?.flangeStandard.id != '7d832d51-7645-4394-94dc-261959d9e374'
-		) {
-			title = standard?.flangeStandard.title
-		}
-
 		setValue(
-			`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}, ${title}) ТУ 5728-006-93978201-2008`
+			`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}) ${standard?.standard?.title}`
 		)
+
+		// let title = standard?.standard?.title
+		// //  == ASME B 16.21 && != ASME B 16.5
+		// if (
+		// 	standard?.standard.id == '2f4150f0-9ab7-409a-815e-6bcc60cb5d86' &&
+		// 	standard?.flangeStandard.id != '7d832d51-7645-4394-94dc-261959d9e374'
+		// ) {
+		// 	title = standard?.flangeStandard.title
+		// }
+
+		// setValue(
+		// 	`${res}-${size.dn}-${size.pn}-${h}${coating}${jumper}${materialsStr} ${designStr}(${sizes}, ${title}) ТУ 5728-006-93978201-2008`
+		// )
 	}, [design, main, material, size])
 
 	useEffect(() => {

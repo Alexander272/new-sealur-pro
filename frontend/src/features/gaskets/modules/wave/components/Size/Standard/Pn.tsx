@@ -17,9 +17,6 @@ export const Pn = () => {
 		{ skip: !type?.id || !dn }
 	)
 
-	// useEffect(() => {
-	// 	if (!data || !active) return
-	// }, [data, active, dispatch, pnMpa])
 	useEffect(() => {
 		if (!data || data.data[0]?.dnAlt != dn) return
 		const idx = data.data.findIndex(s => s.pn === pn)

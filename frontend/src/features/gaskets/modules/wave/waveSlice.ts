@@ -259,6 +259,7 @@ export const getSizeId = (state: RootState) => state.wave.size.id
 export const getDn = (state: RootState) => state.wave.size.dnAlt
 export const getPn = (state: RootState) => state.wave.size.pn
 export const getH = (state: RootState) => state.wave.size.h
+export const getThicknesses = (state: RootState) => state.wave.size.thicknesses
 export const getUseDimensions = (state: RootState) => state.wave.size.useDimensions
 export const getHasRounding = (state: RootState) => state.wave.size.hasRounding
 

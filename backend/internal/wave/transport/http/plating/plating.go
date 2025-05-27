@@ -38,7 +38,13 @@ func Register(api *gin.RouterGroup, service services.Plating, middleware *middle
 }
 
 func (h *Handler) get(c *gin.Context) {
-	req := &models.GetPlatingDTO{}
+	standard := c.Query("standard")
+	if err := uuid.Validate(standard); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Стандарт не задан")
+		return
+	}
+
+	req := &models.GetPlatingDTO{StandardId: standard}
 	data, err := h.service.Get(c, req)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить данные")
@@ -68,7 +74,7 @@ func (h *Handler) update(c *gin.Context) {
 	id := c.Param("id")
 	err := uuid.Validate(id)
 	if err != nil {
-		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Идентификатор не задан")
 		return
 	}
 

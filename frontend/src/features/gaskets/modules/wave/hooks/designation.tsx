@@ -37,12 +37,29 @@ export const useDesignation = () => {
 		const res = `Прокладка ПУТГм-${main.flangeType?.code}-${main.type?.code}-${main.construction?.code}`
 
 		if (main.configuration?.code == 'oval') {
-			setValue(`${res}-...x...-...${coating}${parts}${materialsStr} ${designStr} ТУ 5728-006-93978201-2008`)
+			setValue(`${res}-...x...-...${coating}${parts}${materialsStr} ${designStr} ТУ 5728-013-93978201-2008`)
 			return
 		}
 
 		if (main.standard?.standard?.id == '793de235-19d6-43e8-9807-4382923235a2') {
-			setValue(`${res}-${size.dn}-${size.pn}-${h} (${main.standard.standard.title}) ТУ 5728-013-93978201-2008`)
+			let mat = ''
+			if (!material.base?.isDefault) {
+				mat = ' (основание - ' + material.base?.short + ')'
+			}
+
+			setValue(
+				`Прокладка волновая ${main.type?.code}-${size.dn}-${size.pn} ${main.standard.standard.title}${mat}`
+			)
+			// setValue(`${res}-${size.dn}-${size.pn}-${h} (${main.standard.standard.title}) ТУ 5728-013-93978201-2008`)
+			return
+		}
+
+		if (
+			main?.standard?.standard.id == '47ada632-c4e6-45df-a69e-1faf6dc91910' &&
+			main.standard?.flangeStandard.id != '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7'
+		) {
+			const title = main.standard?.flangeStandard?.title.split(' (')[0]
+			setValue(`${res}-${size.dn}-${size.pn}-${h} (${sizes}, ${title}) ТУ 5728-013-93978201-2008`)
 			return
 		}
 

@@ -4,18 +4,22 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetWaveConstructionsQuery } from '../../waveApiSlice'
-import { getConfiguration, getConstruction, getType, setConstruction } from '../../waveSlice'
+import { getConfiguration, getConstruction, getStandard, getType, setConstruction } from '../../waveSlice'
 
 export const Construction = () => {
 	const active = useAppSelector(getActive)
+	const standard = useAppSelector(getStandard)
 	const configuration = useAppSelector(getConfiguration)
 	const construction = useAppSelector(getConstruction)
 	const type = useAppSelector(getType)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetWaveConstructionsQuery(type?.baseId || '', {
-		skip: !type?.baseId,
-	})
+	const { data, isFetching, isUninitialized } = useGetWaveConstructionsQuery(
+		{ type: type?.baseId || '', standard: standard?.id || '' },
+		{
+			skip: !type?.baseId || !standard?.id,
+		}
+	)
 
 	useEffect(() => {
 		if (!data || active?.id || isFetching) return
@@ -56,6 +60,7 @@ export const Construction = () => {
 				<Select
 					value={construction?.code || 'not_selected'}
 					onChange={constructionHandler}
+					name='construction'
 					disabled={isFetching || isUninitialized}
 				>
 					<MenuItem disabled value='not_selected'>

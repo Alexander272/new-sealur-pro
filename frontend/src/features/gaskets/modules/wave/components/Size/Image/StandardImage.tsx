@@ -54,6 +54,11 @@ type Props = {
 
 export const StandardImage: FC<Props> = ({ type, construction }) => {
 	return (
-		<Image width={512} height={113} src={images.get(`${type?.code}_${construction?.code}`)} alt='gasket drawing' />
+		<Image
+			width={512}
+			height={113}
+			src={images.get(`${type?.baseCode}_${construction?.code}`)}
+			alt='gasket drawing'
+		/>
 	)
 }

@@ -41,6 +41,7 @@ export const FlangeType = () => {
 				<Select
 					value={flange?.id || 'not_selected'}
 					onChange={flangeTypeHandler}
+					name='flange'
 					disabled={Boolean(active?.id) || isFetching}
 				>
 					<MenuItem disabled value='not_selected'>

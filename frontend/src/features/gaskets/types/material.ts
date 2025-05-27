@@ -7,4 +7,5 @@ export interface IMaterial {
 	isStandard: boolean
 	baseCode: string
 	title: string
+	short?: string
 }

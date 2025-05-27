@@ -9,8 +9,6 @@ export interface ISizeSerrated {
 	d2: string
 	d1: string
 	h: string
-	useDimensions?: boolean
-	hasRounding?: boolean
 }
 
 export interface IDn {

@@ -97,6 +97,7 @@ export const API = Object.freeze({
 		},
 		plating: 'wave/plating' as const,
 		materials: 'wave/materials' as const,
+		info: 'wave/info' as const,
 	},
 	serrated: {
 		standards: 'serrated/standard-info' as const,

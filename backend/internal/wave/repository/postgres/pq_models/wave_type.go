@@ -8,6 +8,7 @@ type WaveType struct {
 	BaseId      string         `db:"base_id"`
 	Title       string         `db:"title"`
 	Code        string         `db:"code"`
+	BaseCode    string         `db:"base_code"`
 	Description string         `db:"description"`
 	Priority    int            `db:"priority"`
 	DnRange     pq.StringArray `db:"dn_range"`

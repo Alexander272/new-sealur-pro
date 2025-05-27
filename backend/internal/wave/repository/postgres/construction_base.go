@@ -10,25 +10,25 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type ConstructionRepo struct {
+type BaseConstructionRepo struct {
 	db *sqlx.DB
 }
 
-func NewConstructionRepo(db *sqlx.DB) *ConstructionRepo {
-	return &ConstructionRepo{
+func NewBaseConstructionRepo(db *sqlx.DB) *BaseConstructionRepo {
+	return &BaseConstructionRepo{
 		db: db,
 	}
 }
 
-type Construction interface {
-	Get(ctx context.Context, req *models.GetConstructionDTO) ([]*models.Construction, error)
-	Create(ctx context.Context, dto *models.ConstructionDTO) error
-	Update(ctx context.Context, dto *models.ConstructionDTO) error
-	Delete(ctx context.Context, dto *models.DeleteConstructionDTO) error
+type BaseConstruction interface {
+	Get(ctx context.Context, req *models.GetBaseConstructionDTO) ([]*models.Construction, error)
+	Create(ctx context.Context, dto *models.BaseConstructionDTO) error
+	Update(ctx context.Context, dto *models.BaseConstructionDTO) error
+	Delete(ctx context.Context, dto *models.DeleteBaseConstructionDTO) error
 }
 
-func (r *ConstructionRepo) Get(ctx context.Context, req *models.GetConstructionDTO) ([]*models.Construction, error) {
-	query := fmt.Sprintf(`SELECT id, title, code, description, has_material FROM %s WHERE $1::text=ANY(allowed_types) ORDER BY code`, WaveConstructionTable)
+func (r *BaseConstructionRepo) Get(ctx context.Context, req *models.GetBaseConstructionDTO) ([]*models.Construction, error) {
+	query := fmt.Sprintf(`SELECT id, title, code, description, has_material FROM %s WHERE $1::text=ANY(allowed_types) ORDER BY code`, BaseConstructionTable)
 
 	data := []*models.Construction{}
 	if err := r.db.SelectContext(ctx, &data, query, req.TypeId); err != nil {
@@ -37,10 +37,10 @@ func (r *ConstructionRepo) Get(ctx context.Context, req *models.GetConstructionD
 	return data, nil
 }
 
-func (r *ConstructionRepo) Create(ctx context.Context, dto *models.ConstructionDTO) error {
+func (r *BaseConstructionRepo) Create(ctx context.Context, dto *models.BaseConstructionDTO) error {
 	query := fmt.Sprintf(`INSERT INTO %s (id, title, code, description, allowed_types, has_material) 
 		VALUES (:id, :title, :code, :description, :allowed_types, :has_material)`,
-		WaveConstructionTable,
+		BaseConstructionTable,
 	)
 	dto.Id = uuid.NewString()
 
@@ -60,10 +60,10 @@ func (r *ConstructionRepo) Create(ctx context.Context, dto *models.ConstructionD
 	return nil
 }
 
-func (r *ConstructionRepo) Update(ctx context.Context, dto *models.ConstructionDTO) error {
+func (r *BaseConstructionRepo) Update(ctx context.Context, dto *models.BaseConstructionDTO) error {
 	query := fmt.Sprintf(`UPDATE %s SET title=:title, code=:code, description=:description, allowed_types=:allowed_types, 
 		has_material=:has_material WHERE id=:id`,
-		WaveConstructionTable,
+		BaseConstructionTable,
 	)
 
 	tmp := pq_models.ConstructionDTO{
@@ -82,8 +82,8 @@ func (r *ConstructionRepo) Update(ctx context.Context, dto *models.ConstructionD
 	return nil
 }
 
-func (r *ConstructionRepo) Delete(ctx context.Context, dto *models.DeleteConstructionDTO) error {
-	query := fmt.Sprintf(`DELETE FROM %s WHERE id=:id`, WaveConstructionTable)
+func (r *BaseConstructionRepo) Delete(ctx context.Context, dto *models.DeleteBaseConstructionDTO) error {
+	query := fmt.Sprintf(`DELETE FROM %s WHERE id=:id`, BaseConstructionTable)
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)
 	if err != nil {

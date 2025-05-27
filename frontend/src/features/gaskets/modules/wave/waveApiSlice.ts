@@ -2,9 +2,10 @@ import { toast } from 'react-toastify'
 
 import type { IConfiguration, IConstruction, IFlangeType, IWaveStandard, IWaveType } from './types/main'
 import type { IDn, ISize } from './types/sizes'
+import type { IMaterials, IPlating } from './types/material'
+import type { IWaveInfo } from './types/design'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
-import { IMaterials, IPlating } from './types/material'
 
 export const waveApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
@@ -64,10 +65,10 @@ export const waveApi = apiSlice.injectEndpoints({
 			},
 		}),
 		// получение типов конструкций
-		getWaveConstructions: builder.query<{ data: IConstruction[] }, string>({
-			query: type => ({
+		getWaveConstructions: builder.query<{ data: IConstruction[] }, { type: string; standard: string }>({
+			query: req => ({
 				url: API.wave.constructions,
-				params: new URLSearchParams({ type }),
+				params: new URLSearchParams(req),
 			}),
 			providesTags: [{ type: 'Wave', id: 'constructions' }],
 			onQueryStarted: async (_arg, api) => {
@@ -113,8 +114,11 @@ export const waveApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getWavePlating: builder.query<{ data: IPlating[] }, null>({
-			query: () => API.wave.plating,
+		getWavePlating: builder.query<{ data: IPlating[] }, string>({
+			query: standard => ({
+				url: API.wave.plating,
+				params: new URLSearchParams({ standard }),
+			}),
 			providesTags: [{ type: 'Wave', id: 'plating' }],
 			onQueryStarted: async (_arg, api) => {
 				try {
@@ -135,6 +139,20 @@ export const waveApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+		getWaveInfo: builder.query<{ data: IWaveInfo }, string>({
+			query: standard => ({
+				url: API.wave.info,
+				params: new URLSearchParams({ standard }),
+			}),
+			providesTags: [{ type: 'Wave', id: 'info' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить данные', { autoClose: false })
+				}
+			},
+		}),
 	}),
 })
 
@@ -148,4 +166,5 @@ export const {
 	useGetWaveMaterialsQuery,
 	useGetWaveDnQuery,
 	useGetWaveSizesQuery,
+	useGetWaveInfoQuery,
 } = waveApi

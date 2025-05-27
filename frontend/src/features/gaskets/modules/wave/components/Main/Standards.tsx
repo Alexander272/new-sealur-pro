@@ -47,6 +47,7 @@ export const Standards = () => {
 			) : (
 				<FormControl size='small'>
 					<Select
+						name='standard'
 						value={standard?.id || 'not_selected'}
 						onChange={standardHandler}
 						disabled={Boolean(active?.id) || isFetching}

@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS public.wave_type
     standard_id uuid NOT NULL,
     base_id uuid NOT NULL,
     priority integer NOT NULL,
+    code text COLLATE pg_catalog."default" DEFAULT ''::text,
     dn_range text[] COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT wave_type_pkey PRIMARY KEY (id),
     CONSTRAINT wave_type_base_id_fkey FOREIGN KEY (base_id)

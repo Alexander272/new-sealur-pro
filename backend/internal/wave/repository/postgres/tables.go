@@ -12,9 +12,11 @@ const (
 	WaveFlangeTypeTable   = "wave_flange_type"
 	WaveTypeTable         = "wave_type"
 	WaveTypeBaseTable     = "wave_type_base"
-	WaveConstructionTable = "wave_construction"
+	BaseConstructionTable = "wave_construction_base"
+	ConstructionsTable    = "wave_constructions"
 	SizeTable             = "wave_size"
 	PlatingTable          = "wave_plating"
 	WaveMaterialTable     = "wave_material"
 	ConfigurationTable    = "wave_configuration"
+	InfoTable             = "wave_data"
 )

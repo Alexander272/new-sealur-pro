@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS public.wave_size
     d3 text COLLATE pg_catalog."default" DEFAULT ''::text,
     d2 text COLLATE pg_catalog."default" DEFAULT ''::text,
     d1 text COLLATE pg_catalog."default" DEFAULT ''::text,
-    h text COLLATE pg_catalog."default" DEFAULT ''::text,
+    h text[] COLLATE pg_catalog."default" DEFAULT ARRAY[]::text[],
     CONSTRAINT wave_size_pkey PRIMARY KEY (id),
     CONSTRAINT wave_size_type_id_fkey FOREIGN KEY (type_id)
         REFERENCES public.wave_type (id) MATCH SIMPLE

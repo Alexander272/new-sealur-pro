@@ -9,4 +9,5 @@ type Material struct {
 	IsStandard bool   `db:"is_standard"`
 	BaseCode   string `db:"base_code"`
 	Title      string `db:"title"`
+	Short      string `db:"short_en"`
 }

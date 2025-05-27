@@ -45,6 +45,7 @@ export const Gasket = () => {
 				<Select
 					value={type?.id || 'not_selected'}
 					onChange={typeHandler}
+					name='gasket'
 					disabled={isFetching || isUninitialized}
 				>
 					<MenuItem disabled value='not_selected'>

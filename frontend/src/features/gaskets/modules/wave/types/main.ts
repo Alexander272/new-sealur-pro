@@ -35,6 +35,7 @@ export interface IWaveType {
 	baseId: string
 	title: string
 	code: string
+	baseCode: string
 	description: string
 	priority: number
 	dnRange: string[]

@@ -4,14 +4,15 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetWavePlatingQuery } from '../../waveApiSlice'
-import { getPlating, setPlating } from '../../waveSlice'
+import { getPlating, getStandard, setPlating } from '../../waveSlice'
 
 export const Plating = () => {
 	const active = useAppSelector(getActive)
+	const standard = useAppSelector(getStandard)
 	const plating = useAppSelector(getPlating)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetWavePlatingQuery(null)
+	const { data, isFetching, isUninitialized } = useGetWavePlatingQuery(standard?.id || '', { skip: !standard })
 
 	useEffect(() => {
 		if (data && !active?.id && !isFetching) dispatch(setPlating(data.data[0]))

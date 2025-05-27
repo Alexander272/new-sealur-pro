@@ -32,7 +32,7 @@ const (
 	WaveSizeTable          = "wave_size"
 	WaveTypeTable          = "wave_type"
 	WaveConfigurationTable = "wave_configuration"
-	WaveConstructionTable  = "wave_construction"
+	WaveConstructionTable  = "wave_construction_base"
 	WavePlatingTable       = "wave_plating"
 	WaveBaseTypeTable      = "wave_type_base"
 	WaveMaterialTable      = "wave_material"
