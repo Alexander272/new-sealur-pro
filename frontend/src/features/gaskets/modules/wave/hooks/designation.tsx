@@ -29,10 +29,7 @@ export const useDesignation = () => {
 		const coating = design.hasCoating ? '/СК' : ''
 
 		const materials = [material.base?.code || '0', material.rotaryPlug?.code || '0', material.plating?.code || '0']
-		let materialsStr = ''
-		// if (construction?.hasRotaryPlug || construction?.hasInnerRing || construction?.hasOuterRing) {
-		materialsStr = `-${materials.join('')}`
-		// }
+		const materialsStr = `-${materials.join('')}`
 
 		const res = `Прокладка ПУТГм-${main.flangeType?.code}-${main.type?.code}-${main.construction?.code}`
 
@@ -59,7 +56,9 @@ export const useDesignation = () => {
 			main.standard?.flangeStandard.id != '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7'
 		) {
 			const title = main.standard?.flangeStandard?.title.split(' (')[0]
-			setValue(`${res}-${size.dn}-${size.pn}-${h} (${sizes}, ${title}) ТУ 5728-013-93978201-2008`)
+			setValue(
+				`${res}-${size.dn}-${size.pn}-${h}${coating}${parts}${materialsStr} ${designStr} (${sizes}, ${title}) ТУ 5728-013-93978201-2008`
+			)
 			return
 		}
 

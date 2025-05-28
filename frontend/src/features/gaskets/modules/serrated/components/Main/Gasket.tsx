@@ -44,7 +44,7 @@ export const Gasket = () => {
 				<Select
 					value={type?.id || 'not_selected'}
 					onChange={typeHandler}
-					disabled={isFetching || isUninitialized || data?.data.length == 1}
+					disabled={isFetching || isUninitialized}
 				>
 					<MenuItem disabled value='not_selected'>
 						Выберите тип прокладки

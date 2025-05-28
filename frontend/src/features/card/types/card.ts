@@ -39,7 +39,7 @@ export type Position = PositionSnp | PositionPutg | PositionWave | PositionSerra
 export interface IActive {
 	index: number
 	id: string
-	type: SnpType | PutgType | WaveType
+	type: PositionType
 }
 
 export interface ICopyPosition {

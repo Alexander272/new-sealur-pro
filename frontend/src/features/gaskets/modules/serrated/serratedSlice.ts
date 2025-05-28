@@ -216,6 +216,7 @@ export const getSizeId = (state: RootState) => state.serrated.size.id
 export const getDn = (state: RootState) => state.serrated.size.dnAlt
 export const getPn = (state: RootState) => state.serrated.size.pn
 export const getH = (state: RootState) => state.serrated.size.h
+export const getThicknesses = (state: RootState) => state.serrated.size.thicknesses
 
 export const getMaterials = (state: RootState) => state.serrated.material
 export const getPlating = (state: RootState) => state.serrated.material.plating

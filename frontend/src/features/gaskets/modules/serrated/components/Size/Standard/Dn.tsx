@@ -17,7 +17,7 @@ export const Dn = () => {
 
 	useEffect(() => {
 		if (!data || active) return
-		dispatch(setDn(data.data[0]?.alt))
+		if (!dn) dispatch(setDn(data.data[0]?.alt))
 	}, [data, dn, active, dispatch])
 
 	const dnHandler = (event: SelectChangeEvent) => {

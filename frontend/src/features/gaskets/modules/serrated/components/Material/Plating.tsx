@@ -4,14 +4,17 @@ import { MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetSerratedPlatingQuery } from '../../serratedApiSlice'
-import { getPlating, setPlating } from '../../serratedSlice'
+import { getPlating, getStandard, setPlating } from '../../serratedSlice'
 
 export const Plating = () => {
 	const active = useAppSelector(getActive)
+	const standard = useAppSelector(getStandard)
 	const plating = useAppSelector(getPlating)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching, isUninitialized } = useGetSerratedPlatingQuery(null)
+	const { data, isFetching, isUninitialized } = useGetSerratedPlatingQuery(standard?.id || '', {
+		skip: !standard?.id,
+	})
 
 	useEffect(() => {
 		if (data && !active?.id && !isFetching) dispatch(setPlating(data.data[0]))

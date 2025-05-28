@@ -27,23 +27,42 @@ export const useDesignation = () => {
 		const coating = design.hasCoating ? '/СК' : ''
 
 		const materials = [material.base?.code || '0', material.rotaryPlug?.code || '0', material.plating?.code || '0']
-		let materialsStr = ''
-		// if (construction?.hasRotaryPlug || construction?.hasInnerRing || construction?.hasOuterRing) {
-		materialsStr = `-${materials.join('')}`
-		// }
+		const materialsStr = `-${materials.join('')}`
 
 		const res = `Прокладка ПУТГм-${main.flangeType?.code}-${main.type?.code}-${main.construction?.code}`
 
-		//* != ТУ 5728-013-93978201-2008
-		if (main.standard?.standard?.id != '47ada632-c4e6-45df-a69e-1faf6dc91910') {
+		if (main.standard?.standard?.id == '7b6b3272-88d0-4a1a-b6c8-ce07ac7b3255') {
+			let mat = ''
+			if (!material.base?.isDefault) {
+				mat = ' (основание - ' + material.base?.short + ')'
+			}
+
 			setValue(
-				`${res}-${size.dn}-${size.pn}-${h} (${main?.standard?.flangeStandard?.title}) ТУ 5728-013-93978201-2008`
+				`Прокладка зубчатая ${main.type?.code}-${size.dn}-${size.pn} ${main.standard.standard.title}${mat}`
 			)
 			return
 		}
 
 		//* ТУ 5728-013-93978201-2008
-		setValue(`${res}-${sizes}-${h}${coating}${parts}${materialsStr} ${designStr} ТУ 5728-013-93978201-2008`)
+		if (main.standard?.standard.id == '47ada632-c4e6-45df-a69e-1faf6dc91910') {
+			// == нестандартные фланцы
+			if (main.standard.flangeStandard.id == '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7') {
+				setValue(
+					`${res}-${sizes}-${h}${coating}${parts}${materialsStr} ${designStr}${main.standard?.standard?.title}`
+				)
+				return
+			}
+			const title = main.standard?.flangeStandard?.title.split(' (')[0]
+
+			setValue(
+				`${res}-${size.dn}-${size.pn}-${h}${coating}${parts}${materialsStr} ${designStr}(${sizes}, ${title}) ${main.standard?.standard?.title}`
+			)
+			return
+		}
+
+		setValue(
+			`${res}-${size.dn}-${size.pn}-${h}${coating}${parts}${materialsStr} ${designStr}(${sizes}) ${main.standard?.standard?.title}`
+		)
 	}, [design, main, material, size])
 
 	useEffect(() => {

@@ -7,3 +7,11 @@ export interface IDesignSerrated {
 	withRetainer?: boolean
 	drawing?: string
 }
+
+export interface ISerratedInfo {
+	id?: string
+	hasJumper?: boolean
+	hasHole?: boolean
+	hasCoating?: boolean
+	withRetainer?: boolean
+}

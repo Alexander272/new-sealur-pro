@@ -1,10 +1,11 @@
 import { toast } from 'react-toastify'
 
 import type { IConstruction, IFlangeType, ISerratedStandard, ISerratedType } from './types/main'
+import type { IDn, ISize } from './types/sizes'
+import type { IMaterials, IPlating } from './types/material'
+import type { ISerratedInfo } from './types/design'
 import { API } from '@/app/api'
 import { apiSlice } from '@/app/apiSlice'
-import { IDn, ISize } from './types/sizes'
-import { IMaterials, IPlating } from './types/material'
 
 export const serratedApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
@@ -101,8 +102,11 @@ export const serratedApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getSerratedPlating: builder.query<{ data: IPlating[] }, null>({
-			query: () => API.serrated.plating,
+		getSerratedPlating: builder.query<{ data: IPlating[] }, string>({
+			query: standard => ({
+				url: API.serrated.plating,
+				params: new URLSearchParams({ standard }),
+			}),
 			providesTags: [{ type: 'Serrated', id: 'plating' }],
 			onQueryStarted: async (_arg, api) => {
 				try {
@@ -123,6 +127,20 @@ export const serratedApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+		getSerratedInfo: builder.query<{ data: ISerratedInfo }, string>({
+			query: standard => ({
+				url: API.serrated.info,
+				params: new URLSearchParams({ standard }),
+			}),
+			providesTags: [{ type: 'Serrated', id: 'info' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить данные', { autoClose: false })
+				}
+			},
+		}),
 	}),
 })
 
@@ -135,4 +153,5 @@ export const {
 	useGetSerratedSizesQuery,
 	useGetSerratedPlatingQuery,
 	useGetSerratedMaterialsQuery,
+	useGetSerratedInfoQuery,
 } = serratedApi

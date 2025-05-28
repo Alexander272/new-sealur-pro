@@ -110,5 +110,6 @@ export const API = Object.freeze({
 		},
 		plating: 'serrated/plating' as const,
 		materials: 'serrated/materials' as const,
+		info: 'serrated/info' as const,
 	},
 })

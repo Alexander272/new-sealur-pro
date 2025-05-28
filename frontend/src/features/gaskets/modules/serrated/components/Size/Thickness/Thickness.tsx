@@ -1,11 +1,20 @@
+import { useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getH, setThickness } from '../../../serratedSlice'
+import { getH, getThicknesses, setThickness } from '../../../serratedSlice'
+
+const defaultThicknesses = ['2.0', '2.5', '3.0', '4.0']
 
 export const Thickness = () => {
 	const h = useAppSelector(getH)
+	const thicknesses = useAppSelector(getThicknesses)
 	const dispatch = useAppDispatch()
+
+	useEffect(() => {
+		if (thicknesses && thicknesses.length > 0) dispatch(setThickness(thicknesses[0]))
+		else dispatch(setThickness(defaultThicknesses[0]))
+	}, [dispatch, thicknesses])
 
 	// const thicknessHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 	// 	const regex = /(^\d+[.,]?(\d{1})?)$/
@@ -28,10 +37,11 @@ export const Thickness = () => {
 				size='small'
 				sx={{ borderRadius: '12px', width: '100%' }}
 			>
-				<MenuItem value={'3.0'}>3,0</MenuItem>
-				<MenuItem value={'3.5'}>3,5</MenuItem>
-				<MenuItem value={'4.0'}>4,0</MenuItem>
-				<MenuItem value={'4.5'}>4,5</MenuItem>
+				{(thicknesses && thicknesses.length > 0 ? thicknesses : defaultThicknesses).map((v, i) => (
+					<MenuItem key={i + '-' + v} value={v}>
+						{v.replace('.', ',')}
+					</MenuItem>
+				))}
 			</Select>
 			{/* <Input
 				name='thickness'

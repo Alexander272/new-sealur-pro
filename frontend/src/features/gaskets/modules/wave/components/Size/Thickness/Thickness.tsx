@@ -1,8 +1,8 @@
+import { useEffect } from 'react'
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getH, getThicknesses, setThickness } from '../../../waveSlice'
-import { useEffect } from 'react'
 
 const defaultThicknesses = ['3.0', '3.5', '4.0', '4.5']
 

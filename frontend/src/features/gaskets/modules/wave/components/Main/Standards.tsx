@@ -27,8 +27,9 @@ export const Standards = () => {
 
 	useEffect(() => {
 		if (!data || active?.id || isFetching) return
-		dispatch(setMainStandard(data.data[0]))
-	}, [data, active, isFetching, dispatch])
+		if (configuration?.code != 'round') dispatch(setMainStandard(data.data[data.data.length - 1]))
+		else dispatch(setMainStandard(data.data[0]))
+	}, [data, active, configuration, isFetching, dispatch])
 
 	const standardHandler = (event: SelectChangeEvent<string>) => {
 		const standard = data?.data.find(s => s.id === event.target.value)
