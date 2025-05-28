@@ -6,6 +6,7 @@ type SerratedType struct {
 	BaseId      string `json:"baseId" db:"base_id"`
 	Title       string `json:"title" db:"title"`
 	Code        string `json:"code" db:"code"`
+	BaseCode    string `json:"baseCode" db:"base_code"`
 	Description string `json:"description" db:"description"`
 	HasD4       bool   `json:"hasD4" db:"has_d4"`
 	HasD3       bool   `json:"hasD3" db:"has_d3"`
@@ -21,6 +22,7 @@ type SerratedTypeDTO struct {
 	Id       string `json:"id" db:"id"`
 	FlangeId string `json:"flangeId" db:"flange_id"`
 	BaseId   string `json:"baseId" db:"base_id"`
+	Code     string `json:"code" db:"code"`
 }
 
 type DeleteSerratedTypeDTO struct {

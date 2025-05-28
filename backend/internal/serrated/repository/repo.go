@@ -29,6 +29,9 @@ type Plating interface {
 type Material interface {
 	postgres.Material
 }
+type Info interface {
+	postgres.Info
+}
 
 type Repository struct {
 	StandardInfo
@@ -39,6 +42,7 @@ type Repository struct {
 	Size
 	Plating
 	Material
+	Info
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -51,5 +55,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Size:             postgres.NewSizeRepo(db),
 		Plating:          postgres.NewPlatingRepo(db),
 		Material:         postgres.NewMaterialRepo(db),
+		Info:             postgres.NewInfoRepo(db),
 	}
 }

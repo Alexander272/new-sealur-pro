@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Alexander272/new-sealur-pro/internal/putg/repository/postgres/pg_models"
 	"github.com/Alexander272/new-sealur-pro/internal/serrated/models"
+	"github.com/Alexander272/new-sealur-pro/internal/serrated/repository/postgres/pq_models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -27,11 +27,11 @@ type Material interface {
 }
 
 func (r *MaterialRepo) Get(ctx context.Context, req *models.GetMaterialsDTO) (*models.Materials, error) {
-	query := fmt.Sprintf(`SELECT pm.id, material_id, type, is_default, pm.code, m.code as base_code, title
+	query := fmt.Sprintf(`SELECT pm.id, material_id, type, is_default, pm.code, m.code as base_code, title, short_en
 		FROM %s AS pm INNER JOIN %s AS m ON material_id=m.id ORDER BY type, count`,
 		SerratedMaterialTable, MaterialTable,
 	)
-	data := []*pg_models.Material{}
+	data := []*pq_models.Material{}
 
 	if err := r.db.SelectContext(ctx, &data, query); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
@@ -49,6 +49,7 @@ func (r *MaterialRepo) Get(ctx context.Context, req *models.GetMaterialsDTO) (*m
 			Code:       m.Code,
 			BaseCode:   m.BaseCode,
 			Title:      m.Title,
+			Short:      m.Short,
 		}
 
 		if m.Type == "rotaryPlug" {
@@ -79,7 +80,7 @@ func (r *MaterialRepo) GetByType(ctx context.Context, req *models.GetMaterialsBy
 		FROM %s AS pm INNER JOIN %s AS m ON material_id=m.id WHERE type=$1 ORDER BY count`,
 		SerratedMaterialTable, MaterialTable,
 	)
-	data := []*pg_models.Material{}
+	data := []*pq_models.Material{}
 
 	if err := r.db.SelectContext(ctx, &data, query, req.Type); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)

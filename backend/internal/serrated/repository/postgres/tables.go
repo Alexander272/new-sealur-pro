@@ -16,4 +16,5 @@ const (
 	SizeTable               = "serrated_size"
 	PlatingTable            = "serrated_plating"
 	SerratedMaterialTable   = "serrated_material"
+	InfoTable               = "serrated_data"
 )

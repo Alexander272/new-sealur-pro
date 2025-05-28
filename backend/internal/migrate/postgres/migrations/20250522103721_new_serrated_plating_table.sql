@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS public.serrated_plating
 (
     id uuid NOT NULL,
     temperature_id uuid NOT NULL,
+    standard_id uuid,
     title text COLLATE pg_catalog."default" NOT NULL,
     code text COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" DEFAULT ''::text,

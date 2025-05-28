@@ -27,9 +27,10 @@ type SerratedType interface {
 }
 
 func (r *TypeRepo) Get(ctx context.Context, req *models.GetSerratedTypesDTO) ([]*models.SerratedType, error) {
-	query := fmt.Sprintf(`SELECT t.id, flange_id, b.id AS base_id, title, code, description, has_d4, has_d3, has_d2, has_d1
+	query := fmt.Sprintf(`SELECT t.id, flange_id, b.id AS base_id, title, COALESCE(NULLIF(t.code,''), b.code) AS code, b.code AS base_code,
+		description, has_d4, has_d3, has_d2, has_d1
 		FROM %s AS t LEFT JOIN %s AS b ON t.base_id = b.id
-		WHERE flange_id=$1 ORDER BY code`,
+		WHERE flange_id=$1 ORDER BY b.code`,
 		TypeTable, TypeBaseTable,
 	)
 	data := []*models.SerratedType{}
@@ -41,7 +42,7 @@ func (r *TypeRepo) Get(ctx context.Context, req *models.GetSerratedTypesDTO) ([]
 }
 
 func (r *TypeRepo) Create(ctx context.Context, dto *models.SerratedTypeDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s (id, flange_id, base_id) VALUES (:id, :flange_id, :base_id)`,
+	query := fmt.Sprintf(`INSERT INTO %s (id, flange_id, base_id, code) VALUES (:id, :flange_id, :base_id, :code)`,
 		TypeTable,
 	)
 	dto.Id = uuid.NewString()
@@ -54,7 +55,7 @@ func (r *TypeRepo) Create(ctx context.Context, dto *models.SerratedTypeDTO) erro
 }
 
 func (r *TypeRepo) Update(ctx context.Context, dto *models.SerratedTypeDTO) error {
-	query := fmt.Sprintf(`UPDATE %s SET flange_id=:flange_id, base_id=:base_id WHERE id=:id`,
+	query := fmt.Sprintf(`UPDATE %s SET flange_id=:flange_id, base_id=:base_id, code=:code WHERE id=:id`,
 		TypeTable,
 	)
 

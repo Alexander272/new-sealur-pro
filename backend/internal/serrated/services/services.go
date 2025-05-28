@@ -11,6 +11,7 @@ type Services struct {
 	Size
 	Plating
 	Material
+	Info
 }
 
 type Deps struct {
@@ -26,6 +27,7 @@ func NewServices(deps *Deps) *Services {
 	size := NewSizeService(deps.Repos.Size)
 	plating := NewPlatingService(deps.Repos.Plating)
 	material := NewMaterialService(deps.Repos.Material)
+	info := NewInfoService(deps.Repos.Info)
 
 	return &Services{
 		StandardInfo:     standardInfo,
@@ -36,5 +38,6 @@ func NewServices(deps *Deps) *Services {
 		Size:             size,
 		Plating:          plating,
 		Material:         material,
+		Info:             info,
 	}
 }

@@ -25,21 +25,24 @@ type Plating interface {
 }
 
 func (r *PlatingRepo) Get(ctx context.Context, req *models.GetPlatingDTO) ([]*models.Plating, error) {
-	query := fmt.Sprintf(`SELECT f.id, t.title as temperature, f.title, code, description, designation
-		FROM %s AS f INNER JOIN %s AS t ON temperature_id=t.id ORDER BY code`,
-		PlatingTable, TemperatureTable,
+	query := fmt.Sprintf(`SELECT f.id, COALESCE(f.standard_id::text, '') AS standard_id, t.title as temperature, f.title, 
+		code, description, designation FROM %s AS f 
+		INNER JOIN %s AS t ON temperature_id=t.id 
+		INNER JOIN LATERAL (SELECT COUNT(*) AS total FROM %s WHERE standard_id=$1) AS c ON true 
+		WHERE CASE WHEN total>0 THEN standard_id=$1 ELSE standard_id IS NULL END;`,
+		PlatingTable, TemperatureTable, PlatingTable,
 	)
 
 	data := []*models.Plating{}
-	if err := r.db.SelectContext(ctx, &data, query); err != nil {
+	if err := r.db.SelectContext(ctx, &data, query, req.StandardId); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 	return data, nil
 }
 
 func (r *PlatingRepo) Create(ctx context.Context, dto *models.PlatingDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s (id, temperature_id, title, code, description, designation) 
-		VALUES (:id, :temperature_id, :title, :code, :description, :designation)`,
+	query := fmt.Sprintf(`INSERT INTO %s (id, standard_id, temperature_id, title, code, description, designation) 
+		VALUES (:id, :standard_id, :temperature_id, :title, :code, :description, :designation)`,
 		PlatingTable,
 	)
 	dto.Id = uuid.NewString()
@@ -51,7 +54,7 @@ func (r *PlatingRepo) Create(ctx context.Context, dto *models.PlatingDTO) error 
 }
 
 func (r *PlatingRepo) Update(ctx context.Context, dto *models.PlatingDTO) error {
-	query := fmt.Sprintf(`UPDATE %s SET temperature_id=:temperature_id, title=:title, code=:code, 
+	query := fmt.Sprintf(`UPDATE %s SET temperature_id=:temperature_id, standard_id=:standard_id, title=:title, code=:code, 
 		description=:description, designation=:designation WHERE id=:id`,
 		PlatingTable,
 	)

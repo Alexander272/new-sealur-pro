@@ -4,6 +4,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/serrated/services"
 	"github.com/Alexander272/new-sealur-pro/internal/serrated/transport/http/construction"
 	"github.com/Alexander272/new-sealur-pro/internal/serrated/transport/http/flange_type"
+	"github.com/Alexander272/new-sealur-pro/internal/serrated/transport/http/info"
 	"github.com/Alexander272/new-sealur-pro/internal/serrated/transport/http/materials"
 	"github.com/Alexander272/new-sealur-pro/internal/serrated/transport/http/plating"
 	"github.com/Alexander272/new-sealur-pro/internal/serrated/transport/http/serrated_type"
@@ -32,4 +33,5 @@ func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) 
 	sizes.Register(serrated, h.services.Size, middleware)
 	plating.Register(serrated, h.services.Plating, middleware)
 	materials.Register(serrated, h.services.Material, middleware)
+	info.Register(serrated, h.services.Info, middleware)
 }

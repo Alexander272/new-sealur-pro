@@ -1,4 +1,4 @@
-package plating
+package info
 
 import (
 	"net/http"
@@ -15,20 +15,22 @@ import (
 )
 
 type Handler struct {
-	service services.Plating
+	service services.Info
 }
 
-func NewHandler(service services.Plating) *Handler {
-	return &Handler{service: service}
+func NewHandler(service services.Info) *Handler {
+	return &Handler{
+		service: service,
+	}
 }
 
-func Register(api *gin.RouterGroup, service services.Plating, middleware *middleware.Middleware) {
+func Register(api *gin.RouterGroup, service services.Info, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	plating := api.Group("/plating")
+	info := api.Group("/info")
 	{
-		plating.GET("", handler.get)
-		write := plating.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		info.GET("", handler.get)
+		write := info.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)
 			write.PUT("/:id", handler.update)
@@ -43,7 +45,7 @@ func (h *Handler) get(c *gin.Context) {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Стандарт не задан")
 		return
 	}
-	req := &models.GetPlatingDTO{StandardId: standard}
+	req := &models.GetInfoDTO{StandardId: standard}
 
 	data, err := h.service.Get(c, req)
 	if err != nil {
@@ -51,23 +53,23 @@ func (h *Handler) get(c *gin.Context) {
 		error_bot.Send(c, err.Error(), req)
 		return
 	}
-	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
+	c.JSON(http.StatusOK, response.DataResponse{Data: data})
 }
 
 func (h *Handler) create(c *gin.Context) {
-	dto := &models.PlatingDTO{}
+	dto := &models.InfoDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
 	}
 
 	if err := h.service.Create(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось создать материал основания")
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось создать информацию о прокладке")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Info("Материал основания создан", logger.AnyAttr("dto", dto))
-	c.JSON(http.StatusCreated, response.IdResponse{Message: "Материал основания создан"})
+	logger.Info("Информация о прокладке создана", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusCreated, response.IdResponse{Message: "Информация о прокладке создана"})
 }
 
 func (h *Handler) update(c *gin.Context) {
@@ -78,7 +80,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	dto := &models.PlatingDTO{}
+	dto := &models.InfoDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
@@ -86,27 +88,28 @@ func (h *Handler) update(c *gin.Context) {
 	dto.Id = id
 
 	if err := h.service.Update(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось обновить материал основания")
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось обновить информацию о прокладке")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Info("Материал основания обновлен", logger.AnyAttr("dto", dto))
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Материал основания обновлен"})
+	logger.Info("Информация о прокладке обновлена", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Информация о прокладке обновлена"})
 }
 
 func (h *Handler) delete(c *gin.Context) {
 	id := c.Param("id")
-	if err := uuid.Validate(id); err != nil {
+	err := uuid.Validate(id)
+	if err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
 		return
 	}
 
-	dto := &models.DeletePlatingDTO{Id: id}
+	dto := &models.DeleteInfoDTO{Id: id}
 	if err := h.service.Delete(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить материал основания")
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить информацию о прокладке")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Info("Материал основания удален", logger.StringAttr("id", id))
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Материал основания удален"})
+	logger.Info("Информация о прокладке удалена", logger.StringAttr("id", id))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Информация о прокладке удалена"})
 }
