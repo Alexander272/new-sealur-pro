@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS public.position_wave
     has_coating boolean DEFAULT false,
     with_retainer boolean DEFAULT false,
     drawing text COLLATE pg_catalog."default" DEFAULT ''::text,
-    created_at time with time zone DEFAULT now(),
+    created_at timestamp with time zone DEFAULT now(),
     CONSTRAINT position_wave_pkey PRIMARY KEY (id),
     CONSTRAINT position_wave_position_id_fkey FOREIGN KEY (position_id)
         REFERENCES public."position" (id) MATCH SIMPLE

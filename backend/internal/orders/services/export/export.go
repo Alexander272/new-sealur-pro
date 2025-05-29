@@ -94,6 +94,9 @@ func (s *ExportService) Prepare(ctx context.Context, dto *models.Order) (*models
 	if err := s.prepareWave(ctx, data); err != nil {
 		return nil, err
 	}
+	if err := s.prepareSerrated(ctx, data); err != nil {
+		return nil, err
+	}
 
 	if err := s.prepareBase(base); err != nil {
 		return nil, err

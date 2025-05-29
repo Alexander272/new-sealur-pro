@@ -39,7 +39,7 @@ func (r *PositionSerratedRepo) Get(ctx context.Context, req *models.GetPositions
 	query := fmt.Sprintf(`SELECT p.id, title, amount, type, count, info,
 		type_code, construction_code, plating_code,	base_id, rotary_plug_id, m.arr_mat_code,
 		COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, h,
-		has_rounding, jumper, jumper_width, has_hole, has_coating, with_retainer, drawing
+		jumper, jumper_width, has_hole, has_coating, with_retainer, drawing
 		FROM %s AS p INNER JOIN %s AS ps ON p.id=ps.position_id
 		LEFT JOIN LATERAL (SELECT code AS construction_code FROM %s WHERE id=ps.construction_id) AS con ON true
 		LEFT JOIN LATERAL (SELECT code AS plating_code FROM %s WHERE id=ps.plating_id) AS pl ON true
@@ -50,7 +50,7 @@ func (r *PositionSerratedRepo) Get(ctx context.Context, req *models.GetPositions
 			FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id
 			WHERE sm.id=ANY(ARRAY[ps.base_id, ps.rotary_plug_id])
 		) AS m ON true
-		WHERE order_id=$1 AND type=$2 ORDER BY configuration_code DESC, length(construction_code), count`,
+		WHERE order_id=$1 AND type=$2 ORDER BY count`,
 		PositionTable, PositionSerratedTable, SerratedConstructionTable, SerratedPlatingTable, SerratedTypeTable, SerratedBaseTypeTable,
 		SerratedSizeTable, SerratedMaterialTable, MaterialTable,
 	)

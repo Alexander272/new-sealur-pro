@@ -29,7 +29,8 @@ func (r *PlatingRepo) Get(ctx context.Context, req *models.GetPlatingDTO) ([]*mo
 		code, description, designation FROM %s AS f 
 		INNER JOIN %s AS t ON temperature_id=t.id 
 		INNER JOIN LATERAL (SELECT COUNT(*) AS total FROM %s WHERE standard_id=$1) AS c ON true 
-		WHERE CASE WHEN total>0 THEN standard_id=$1 ELSE standard_id IS NULL END;`,
+		WHERE CASE WHEN total>0 THEN standard_id=$1 ELSE standard_id IS NULL END
+		ORDER BY code`,
 		PlatingTable, TemperatureTable, PlatingTable,
 	)
 
