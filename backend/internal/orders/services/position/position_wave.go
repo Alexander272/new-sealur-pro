@@ -29,6 +29,7 @@ func NewPositionWaveService(repo repository.PositionWave, files services.Files) 
 type PositionWave interface {
 	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionWave, error)
+	GetDrawing(ctx context.Context, positionId string) (string, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
@@ -54,10 +55,21 @@ func (s *PositionWaveService) GetByPosition(ctx context.Context, positionId stri
 	return data, nil
 }
 
+func (s *PositionWaveService) GetDrawing(ctx context.Context, positionId string) (string, error) {
+	drawing, err := s.repo.GetDrawing(ctx, positionId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", base.ErrNoRows
+		}
+		return "", fmt.Errorf("failed to get wave drawing by position id. error: %w", err)
+	}
+	return drawing, nil
+}
+
 func (s *PositionWaveService) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {
 	drawing, err := s.repo.Copy(ctx, dto)
 	if err != nil {
-		return fmt.Errorf("failed to copy position putg. error: %w", err)
+		return fmt.Errorf("failed to copy wave position. error: %w", err)
 	}
 
 	if drawing == "" {
@@ -87,7 +99,7 @@ func (s *PositionWaveService) Copy(ctx context.Context, dto *models.CopyPosition
 
 func (s *PositionWaveService) CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error {
 	if err := s.repo.CopySeveral(ctx, dto); err != nil {
-		return fmt.Errorf("failed to copy several positions putg. error: %w", err)
+		return fmt.Errorf("failed to copy several wave positions. error: %w", err)
 	}
 	return nil
 }
@@ -105,7 +117,7 @@ func (s *PositionWaveService) Create(ctx context.Context, dto *models.PositionDT
 		Design:     dto.WaveData.Design,
 	}
 	if err := s.repo.Create(ctx, tmp); err != nil {
-		return fmt.Errorf("failed to create position putg. error: %w", err)
+		return fmt.Errorf("failed to create wave position. error: %w", err)
 	}
 	return nil
 }
@@ -123,7 +135,7 @@ func (s *PositionWaveService) Update(ctx context.Context, dto *models.PositionDT
 		Design:     dto.WaveData.Design,
 	}
 	if err := s.repo.Update(ctx, tmp); err != nil {
-		return fmt.Errorf("failed to update position putg. error: %w", err)
+		return fmt.Errorf("failed to update wave position. error: %w", err)
 	}
 	return nil
 }

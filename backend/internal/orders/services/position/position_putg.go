@@ -29,6 +29,7 @@ func NewPositionPutgService(repo repository.PositionPutg, files services.Files) 
 type PositionPutg interface {
 	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error)
+	GetDrawing(ctx context.Context, positionId string) (string, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
@@ -52,6 +53,17 @@ func (s *PositionPutgService) GetByPosition(ctx context.Context, positionId stri
 		return nil, fmt.Errorf("failed to get position putg by position id. error: %w", err)
 	}
 	return data, nil
+}
+
+func (s *PositionPutgService) GetDrawing(ctx context.Context, positionId string) (string, error) {
+	drawing, err := s.repo.GetDrawing(ctx, positionId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", base.ErrNoRows
+		}
+		return "", fmt.Errorf("failed to get putg drawing by position id. error: %w", err)
+	}
+	return drawing, nil
 }
 
 func (s *PositionPutgService) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {

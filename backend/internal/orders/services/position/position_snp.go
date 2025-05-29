@@ -29,6 +29,7 @@ func NewPositionSnpService(repo repository.PositionSnp, files services.Files) *P
 type PositionSnp interface {
 	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error)
+	GetDrawing(ctx context.Context, positionId string) (string, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) error
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionDTO) error
@@ -53,6 +54,17 @@ func (s *PositionSnpService) GetByPosition(ctx context.Context, positionId strin
 		return nil, fmt.Errorf("failed to get position snp by position id. error: %w", err)
 	}
 	return data, nil
+}
+
+func (s *PositionSnpService) GetDrawing(ctx context.Context, positionId string) (string, error) {
+	drawing, err := s.repo.GetDrawing(ctx, positionId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", base.ErrNoRows
+		}
+		return "", fmt.Errorf("failed to get snp drawing by position. error: %w", err)
+	}
+	return drawing, nil
 }
 
 func (s *PositionSnpService) Copy(ctx context.Context, dto *models.CopyPositionDTO) error {

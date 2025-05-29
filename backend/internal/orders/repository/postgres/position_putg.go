@@ -26,6 +26,7 @@ func NewPositionPutgRepo(db *sqlx.DB) *PositionPutgRepo {
 type PositionPutg interface {
 	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error)
+	GetDrawing(ctx context.Context, positionId string) (string, error)
 	Create(ctx context.Context, dto *models.PositionPutgDTO) error
 	CreateSeveral(ctx context.Context, dto []*models.PositionPutgDTO) error
 	Update(ctx context.Context, dto *models.PositionPutgDTO) error
@@ -199,6 +200,19 @@ func (r *PositionPutgRepo) GetByPosition(ctx context.Context, positionId string)
 	}
 
 	return data, nil
+}
+
+func (r *PositionPutgRepo) GetDrawing(ctx context.Context, positionId string) (string, error) {
+	query := fmt.Sprintf(`SELECT id, position_id, drawing FROM %s WHERE position_id=$1`, PositionPutgTable)
+
+	data := &pq_models.PositionSnp{}
+	if err := r.db.GetContext(ctx, data, query, positionId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", base.ErrNoRows
+		}
+		return "", fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return data.Drawing, nil
 }
 
 func (r *PositionPutgRepo) Create(ctx context.Context, dto *models.PositionPutgDTO) error {

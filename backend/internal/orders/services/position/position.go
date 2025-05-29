@@ -15,28 +15,31 @@ import (
 )
 
 type PositionService struct {
-	repo  repository.Position
-	snp   PositionSnp
-	putg  PositionPutg
-	wave  PositionWave
-	files services.Files
+	repo     repository.Position
+	snp      PositionSnp
+	putg     PositionPutg
+	wave     PositionWave
+	serrated PositionSerrated
+	files    services.Files
 }
 
 type PositionDeps struct {
-	Repo  repository.Position
-	Snp   PositionSnp
-	Putg  PositionPutg
-	Wave  PositionWave
-	Files services.Files
+	Repo     repository.Position
+	Snp      PositionSnp
+	Putg     PositionPutg
+	Wave     PositionWave
+	Serrated PositionSerrated
+	Files    services.Files
 }
 
 func NewPositionService(deps *PositionDeps) *PositionService {
 	return &PositionService{
-		repo:  deps.Repo,
-		snp:   deps.Snp,
-		putg:  deps.Putg,
-		wave:  deps.Wave,
-		files: deps.Files,
+		repo:     deps.Repo,
+		snp:      deps.Snp,
+		putg:     deps.Putg,
+		wave:     deps.Wave,
+		serrated: deps.Serrated,
+		files:    deps.Files,
 	}
 }
 
@@ -72,6 +75,8 @@ func (s *PositionService) GetById(ctx context.Context, id string) (*models.Posit
 		data.Data, err = s.putg.GetByPosition(ctx, id)
 	case models.PositionTypeWave:
 		data.Data, err = s.wave.GetByPosition(ctx, id)
+	case models.PositionTypeSerrated:
+		data.Data, err = s.serrated.GetByPosition(ctx, id)
 	}
 	if err != nil {
 		return nil, err
@@ -127,14 +132,15 @@ func (s *PositionService) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 	// 	return fmt.Errorf("failed to copy position. error: %w", err)
 	// }
 
-	if pos.Type == models.PositionTypeSnp {
+	switch pos.Type {
+	case models.PositionTypeSnp:
 		err = s.snp.Copy(ctx, dto)
-	}
-	if pos.Type == models.PositionTypePutg {
+	case models.PositionTypePutg:
 		err = s.putg.Copy(ctx, dto)
-	}
-	if pos.Type == models.PositionTypeWave {
+	case models.PositionTypeWave:
 		err = s.wave.Copy(ctx, dto)
+	case models.PositionTypeSerrated:
+		err = s.serrated.Copy(ctx, dto)
 	}
 	if err != nil {
 		s.Delete(ctx, &models.DeletePositionDTO{Id: data.Id})
@@ -194,16 +200,18 @@ func (s *PositionService) CopySeveral(ctx context.Context, dto []*models.CopyPos
 	snpDTO := []*models.CopyPositionDTO{}
 	putgDTO := []*models.CopyPositionDTO{}
 	waveDTO := []*models.CopyPositionDTO{}
+	serratedDTO := []*models.CopyPositionDTO{}
 	for _, v := range data {
 		filtered[v.Title].NewId = v.Id
-		if v.Type == models.PositionTypeSnp {
+		switch v.Type {
+		case models.PositionTypeSnp:
 			snpDTO = append(snpDTO, filtered[v.Title])
-		}
-		if v.Type == models.PositionTypePutg {
+		case models.PositionTypePutg:
 			putgDTO = append(putgDTO, filtered[v.Title])
-		}
-		if v.Type == models.PositionTypeWave {
+		case models.PositionTypeWave:
 			waveDTO = append(waveDTO, filtered[v.Title])
+		case models.PositionTypeSerrated:
+			serratedDTO = append(serratedDTO, filtered[v.Title])
 		}
 	}
 
@@ -215,6 +223,9 @@ func (s *PositionService) CopySeveral(ctx context.Context, dto []*models.CopyPos
 	}
 	if len(waveDTO) > 0 {
 		err = s.wave.CopySeveral(ctx, waveDTO)
+	}
+	if len(serratedDTO) > 0 {
+		err = s.serrated.CopySeveral(ctx, serratedDTO)
 	}
 	if err != nil {
 		s.DeleteSeveral(ctx, data)
@@ -244,14 +255,15 @@ func (s *PositionService) Create(ctx context.Context, dto *models.PositionDTO) e
 		return fmt.Errorf("failed to create position. error: %w", err)
 	}
 
-	if dto.Type == models.PositionTypeSnp {
+	switch dto.Type {
+	case models.PositionTypeSnp:
 		err = s.snp.Create(ctx, dto)
-	}
-	if dto.Type == models.PositionTypePutg {
+	case models.PositionTypePutg:
 		err = s.putg.Create(ctx, dto)
-	}
-	if dto.Type == models.PositionTypeWave {
+	case models.PositionTypeWave:
 		err = s.wave.Create(ctx, dto)
+	case models.PositionTypeSerrated:
+		err = s.serrated.Create(ctx, dto)
 	}
 	if err != nil {
 		s.Delete(ctx, &models.DeletePositionDTO{Id: dto.Id})
@@ -273,14 +285,15 @@ func (s *PositionService) Update(ctx context.Context, dto *models.PositionDTO) e
 	}
 
 	var err error
-	if dto.Type == models.PositionTypeSnp {
+	switch dto.Type {
+	case models.PositionTypeSnp:
 		err = s.snp.Update(ctx, dto)
-	}
-	if dto.Type == models.PositionTypePutg {
+	case models.PositionTypePutg:
 		err = s.putg.Update(ctx, dto)
-	}
-	if dto.Type == models.PositionTypeWave {
+	case models.PositionTypeWave:
 		err = s.wave.Update(ctx, dto)
+	case models.PositionTypeSerrated:
+		err = s.serrated.Update(ctx, dto)
 	}
 	if err != nil {
 		return err
@@ -294,20 +307,13 @@ func (s *PositionService) Delete(ctx context.Context, dto *models.DeletePosition
 
 	switch dto.Type {
 	case models.PositionTypeSnp:
-		var data *models.PositionSnp
-		if data, err = s.snp.GetByPosition(ctx, dto.Id); err == nil {
-			drawing = data.Design.Drawing
-		}
+		drawing, err = s.snp.GetDrawing(ctx, dto.Id)
 	case models.PositionTypePutg:
-		var data *models.PositionPutg
-		if data, err = s.putg.GetByPosition(ctx, dto.Id); err == nil {
-			drawing = data.Design.Drawing
-		}
+		drawing, err = s.putg.GetDrawing(ctx, dto.Id)
 	case models.PositionTypeWave:
-		var data *models.PositionWave
-		if data, err = s.wave.GetByPosition(ctx, dto.Id); err == nil {
-			drawing = data.Design.Drawing
-		}
+		drawing, err = s.wave.GetDrawing(ctx, dto.Id)
+	case models.PositionTypeSerrated:
+		drawing, err = s.serrated.GetDrawing(ctx, dto.Id)
 	}
 	if err != nil && !errors.Is(err, base.ErrNoRows) {
 		return err

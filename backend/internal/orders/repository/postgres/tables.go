@@ -17,6 +17,7 @@ const (
 	PositionDesignPutgTable   = "position_putg_design"
 
 	PositionWaveTable     = "position_wave"
+	PositionSerratedTable = "position_serrated"
 	PositionRingTable     = "position_ring"
 	PositionRingsKitTable = "position_rings_kit"
 
@@ -36,6 +37,13 @@ const (
 	WavePlatingTable       = "wave_plating"
 	WaveBaseTypeTable      = "wave_type_base"
 	WaveMaterialTable      = "wave_material"
+
+	SerratedSizeTable         = "serrated_size"
+	SerratedTypeTable         = "serrated_type"
+	SerratedConstructionTable = "serrated_construction"
+	SerratedPlatingTable      = "serrated_plating"
+	SerratedBaseTypeTable     = "serrated_type_base"
+	SerratedMaterialTable     = "serrated_material"
 
 	FlangeTypeTable  = "flange_type"
 	SnpFillerTable   = "snp_filler_new"

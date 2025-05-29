@@ -26,6 +26,7 @@ func NewPositionSnpRepo(db *sqlx.DB) *PositionSnpRepo {
 type PositionSnp interface {
 	Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error)
 	GetByPosition(ctx context.Context, positionId string) (*models.PositionSnp, error)
+	GetDrawing(ctx context.Context, positionId string) (string, error)
 	Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error)
 	CopySeveral(ctx context.Context, dto []*models.CopyPositionDTO) error
 	Create(ctx context.Context, dto *models.PositionSnpDTO) error
@@ -130,8 +131,7 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 	)
 	tmp := &pq_models.PositionSnp{}
 
-	err := r.db.GetContext(ctx, tmp, query, positionId)
-	if err != nil {
+	if err := r.db.GetContext(ctx, tmp, query, positionId); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, base.ErrNoRows
 		}
@@ -207,6 +207,19 @@ func (r *PositionSnpRepo) GetByPosition(ctx context.Context, positionId string) 
 	}
 
 	return data, nil
+}
+
+func (r *PositionSnpRepo) GetDrawing(ctx context.Context, positionId string) (string, error) {
+	query := fmt.Sprintf(`SELECT id, position_id, drawing FROM %s WHERE position_id=$1`, PositionSnpTable)
+
+	data := &pq_models.PositionSnp{}
+	if err := r.db.GetContext(ctx, data, query, positionId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", base.ErrNoRows
+		}
+		return "", fmt.Errorf("failed to execute query. error: %w", err)
+	}
+	return data.Drawing, nil
 }
 
 func (r *PositionSnpRepo) Create(ctx context.Context, dto *models.PositionSnpDTO) error {

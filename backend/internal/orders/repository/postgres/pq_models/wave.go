@@ -25,7 +25,6 @@ type BasePositionWave struct {
 	HasRounding       bool           `db:"has_rounding"`
 	Jumper            string         `db:"jumper"`
 	JumperWidth       string         `db:"jumper_width"`
-	Mounting          string         `db:"mounting"`
 	HasHole           bool           `db:"has_hole"`
 	HasCoating        bool           `db:"has_coating"`
 	WithRetainer      bool           `db:"with_retainer"`
@@ -57,7 +56,6 @@ type PositionWave struct {
 	RotaryPlugId    string `db:"rotary_plug_id"`
 	Jumper          string `db:"jumper"`
 	JumperWidth     string `db:"jumper_width"`
-	Mounting        string `db:"mounting"`
 	HasHole         bool   `db:"has_hole"`
 	HasCoating      bool   `db:"has_coating"`
 	WithRetainer    bool   `db:"with_retainer"`
@@ -85,7 +83,6 @@ type PositionWaveDTO struct {
 	RotaryPlugId    string `db:"rotary_plug_id"`
 	Jumper          string `db:"jumper"`
 	JumperWidth     string `db:"jumper_width"`
-	Mounting        string `db:"mounting"`
 	HasHole         bool   `db:"has_hole"`
 	HasCoating      bool   `db:"has_coating"`
 	WithRetainer    bool   `db:"with_retainer"`

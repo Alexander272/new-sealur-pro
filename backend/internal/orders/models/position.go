@@ -23,17 +23,18 @@ type ShortPosition struct {
 }
 
 type Position struct {
-	Id       string        `json:"id" db:"id"`
-	OrderId  string        `json:"orderId" db:"order_id"`
-	Count    int64         `json:"count" db:"count"`
-	Title    string        `json:"title" db:"title"`
-	Amount   string        `json:"amount" db:"amount"`
-	Type     PositionType  `json:"type" db:"type"`
-	Info     string        `json:"info" db:"info"`
-	SnpData  *PositionSnp  `json:"snpData"`
-	PutgData *PositionPutg `json:"putgData"`
-	WaveData *PositionWave `json:"waveData"`
-	Data     interface{}   `json:"data"`
+	Id           string            `json:"id" db:"id"`
+	OrderId      string            `json:"orderId" db:"order_id"`
+	Count        int64             `json:"count" db:"count"`
+	Title        string            `json:"title" db:"title"`
+	Amount       string            `json:"amount" db:"amount"`
+	Type         PositionType      `json:"type" db:"type"`
+	Info         string            `json:"info" db:"info"`
+	SnpData      *PositionSnp      `json:"snpData"`
+	PutgData     *PositionPutg     `json:"putgData"`
+	WaveData     *PositionWave     `json:"waveData"`
+	SerratedData *PositionSerrated `json:"serratedData"`
+	Data         interface{}       `json:"data"`
 	// RingData *PositionRing     `json:"ringData"`
 	// KitData  *PositionRingsKit `json:"kitData"`
 }
@@ -48,16 +49,17 @@ type GetPositionByTitle struct {
 }
 
 type PositionDTO struct {
-	Id       string           `json:"id" db:"id"`
-	OrderId  string           `json:"orderId" db:"order_id"`
-	Count    int64            `json:"count" db:"count"`
-	Title    string           `json:"title" db:"title"`
-	Amount   string           `json:"amount" db:"amount"`
-	Type     PositionType     `json:"type" db:"type"`
-	Info     string           `json:"info" db:"info"`
-	SnpData  *PositionSnpDTO  `json:"snpData"`
-	PutgData *PositionPutgDTO `json:"putgData"`
-	WaveData *PositionWaveDTO `json:"waveData"`
+	Id           string               `json:"id" db:"id"`
+	OrderId      string               `json:"orderId" db:"order_id"`
+	Count        int64                `json:"count" db:"count"`
+	Title        string               `json:"title" db:"title"`
+	Amount       string               `json:"amount" db:"amount"`
+	Type         PositionType         `json:"type" db:"type"`
+	Info         string               `json:"info" db:"info"`
+	SnpData      *PositionSnpDTO      `json:"snpData"`
+	PutgData     *PositionPutgDTO     `json:"putgData"`
+	WaveData     *PositionWaveDTO     `json:"waveData"`
+	SerratedData *PositionSerratedDTO `json:"serratedData"`
 	// RingData *PositionRingDTO     `json:"ringData"`
 	// KitData  *PositionRingsKitDTO `json:"kitData"`
 }
@@ -76,7 +78,12 @@ func (d *PositionDTO) Validate() error {
 		if d.WaveData.Main == nil || d.WaveData.Material == nil || d.WaveData.Size == nil || d.WaveData.Design == nil {
 			return fmt.Errorf("the data sent was not correct")
 		}
+	case PositionTypeSerrated:
+		if d.SerratedData.Main == nil || d.SerratedData.Material == nil || d.SerratedData.Size == nil || d.SerratedData.Design == nil {
+			return fmt.Errorf("the data sent was not correct")
+		}
 	}
+
 	return nil
 }
 

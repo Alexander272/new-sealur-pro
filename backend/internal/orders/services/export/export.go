@@ -15,28 +15,31 @@ import (
 )
 
 type ExportService struct {
-	snp   position.PositionSnp
-	putg  position.PositionPutg
-	wave  position.PositionWave
-	files files.Files
-	zip   Zip
+	snp      position.PositionSnp
+	putg     position.PositionPutg
+	wave     position.PositionWave
+	serrated position.PositionSerrated
+	files    files.Files
+	zip      Zip
 }
 
 type ExportDeps struct {
-	Snp   position.PositionSnp
-	Putg  position.PositionPutg
-	Wave  position.PositionWave
-	Files files.Files
-	Zip   Zip
+	Snp      position.PositionSnp
+	Putg     position.PositionPutg
+	Wave     position.PositionWave
+	Serrated position.PositionSerrated
+	Files    files.Files
+	Zip      Zip
 }
 
 func NewExportService(deps *ExportDeps) *ExportService {
 	return &ExportService{
-		snp:   deps.Snp,
-		putg:  deps.Putg,
-		wave:  deps.Wave,
-		files: deps.Files,
-		zip:   deps.Zip,
+		snp:      deps.Snp,
+		putg:     deps.Putg,
+		wave:     deps.Wave,
+		serrated: deps.Serrated,
+		files:    deps.Files,
+		zip:      deps.Zip,
 	}
 }
 
