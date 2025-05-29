@@ -10,7 +10,9 @@ export const Size = () => {
 
 	return (
 		<SizeContainer>
-			<Column width={40}>{standard?.flangeStandard.code ? <Standard /> : <Another />}</Column>
+			<Column width={40}>
+				{!standard?.flangeStandard || standard?.flangeStandard?.code ? <Standard /> : <Another />}
+			</Column>
 
 			<Drawing />
 		</SizeContainer>

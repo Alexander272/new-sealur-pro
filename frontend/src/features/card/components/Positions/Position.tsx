@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { setSnp } from '@/features/gaskets/modules/snp/snpSlice'
 import { setPutg } from '@/features/gaskets/modules/putg/putgSlice'
 import { setWave } from '@/features/gaskets/modules/wave/waveSlice'
+import { setSerrated } from '@/features/gaskets/modules/serrated/serratedSlice'
 import { WarningIcon } from '@/components/Icons/WarningIcon'
 import { getActive, setActive } from '../../cardSlice'
 import { useDeletePositionMutation, useLazyGetPositionByIdQuery } from '../../cardApiSlice'
@@ -51,10 +52,7 @@ export const Position: FC<Props> = ({ idx, data }) => {
 	const deleteHandler = async (event: MouseEvent<HTMLButtonElement>) => {
 		toggle(event)
 
-		if (active?.id === data.id) {
-			dispatch(setActive())
-			return
-		}
+		if (active?.id === data.id) dispatch(setActive())
 		try {
 			await remove(data)
 		} catch {
@@ -88,6 +86,7 @@ export const Position: FC<Props> = ({ idx, data }) => {
 			dispatch(setWave(payload.data))
 			// if (location.pathname !== PathRoutes.Gasket.Wave) navigate(PathRoutes.Gasket.Wave)
 		}
+		if (payload.data.type == 'Serrated') dispatch(setSerrated(payload.data))
 		//TODO эта строка работает только для прокладок, но когда нибудь тут будут и кольца
 		if (location.pathname !== PathRoutes.Gasket[payload.data.type]) navigate(PathRoutes.Gasket[payload.data.type])
 	}

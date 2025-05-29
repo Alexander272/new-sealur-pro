@@ -29,13 +29,12 @@ export const Another = () => {
 		err.emptyD2 = (type?.hasD2 || false) && !sizes.d2
 		err.emptyD1 = (type?.hasD1 || false) && !sizes.d1
 
-		err.maxSize = 3900 <= +sizes.d3
+		err.maxSize = 4000 <= +sizes.d3
 
-		if (type) {
-			const width = (+sizes.d3 - +sizes.d2) / 2
-			err.minWidth = width < 10
-			err.maxWidth = width > 30
-		}
+		const width = (+sizes.d3 - +sizes.d2) / 2
+		err.minWidth = +sizes.d3 > 300 ? width < 10 : width < 5
+		err.maxWidth = width > 50
+
 		if (type?.hasD4 && type?.hasD1) {
 			err.difD4D1 = (+sizes.d4 - +sizes.d1) / 2 >= 160
 		}

@@ -44,9 +44,9 @@ export const useDesignation = () => {
 		}
 
 		//* ТУ 5728-013-93978201-2008
-		if (main.standard?.standard.id == '47ada632-c4e6-45df-a69e-1faf6dc91910') {
+		if (main.standard?.standard?.id == '47ada632-c4e6-45df-a69e-1faf6dc91910') {
 			// == нестандартные фланцы
-			if (main.standard.flangeStandard.id == '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7') {
+			if (main.standard?.flangeStandard?.id == '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7') {
 				setValue(
 					`${res}-${sizes}-${h}${coating}${parts}${materialsStr} ${designStr}${main.standard?.standard?.title}`
 				)
