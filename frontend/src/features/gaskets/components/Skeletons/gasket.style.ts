@@ -33,7 +33,8 @@ export const PageTitle = styled.h3`
 	grid-row-end: 2; */
 	margin: 5px;
 	text-align: center;
-	margin-top: -30px;
+	margin-top: 15px;
+	/* margin-top: -30px; */
 	/* margin-left: 5px; */
 
 	@media screen and (max-width: 1300px) {

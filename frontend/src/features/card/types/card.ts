@@ -8,6 +8,7 @@ export type PutgType = 'Putg'
 export type PutgmType = 'Putgm'
 export type WaveType = 'Wave'
 export type SerratedType = 'Serrated'
+export type JacketType = 'Jacketed'
 
 export type PositionType = SnpType | PutgType | WaveType | SerratedType
 

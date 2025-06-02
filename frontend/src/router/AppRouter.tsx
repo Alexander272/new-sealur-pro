@@ -14,6 +14,7 @@ import { Snp } from '@/pages/gaskets/snp/SnpLazy'
 import { Putg } from '@/pages/gaskets/putg/PutgLazy'
 import { Wave } from '@/pages/gaskets/wave/WaveLazy'
 import { Serrated } from '@/pages/gaskets/serrated/SerratedLazy'
+import { Jacketed } from '@/pages/gaskets/jacketed/JacketedLazy'
 import { Orders } from '@/pages/orders/orders/OrdersLazy'
 import { Orders as ManagerOrders } from '@/pages/orders/byManager/OrdersLazy'
 import { Order as ManagerOrder } from '@/pages/orders/byManager/OrderLazy'
@@ -68,6 +69,7 @@ export const AppRouter = () => {
 							<Route path={PathRoutes.Gasket.Putg} element={<Putg />} />
 							<Route path={PathRoutes.Gasket.Wave} element={<Wave />} />
 							<Route path={PathRoutes.Gasket.Serrated} element={<Serrated />} />
+							<Route path={PathRoutes.Gasket.Jacketed} element={<Jacketed />} />
 						</Route>
 
 						{/* <Route path={PathRoutes.Rings.Base} element={<Rings />}>
