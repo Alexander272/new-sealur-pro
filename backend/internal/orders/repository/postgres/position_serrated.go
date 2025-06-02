@@ -319,14 +319,14 @@ func (r *PositionSerratedRepo) CopySeveral(ctx context.Context, dto []*models.Co
 
 	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, standard_id, flange_type_id, type_id, construction_id, plating_id, base_id, 
 		rotary_plug_id, size_id, d4, d3, d2, d1, h, jumper, jumper_width, has_hole, has_coating, with_retainer, drawing)
-		SELECT id::uuid, position_id::uuid, standard_id::uuid, flange_type_id::uuid, plating_id::uuid, base_id::uuid,
-			rotary_plug_id::uuid, size_id::uuid, d4, d3, d2, d1, h, jumper, jumper_width, has_hole, has_coating, with_retainer, 
+		SELECT id::uuid, position_id::uuid, standard_id::uuid, flange_type_id::uuid, type_id::uuid, construction_id::uuid, plating_id::uuid,
+			base_id::uuid, rotary_plug_id::uuid, size_id::uuid, d4, d3, d2, d1, h, jumper, jumper_width, has_hole, has_coating, with_retainer, 
 			drawing FROM (VALUES %s) AS s(id, position_id, orig_id, from_order_id, order_id)
 		LEFT JOIN LATERAL (SELECT standard_id, flange_type_id, type_id, construction_id, plating_id, base_id, rotary_plug_id,
 			size_id, d4, d3, d2, d1, h, jumper, jumper_width, has_hole, has_coating, with_retainer,
 			replace(drawing, s.from_order_id, s.order_id) AS drawing
 			FROM %s WHERE position_id=s.orig_id::uuid) AS m ON true`,
-		PositionPutgTable, strings.Join(values, ","), PositionPutgTable,
+		PositionSerratedTable, strings.Join(values, ","), PositionSerratedTable,
 	)
 
 	if _, err := r.db.ExecContext(ctx, query, args...); err != nil {
