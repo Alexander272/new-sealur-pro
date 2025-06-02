@@ -6,19 +6,24 @@ import { SizesBlock } from './SizeBlock/SizesBlock'
 import { AnotherSizeBlock } from './SizeBlock/AnotherSizeBlock'
 import { StandardImage } from './Image/StandardImage'
 import { NotStandardImage } from './Image/NotStandardImage'
-import { getConfiguration, getConstruction, getType } from '../../putgSlice'
+import { getConfiguration, getConstruction, getType, getUseDimensions } from '../../putgSlice'
 
 import ovalImage from '@/assets/putg/ov.webp'
+import ovalDimImage from '@/assets/putg/ov-dimensions.webp'
 import rectangularImage from '@/assets/putg/pr.webp'
+import rectangularDimImage from '@/assets/putg/pr-dimensions.webp'
 
 const images = {
-	oval: ovalImage,
-	rectangular: rectangularImage,
+	'oval-false': ovalImage,
+	'oval-true': ovalDimImage,
+	'rectangular-false': rectangularImage,
+	'rectangular-true': rectangularDimImage,
 }
 
 export const Drawing = () => {
 	const configuration = useAppSelector(getConfiguration)
 	const construction = useAppSelector(getConstruction)
+	const useDimensions = useAppSelector(getUseDimensions)
 	const type = useAppSelector(getType)
 
 	return (
@@ -44,7 +49,7 @@ export const Drawing = () => {
 							<Typography fontWeight='bold'>Размеры прокладки</Typography>
 							<ImageContainer padding='0 20px'>
 								<Image
-									src={images[configuration?.code || 'rectangular']}
+									src={images[`${configuration?.code || 'rectangular'}-${useDimensions || false}`]}
 									alt='gasket drawing'
 									maxWidth={'400px'}
 									width={600}

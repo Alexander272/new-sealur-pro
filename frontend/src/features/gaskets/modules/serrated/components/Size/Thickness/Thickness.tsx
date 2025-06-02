@@ -12,9 +12,14 @@ export const Thickness = () => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		if (thicknesses && thicknesses.length > 0) dispatch(setThickness(thicknesses[0]))
-		else dispatch(setThickness(defaultThicknesses[0]))
-	}, [dispatch, thicknesses])
+		if (thicknesses && thicknesses.length > 0) {
+			const newH = thicknesses.find(v => v == h)
+			dispatch(setThickness(newH ? newH : thicknesses[0]))
+		} else {
+			const newH = defaultThicknesses.find(v => v == h)
+			dispatch(setThickness(newH ? newH : defaultThicknesses[0]))
+		}
+	}, [dispatch, thicknesses, h])
 
 	// const thicknessHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 	// 	const regex = /(^\d+[.,]?(\d{1})?)$/

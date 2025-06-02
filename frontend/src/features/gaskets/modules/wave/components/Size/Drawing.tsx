@@ -1,10 +1,19 @@
 import { Skeleton, Typography } from '@mui/material'
 
 import { useAppSelector } from '@/hooks/redux'
-import { Column, ImageContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { Column, Image, ImageContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
 import { getConfiguration, getConstruction, getType } from '../../waveSlice'
 import { StandardImage } from './Image/StandardImage'
 import { Dimensions } from './Dimensions/Dimensions'
+import { NotRoundDimensions } from './Dimensions/NotRoundDimensions'
+
+import ovalImage from '@/assets/putg/ov.webp'
+import rectangularImage from '@/assets/putg/pr.webp'
+
+const images = {
+	oval: ovalImage,
+	rectangular: rectangularImage,
+}
 
 export const Drawing = () => {
 	const configuration = useAppSelector(getConfiguration)
@@ -25,25 +34,25 @@ export const Drawing = () => {
 						</ImageContainer>
 					)}
 
-					{/* {configuration?.code != 'round' && (
-							<>
-								<ImageContainer padding='0'>
+					{configuration?.code != 'round' && (
+						<>
+							{/* <ImageContainer padding='0'>
 									<NotStandardImage type={type} construction={construction} />
-								</ImageContainer>
+								</ImageContainer> */}
 
-								<Typography fontWeight='bold'>Размеры прокладки</Typography>
-								<ImageContainer padding='0 20px'>
-									<Image
-										src={images[configuration?.code || 'rectangular']}
-										alt='gasket drawing'
-										maxWidth={'400px'}
-										width={600}
-										height={255}
-									/>
-									<AnotherSizeBlock />
-								</ImageContainer>
-							</>
-						)} */}
+							<Typography fontWeight='bold'>Размеры прокладки</Typography>
+							<ImageContainer padding='0 20px'>
+								<Image
+									src={images[configuration?.code || 'rectangular']}
+									alt='gasket drawing'
+									maxWidth={'400px'}
+									width={600}
+									height={255}
+								/>
+								<NotRoundDimensions />
+							</ImageContainer>
+						</>
+					)}
 				</>
 			)}
 		</Column>
