@@ -69,5 +69,5 @@ links:
 
 limiter:
     rps: 10
-    burst: 20
+    burst: 30
     ttl: 10m
