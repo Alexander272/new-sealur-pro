@@ -2,22 +2,24 @@ import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 import { PathRoutes } from '@/constants/routes'
-import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
+import { useAppDispatch } from '@/hooks/redux'
+import { clearActive } from '@/features/card/cardSlice'
 import { GasketSkeleton } from '@/features/gaskets/components/Skeletons/Skeleton'
 import { Container } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { RadioGroup, RadioItem } from '@/components/RadioGroup/RadioGroup'
 
 export default function Gaskets() {
 	const navigate = useNavigate()
 	const location = useLocation()
 
-	// const dispatch = useAppDispatch()
+	const dispatch = useAppDispatch()
 
 	useEffect(() => {
 		if (location.pathname == PathRoutes.Gasket.Base) navigate(PathRoutes.Gasket.Snp, { replace: true })
 	}, [location.pathname, navigate])
 
 	const navigateHandler = (path: string) => {
-		// dispatch(clearActive())
+		dispatch(clearActive())
 		navigate(path)
 	}
 
@@ -61,6 +63,8 @@ export default function Gaskets() {
 					Завальцованные
 				</RadioItem>
 			</RadioGroup>
+
+			{/* //TODO попробовать добавить прочерк в типы фланцев и исключить фланец из наименования для путг,путгм в нестандартные фланцы  */}
 
 			<Suspense key={location.pathname} fallback={<GasketSkeleton />}>
 				<Outlet />

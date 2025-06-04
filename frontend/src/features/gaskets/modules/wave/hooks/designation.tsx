@@ -52,8 +52,8 @@ export const useDesignation = () => {
 		}
 
 		if (
-			main?.standard?.standard.id == '47ada632-c4e6-45df-a69e-1faf6dc91910' &&
-			main.standard?.flangeStandard.id != '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7'
+			main?.standard?.standard?.id == '47ada632-c4e6-45df-a69e-1faf6dc91910' &&
+			main.standard?.flangeStandard?.id != '8815fa92-22c2-4f47-92ab-c6d0fea6bdb7'
 		) {
 			const title = main.standard?.flangeStandard?.title.split(' (')[0]
 			setValue(

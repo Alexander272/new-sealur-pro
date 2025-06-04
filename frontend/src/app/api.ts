@@ -112,4 +112,17 @@ export const API = Object.freeze({
 		materials: 'serrated/materials' as const,
 		info: 'serrated/info' as const,
 	},
+	jacketed: {
+		standards: 'jacketed/standard-info' as const,
+		flangeTypes: 'jacketed/flange-types' as const,
+		types: 'jacketed/types' as const,
+		constructions: 'jacketed/constructions' as const,
+		sizes: {
+			base: 'jacketed/sizes' as const,
+			dn: 'jacketed/sizes/dn' as const,
+		},
+		plating: 'jacketed/plating' as const,
+		materials: 'jacketed/materials' as const,
+		info: 'jacketed/info' as const,
+	},
 })
