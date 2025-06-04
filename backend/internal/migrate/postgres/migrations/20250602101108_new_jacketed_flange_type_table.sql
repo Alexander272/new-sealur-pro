@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.jacketed_flange_type
     code text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT jacketed_flange_type_pkey PRIMARY KEY (id),
     CONSTRAINT jacketed_flange_type_standard_id_fkey FOREIGN KEY (standard_id)
-        REFERENCES public.serrated_standard (id) MATCH SIMPLE
+        REFERENCES public.jacketed_standard (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE
 )

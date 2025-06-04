@@ -1,4 +1,4 @@
-package jacketed_type
+package construction
 
 import (
 	"net/http"
@@ -15,22 +15,20 @@ import (
 )
 
 type Handler struct {
-	service services.JacketedBaseType
+	service services.Construction
 }
 
-func NewHandler(service services.JacketedBaseType) *Handler {
-	return &Handler{
-		service: service,
-	}
+func NewHandler(service services.Construction) *Handler {
+	return &Handler{service: service}
 }
 
-func Register(api *gin.RouterGroup, service services.JacketedBaseType, middleware *middleware.Middleware) {
+func Register(api *gin.RouterGroup, service services.Construction, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
-	SerratedTypeBase := api.Group("/types")
+	construction := api.Group("/constructions")
 	{
-		SerratedTypeBase.GET("", handler.get)
-		write := SerratedTypeBase.Group("", middleware.CheckAccess(constants.AllowAdmin))
+		construction.GET("", handler.get)
+		write := construction.Group("", middleware.CheckAccess(constants.AllowAdmin))
 		{
 			write.POST("", handler.create)
 			write.PUT("/:id", handler.update)
@@ -40,29 +38,30 @@ func Register(api *gin.RouterGroup, service services.JacketedBaseType, middlewar
 }
 
 func (h *Handler) get(c *gin.Context) {
-	data, err := h.service.Get(c, &models.GetTypeBaseDTO{})
+	req := &models.GetConstructionDTO{}
+	data, err := h.service.Get(c, req)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить данные")
-		error_bot.Send(c, err.Error(), nil)
+		error_bot.Send(c, err.Error(), req)
 		return
 	}
 	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
 }
 
 func (h *Handler) create(c *gin.Context) {
-	dto := &models.TypeBaseDTO{}
+	dto := &models.ConstructionDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
 	}
 
 	if err := h.service.Create(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось создать тип прокладки")
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось создать конструкцию")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Info("Тип прокладки создан", logger.AnyAttr("dto", dto))
-	c.JSON(http.StatusCreated, response.IdResponse{Message: "Тип прокладки создан"})
+	logger.Info("Конструкция создана", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusCreated, response.IdResponse{Message: "Конструкция создана"})
 }
 
 func (h *Handler) update(c *gin.Context) {
@@ -72,7 +71,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	dto := &models.TypeBaseDTO{}
+	dto := &models.ConstructionDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
@@ -80,12 +79,12 @@ func (h *Handler) update(c *gin.Context) {
 	dto.Id = id
 
 	if err := h.service.Update(c, dto); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось обновить тип прокладки")
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось обновить конструкцию")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Info("Тип прокладки обновлен", logger.AnyAttr("dto", dto))
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип прокладки обновлен"})
+	logger.Info("Конструкция обновлена", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Конструкция обновлена"})
 }
 
 func (h *Handler) delete(c *gin.Context) {
@@ -95,11 +94,11 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.Delete(c, &models.DeleteTypeBaseDTO{Id: id}); err != nil {
-		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить тип прокладки")
+	if err := h.service.Delete(c, &models.DeleteConstructionDTO{Id: id}); err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить конструкцию")
 		error_bot.Send(c, err.Error(), id)
 		return
 	}
-	logger.Info("Тип прокладки удален", logger.StringAttr("id", id))
-	c.JSON(http.StatusOK, response.IdResponse{Message: "Тип прокладки удален"})
+	logger.Info("Конструкция удалена", logger.StringAttr("id", id))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Конструкция удалена"})
 }

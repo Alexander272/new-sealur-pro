@@ -13,6 +13,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/analytics"
 	"github.com/Alexander272/new-sealur-pro/internal/config"
 	"github.com/Alexander272/new-sealur-pro/internal/files"
+	"github.com/Alexander272/new-sealur-pro/internal/jacketed"
 	"github.com/Alexander272/new-sealur-pro/internal/mail"
 	"github.com/Alexander272/new-sealur-pro/internal/migrate"
 	"github.com/Alexander272/new-sealur-pro/internal/orders"
@@ -92,6 +93,7 @@ func main() {
 	putgModule := putg.NewPutgModule(db, conf)
 	waveModule := wave.NewWaveModule(db)
 	serratedModule := serrated.NewSerratedModule(db)
+	jacketedModule := jacketed.NewJacketedModule(db)
 	filesModule := files.NewFilesModule(db, conf)
 	mailModule := mail.NewMailModule(conf)
 
@@ -119,7 +121,7 @@ func main() {
 	// handlers.Modules = append(handlers.Modules, snpModule)
 
 	handlers.Modules = []transport.Modules{
-		snpModule, putgModule, waveModule, serratedModule,
+		snpModule, putgModule, waveModule, serratedModule, jacketedModule,
 		filesModule, mailModule,
 		ordersModule, analyticsModule,
 	}
