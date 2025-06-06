@@ -17,10 +17,10 @@ export const BaseConfiguration: FC<Props> = ({ data, isFetching, value, onChange
 	const active = useAppSelector(getActive)
 
 	useEffect(() => {
-		if (data && !active?.id && !isFetching) onChange(data[0])
+		if (data.length && !active?.id && !isFetching) onChange(data[0])
 	}, [data, onChange, isFetching, active])
 	useEffect(() => {
-		if (!data || !active || isFetching) return
+		if (!data.length || !active || isFetching) return
 		let idx = value ? data.findIndex(c => c.id === value) : 0
 		if (idx == -1) idx = 0
 		onChange(data[idx])

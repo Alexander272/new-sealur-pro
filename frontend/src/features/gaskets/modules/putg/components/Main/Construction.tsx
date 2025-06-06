@@ -16,7 +16,7 @@ export const Construction = () => {
 	const flangeType = useAppSelector(getFlangeType)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetPutgConstructionsQuery(
+	const { data, isFetching, isUninitialized } = useGetPutgConstructionsQuery(
 		{ filler: filler?.baseId || '', flangeType: flangeType?.id || '' },
 		{ skip: !filler?.baseId || !flangeType?.id }
 	)
@@ -52,8 +52,9 @@ export const Construction = () => {
 	return (
 		<BaseConstruction
 			data={data?.data || []}
-			isFetching={isFetching}
+			isFetching={isFetching || isUninitialized}
 			value={construction}
+			type={flangeType?.id}
 			onChange={changeHandler}
 		/>
 	)

@@ -121,7 +121,7 @@ export const API = Object.freeze({
 			base: 'jacketed/sizes' as const,
 			dn: 'jacketed/sizes/dn' as const,
 		},
-		plating: 'jacketed/plating' as const,
+		fillers: 'jacketed/fillers' as const,
 		materials: 'jacketed/materials' as const,
 		info: 'jacketed/info' as const,
 	},

@@ -15,7 +15,7 @@ export const Gasket = () => {
 	const type = useAppSelector(getType)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetWaveTypesQuery(flange?.id || '', {
+	const { data, isFetching, isUninitialized } = useGetWaveTypesQuery(flange?.id || '', {
 		skip: !flange?.id,
 	})
 
@@ -41,7 +41,7 @@ export const Gasket = () => {
 	return (
 		<BaseGasket
 			data={data?.data || []}
-			isFetching={isFetching}
+			isFetching={isFetching || isUninitialized}
 			value={type?.id}
 			onChange={changeHandler}
 			configuration={configuration?.code}

@@ -18,18 +18,19 @@ export const Standards: FC<Props> = ({ data, isFetching, value, onChange, config
 	const active = useAppSelector(getActive)
 
 	useEffect(() => {
-		if (!data || active?.id || isFetching) return
+		if (!data.length || active?.id || isFetching) return
 		onChange(data[0])
 	}, [data, active, isFetching, onChange])
+
 	useEffect(() => {
-		if (!data || !active || isFetching) return
+		if (!data.length || !active || isFetching) return
 		let idx = data.findIndex(c => c.id === value)
 		if (idx == -1) idx = 0
 		onChange(data[idx])
 	}, [data, active, isFetching, value, onChange])
 
 	useEffect(() => {
-		if (!data || active?.id || isFetching) return
+		if (!data.length || active?.id || isFetching) return
 		if (configuration && configuration != 'round') onChange(data[data.length - 1])
 		else onChange(data[0])
 	}, [data, active, configuration, isFetching, onChange])

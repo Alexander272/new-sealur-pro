@@ -21,10 +21,10 @@ export const BaseGasket: FC<Props> = ({ data, isFetching, value, onChange, confi
 	const active = useAppSelector(getActive)
 
 	useEffect(() => {
-		if (data && !active?.id && !isFetching) onChange(data[0] as Union)
+		if (data.length && !active?.id && !isFetching) onChange(data[0] as Union)
 	}, [data, active, isFetching, configuration, onChange])
 	useEffect(() => {
-		if (!data || !active || isFetching) return
+		if (!data.length || !active || isFetching) return
 		let idx = data.findIndex(c => c.id === value)
 		if (idx == -1) idx = 0
 		onChange(data[idx] as Union)

@@ -14,7 +14,7 @@ export const Gasket = () => {
 	const type = useAppSelector(getType)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetSerratedTypesQuery(flange?.id || '', {
+	const { data, isFetching, isUninitialized } = useGetSerratedTypesQuery(flange?.id || '', {
 		skip: !flange?.id,
 	})
 
@@ -37,7 +37,14 @@ export const Gasket = () => {
 
 	const changeHandler = useCallback((value: ISerratedType) => dispatch(setType(value)), [dispatch])
 
-	return <BaseGasket data={data?.data || []} isFetching={isFetching} value={type?.id} onChange={changeHandler} />
+	return (
+		<BaseGasket
+			data={data?.data || []}
+			isFetching={isFetching || isUninitialized}
+			value={type?.id}
+			onChange={changeHandler}
+		/>
+	)
 	// return (
 	// 	<>
 	// 		<Typography fontWeight='bold' mt={1}>

@@ -16,7 +16,7 @@ export const Construction = () => {
 	const type = useAppSelector(getType)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetWaveConstructionsQuery(
+	const { data, isFetching, isUninitialized } = useGetWaveConstructionsQuery(
 		{ type: type?.baseId || '', standard: standard?.id || '' },
 		{
 			skip: !type?.baseId || !standard?.id,
@@ -55,7 +55,7 @@ export const Construction = () => {
 	return (
 		<BaseConstruction
 			data={data?.data || []}
-			isFetching={isFetching}
+			isFetching={isFetching || isUninitialized}
 			value={construction}
 			onChange={changeHandler}
 			type={type?.id}

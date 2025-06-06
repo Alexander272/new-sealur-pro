@@ -21,14 +21,14 @@ export const BaseConstruction: FC<Props> = ({ data, isFetching, value, onChange,
 	const active = useAppSelector(getActive)
 
 	useEffect(() => {
-		if (!data || active?.id || isFetching) return
+		if (!data.length || active?.id || isFetching) return
 		let idx = value ? data.findIndex(c => c.code === value.code) : 0
 		if (idx == -1) idx = 0
 		onChange(data[idx] as Union)
 	}, [data, active, isFetching, onChange, value])
 
 	useEffect(() => {
-		if (!data || !active || isFetching || !type) return
+		if (!data.length || !active || isFetching || !type) return
 		let idx = value ? data.findIndex(c => c.id === value.id) : 0
 		if (idx == -1) idx = 0
 		onChange(data[idx] as Union)

@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 import type { IConstruction, IFlangeType, IJacketedStandard, IJacketedType } from './types/main'
 import { apiSlice } from '@/app/apiSlice'
 import { API } from '@/app/api'
+import { IFiller, IMaterials } from './types/material'
 
 export const jacketedApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
@@ -63,6 +64,34 @@ export const jacketedApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+
+		getJacketedFillers: builder.query<{ data: IFiller[] }, null>({
+			query: () => ({
+				url: API.jacketed.fillers,
+			}),
+			providesTags: [{ type: 'Jacketed', id: 'fillers' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить материалы основания', { autoClose: false })
+				}
+			},
+		}),
+		getJacketedMaterials: builder.query<{ data: IMaterials }, string>({
+			query: standard => ({
+				url: API.jacketed.materials,
+				params: new URLSearchParams({ standard }),
+			}),
+			providesTags: [{ type: 'Jacketed', id: 'materials' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить материалы', { autoClose: false })
+				}
+			},
+		}),
 	}),
 })
 
@@ -71,4 +100,6 @@ export const {
 	useGetJacketedFlangeTypesQuery,
 	useGetJacketedTypesQuery,
 	useGetJacketedConstructionsQuery,
+	useGetJacketedFillersQuery,
+	useGetJacketedMaterialsQuery,
 } = jacketedApi

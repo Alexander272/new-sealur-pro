@@ -15,7 +15,7 @@ export const Gasket = () => {
 	const filler = useAppSelector(getFiller)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetPutgTypesQuery(filler?.baseId || '', { skip: !filler?.baseId })
+	const { data, isFetching, isUninitialized } = useGetPutgTypesQuery(filler?.baseId || '', { skip: !filler?.baseId })
 
 	// useEffect(() => {
 	// 	if (data && !active?.id && !isFetching) dispatch(setType(data.data[0]))
@@ -38,7 +38,7 @@ export const Gasket = () => {
 	return (
 		<BaseGasket
 			data={data?.data || []}
-			isFetching={isFetching}
+			isFetching={isFetching || isUninitialized}
 			value={type?.id}
 			onChange={changeHandler}
 			configuration={configuration?.code}

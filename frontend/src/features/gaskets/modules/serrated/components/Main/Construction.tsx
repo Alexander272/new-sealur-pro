@@ -14,7 +14,7 @@ export const Construction = () => {
 	const type = useAppSelector(getType)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetSerratedConstructionsQuery(type?.baseId || '', {
+	const { data, isFetching, isUninitialized } = useGetSerratedConstructionsQuery(type?.baseId || '', {
 		skip: !type?.baseId,
 	})
 
@@ -45,7 +45,7 @@ export const Construction = () => {
 	return (
 		<BaseConstruction
 			data={data?.data || []}
-			isFetching={isFetching}
+			isFetching={isFetching || isUninitialized}
 			value={construction}
 			onChange={changeHandler}
 			type={type?.id}

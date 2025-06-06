@@ -50,7 +50,9 @@ export const Dn = () => {
 
 					{data?.data.map(f => {
 						let color = ''
-						if (f.alt < +(type?.dnRange[0] || 0) || f.alt > +(type?.dnRange[1] || 0)) color = '#707070'
+						if ((type?.dnRange?.length || 0) > 0) {
+							if (f.alt < +(type?.dnRange[0] || 0) || f.alt > +(type?.dnRange[1] || 0)) color = '#707070'
+						}
 
 						return (
 							<MenuItem

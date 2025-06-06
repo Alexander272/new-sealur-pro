@@ -4,6 +4,8 @@ import type { IConstruction, IFlangeType, IJacketedStandard, IJacketedType, IMai
 import type { IDrawing } from '../../types/drawing'
 import { localKeys } from '@/constants/localKeys'
 import { RootState } from '@/app/store'
+import { IFiller, IMaterialsJacketed, TypeMaterial } from './types/material'
+import { IMaterial } from '../../types/material'
 
 export interface IJacketedState {
 	amount: string
@@ -11,7 +13,7 @@ export interface IJacketedState {
 
 	main: IMainJacketed
 	// size: ISizeJacketed
-	// material: IMaterialsJacketed
+	material: IMaterialsJacketed
 	// design: IDesignJacketed
 
 	// designErrors: IDesignErrors
@@ -36,7 +38,7 @@ const initialState: IJacketedState = {
 	// 	d1: '',
 	// 	h: '3.0',
 	// },
-	// material: {},
+	material: {},
 	// design: {
 	// 	jumper: {
 	// 		hasJumper: false,
@@ -75,6 +77,14 @@ export const jacketedSlice = createSlice({
 		setConstruction: (state, action: PayloadAction<IConstruction>) => {
 			state.main.construction = action.payload
 		},
+
+		//
+		setFiller: (state, action: PayloadAction<IFiller>) => {
+			state.material.filler = action.payload
+		},
+		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material?: IMaterial }>) => {
+			state.material[action.payload.type] = action.payload.material
+		},
 	},
 })
 
@@ -87,6 +97,9 @@ export const getFlangeType = (state: RootState) => state.jacketed.main.flangeTyp
 export const getType = (state: RootState) => state.jacketed.main.type
 export const getConstruction = (state: RootState) => state.jacketed.main.construction
 
+export const getMaterials = (state: RootState) => state.jacketed.material
+export const getFiller = (state: RootState) => state.jacketed.material.filler
+
 export const {
 	setMainStandard,
 	setMainFlangeType,
@@ -97,8 +110,8 @@ export const {
 	// setDSize,
 	// setThickness,
 	// setSizeErrors,
-	// setPlating,
-	// setMaterial,
+	setFiller,
+	setMaterial,
 	// setHasHole,
 	// setHasCoating,
 	// setWithRetainer,
