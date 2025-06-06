@@ -7,6 +7,8 @@ type Services struct {
 	FlangeType
 	JacketedBaseType
 	Construction
+	Filler
+	Material
 }
 
 type Deps struct {
@@ -19,10 +21,15 @@ func NewServices(deps *Deps) *Services {
 	jacketBase := NewJacketedBaseTypeService(deps.Repos.JacketedBaseType)
 	construction := NewConstructionService(deps.Repos.Construction)
 
+	filler := NewFillerService(deps.Repos.Filler)
+	material := NewMaterialService(deps.Repos.Material)
+
 	return &Services{
 		StandardInfo:     standard,
 		FlangeType:       flange,
 		JacketedBaseType: jacketBase,
 		Construction:     construction,
+		Filler:           filler,
+		Material:         material,
 	}
 }

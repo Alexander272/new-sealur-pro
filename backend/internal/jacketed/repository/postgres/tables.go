@@ -12,5 +12,7 @@ const (
 	JacketedFlangeTypeTable = "jacketed_flange_type"
 	TypeBaseTable           = "jacketed_type_base"
 	// TypeTable               = "jacketed_type"
-	ConstructionTable = "jacketed_construction"
+	ConstructionTable     = "jacketed_construction"
+	FillerTable           = "jacketed_filler"
+	JacketedMaterialTable = "jacketed_material"
 )
