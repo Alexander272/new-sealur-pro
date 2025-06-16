@@ -4,6 +4,7 @@ import type { IConstruction, IFlangeType, IJacketedStandard, IJacketedType } fro
 import { apiSlice } from '@/app/apiSlice'
 import { API } from '@/app/api'
 import { IFiller, IMaterials } from './types/material'
+import { IDn, ISize } from './types/sizes'
 
 export const jacketedApi = apiSlice.injectEndpoints({
 	overrideExisting: false,
@@ -92,6 +93,40 @@ export const jacketedApi = apiSlice.injectEndpoints({
 				}
 			},
 		}),
+
+		// получение условного прохода
+		getJacketedDn: builder.query<{ data: IDn[] }, string>({
+			query: flange => ({
+				url: API.jacketed.sizes.dn,
+				params: new URLSearchParams({ flange }),
+			}),
+			providesTags: [{ type: 'Jacketed', id: 'dn' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить условный проход', { autoClose: false })
+				}
+			},
+		}),
+		// получение размеров
+		getJacketedSizes: builder.query<{ data: ISize[] }, { flange: string; dn: string }>({
+			query: req => ({
+				url: API.jacketed.sizes.base,
+				params: new URLSearchParams({
+					flange: req.flange,
+					dn: req.dn,
+				}),
+			}),
+			providesTags: [{ type: 'Jacketed', id: 'sizes' }],
+			onQueryStarted: async (_arg, api) => {
+				try {
+					await api.queryFulfilled
+				} catch {
+					toast.error('Не удалось получить размеры', { autoClose: false })
+				}
+			},
+		}),
 	}),
 })
 
@@ -102,4 +137,6 @@ export const {
 	useGetJacketedConstructionsQuery,
 	useGetJacketedFillersQuery,
 	useGetJacketedMaterialsQuery,
+	useGetJacketedDnQuery,
+	useGetJacketedSizesQuery,
 } = jacketedApi

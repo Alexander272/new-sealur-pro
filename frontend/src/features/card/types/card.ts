@@ -1,3 +1,4 @@
+import type { IJacketed, IJacketedDTO } from '@/features/gaskets/modules/jacketed/types/jacketed'
 import type { IPutg, IPutgDTO } from '@/features/gaskets/modules/putg/types/putg'
 import type { ISerrated, ISerratedDTO } from '@/features/gaskets/modules/serrated/types/serrated'
 import type { ISnp, ISnpDTO } from '@/features/gaskets/modules/snp/types/snp'
@@ -8,9 +9,9 @@ export type PutgType = 'Putg'
 export type PutgmType = 'Putgm'
 export type WaveType = 'Wave'
 export type SerratedType = 'Serrated'
-export type JacketType = 'Jacketed'
+export type JacketedType = 'Jacketed'
 
-export type PositionType = SnpType | PutgType | WaveType | SerratedType
+export type PositionType = SnpType | PutgType | WaveType | SerratedType | JacketedType
 
 export type PositionBase<Type, ExtraProps> = {
 	id: string
@@ -34,8 +35,11 @@ export type PositionWave = PositionBase<WaveType, { data: IWave }>
 export type PositionSerratedDTO = PositionBase<SerratedType, { serratedData: ISerratedDTO }>
 export type PositionSerrated = PositionBase<SerratedType, { data: ISerrated }>
 
-export type PositionDTO = PositionSnpDTO | PositionPutgDTO | PositionWaveDTO | PositionSerratedDTO
-export type Position = PositionSnp | PositionPutg | PositionWave | PositionSerrated
+export type PositionJacketedDTO = PositionBase<JacketedType, { jacketedData: IJacketedDTO }>
+export type PositionJacketed = PositionBase<JacketedType, { data: IJacketed }>
+
+export type PositionDTO = PositionSnpDTO | PositionPutgDTO | PositionWaveDTO | PositionSerratedDTO | PositionJacketedDTO
+export type Position = PositionSnp | PositionPutg | PositionWave | PositionSerrated | PositionJacketed
 
 export interface IActive {
 	index: number

@@ -36,11 +36,7 @@ export const Thickness = () => {
 				Толщина прокладки
 			</Typography>
 
-			<Select
-				value={h || defaultThicknesses[0]}
-				onChange={thicknessHandler}
-				sx={{ borderRadius: '12px', width: '100%' }}
-			>
+			<Select value={h || defaultThicknesses[0]} onChange={thicknessHandler} fullWidth>
 				{(thicknesses && thicknesses.length > 0 ? thicknesses : defaultThicknesses).map((v, i) => (
 					<MenuItem key={i + '-' + v} value={v}>
 						{v.replace('.', ',')}

@@ -5,7 +5,7 @@ import type { TypeMaterial } from '../../types/material'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 import { useGetJacketedMaterialsQuery } from '../../jacketedApiSlice'
-import { getMaterials, getStandard, setMaterial } from '../../jacketedSlice'
+import { getMaterials, getStandard, setMaterial, setThickness } from '../../jacketedSlice'
 
 type Props = {
 	title: string
@@ -54,6 +54,7 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty, related })
 		const current = data?.data?.[type].find(m => m.materialId === event.target.value)
 		if (!current) return
 		dispatch(setMaterial({ type, material: current }))
+		dispatch(setThickness(current.thickness))
 		if (related) {
 			const current = data?.data?.[related].find(m => m.materialId === event.target.value)
 			dispatch(setMaterial({ type: related, material: current }))

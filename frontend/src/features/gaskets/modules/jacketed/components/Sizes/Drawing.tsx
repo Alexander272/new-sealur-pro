@@ -1,0 +1,27 @@
+import { Skeleton, Typography } from '@mui/material'
+
+import { useAppSelector } from '@/hooks/redux'
+import { Column, ImageContainer } from '@/features/gaskets/components/Skeletons/gasket.style'
+import { getConstruction, getType } from '../../jacketedSlice'
+import { Dimensions } from './Dimensions/Dimensions'
+import { StandardImage } from './Image/StandardImage'
+
+export const Drawing = () => {
+	const type = useAppSelector(getType)
+	const construction = useAppSelector(getConstruction)
+
+	return (
+		<Column width={60}>
+			<Typography fontWeight='bold'>Чертеж прокладки</Typography>
+
+			{!construction || !type ? (
+				<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
+			) : (
+				<ImageContainer padding='0'>
+					<StandardImage />
+					<Dimensions />
+				</ImageContainer>
+			)}
+		</Column>
+	)
+}

@@ -1,20 +1,23 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import type { IConstruction, IFlangeType, IJacketedStandard, IJacketedType, IMainJacketed } from './types/main'
 import type { IDrawing } from '../../types/drawing'
+import type { IMaterial } from '../../types/material'
+import type { IConstruction, IFlangeType, IJacketedStandard, IJacketedType, IMainJacketed } from './types/main'
+import type { IFiller, IMaterialsJacketed, TypeMaterial } from './types/material'
+import type { DSize, ISize, ISizeJacketed } from './types/sizes'
+import type { IDesignJacketed } from './types/design'
 import { localKeys } from '@/constants/localKeys'
 import { RootState } from '@/app/store'
-import { IFiller, IMaterialsJacketed, TypeMaterial } from './types/material'
-import { IMaterial } from '../../types/material'
+import { IJacketed } from './types/jacketed'
 
 export interface IJacketedState {
 	amount: string
 	info: string
 
 	main: IMainJacketed
-	// size: ISizeJacketed
+	size: ISizeJacketed
 	material: IMaterialsJacketed
-	// design: IDesignJacketed
+	design: IDesignJacketed
 
 	// designErrors: IDesignErrors
 	// sizeErrors: ISizeErrors
@@ -27,27 +30,27 @@ const initialState: IJacketedState = {
 	info: '',
 
 	main: {},
-	// size: {
-	// 	dn: '',
-	// 	dnAlt: 0,
-	// 	pn: '',
-	// 	pnAlt: '',
-	// 	d4: '',
-	// 	d3: '',
-	// 	d2: '',
-	// 	d1: '',
-	// 	h: '3.0',
-	// },
+	size: {
+		dn: '',
+		dnAlt: 0,
+		pn: '',
+		pnAlt: '',
+		d4: '',
+		d3: '',
+		d2: '',
+		d1: '',
+		h: '3.6',
+	},
 	material: {},
-	// design: {
-	// 	jumper: {
-	// 		hasJumper: false,
-	// 		code: 'A',
-	// 		width: '',
-	// 		hasDrawing: false,
-	// 	},
-	// 	drawing: JSON.parse(localStorage.getItem(localKeys.jacketedDrawing) || 'null')?.src || undefined,
-	// },
+	design: {
+		// jumper: {
+		// 	hasJumper: false,
+		// 	code: 'A',
+		// 	width: '',
+		// 	hasDrawing: false,
+		// },
+		drawing: JSON.parse(localStorage.getItem(localKeys.jacketedDrawing) || 'null')?.src || undefined,
+	},
 	drawing: JSON.parse(localStorage.getItem(localKeys.jacketedDrawing) || 'null') || undefined,
 
 	// designErrors: {
@@ -85,6 +88,82 @@ export const jacketedSlice = createSlice({
 		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material?: IMaterial }>) => {
 			state.material[action.payload.type] = action.payload.material
 		},
+
+		//
+		setDn: (state, action: PayloadAction<number>) => {
+			state.size.dnAlt = action.payload
+		},
+		setSize: (state, action: PayloadAction<ISize>) => {
+			state.size = { ...state.size, ...action.payload }
+		},
+		setDSize: (state, action: PayloadAction<{ name: DSize; value: string }>) => {
+			state.size[action.payload.name] = action.payload.value
+		},
+		setThickness: (state, action: PayloadAction<string>) => {
+			state.size.h = action.payload
+		},
+		// setSizeErrors: (state, action: PayloadAction<ISizeErrors>) => {
+		// 	state.sizeErrors = { ...state.sizeErrors, ...action.payload }
+		// },
+
+		// установка чертежа
+		setDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {
+			state.drawing = action.payload
+			state.design.drawing = action.payload?.src
+			localStorage.setItem(localKeys.jacketedDrawing, JSON.stringify(action.payload || ''))
+
+			// state.designErrors.hole = !action.payload && (state.design.hasHole || false)
+			// state.designErrors.jumper =
+			// 	!action.payload && ((state.design.jumper.hasJumper && state.design.jumper.hasDrawing) || false)
+		},
+
+		// установка доп. инфы
+		setInfo: (state, action: PayloadAction<string>) => {
+			state.info = action.payload
+		},
+		// установка количества
+		setAmount: (state, action: PayloadAction<string>) => {
+			state.amount = action.payload
+		},
+
+		setJacketed: (state, action: PayloadAction<{ data: IJacketed; amount: string; info?: string }>) => {
+			state.main = action.payload.data.main
+			state.size = action.payload.data.size
+			state.material = action.payload.data.material
+
+			// state.design.hasHole = action.payload.data.design.hasHole || false
+			// state.design.hasCoating = action.payload.data.design.hasCoating || false
+			// state.design.withRetainer = action.payload.data.design.withRetainer || false
+			// state.design.jumper.hasJumper = action.payload.data.design.jumper.hasJumper || false
+			// state.design.jumper.code = action.payload.data.design.jumper.code
+			// state.design.jumper.width = action.payload.data.design.jumper.width
+			state.design.drawing = action.payload.data.design.drawing
+
+			if (action.payload.data.design.drawing) {
+				const params = new URLSearchParams(action.payload.data.design.drawing.split('?')[1])
+				const id = params.get('name')?.split('_')[0]
+				const drawing: IDrawing = {
+					id: id || '',
+					name: params.get('name') || '',
+					origName: params.get('orig') || '',
+					src: action.payload.data.design.drawing,
+					group: params.get('group') || '',
+				}
+				state.drawing = drawing
+			} else {
+				state.drawing = undefined
+			}
+
+			state.amount = action.payload.amount
+			state.info = action.payload.info || ''
+		},
+		// сброс выбранной позиции
+		clearJacketed: state => {
+			state.drawing = JSON.parse(localStorage.getItem(localKeys.jacketedDrawing) || 'null') || undefined
+			state.design.drawing = state.drawing?.src
+		},
+		// сброс стейта
+		resetJacketed: () => initialState,
 	},
 })
 
@@ -100,15 +179,30 @@ export const getConstruction = (state: RootState) => state.jacketed.main.constru
 export const getMaterials = (state: RootState) => state.jacketed.material
 export const getFiller = (state: RootState) => state.jacketed.material.filler
 
+export const getSize = (state: RootState) => state.jacketed.size
+export const getSizeId = (state: RootState) => state.jacketed.size.id
+export const getDn = (state: RootState) => state.jacketed.size.dnAlt
+export const getPn = (state: RootState) => state.jacketed.size.pn
+export const getH = (state: RootState) => state.jacketed.size.h
+
+export const getDrawing = (state: RootState) => state.jacketed.drawing
+export const getDesign = (state: RootState) => state.jacketed.design
+
+// export const getDesignErrors = (state: RootState) => state.jacketed.designErrors
+// export const getSizeErrors = (state: RootState) => state.jacketed.sizeErrors
+
+export const getInfo = (state: RootState) => state.jacketed.info
+export const getAmount = (state: RootState) => state.jacketed.amount
+
 export const {
 	setMainStandard,
 	setMainFlangeType,
 	setType,
 	setConstruction,
-	// setDn,
-	// setSize,
-	// setDSize,
-	// setThickness,
+	setDn,
+	setSize,
+	setDSize,
+	setThickness,
 	// setSizeErrors,
 	setFiller,
 	setMaterial,
@@ -116,10 +210,10 @@ export const {
 	// setHasCoating,
 	// setWithRetainer,
 	// setJumper,
-	// setDrawing,
-	// setInfo,
-	// setAmount,
-	// setSerrated,
-	// clearSerrated,
-	// resetSerrated,
+	setDrawing,
+	setInfo,
+	setAmount,
+	setJacketed,
+	clearJacketed,
+	resetJacketed,
 } = jacketedSlice.actions
