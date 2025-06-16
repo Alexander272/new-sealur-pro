@@ -9,6 +9,7 @@ type Services struct {
 	Construction
 	Filler
 	Material
+	Size
 }
 
 type Deps struct {
@@ -24,6 +25,8 @@ func NewServices(deps *Deps) *Services {
 	filler := NewFillerService(deps.Repos.Filler)
 	material := NewMaterialService(deps.Repos.Material)
 
+	size := NewSizeService(deps.Repos.Size)
+
 	return &Services{
 		StandardInfo:     standard,
 		FlangeType:       flange,
@@ -31,5 +34,6 @@ func NewServices(deps *Deps) *Services {
 		Construction:     construction,
 		Filler:           filler,
 		Material:         material,
+		Size:             size,
 	}
 }

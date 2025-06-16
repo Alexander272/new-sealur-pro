@@ -7,6 +7,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/jacketed/transport/http/flange_type"
 	"github.com/Alexander272/new-sealur-pro/internal/jacketed/transport/http/jacketed_type"
 	"github.com/Alexander272/new-sealur-pro/internal/jacketed/transport/http/materials"
+	"github.com/Alexander272/new-sealur-pro/internal/jacketed/transport/http/sizes"
 	"github.com/Alexander272/new-sealur-pro/internal/jacketed/transport/http/standard_info"
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
 	"github.com/gin-gonic/gin"
@@ -30,4 +31,5 @@ func (h *Handler) Init(api *gin.RouterGroup, middleware *middleware.Middleware) 
 	construction.Register(jacketed, h.services.Construction, middleware)
 	filler.Register(jacketed, h.services.Filler, middleware)
 	materials.Register(jacketed, h.services.Material, middleware)
+	sizes.Register(jacketed, h.services.Size, middleware)
 }

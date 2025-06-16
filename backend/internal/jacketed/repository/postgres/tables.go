@@ -15,4 +15,5 @@ const (
 	ConstructionTable     = "jacketed_construction"
 	FillerTable           = "jacketed_filler"
 	JacketedMaterialTable = "jacketed_material"
+	SizeTable             = "jacketed_size"
 )

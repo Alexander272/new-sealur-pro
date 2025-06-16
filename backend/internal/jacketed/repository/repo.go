@@ -23,6 +23,9 @@ type Filler interface {
 type Material interface {
 	postgres.Material
 }
+type Size interface {
+	postgres.Size
+}
 
 type Repository struct {
 	StandardInfo
@@ -31,6 +34,7 @@ type Repository struct {
 	Construction
 	Filler
 	Material
+	Size
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -41,5 +45,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Construction:     postgres.NewConstructionRepo(db),
 		Filler:           postgres.NewFillerRepo(db),
 		Material:         postgres.NewMaterialRepo(db),
+		Size:             postgres.NewSizeRepo(db),
 	}
 }
