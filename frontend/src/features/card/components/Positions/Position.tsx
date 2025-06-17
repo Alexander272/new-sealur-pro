@@ -24,6 +24,7 @@ import { setSerrated } from '@/features/gaskets/modules/serrated/serratedSlice'
 import { WarningIcon } from '@/components/Icons/WarningIcon'
 import { getActive, setActive } from '../../cardSlice'
 import { useDeletePositionMutation, useLazyGetPositionByIdQuery } from '../../cardApiSlice'
+import { setJacketed } from '@/features/gaskets/modules/jacketed/jacketedSlice'
 
 type Props = {
 	idx: number
@@ -87,6 +88,8 @@ export const Position: FC<Props> = ({ idx, data }) => {
 			// if (location.pathname !== PathRoutes.Gasket.Wave) navigate(PathRoutes.Gasket.Wave)
 		}
 		if (payload.data.type == 'Serrated') dispatch(setSerrated(payload.data))
+		if (payload.data.type == 'Jacketed') dispatch(setJacketed(payload.data))
+
 		//TODO эта строка работает только для прокладок, но когда нибудь тут будут и кольца
 		if (location.pathname !== PathRoutes.Gasket[payload.data.type]) navigate(PathRoutes.Gasket[payload.data.type])
 	}

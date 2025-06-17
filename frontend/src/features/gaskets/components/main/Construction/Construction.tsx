@@ -28,7 +28,7 @@ export const BaseConstruction: FC<Props> = ({ data, isFetching, value, onChange,
 	}, [data, active, isFetching, onChange, value])
 
 	useEffect(() => {
-		if (!data.length || !active || isFetching || !type) return
+		if (!data.length || !active || isFetching || (type != undefined && !type)) return
 		let idx = value ? data.findIndex(c => c.id === value.id) : 0
 		if (idx == -1) idx = 0
 		onChange(data[idx] as Union)

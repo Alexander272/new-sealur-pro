@@ -10,14 +10,14 @@ export const Construction = () => {
 	const construction = useAppSelector(getConstruction)
 	const dispatch = useAppDispatch()
 
-	const { data, isFetching } = useGetJacketedConstructionsQuery(null)
+	const { data, isFetching, isUninitialized } = useGetJacketedConstructionsQuery(null)
 
 	const changeHandler = useCallback((value: IConstruction) => dispatch(setConstruction(value)), [dispatch])
 
 	return (
 		<BaseConstruction
 			data={data?.data || []}
-			isFetching={isFetching}
+			isFetching={isFetching || isUninitialized}
 			value={construction}
 			onChange={changeHandler}
 			hidden
