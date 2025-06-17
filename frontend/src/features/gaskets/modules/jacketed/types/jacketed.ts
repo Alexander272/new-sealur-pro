@@ -39,13 +39,10 @@ export interface IMaterialDTO {
 }
 
 export interface IDesignDTO {
-	// jumper?: IJumperDTO
-	// hasHole: boolean
-	// hasCoating: boolean
-	// withRetainer: boolean
+	jumper?: IJumperDTO
 	drawing: string
 }
-// export interface IJumperDTO {
-// 	code: string
-// 	width: string
-// }
+export interface IJumperDTO {
+	code: string
+	width: string
+}

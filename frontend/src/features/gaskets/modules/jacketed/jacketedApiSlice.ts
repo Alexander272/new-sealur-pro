@@ -66,9 +66,10 @@ export const jacketedApi = apiSlice.injectEndpoints({
 			},
 		}),
 
-		getJacketedFillers: builder.query<{ data: IFiller[] }, null>({
-			query: () => ({
+		getJacketedFillers: builder.query<{ data: IFiller[] }, string>({
+			query: standard => ({
 				url: API.jacketed.fillers,
+				params: new URLSearchParams({ standard }),
 			}),
 			providesTags: [{ type: 'Jacketed', id: 'fillers' }],
 			onQueryStarted: async (_arg, api) => {

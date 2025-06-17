@@ -58,22 +58,22 @@ export const SizesBlock: FC<Props> = ({ sizes, hasSizes, hasD2, positions }) => 
 
 			{hasSizes.hasD4 && (
 				<Size top={positions.d4?.top} left={positions.d4?.left}>
-					{sizes.d4} <Description>(D4)</Description>
+					&#8960; {sizes.d4} <Description>(D4)</Description>
 				</Size>
 			)}
 			{hasSizes.hasD3 && (
 				<Size top={positions.d3?.top} left={positions.d3?.left}>
-					{sizes.d3} <Description>(D3)</Description>
+					&#8960; {sizes.d3} <Description>(D3)</Description>
 				</Size>
 			)}
 			{hasSizes.hasD2 && (
 				<Size top={positions.d2?.top} left={positions.d2?.left}>
-					{sizes.d2} <Description select={hasD2}>(D2)</Description>
+					&#8960; {sizes.d2} <Description select={hasD2}>(D2)</Description>
 				</Size>
 			)}
 			{hasSizes.hasD1 && (
 				<Size top={positions.d1?.top} left={positions.d1?.left}>
-					{sizes.d1} <Description>(D1)</Description>
+					&#8960; {sizes.d1} <Description>(D1)</Description>
 				</Size>
 			)}
 		</Container>

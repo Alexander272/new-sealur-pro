@@ -8,10 +8,10 @@ export const Dimensions = () => {
 	return (
 		<Container>
 			<Size bottom={'9%'}>
-				{sizes.d3.replace('.', ',')} <Description>(D2)</Description>
+				&#8960; {sizes.d3.replace('.', ',')} <Description>(D2)</Description>
 			</Size>
 			<Size bottom={'28%'}>
-				{sizes.d2.replace('.', ',')} <Description>(D1)</Description>
+				&#8960; {sizes.d2.replace('.', ',')} <Description>(D1)</Description>
 			</Size>
 		</Container>
 	)

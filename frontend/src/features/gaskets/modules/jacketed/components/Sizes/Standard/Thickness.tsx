@@ -17,7 +17,7 @@ export const Thickness = () => {
 				Толщина прокладки
 			</Typography>
 
-			<Select value={h || '3.0'} onChange={thicknessHandler}>
+			<Select value={h || '3.4'} onChange={thicknessHandler}>
 				<MenuItem value={h}>{h}</MenuItem>
 				{/* {(thicknesses && thicknesses.length > 0 ? thicknesses : defaultThicknesses).map((v, i) => (
 					<MenuItem key={i + '-' + v} value={v}>

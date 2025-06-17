@@ -38,6 +38,7 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty, related })
 		if (data.data[type]?.length > 0) {
 			const index = data.data[key] || 0
 			dispatch(setMaterial({ type, material: data.data[type][index] }))
+			dispatch(setThickness(data.data[type][index].thickness))
 		}
 	}, [data, active, dispatch, type])
 	useEffect(() => {
@@ -47,6 +48,7 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty, related })
 			const key = `${type}DefaultIndex` as const
 			const index = data.data[key] || 0
 			dispatch(setMaterial({ type, material: data.data[type][index] }))
+			dispatch(setThickness(data.data[type][index].thickness))
 		}
 	}, [data, active, dispatch, isEmpty, material, type])
 
@@ -80,7 +82,7 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty, related })
 
 					{data?.data?.[type]?.map(m => (
 						<MenuItem key={m.id} value={m.materialId}>
-							{m.title}
+							{m.code} - {m.title}
 						</MenuItem>
 					))}
 				</Select>

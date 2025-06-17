@@ -12,12 +12,12 @@ import {
 	clearJacketed,
 	getAmount,
 	getDesign,
-	// getDesignErrors,
+	getDesignErrors,
 	getInfo,
 	getMain,
 	getMaterials,
 	getSize,
-	// getSizeErrors,
+	getSizeErrors,
 	setDrawing,
 } from '../../jacketedSlice'
 
@@ -31,8 +31,8 @@ export const Buttons = () => {
 	const materials = useAppSelector(getMaterials)
 	const size = useAppSelector(getSize)
 	const design = useAppSelector(getDesign)
-	// const designErrors = useAppSelector(getDesignErrors)
-	// const sizeErrors = useAppSelector(getSizeErrors)
+	const designErrors = useAppSelector(getDesignErrors)
+	const sizeErrors = useAppSelector(getSizeErrors)
 
 	const orderId = useAppSelector(getOrderId)
 	const positions = useAppSelector(getPositions)
@@ -78,12 +78,9 @@ export const Buttons = () => {
 					shellId: materials.shell?.id || '',
 				},
 				design: {
-					// jumper: design.jumper.hasJumper
-					// 	? { code: design.jumper.code, width: design.jumper.width }
-					// 	: undefined,
-					// hasHole: design.hasHole || false,
-					// hasCoating: design.hasCoating || false,
-					// withRetainer: design.withRetainer || false,
+					jumper: design.jumper.hasJumper
+						? { code: design.jumper.code, width: design.jumper.width }
+						: undefined,
 					drawing: design.drawing || '',
 				},
 			},
@@ -131,8 +128,8 @@ export const Buttons = () => {
 			<Button
 				disabled={
 					!amount ||
-					// Object.values(sizeErrors).some(v => v) ||
-					// Object.values(designErrors).some(v => v) ||
+					Object.values(sizeErrors).some(v => v) ||
+					Object.values(designErrors).some(v => v) ||
 					role != 'user' ||
 					isLoading ||
 					isLoadingUpdate
