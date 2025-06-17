@@ -10,10 +10,12 @@ type Filler struct {
 }
 
 type GetFillerDTO struct {
+	StandardId string `json:"standardId" db:"standard_id"`
 }
 
 type FillerDTO struct {
 	Id            string `json:"id" db:"id"`
+	StandardId    string `json:"standardId" db:"standard_id"`
 	TemperatureId string `json:"temperatureId" db:"temperature_id"`
 	Title         string `json:"title" db:"title"`
 	Code          string `json:"code" db:"code"`

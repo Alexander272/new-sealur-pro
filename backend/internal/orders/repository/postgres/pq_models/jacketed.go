@@ -17,6 +17,8 @@ type BasePositionJacketed struct {
 	D2               string `db:"d2"`
 	D1               string `db:"d1"`
 	H                string `db:"h"`
+	Jumper           string `db:"jumper"`
+	JumperWidth      string `db:"jumper_width"`
 	Drawing          string `db:"drawing"`
 }
 
@@ -39,6 +41,8 @@ type PositionJacketed struct {
 	H              string `db:"h"`
 	FillerId       string `db:"filler_id"`
 	ShellId        string `db:"shell_id"`
+	Jumper         string `db:"jumper"`
+	JumperWidth    string `db:"jumper_width"`
 	Drawing        string `db:"drawing"`
 }
 
@@ -57,5 +61,7 @@ type PositionJacketedDTO struct {
 	H              string `db:"h"`
 	FillerId       string `db:"filler_id"`
 	ShellId        string `db:"shell_id"`
+	Jumper         string `db:"jumper"`
+	JumperWidth    string `db:"jumper_width"`
 	Drawing        string `db:"drawing"`
 }

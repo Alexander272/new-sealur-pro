@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS public.position_jacketed
     d2 text COLLATE pg_catalog."default" DEFAULT ''::text,
     d1 text COLLATE pg_catalog."default" DEFAULT ''::text,
     h text COLLATE pg_catalog."default" DEFAULT ''::text,
+    jumper text COLLATE pg_catalog."default" DEFAULT ''::text,
+    jumper_width text COLLATE pg_catalog."default" DEFAULT ''::text,
     drawing text COLLATE pg_catalog."default" DEFAULT ''::text,
     created_at timestamp with time zone DEFAULT now(),
     CONSTRAINT position_jacketed_pkey PRIMARY KEY (id),

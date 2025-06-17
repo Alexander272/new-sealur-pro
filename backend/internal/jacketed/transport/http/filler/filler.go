@@ -38,7 +38,12 @@ func Register(api *gin.RouterGroup, service services.Filler, middleware *middlew
 }
 
 func (h *Handler) get(c *gin.Context) {
-	req := &models.GetFillerDTO{}
+	standard := c.Query("standard")
+	if err := uuid.Validate(standard); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Стандарт не задан")
+		return
+	}
+	req := &models.GetFillerDTO{StandardId: standard}
 
 	data, err := h.service.Get(c, req)
 	if err != nil {

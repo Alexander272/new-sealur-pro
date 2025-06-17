@@ -26,21 +26,21 @@ type Filler interface {
 
 func (r *FillerRepo) Get(ctx context.Context, req *models.GetFillerDTO) ([]*models.Filler, error) {
 	query := fmt.Sprintf(`SELECT f.id, t.title as temperature, f.title, code, description, designation FROM %s AS f 
-		INNER JOIN %s AS t ON temperature_id=t.id 
+		INNER JOIN %s AS t ON temperature_id=t.id WHERE standard_id=$1
 		ORDER BY code`,
 		FillerTable, TemperatureTable,
 	)
 
 	data := []*models.Filler{}
-	if err := r.db.SelectContext(ctx, &data, query); err != nil {
+	if err := r.db.SelectContext(ctx, &data, query, req.StandardId); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 	return data, nil
 }
 
 func (r *FillerRepo) Create(ctx context.Context, dto *models.FillerDTO) error {
-	query := fmt.Sprintf(`INSERT INTO %s (id, temperature_id, title, code, description, designation) 
-		VALUES (:id, :temperature_id, :title, :code, :description, :designation)`,
+	query := fmt.Sprintf(`INSERT INTO %s (id, standard_id, temperature_id, title, code, description, designation) 
+		VALUES (:id, :standard_id, :temperature_id, :title, :code, :description, :designation)`,
 		FillerTable,
 	)
 	dto.Id = uuid.NewString()

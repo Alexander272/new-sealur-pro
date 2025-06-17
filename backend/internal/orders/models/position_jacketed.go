@@ -35,11 +35,13 @@ type PositionJacketed_Material struct {
 }
 
 type PositionJacketed_Design struct {
-	// Jumper       *PositionSerrated_Jumper `json:"jumper,omitempty"`
-	// HasHole      bool                     `json:"hasHole"`
-	// HasCoating   bool                     `json:"hasCoating"`
-	// WithRetainer bool                     `json:"withRetainer"`
-	Drawing string `json:"drawing"`
+	Jumper  *PositionJacketed_Jumper `json:"jumper,omitempty"`
+	Drawing string                   `json:"drawing"`
+}
+type PositionJacketed_Jumper struct {
+	HasJumper bool   `json:"hasJumper"`
+	Code      string `json:"code"`
+	Width     string `json:"width"`
 }
 
 type PositionJacketedDTO struct {
@@ -73,9 +75,10 @@ type PositionJacketedDTO_Material struct {
 }
 
 type PositionJacketedDTO_Design struct {
-	// Jumper       *PositionSerratedDTO_Jumper `json:"jumper,omitempty"`
-	// HasHole      bool                        `json:"hasHole"`
-	// HasCoating   bool                        `json:"hasCoating"`
-	// WithRetainer bool                        `json:"withRetainer"`
-	Drawing string `json:"drawing"`
+	Jumper  *PositionJacketedDTO_Jumper `json:"jumper,omitempty"`
+	Drawing string                      `json:"drawing"`
+}
+type PositionJacketedDTO_Jumper struct {
+	Code  string `json:"code"`
+	Width string `json:"width"`
 }

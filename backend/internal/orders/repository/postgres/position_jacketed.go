@@ -37,7 +37,7 @@ type PositionJacketed interface {
 
 func (r *PositionJacketedRepo) Get(ctx context.Context, req *models.GetPositionsDTO) ([]*models.Position, error) {
 	query := fmt.Sprintf(`SELECT p.id, title, amount, type, count, info,
-		type_code, construction_code, filler_code, shell_id, shell_code,
+		type_code, construction_code, filler_code, shell_id, shell_code, jumper, jumper_width,
 		COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, COALESCE(s.d2, ps.d2) AS d2, COALESCE(s.d1, ps.d1) AS d1, h,
 		drawing
 		FROM %s AS p INNER JOIN %s AS ps ON p.id=ps.position_id
@@ -96,7 +96,7 @@ func (r *PositionJacketedRepo) GetByPosition(ctx context.Context, positionId str
 	query := fmt.Sprintf(`SELECT id, position_id, standard_id, flange_type_id, type_id, construction_id, filler_id, shell_id, 
 		size_id, COALESCE(s.d4, ps.d4) AS d4, COALESCE(s.d3, ps.d3) AS d3, COALESCE(s.d2, ps.d2) AS d2, 
 		COALESCE(s.d1, ps.d1) AS d1, COALESCE(dn, '') AS dn, COALESCE(dn_alt, 0) AS dn_alt, COALESCE(pn, '') AS pn, 
-		COALESCE(pn_alt, '') AS pn_alt, h, drawing
+		COALESCE(pn_alt, '') AS pn_alt, h, jumper, jumper_width, drawing
 		FROM %s AS ps
 		LEFT JOIN LATERAL (SELECT dn, dn_alt, pn, pn_alt, d4, d3, d2, d1 FROM %s WHERE id=ps.size_id) AS s ON true 
 		WHERE position_id=$1`,
@@ -162,9 +162,9 @@ func (r *PositionJacketedRepo) GetDrawing(ctx context.Context, positionId string
 
 func (r *PositionJacketedRepo) Create(ctx context.Context, dto *models.PositionJacketedDTO) error {
 	query := fmt.Sprintf(`INSERT INTO %s(id, position_id, standard_id, flange_type_id, type_id, construction_id, filler_id, shell_id, 
-		size_id, d4, d3, d2, d1, h, drawing)
+		size_id, d4, d3, d2, d1, h, jumper, jumper_width, drawing)
 		VALUES (:id, :position_id, :standard_id, :flange_type_id, :type_id, :construction_id, :filler_id, :shell_id,
-		:size_id, :d4, :d3, :d2, :d1, :h, :drawing)`,
+		:size_id, :d4, :d3, :d2, :d1, :h, :jumper, :jumper_width, :drawing)`,
 		PositionJacketedTable,
 	)
 
@@ -201,7 +201,7 @@ func (r *PositionJacketedRepo) Create(ctx context.Context, dto *models.PositionJ
 func (r *PositionJacketedRepo) Update(ctx context.Context, dto *models.PositionJacketedDTO) error {
 	query := fmt.Sprintf(`UPDATE %s SET standard_id=:standard_id, flange_type_id=:flange_type_id, type_id=:type_id, 
 		construction_id=:construction_id, filler_id=:filler_id, shell_id=:shell_id, size_id=:size_id, 
-		d4=:d4, d3=:d3, d2=:d2, d1=:d1, h=:h, drawing=:drawing WHERE position_id=:position_id`,
+		d4=:d4, d3=:d3, d2=:d2, d1=:d1, h=:h, :jumper, :jumper_width, drawing=:drawing WHERE position_id=:position_id`,
 		PositionJacketedTable,
 	)
 
@@ -236,9 +236,9 @@ func (r *PositionJacketedRepo) Update(ctx context.Context, dto *models.PositionJ
 
 func (r *PositionJacketedRepo) Copy(ctx context.Context, dto *models.CopyPositionDTO) (string, error) {
 	query := fmt.Sprintf(`INSERT INTO %s(id, position_id, standard_id, flange_type_id, type_id, construction_id, filler_id, shell_id, 
-		size_id, d4, d3, d2, d1, h, drawing) 
+		size_id, d4, d3, d2, d1, h, jumper, jumper_width, drawing) 
 		SELECT $1, $2, standard_id, flange_type_id, type_id, construction_id, filler_id, shell_id, size_id, d4, d3, d2, d1, h, 
-		replace(drawing, $3, $4) 
+		jumper, jumper_width, replace(drawing, $3, $4) 
 		FROM %s WHERE position_id=$5 RETURNING drawing`,
 		PositionJacketedTable, PositionJacketedTable,
 	)
@@ -270,11 +270,12 @@ func (r *PositionJacketedRepo) CopySeveral(ctx context.Context, dto []*models.Co
 	}
 
 	query := fmt.Sprintf(`INSERT INTO %s (id, position_id, standard_id, flange_type_id, type_id, construction_id, filler_id, shell_id, 
-		size_id, d4, d3, d2, d1, h, drawing)
+		size_id, d4, d3, d2, d1, h, jumper, jumper_width, drawing)
 		SELECT id::uuid, position_id::uuid, standard_id::uuid, flange_type_id::uuid, type_id::uuid, construction_id::uuid, filler_id::uuid,
-			shell_id::uuid, size_id::uuid, d4, d3, d2, d1, h, drawing FROM (VALUES %s) AS s(id, position_id, orig_id, from_order_id, order_id)
+			shell_id::uuid, size_id::uuid, d4, d3, d2, d1, h, jumper, jumper_width, drawing 
+			FROM (VALUES %s) AS s(id, position_id, orig_id, from_order_id, order_id)
 		LEFT JOIN LATERAL (SELECT standard_id, flange_type_id, type_id, construction_id, filler_id, shell_id,
-			size_id, d4, d3, d2, d1, h,	replace(drawing, s.from_order_id, s.order_id) AS drawing
+			size_id, d4, d3, d2, d1, h, jumper, jumper_width, replace(drawing, s.from_order_id, s.order_id) AS drawing
 			FROM %s WHERE position_id=s.orig_id::uuid) AS m ON true`,
 		PositionJacketedTable, strings.Join(values, ","), PositionJacketedTable,
 	)

@@ -49,6 +49,7 @@ func (r *MaterialRepo) Get(ctx context.Context, req *models.GetMaterialsDTO) (*m
 			BaseCode:   m.BaseCode,
 			Title:      m.Title,
 			Short:      m.Short,
+			Thickness:  m.Thickness,
 		}
 
 		if m.Type == "shell" {
