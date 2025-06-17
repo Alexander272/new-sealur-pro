@@ -2,7 +2,6 @@ package position
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"net/url"
@@ -47,8 +46,8 @@ func (s *PositionWaveService) Get(ctx context.Context, req *models.GetPositionsD
 func (s *PositionWaveService) GetByPosition(ctx context.Context, positionId string) (*models.PositionWave, error) {
 	data, err := s.repo.GetByPosition(ctx, positionId)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, base.ErrNoRows
+		if errors.Is(err, base.ErrNoRows) {
+			return nil, err
 		}
 		return nil, fmt.Errorf("failed to get position wave by position id. error: %w", err)
 	}
@@ -58,8 +57,8 @@ func (s *PositionWaveService) GetByPosition(ctx context.Context, positionId stri
 func (s *PositionWaveService) GetDrawing(ctx context.Context, positionId string) (string, error) {
 	drawing, err := s.repo.GetDrawing(ctx, positionId)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return "", base.ErrNoRows
+		if errors.Is(err, base.ErrNoRows) {
+			return "", err
 		}
 		return "", fmt.Errorf("failed to get wave drawing by position id. error: %w", err)
 	}

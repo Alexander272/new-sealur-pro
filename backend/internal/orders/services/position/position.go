@@ -20,6 +20,7 @@ type PositionService struct {
 	putg     PositionPutg
 	wave     PositionWave
 	serrated PositionSerrated
+	jacketed PositionJacketed
 	files    services.Files
 }
 
@@ -29,6 +30,7 @@ type PositionDeps struct {
 	Putg     PositionPutg
 	Wave     PositionWave
 	Serrated PositionSerrated
+	Jacketed PositionJacketed
 	Files    services.Files
 }
 
@@ -39,6 +41,7 @@ func NewPositionService(deps *PositionDeps) *PositionService {
 		putg:     deps.Putg,
 		wave:     deps.Wave,
 		serrated: deps.Serrated,
+		jacketed: deps.Jacketed,
 		files:    deps.Files,
 	}
 }
@@ -77,6 +80,8 @@ func (s *PositionService) GetById(ctx context.Context, id string) (*models.Posit
 		data.Data, err = s.wave.GetByPosition(ctx, id)
 	case models.PositionTypeSerrated:
 		data.Data, err = s.serrated.GetByPosition(ctx, id)
+	case models.PositionTypeJacketed:
+		data.Data, err = s.jacketed.GetByPosition(ctx, id)
 	}
 	if err != nil {
 		return nil, err
@@ -141,6 +146,8 @@ func (s *PositionService) Copy(ctx context.Context, dto *models.CopyPositionDTO)
 		err = s.wave.Copy(ctx, dto)
 	case models.PositionTypeSerrated:
 		err = s.serrated.Copy(ctx, dto)
+	case models.PositionTypeJacketed:
+		err = s.jacketed.Copy(ctx, dto)
 	}
 	if err != nil {
 		s.Delete(ctx, &models.DeletePositionDTO{Id: data.Id})
@@ -201,6 +208,8 @@ func (s *PositionService) CopySeveral(ctx context.Context, dto []*models.CopyPos
 	putgDTO := []*models.CopyPositionDTO{}
 	waveDTO := []*models.CopyPositionDTO{}
 	serratedDTO := []*models.CopyPositionDTO{}
+	jacketedDTO := []*models.CopyPositionDTO{}
+
 	for _, v := range data {
 		filtered[v.Title].NewId = v.Id
 		switch v.Type {
@@ -212,6 +221,8 @@ func (s *PositionService) CopySeveral(ctx context.Context, dto []*models.CopyPos
 			waveDTO = append(waveDTO, filtered[v.Title])
 		case models.PositionTypeSerrated:
 			serratedDTO = append(serratedDTO, filtered[v.Title])
+		case models.PositionTypeJacketed:
+			jacketedDTO = append(jacketedDTO, filtered[v.Title])
 		}
 	}
 
@@ -226,6 +237,9 @@ func (s *PositionService) CopySeveral(ctx context.Context, dto []*models.CopyPos
 	}
 	if len(serratedDTO) > 0 {
 		err = s.serrated.CopySeveral(ctx, serratedDTO)
+	}
+	if len(jacketedDTO) > 0 {
+		err = s.jacketed.CopySeveral(ctx, jacketedDTO)
 	}
 	if err != nil {
 		s.DeleteSeveral(ctx, data)
@@ -264,6 +278,8 @@ func (s *PositionService) Create(ctx context.Context, dto *models.PositionDTO) e
 		err = s.wave.Create(ctx, dto)
 	case models.PositionTypeSerrated:
 		err = s.serrated.Create(ctx, dto)
+	case models.PositionTypeJacketed:
+		err = s.jacketed.Create(ctx, dto)
 	}
 	if err != nil {
 		s.Delete(ctx, &models.DeletePositionDTO{Id: dto.Id})
@@ -294,6 +310,8 @@ func (s *PositionService) Update(ctx context.Context, dto *models.PositionDTO) e
 		err = s.wave.Update(ctx, dto)
 	case models.PositionTypeSerrated:
 		err = s.serrated.Update(ctx, dto)
+	case models.PositionTypeJacketed:
+		err = s.jacketed.Update(ctx, dto)
 	}
 	if err != nil {
 		return err
@@ -314,6 +332,8 @@ func (s *PositionService) Delete(ctx context.Context, dto *models.DeletePosition
 		drawing, err = s.wave.GetDrawing(ctx, dto.Id)
 	case models.PositionTypeSerrated:
 		drawing, err = s.serrated.GetDrawing(ctx, dto.Id)
+	case models.PositionTypeJacketed:
+		drawing, err = s.jacketed.GetDrawing(ctx, dto.Id)
 	}
 	if err != nil && !errors.Is(err, base.ErrNoRows) {
 		return err

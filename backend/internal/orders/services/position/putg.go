@@ -2,7 +2,6 @@ package position
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"net/url"
@@ -47,7 +46,7 @@ func (s *PositionPutgService) Get(ctx context.Context, req *models.GetPositionsD
 func (s *PositionPutgService) GetByPosition(ctx context.Context, positionId string) (*models.PositionPutg, error) {
 	data, err := s.repo.GetByPosition(ctx, positionId)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, base.ErrNoRows) {
 			return nil, base.ErrNoRows
 		}
 		return nil, fmt.Errorf("failed to get position putg by position id. error: %w", err)
@@ -58,7 +57,7 @@ func (s *PositionPutgService) GetByPosition(ctx context.Context, positionId stri
 func (s *PositionPutgService) GetDrawing(ctx context.Context, positionId string) (string, error) {
 	drawing, err := s.repo.GetDrawing(ctx, positionId)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, base.ErrNoRows) {
 			return "", base.ErrNoRows
 		}
 		return "", fmt.Errorf("failed to get putg drawing by position id. error: %w", err)

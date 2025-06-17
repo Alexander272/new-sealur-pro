@@ -9,6 +9,7 @@ const (
 	PositionTypePutg     PositionType = "Putg"
 	PositionTypeWave     PositionType = "Wave"
 	PositionTypeSerrated PositionType = "Serrated"
+	PositionTypeJacketed PositionType = "Jacketed"
 	PositionTypeRing     PositionType = "Ring"
 	PositionTypeKit      PositionType = "RingsKit"
 )
@@ -34,6 +35,7 @@ type Position struct {
 	PutgData     *PositionPutg     `json:"putgData"`
 	WaveData     *PositionWave     `json:"waveData"`
 	SerratedData *PositionSerrated `json:"serratedData"`
+	JacketedData *PositionJacketed `json:"jacketedData"`
 	Data         interface{}       `json:"data"`
 	// RingData *PositionRing     `json:"ringData"`
 	// KitData  *PositionRingsKit `json:"kitData"`
@@ -60,6 +62,7 @@ type PositionDTO struct {
 	PutgData     *PositionPutgDTO     `json:"putgData"`
 	WaveData     *PositionWaveDTO     `json:"waveData"`
 	SerratedData *PositionSerratedDTO `json:"serratedData"`
+	JacketedData *PositionJacketedDTO `json:"jacketedData"`
 	// RingData *PositionRingDTO     `json:"ringData"`
 	// KitData  *PositionRingsKitDTO `json:"kitData"`
 }
