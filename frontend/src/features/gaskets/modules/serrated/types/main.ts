@@ -24,6 +24,7 @@ export interface IFlangeType {
 export interface ISerratedType {
 	id: string
 	baseId: string
+	baseCode: string
 	title: string
 	code: string
 	description: string
