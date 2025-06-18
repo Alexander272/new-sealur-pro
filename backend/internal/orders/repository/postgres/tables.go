@@ -47,7 +47,7 @@ const (
 	SerratedMaterialTable     = "serrated_material"
 
 	JacketedSizeTable         = "jacketed_size"
-	JacketedTypeTable         = "jacketed_type_base"
+	JacketedTypeTable         = "jacketed_type"
 	JacketedConstructionTable = "jacketed_construction"
 	JacketedFillerTable       = "jacketed_filler"
 	JacketedMaterialTable     = "jacketed_material"

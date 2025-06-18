@@ -12,7 +12,7 @@ type PositionJacketed struct {
 type PositionJacketed_Main struct {
 	Standard     *jacketed_models.StandardInfo `json:"standard"`
 	FlangeType   *jacketed_models.FlangeType   `json:"flangeType"`
-	JacketedType *jacketed_models.TypeBase     `json:"type"`
+	JacketedType *jacketed_models.JacketedType `json:"type"`
 	Construction *jacketed_models.Construction `json:"construction"`
 }
 

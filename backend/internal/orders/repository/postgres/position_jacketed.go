@@ -69,7 +69,7 @@ func (r *PositionJacketedRepo) Get(ctx context.Context, req *models.GetPositions
 			Type:   models.PositionType(d.Type),
 			JacketedData: &models.PositionJacketed{
 				Main: &models.PositionJacketed_Main{
-					JacketedType: &jacketed_models.TypeBase{Code: d.TypeCode},
+					JacketedType: &jacketed_models.JacketedType{Code: d.TypeCode},
 					Construction: &jacketed_models.Construction{Code: d.ConstructionCode},
 				},
 				Size: &models.PositionJacketed_Size{
@@ -84,6 +84,11 @@ func (r *PositionJacketedRepo) Get(ctx context.Context, req *models.GetPositions
 					Shell:  &jacketed_models.Material{Code: d.ShellCode},
 				},
 				Design: &models.PositionJacketed_Design{
+					Jumper: &models.PositionJacketed_Jumper{
+						HasJumper: d.Jumper != "",
+						Code:      d.Jumper,
+						Width:     d.JumperWidth,
+					},
 					Drawing: d.Drawing,
 				},
 			},
@@ -121,7 +126,7 @@ func (r *PositionJacketedRepo) GetByPosition(ctx context.Context, positionId str
 		Main: &models.PositionJacketed_Main{
 			Standard:     &jacketed_models.StandardInfo{Id: tmp.StandardId},
 			FlangeType:   &jacketed_models.FlangeType{Id: tmp.FlangeTypeId},
-			JacketedType: &jacketed_models.TypeBase{Id: tmp.TypeId},
+			JacketedType: &jacketed_models.JacketedType{Id: tmp.TypeId},
 			Construction: &jacketed_models.Construction{Id: tmp.ConstructionId},
 		},
 		Size: &models.PositionJacketed_Size{
@@ -141,6 +146,11 @@ func (r *PositionJacketedRepo) GetByPosition(ctx context.Context, positionId str
 			Shell:  &jacketed_models.Material{Id: tmp.ShellId},
 		},
 		Design: &models.PositionJacketed_Design{
+			Jumper: &models.PositionJacketed_Jumper{
+				HasJumper: tmp.Jumper != "",
+				Code:      tmp.Jumper,
+				Width:     tmp.JumperWidth,
+			},
 			Drawing: tmp.Drawing,
 		},
 	}

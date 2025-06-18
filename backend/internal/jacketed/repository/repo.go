@@ -11,8 +11,8 @@ type StandardInfo interface {
 type FlangeType interface {
 	postgres.FlangeType
 }
-type JacketedBaseType interface {
-	postgres.JacketedBaseType
+type JacketedType interface {
+	postgres.JacketedType
 }
 type Construction interface {
 	postgres.Construction
@@ -30,7 +30,7 @@ type Size interface {
 type Repository struct {
 	StandardInfo
 	FlangeType
-	JacketedBaseType
+	JacketedType
 	Construction
 	Filler
 	Material
@@ -39,12 +39,12 @@ type Repository struct {
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		StandardInfo:     postgres.NewStandardInfoRepo(db),
-		FlangeType:       postgres.NewFlangeTypeRepo(db),
-		JacketedBaseType: postgres.NewJacketedTypeBaseRepo(db),
-		Construction:     postgres.NewConstructionRepo(db),
-		Filler:           postgres.NewFillerRepo(db),
-		Material:         postgres.NewMaterialRepo(db),
-		Size:             postgres.NewSizeRepo(db),
+		StandardInfo: postgres.NewStandardInfoRepo(db),
+		FlangeType:   postgres.NewFlangeTypeRepo(db),
+		JacketedType: postgres.NewJacketedTypeRepo(db),
+		Construction: postgres.NewConstructionRepo(db),
+		Filler:       postgres.NewFillerRepo(db),
+		Material:     postgres.NewMaterialRepo(db),
+		Size:         postgres.NewSizeRepo(db),
 	}
 }

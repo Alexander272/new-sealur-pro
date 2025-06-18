@@ -15,16 +15,16 @@ import (
 )
 
 type Handler struct {
-	service services.JacketedBaseType
+	service services.JacketedType
 }
 
-func NewHandler(service services.JacketedBaseType) *Handler {
+func NewHandler(service services.JacketedType) *Handler {
 	return &Handler{
 		service: service,
 	}
 }
 
-func Register(api *gin.RouterGroup, service services.JacketedBaseType, middleware *middleware.Middleware) {
+func Register(api *gin.RouterGroup, service services.JacketedType, middleware *middleware.Middleware) {
 	handler := NewHandler(service)
 
 	SerratedTypeBase := api.Group("/types")
@@ -40,17 +40,24 @@ func Register(api *gin.RouterGroup, service services.JacketedBaseType, middlewar
 }
 
 func (h *Handler) get(c *gin.Context) {
-	data, err := h.service.Get(c, &models.GetTypeBaseDTO{})
+	filler := c.Query("filler")
+	if err := uuid.Validate(filler); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Стандарт не задан")
+		return
+	}
+	dto := &models.GetJacketedTypeDTO{FillerId: filler}
+
+	data, err := h.service.Get(c, dto)
 	if err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось получить данные")
-		error_bot.Send(c, err.Error(), nil)
+		error_bot.Send(c, err.Error(), dto)
 		return
 	}
 	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
 }
 
 func (h *Handler) create(c *gin.Context) {
-	dto := &models.TypeBaseDTO{}
+	dto := &models.JacketedTypeDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
@@ -72,7 +79,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	dto := &models.TypeBaseDTO{}
+	dto := &models.JacketedTypeDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
@@ -95,7 +102,7 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.Delete(c, &models.DeleteTypeBaseDTO{Id: id}); err != nil {
+	if err := h.service.Delete(c, &models.DeleteJacketedTypeDTO{Id: id}); err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Не удалось удалить тип прокладки")
 		error_bot.Send(c, err.Error(), id)
 		return

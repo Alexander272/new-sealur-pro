@@ -29,6 +29,7 @@ func NewServices(deps *Deps) *Services {
 	wave := position.NewPositionWaveService(deps.Repos.PositionWave, deps.Files.Files)
 	serrated := position.NewPositionSerratedService(deps.Repos.PositionSerrated, deps.Files.Files)
 	jacketed := position.NewPositionJacketedService(deps.Repos.PositionJacketed, deps.Files.Files)
+
 	position := position.NewPositionService(&position.PositionDeps{
 		Repo: deps.Repos.Position,
 		Snp:  snp, Putg: putg, Wave: wave, Serrated: serrated, Jacketed: jacketed,
@@ -36,7 +37,7 @@ func NewServices(deps *Deps) *Services {
 	})
 	zip := export.NewZipService()
 	export := export.NewExportService(&export.ExportDeps{
-		Snp: snp, Putg: putg, Wave: wave, Serrated: serrated,
+		Snp: snp, Putg: putg, Wave: wave, Serrated: serrated, Jacketed: jacketed,
 		Files: deps.Files.Files, Zip: zip,
 	})
 	order := NewOrderService(&OrderDeps{Repo: deps.Repos.Order, Mail: deps.Mail, User: deps.User, Position: position, Export: export})

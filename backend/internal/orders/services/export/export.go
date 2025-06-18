@@ -19,6 +19,7 @@ type ExportService struct {
 	putg     position.PositionPutg
 	wave     position.PositionWave
 	serrated position.PositionSerrated
+	jacketed position.PositionJacketed
 	files    files.Files
 	zip      Zip
 }
@@ -28,6 +29,7 @@ type ExportDeps struct {
 	Putg     position.PositionPutg
 	Wave     position.PositionWave
 	Serrated position.PositionSerrated
+	Jacketed position.PositionJacketed
 	Files    files.Files
 	Zip      Zip
 }
@@ -38,6 +40,7 @@ func NewExportService(deps *ExportDeps) *ExportService {
 		putg:     deps.Putg,
 		wave:     deps.Wave,
 		serrated: deps.Serrated,
+		jacketed: deps.Jacketed,
 		files:    deps.Files,
 		zip:      deps.Zip,
 	}
@@ -95,6 +98,9 @@ func (s *ExportService) Prepare(ctx context.Context, dto *models.Order) (*models
 		return nil, err
 	}
 	if err := s.prepareSerrated(ctx, data); err != nil {
+		return nil, err
+	}
+	if err := s.prepareJacketed(ctx, data); err != nil {
 		return nil, err
 	}
 

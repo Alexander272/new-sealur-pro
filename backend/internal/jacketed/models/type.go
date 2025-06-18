@@ -1,6 +1,6 @@
 package models
 
-type TypeBase struct {
+type JacketedType struct {
 	Id          string `json:"id" db:"id"`
 	Title       string `json:"title" db:"title"`
 	Code        string `json:"code" db:"code"`
@@ -11,10 +11,13 @@ type TypeBase struct {
 	HasD1       bool   `json:"hasD1" db:"has_d1"`
 }
 
-type GetTypeBaseDTO struct{}
+type GetJacketedTypeDTO struct {
+	FillerId string `json:"fillerId" db:"filler_id"`
+}
 
-type TypeBaseDTO struct {
+type JacketedTypeDTO struct {
 	Id          string `json:"id" db:"id"`
+	FillerId    string `json:"fillerId" db:"filler_id"`
 	Title       string `json:"title" db:"title"`
 	Code        string `json:"code" db:"code"`
 	Description string `json:"description" db:"description"`
@@ -24,6 +27,6 @@ type TypeBaseDTO struct {
 	HasD1       bool   `json:"hasD1" db:"has_d1"`
 }
 
-type DeleteTypeBaseDTO struct {
+type DeleteJacketedTypeDTO struct {
 	Id string `json:"id" db:"id"`
 }

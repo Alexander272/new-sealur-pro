@@ -1,8 +1,9 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE IF NOT EXISTS public.jacketed_type_base
+CREATE TABLE IF NOT EXISTS public.jacketed_type
 (
     id uuid NOT NULL,
+    filler_id uuid NOT NULL,
     title text COLLATE pg_catalog."default" NOT NULL,
     code text COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" DEFAULT ''::text,
@@ -10,16 +11,22 @@ CREATE TABLE IF NOT EXISTS public.jacketed_type_base
     has_d3 boolean DEFAULT true,
     has_d2 boolean DEFAULT true,
     has_d1 boolean DEFAULT false,
-    CONSTRAINT jacketed_type_base_pkey PRIMARY KEY (id)
+    CONSTRAINT jacketed_type_base_pkey PRIMARY KEY (id),
+    CONSTRAINT jacketed_type_base_filler_id_fkey FOREIGN KEY (filler_id)
+        REFERENCES public.jacketed_filler (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.jacketed_type_base
+ALTER TABLE IF EXISTS public.jacketed_type
     OWNER to postgres;
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS public.jacketed_type_base;
+DROP TABLE IF EXISTS public.jacketed_type
+;
 -- +goose StatementEnd
