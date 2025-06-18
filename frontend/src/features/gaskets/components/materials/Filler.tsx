@@ -14,9 +14,10 @@ type Props = {
 	title?: string
 	value?: string
 	onChange: (value: Union) => void
+	withCode?: boolean
 }
 
-export const BaseFiller: FC<Props> = ({ data, isFetching, title, value, onChange }) => {
+export const BaseFiller: FC<Props> = ({ data, isFetching, title, value, onChange, withCode }) => {
 	const active = useAppSelector(getActive)
 
 	useEffect(() => {
@@ -54,6 +55,7 @@ export const BaseFiller: FC<Props> = ({ data, isFetching, title, value, onChange
 
 					{data.map(f => (
 						<MenuItem key={f.id} value={f.id}>
+							{withCode ? f.code + ' - ' : ''}
 							{f.title} ({f.description}
 							{f.description && ', '}
 							{f.temperature})

@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import type { IDrawing } from '../../types/drawing'
-import type { IMaterial } from '../../types/material'
 import type { IConstruction, IFlangeType, IJacketedStandard, IJacketedType, IMainJacketed } from './types/main'
-import type { IFiller, IMaterialsJacketed, TypeMaterial } from './types/material'
+import type { IFiller, IMaterialsJacketed, TypeMaterial, MaterialWithThickness } from './types/material'
 import type { DSize, ISize, ISizeJacketed } from './types/sizes'
 import type { IDesignJacketed } from './types/design'
 import type { IDesignErrors, ISizeErrors } from './types/errors'
@@ -85,7 +84,7 @@ export const jacketedSlice = createSlice({
 		setFiller: (state, action: PayloadAction<IFiller>) => {
 			state.material.filler = action.payload
 		},
-		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material?: IMaterial }>) => {
+		setMaterial: (state, action: PayloadAction<{ type: TypeMaterial; material?: MaterialWithThickness }>) => {
 			state.material[action.payload.type] = action.payload.material
 		},
 

@@ -32,11 +32,14 @@ func (r *OrderRepo) GetOrdersStats(ctx context.Context, req *models.GetOrdersSta
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS snp_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS putg_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS wave_count,
+		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS serrated_count,
+		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS jacketed_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS ring_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS kit_count
 		FROM "%s" AS o
 		INNER JOIN "%s" AS p ON order_id=o.id WHERE date != 0`,
-		orders.PositionTypeSnp, orders.PositionTypePutg, orders.PositionTypeWave, orders.PositionTypeRing, orders.PositionTypeKit,
+		orders.PositionTypeSnp, orders.PositionTypePutg, orders.PositionTypeWave, orders.PositionTypeSerrated, orders.PositionTypeJacketed,
+		orders.PositionTypeRing, orders.PositionTypeKit,
 		OrderTable, PositionTable,
 	)
 	tmp := &pq_models.OrdersStats{}
@@ -49,12 +52,14 @@ func (r *OrderRepo) GetOrdersStats(ctx context.Context, req *models.GetOrdersSta
 		OrdersCount: tmp.OrdersCount,
 		UsersCount:  tmp.UsersCount,
 		Position: &models.PositionStats{
-			Count: tmp.PosCount,
-			Snp:   tmp.Snp,
-			Putg:  tmp.Putg,
-			Wave:  tmp.Wave,
-			Rings: tmp.Rings,
-			Kit:   tmp.Kit,
+			Count:    tmp.PosCount,
+			Snp:      tmp.Snp,
+			Putg:     tmp.Putg,
+			Wave:     tmp.Wave,
+			Serrated: tmp.Serrated,
+			Jacketed: tmp.Jacketed,
+			Rings:    tmp.Rings,
+			Kit:      tmp.Kit,
 		},
 	}
 	return data, nil
@@ -73,6 +78,8 @@ func (r *OrderRepo) GetGroupedOrdersStats(ctx context.Context, req *models.Perio
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS snp_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS putg_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS wave_count,
+		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS serrated_count,
+		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS jacketed_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS ring_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS kit_count
 		FROM "%s" AS o
@@ -82,7 +89,8 @@ func (r *OrderRepo) GetGroupedOrdersStats(ctx context.Context, req *models.Perio
 		WHERE date!=0 %s
 		GROUP BY user_id, manager_id, name, company, manager
 		ORDER BY company, name`,
-		orders.PositionTypeSnp, orders.PositionTypePutg, orders.PositionTypeWave, orders.PositionTypeRing, orders.PositionTypeKit,
+		orders.PositionTypeSnp, orders.PositionTypePutg, orders.PositionTypeWave, orders.PositionTypeSerrated, orders.PositionTypeJacketed,
+		orders.PositionTypeRing, orders.PositionTypeKit,
 		OrderTable, PositionTable, UserTable, UserTable,
 		condition,
 	)
@@ -103,12 +111,14 @@ func (r *OrderRepo) GetGroupedOrdersStats(ctx context.Context, req *models.Perio
 			Company:   d.Company,
 			Count:     d.Count,
 			Position: &models.PositionStats{
-				Count: d.PosCount,
-				Snp:   d.Snp,
-				Putg:  d.Putg,
-				Wave:  d.Wave,
-				Rings: d.Rings,
-				Kit:   d.Kit,
+				Count:    d.PosCount,
+				Snp:      d.Snp,
+				Putg:     d.Putg,
+				Wave:     d.Wave,
+				Serrated: d.Serrated,
+				Jacketed: d.Jacketed,
+				Rings:    d.Rings,
+				Kit:      d.Kit,
 			},
 		})
 	}

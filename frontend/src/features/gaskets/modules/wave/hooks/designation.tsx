@@ -31,7 +31,9 @@ export const useDesignation = () => {
 		const materials = [material.base?.code || '0', material.rotaryPlug?.code || '0', material.plating?.code || '0']
 		const materialsStr = `-${materials.join('')}`
 
-		const res = `Прокладка ПУТГм-${main.flangeType?.code}-${main.type?.code}-${main.construction?.code}`
+		const flCode = main.flangeType?.code ? main.flangeType?.code + '-' : ''
+
+		const res = `Прокладка ПУТГм-${flCode}${main.type?.code}-${main.construction?.code}`
 
 		if (main.configuration?.code == 'oval') {
 			setValue(`${res}-...x...-...${coating}${parts}${materialsStr} ${designStr} ТУ 5728-013-93978201-2008`)

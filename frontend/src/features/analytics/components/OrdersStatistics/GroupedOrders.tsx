@@ -28,11 +28,13 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 			acc.positions.snp += item.positions?.snp || 0
 			acc.positions.putg += item.positions?.putg || 0
 			acc.positions.wave += item.positions?.wave || 0
+			acc.positions.serrated += item.positions?.serrated || 0
+			acc.positions.jacketed += item.positions?.jacketed || 0
 			acc.positions.rings += item.positions?.rings || 0
 			acc.positions.kit += item.positions?.kit || 0
 			return acc
 		},
-		{ clients: 0, orders: 0, positions: { snp: 0, putg: 0, wave: 0, rings: 0, kit: 0 } }
+		{ clients: 0, orders: 0, positions: { snp: 0, putg: 0, wave: 0, serrated: 0, jacketed: 0, rings: 0, kit: 0 } }
 	)
 
 	return (
@@ -56,6 +58,12 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
 							Кол-во волновых
 						</TableCell>
+						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
+							Кол-во зубчатых
+						</TableCell>
+						<TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
+							Кол-во завальцованных
+						</TableCell>
 						{/* <TableCell width={160} align='center' sx={{ fontWeight: 'bold' }}>
 							Кол-во колец
 						</TableCell>
@@ -66,7 +74,7 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 				</TableHead>
 				<TableBody>
 					{data?.data.map(item => (
-						<TableRow key={item.userId}>
+						<TableRow key={item.userId + '|' + item.managerId}>
 							<TableCell>{item.manager}</TableCell>
 							<TableCell>
 								{item.company} ({item.user})
@@ -77,6 +85,8 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 							<TableCell align='center'>{FormatNumber(item.positions?.snp)}</TableCell>
 							<TableCell align='center'>{FormatNumber(item.positions?.putg)}</TableCell>
 							<TableCell align='center'>{FormatNumber(item.positions?.wave)}</TableCell>
+							<TableCell align='center'>{FormatNumber(item.positions?.serrated)}</TableCell>
+							<TableCell align='center'>{FormatNumber(item.positions?.jacketed)}</TableCell>
 							{/* <TableCell align='center'>{FormatNumber(item.positions?.rings)}</TableCell>
                             <TableCell align='center'>{FormatNumber(item.positions?.kit)}</TableCell> */}
 						</TableRow>
@@ -85,11 +95,13 @@ export const GroupedOrders: FC<Props> = ({ from, to }) => {
 				<TableFooter>
 					<TableRow>
 						<TableCell>Всего</TableCell>
-						<TableCell align='center'>{total?.clients}</TableCell>
-						<TableCell align='center'>{total?.orders}</TableCell>
-						<TableCell align='center'>{total?.positions.snp}</TableCell>
-						<TableCell align='center'>{total?.positions.putg}</TableCell>
-						<TableCell align='center'>{total?.positions.wave}</TableCell>
+						<TableCell align='center'>{FormatNumber(total?.clients)}</TableCell>
+						<TableCell align='center'>{FormatNumber(total?.orders)}</TableCell>
+						<TableCell align='center'>{FormatNumber(total?.positions.snp)}</TableCell>
+						<TableCell align='center'>{FormatNumber(total?.positions.putg)}</TableCell>
+						<TableCell align='center'>{FormatNumber(total?.positions.wave)}</TableCell>
+						<TableCell align='center'>{FormatNumber(total?.positions.serrated)}</TableCell>
+						<TableCell align='center'>{FormatNumber(total?.positions.jacketed)}</TableCell>
 						{/* <TableCell align='center'>{total?.positions.rings}</TableCell>
 						<TableCell align='center'>{total?.positions.kit}</TableCell> */}
 					</TableRow>

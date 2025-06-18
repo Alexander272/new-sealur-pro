@@ -29,7 +29,9 @@ export const useDesignation = () => {
 		const materials = [material.base?.code || '0', material.rotaryPlug?.code || '0', material.plating?.code || '0']
 		const materialsStr = `-${materials.join('')}`
 
-		const res = `Прокладка ПУТГм-${main.flangeType?.code}-${main.type?.code}-${main.construction?.code}`
+		const flCode = main.flangeType?.code ? main.flangeType?.code + '-' : ''
+
+		const res = `Прокладка ПУТГм-${flCode}${main.type?.code}-${main.construction?.code}`
 
 		if (main.standard?.standard?.id == '7b6b3272-88d0-4a1a-b6c8-ce07ac7b3255') {
 			let mat = ''

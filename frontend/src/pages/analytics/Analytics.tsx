@@ -7,6 +7,7 @@ import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 import 'dayjs/locale/ru'
 
 import { PathRoutes } from '@/constants/routes'
+import { localKeys } from '@/constants/localKeys'
 import { Breadcrumb } from '@/components/Breadcrumb/Breadcrumb'
 import { OrderStatistics } from '@/features/analytics/components/OrdersStatistics/OrderStatistics'
 import { UsersStatistics } from '@/features/analytics/components/UsersStatistics/UsersStatistics'
@@ -17,16 +18,21 @@ dayjs.extend(quarterOfYear)
 dayjs.locale('ru')
 
 export default function Analytics() {
-	console.log(useState(dayjs().startOf('Q')))
+	const localStart = sessionStorage.getItem(localKeys.StartPeriod)
+	const localEnd = sessionStorage.getItem(localKeys.EndPeriod)
 
-	const [start, setStart] = useState(dayjs().startOf('Q'))
-	const [end, setEnd] = useState(dayjs().endOf('Q'))
+	const [start, setStart] = useState<Dayjs>(localStart ? dayjs(localStart) : dayjs().startOf('Q'))
+	const [end, setEnd] = useState<Dayjs>(localEnd ? dayjs(localEnd) : dayjs().endOf('Q'))
 
 	const startHandler = (value: Dayjs | null) => {
-		if (value) setStart(value)
+		if (!value) return
+		setStart(value)
+		sessionStorage.setItem(localKeys.StartPeriod, value.toString())
 	}
 	const endHandler = (value: Dayjs | null) => {
-		if (value) setEnd(value)
+		if (!value) return
+		setEnd(value)
+		sessionStorage.setItem(localKeys.EndPeriod, value.toString())
 	}
 
 	return (

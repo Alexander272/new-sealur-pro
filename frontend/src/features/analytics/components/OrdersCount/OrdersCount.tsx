@@ -16,8 +16,10 @@ const titles = new Map<PositionType, string>([
 	['Snp', 'с СНП'],
 	['Putg', 'с ПУТГ'],
 	['Wave', 'с волновыми прокладками'],
-	// ['Rings', 'Кольца'],
-	// ['Kit', 'Комплект'],
+	['Serrated', 'с зубчатыми прокладками'],
+	['Jacketed', 'с завальцованными прокладками'],
+	// ['Rings', 'с кольцами'],
+	// ['Kit', 'с комплектами колец'],
 ])
 
 export const OrdersCount: FC<Props> = ({ type }) => {

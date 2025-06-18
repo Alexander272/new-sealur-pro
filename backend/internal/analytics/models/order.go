@@ -19,12 +19,14 @@ type GroupedOrdersStats struct {
 }
 
 type PositionStats struct {
-	Count int `json:"count" db:"positions_count"`
-	Snp   int `json:"snp" db:"snp_count"`
-	Putg  int `json:"putg" db:"putg_count"`
-	Wave  int `json:"wave" db:"wave_count"`
-	Rings int `json:"rings" db:"rings_count"`
-	Kit   int `json:"kit" db:"kit_count"`
+	Count    int `json:"count" db:"positions_count"`
+	Snp      int `json:"snp" db:"snp_count"`
+	Putg     int `json:"putg" db:"putg_count"`
+	Wave     int `json:"wave" db:"wave_count"`
+	Serrated int `json:"serrated" db:"serrated_count"`
+	Jacketed int `json:"jacketed" db:"jacketed_count"`
+	Rings    int `json:"rings" db:"rings_count"`
+	Kit      int `json:"kit" db:"kit_count"`
 }
 
 type OrdersStats struct {

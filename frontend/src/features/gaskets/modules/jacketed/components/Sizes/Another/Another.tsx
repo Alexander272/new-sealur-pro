@@ -25,7 +25,7 @@ export const Another = () => {
 		err.emptyD3 = !sizes.d3
 		err.emptyD2 = !sizes.d2
 
-		err.maxSize = 3504 <= +sizes.d3
+		err.maxSize = 3504 < +sizes.d3
 
 		const width = (+sizes.d3 - +sizes.d2) / 2
 		err.minWidth = +sizes.d3 > 300 ? width < 9 : width < 5
@@ -45,6 +45,7 @@ export const Another = () => {
 				errorText={
 					(errors.emptyD3 && 'размер не задан') ||
 					(errors.d3 && 'D2 должен быть больше, чем D1') ||
+					(errors.maxSize && 'Прокладка слишком большая') ||
 					minWidth ||
 					maxWidth
 				}

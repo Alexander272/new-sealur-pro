@@ -40,7 +40,9 @@ export const useDesignation = () => {
 			materialsStr = `-${materials.join('')}`
 		}
 
-		const res = `Прокладка ПУТГ-${main.flangeType?.code}-${material.putgType?.code}-${construction?.code}`
+		const flCode = main.flangeType?.code ? main.flangeType?.code + '-' : ''
+
+		const res = `Прокладка ПУТГ-${flCode}${material.putgType?.code}-${construction?.code}`
 
 		if (main.configuration?.code != 'round') {
 			setValue(`${res}-${sizes}-${h}${coating}${jumper}${materialsStr} ${designStr}ТУ 5728-006-93978201-2008`)

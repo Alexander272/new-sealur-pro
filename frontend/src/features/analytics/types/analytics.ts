@@ -24,6 +24,8 @@ export interface IPositionStatistics {
 	snp: number
 	putg: number
 	wave: number
+	serrated: number
+	jacketed: number
 	rings: number
 	kit: number
 }
@@ -140,17 +142,17 @@ export interface IOrder {
 	status: 'new' | 'work' | 'finish'
 }
 
-export interface IOrderCount {
-	id: string
-	name: string
-	company: string
-	orderCount: number
-	snpOrderCount?: number
-	putgOrderCount?: number
-	positionCount: number
-	snpPositionCount?: number
-	putgPositionCount?: number
-	averagePosition: number
-	averageSnpPosition?: number
-	averagePutgPosition?: number
-}
+// export interface IOrderCount {
+// 	id: string
+// 	name: string
+// 	company: string
+// 	orderCount: number
+// 	snpOrderCount?: number
+// 	putgOrderCount?: number
+// 	positionCount: number
+// 	snpPositionCount?: number
+// 	putgPositionCount?: number
+// 	averagePosition: number
+// 	averageSnpPosition?: number
+// 	averagePutgPosition?: number
+// }

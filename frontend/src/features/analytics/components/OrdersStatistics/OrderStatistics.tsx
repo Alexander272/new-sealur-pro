@@ -55,6 +55,18 @@ export const OrderStatistics = () => {
 							{FormatNumber(data?.data.positions?.wave)}
 						</TableCell>
 					</TableRow>
+					<TableRow hover onClick={navigateHandler('Serrated')} sx={{ cursor: 'pointer' }}>
+						<TableCell>Всего зубчатых прокладок заказано</TableCell>
+						<TableCell sx={{ fontSize: '18px', fontWeight: 'bold', p: '13px 16px' }}>
+							{FormatNumber(data?.data.positions?.serrated)}
+						</TableCell>
+					</TableRow>
+					<TableRow hover onClick={navigateHandler('Jacketed')} sx={{ cursor: 'pointer' }}>
+						<TableCell>Всего завальцованных прокладок заказано</TableCell>
+						<TableCell sx={{ fontSize: '18px', fontWeight: 'bold', p: '13px 16px' }}>
+							{FormatNumber(data?.data.positions?.jacketed)}
+						</TableCell>
+					</TableRow>
 					{/* <TableRow hover onClick={navigateHandler('ring')} sx={{ cursor: 'pointer' }}>
 						<TableCell>Всего колец заказано</TableCell>
 						<TableCell sx={{ fontSize: '18px', fontWeight: 'bold' }}>

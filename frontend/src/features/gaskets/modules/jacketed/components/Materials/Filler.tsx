@@ -22,6 +22,7 @@ export const Filler = () => {
 			value={filler?.id}
 			onChange={changeHandler}
 			title='Материал наполнителя'
+			withCode
 		/>
 	)
 }

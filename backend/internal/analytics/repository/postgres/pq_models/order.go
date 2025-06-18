@@ -12,6 +12,8 @@ type GroupedOrdersStats struct {
 	Snp       int    `db:"snp_count"`
 	Putg      int    `db:"putg_count"`
 	Wave      int    `db:"wave_count"`
+	Serrated  int    `db:"serrated_count"`
+	Jacketed  int    `db:"jacketed_count"`
 	Rings     int    `db:"ring_count"`
 	Kit       int    `db:"kit_count"`
 }
@@ -23,6 +25,8 @@ type OrdersStats struct {
 	Snp         int `db:"snp_count"`
 	Putg        int `db:"putg_count"`
 	Wave        int `db:"wave_count"`
+	Serrated    int `db:"serrated_count"`
+	Jacketed    int `db:"jacketed_count"`
 	Rings       int `db:"ring_count"`
 	Kit         int `db:"kit_count"`
 }

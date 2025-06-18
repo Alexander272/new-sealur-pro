@@ -43,7 +43,7 @@ func (r *PositionJacketedRepo) Get(ctx context.Context, req *models.GetPositions
 		FROM %s AS p INNER JOIN %s AS ps ON p.id=ps.position_id
 		LEFT JOIN LATERAL (SELECT code AS construction_code FROM %s WHERE id=ps.construction_id) AS con ON true
 		LEFT JOIN LATERAL (SELECT code AS filler_code FROM %s WHERE id=ps.filler_id) AS pl ON true
-		LEFT JOIN LATERAL (SELECT b.code AS type_code FROM %s AS c WHERE c.id=ps.type_id) AS t ON true
+		LEFT JOIN LATERAL (SELECT code AS type_code FROM %s AS c WHERE c.id=ps.type_id) AS t ON true
 		LEFT JOIN LATERAL (SELECT dn, dn_alt, pn, pn_alt, d4, d3, d2, d1 FROM %s WHERE id=ps.size_id) AS s ON true 
 		LEFT JOIN LATERAL (SELECT m.code AS shell_code	FROM %s AS sm INNER JOIN %s AS m ON material_id=m.id
 			WHERE sm.id=ps.shell_id
