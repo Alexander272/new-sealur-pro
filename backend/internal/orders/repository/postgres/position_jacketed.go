@@ -211,7 +211,7 @@ func (r *PositionJacketedRepo) Create(ctx context.Context, dto *models.PositionJ
 func (r *PositionJacketedRepo) Update(ctx context.Context, dto *models.PositionJacketedDTO) error {
 	query := fmt.Sprintf(`UPDATE %s SET standard_id=:standard_id, flange_type_id=:flange_type_id, type_id=:type_id, 
 		construction_id=:construction_id, filler_id=:filler_id, shell_id=:shell_id, size_id=:size_id, 
-		d4=:d4, d3=:d3, d2=:d2, d1=:d1, h=:h, :jumper, :jumper_width, drawing=:drawing WHERE position_id=:position_id`,
+		d4=:d4, d3=:d3, d2=:d2, d1=:d1, h=:h, jumper=:jumper, jumper_width=:jumper_width, drawing=:drawing WHERE position_id=:position_id`,
 		PositionJacketedTable,
 	)
 

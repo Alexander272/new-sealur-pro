@@ -6,7 +6,7 @@ type MaterialWithThickness = IMaterial & { thickness: string }
 
 export interface IMaterialsJacketed {
 	filler?: IFiller
-	shell?: IMaterial
+	shell?: MaterialWithThickness
 }
 
 export interface IFiller {

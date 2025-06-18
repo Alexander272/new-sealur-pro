@@ -9,17 +9,17 @@ export const SizesBlock = () => {
 	return (
 		<Container>
 			{construction?.hasD4 && (
-				<Size top={'77%'}>
+				<Size top={'76%'}>
 					&#8960; {sizes.d4?.replace('.', ',')} <Description>(D4)</Description>
 				</Size>
 			)}
 			{construction?.hasD3 && (
-				<Size top={'64%'}>
+				<Size top={'63%'}>
 					&#8960; {sizes.d3.replace('.', ',')} <Description>(D3)</Description>
 				</Size>
 			)}
 			{construction?.hasD2 && (
-				<Size top={'51%'}>
+				<Size top={'50%'}>
 					&#8960; {sizes.d2.replace('.', ',')} <Description>(D2)</Description>
 				</Size>
 			)}

@@ -1,10 +1,11 @@
 import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getH, setThickness } from '../../../jacketedSlice'
+import { getH, getShell, setThickness } from '../../../jacketedSlice'
 
 export const Thickness = () => {
 	const h = useAppSelector(getH)
+	const shell = useAppSelector(getShell)
 	const dispatch = useAppDispatch()
 
 	const thicknessHandler = (event: SelectChangeEvent<string>) => {
@@ -18,12 +19,7 @@ export const Thickness = () => {
 			</Typography>
 
 			<Select value={h || '3.4'} onChange={thicknessHandler}>
-				<MenuItem value={h}>{h}</MenuItem>
-				{/* {(thicknesses && thicknesses.length > 0 ? thicknesses : defaultThicknesses).map((v, i) => (
-					<MenuItem key={i + '-' + v} value={v}>
-						{v.replace('.', ',')}
-					</MenuItem>
-				))} */}
+				<MenuItem value={shell?.thickness}>{shell?.thickness}</MenuItem>
 			</Select>
 		</>
 	)

@@ -187,6 +187,7 @@ export const getConstruction = (state: RootState) => state.jacketed.main.constru
 
 export const getMaterials = (state: RootState) => state.jacketed.material
 export const getFiller = (state: RootState) => state.jacketed.material.filler
+export const getShell = (state: RootState) => state.jacketed.material.shell
 
 export const getSize = (state: RootState) => state.jacketed.size
 export const getSizeId = (state: RootState) => state.jacketed.size.id
