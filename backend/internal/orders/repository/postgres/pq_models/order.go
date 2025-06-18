@@ -13,4 +13,5 @@ type OrderWithPosition struct {
 	PositionCount int64               `db:"position_count"`
 	Type          models.PositionType `db:"type"`
 	Info          string              `db:"info"`
+	Total         int64               `db:"total"`
 }

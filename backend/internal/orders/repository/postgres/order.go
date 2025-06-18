@@ -70,14 +70,29 @@ func (r *OrderRepo) GetById(ctx context.Context, req *models.GetOrderDTO) (*mode
 }
 
 func (r *OrderRepo) Get(ctx context.Context, req *models.GetOrdersByUserDTO) ([]*models.Order, error) {
-	query := fmt.Sprintf(`SELECT o.id, date, o.info, count_position, number, p.id as position_id, title, amount, p.count as position_count, type
-		FROM "%s" AS o INNER JOIN %s AS p on order_id=o.id WHERE user_id=$1 AND date != 0 ORDER BY number DESC, position_count`,
-		OrderTable, PositionTable,
+	// query := fmt.Sprintf(`SELECT o.id, date, o.info, count_position, number, p.id as position_id, title, amount, p.count as position_count, type,
+	// 	COUNT(o.id) OVER() AS total
+	// 	FROM "%s" AS o INNER JOIN %s AS p ON order_id=o.id WHERE user_id=$1 AND date != 0 ORDER BY number DESC, position_count
+	// 	LIMIT $2 OFFSET $3`,
+	// 	OrderTable, PositionTable,
+	// )
+	query := fmt.Sprintf(`WITH Limits AS (
+			SELECT id, COUNT(*) OVER() AS total
+			FROM "%s" WHERE user_id=$1 AND date != 0
+			ORDER BY number DESC
+			LIMIT $2 OFFSET $3
+		)
+	
+		SELECT o.id, date, o.info, count_position, number, p.id as position_id, title, amount, p.count as position_count, type,	total
+		FROM "%s" AS o INNER JOIN %s AS p ON order_id=o.id
+		INNER JOIN Limits AS l ON o.id=l.id
+		ORDER BY number DESC, position_count`,
+		OrderTable, OrderTable, PositionTable,
 	)
 	tmp := []*pq_models.OrderWithPosition{}
 	data := []*models.Order{}
 
-	if err := r.db.SelectContext(ctx, &tmp, query, req.UserId); err != nil {
+	if err := r.db.SelectContext(ctx, &tmp, query, req.UserId, req.Limit, req.Offset); err != nil {
 		return nil, fmt.Errorf("failed to execute query. error: %w", err)
 	}
 
@@ -100,6 +115,7 @@ func (r *OrderRepo) Get(ctx context.Context, req *models.GetOrdersByUserDTO) ([]
 				CountPosition: o.Count,
 				Number:        o.Number,
 				Info:          o.Info,
+				Total:         o.Total,
 				Positions:     []*models.Position{position},
 			})
 		}

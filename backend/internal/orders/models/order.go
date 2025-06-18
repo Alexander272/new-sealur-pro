@@ -16,6 +16,7 @@ type Order struct {
 	CountPosition int64       `json:"countPosition" db:"count_position"`
 	Info          string      `json:"info" db:"info"`
 	Positions     []*Position `json:"positions"`
+	Total         int64       `json:"-" db:"total"`
 }
 
 type OrderWithCompany struct {
@@ -43,6 +44,8 @@ type GetCurrentOrderDTO struct {
 
 type GetOrdersByUserDTO struct {
 	UserId string `json:"userId"`
+	Limit  int    `json:"limit"`
+	Offset int    `json:"offset"`
 }
 
 type GetOrderByNumberDTO struct {

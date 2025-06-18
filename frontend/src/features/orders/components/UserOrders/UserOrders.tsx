@@ -1,12 +1,18 @@
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { useState } from 'react'
+import { Box, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 
 import { TopFallback } from '@/components/Fallback/TopFallback'
 import { NoRowsOverlay } from '@/components/NoRowsOverlay/NoRowsOverlay'
+import { Pagination } from '@/components/Pagination/Pagination'
 import { useGetOrdersByUserQuery } from '../../ordersApiSlice'
 import { Row } from './Row'
 
 export const UserOrders = () => {
-	const { data, isFetching } = useGetOrdersByUserQuery(null)
+	const [page, setPage] = useState(1)
+
+	const { data, isFetching } = useGetOrdersByUserQuery(page)
+
+	const totalPages = Math.ceil((data?.total || 1) / 10)
 
 	if (!data || data.data.length === 0)
 		return (
@@ -23,9 +29,10 @@ export const UserOrders = () => {
 			</Box>
 		)
 
-	if (isFetching) return <TopFallback />
 	return (
 		<TableContainer>
+			{isFetching && <TopFallback />}
+
 			<Table aria-label='collapsible table'>
 				<TableHead>
 					<TableRow>
@@ -39,10 +46,14 @@ export const UserOrders = () => {
 				</TableHead>
 				<TableBody>
 					{data?.data.map((row, i) => (
-						<Row key={row.id} data={row} open={i == 0} />
+						<Row key={row.id} data={row} open={i == 0 && page == 1} />
 					))}
 				</TableBody>
 			</Table>
+
+			<Stack sx={{ mx: 'auto', mt: 2 }}>
+				<Pagination page={page} totalPages={totalPages} onClick={setPage} sx={{ marginX: 'auto' }} />
+			</Stack>
 		</TableContainer>
 	)
 }

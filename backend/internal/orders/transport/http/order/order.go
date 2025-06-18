@@ -53,13 +53,22 @@ func Register(api *gin.RouterGroup, service services.Order, middleware *middlewa
 }
 
 func (h *Handler) getByUser(c *gin.Context) {
+	page, size := c.DefaultQuery("page", "1"), c.DefaultQuery("size", "10")
+
+	limit, _ := strconv.Atoi(size)
+	offset, _ := strconv.Atoi(page)
+
 	u, exists := c.Get(constants.CtxUser)
 	if !exists {
 		response.NewErrorResponse(c, http.StatusUnauthorized, "empty user", "сессия не найдена")
 		return
 	}
 	user := u.(base.User)
-	dto := &models.GetOrdersByUserDTO{UserId: user.Id}
+	dto := &models.GetOrdersByUserDTO{
+		UserId: user.Id,
+		Limit:  limit,
+		Offset: (offset - 1) * limit,
+	}
 
 	data, err := h.service.Get(c, dto)
 	if err != nil {
@@ -67,7 +76,13 @@ func (h *Handler) getByUser(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: len(data)})
+
+	total := 0
+	if len(data) > 0 {
+		total = int(data[0].Total)
+	}
+
+	c.JSON(http.StatusOK, response.DataResponse{Data: data, Total: total})
 }
 
 func (h *Handler) getCurrent(c *gin.Context) {

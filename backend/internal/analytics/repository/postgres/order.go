@@ -27,14 +27,14 @@ type Order interface {
 }
 
 func (r *OrderRepo) GetOrdersStats(ctx context.Context, req *models.GetOrdersStatsDTO) (*models.OrdersStats, error) {
-	query := fmt.Sprintf(`SELECT count(DISTINCT o.id) as orders_count, COUNT(DISTINCT user_id) as users_count, 
-		SUM(amount::integer) as positions_count, 
+	query := fmt.Sprintf(`SELECT COUNT(DISTINCT o.id) AS orders_count, COUNT(DISTINCT user_id) AS users_count, 
+		SUM(amount::integer) AS positions_count, 
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS snp_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS putg_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS wave_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS ring_count,
 		COALESCE(SUM(CASE WHEN type = '%s' THEN amount::integer END), 0) AS kit_count
-		FROM "%s" as o
+		FROM "%s" AS o
 		INNER JOIN "%s" AS p ON order_id=o.id WHERE date != 0`,
 		orders.PositionTypeSnp, orders.PositionTypePutg, orders.PositionTypeWave, orders.PositionTypeRing, orders.PositionTypeKit,
 		OrderTable, PositionTable,
