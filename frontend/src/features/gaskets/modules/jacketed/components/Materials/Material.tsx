@@ -38,7 +38,7 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty, related })
 		if (data.data[type]?.length > 0) {
 			const index = data.data[key] || 0
 			dispatch(setMaterial({ type, material: data.data[type][index] }))
-			dispatch(setThickness(data.data[type][index].thickness))
+			if (data.data[type][index].thickness) dispatch(setThickness(data.data[type][index].thickness))
 		}
 	}, [data, active, dispatch, type])
 	useEffect(() => {
@@ -48,7 +48,7 @@ export const Material: FC<Props> = ({ title, type, disabled, isEmpty, related })
 			const key = `${type}DefaultIndex` as const
 			const index = data.data[key] || 0
 			dispatch(setMaterial({ type, material: data.data[type][index] }))
-			dispatch(setThickness(data.data[type][index].thickness))
+			if (data.data[type][index].thickness) dispatch(setThickness(data.data[type][index].thickness))
 		}
 	}, [data, active, dispatch, isEmpty, material, type])
 

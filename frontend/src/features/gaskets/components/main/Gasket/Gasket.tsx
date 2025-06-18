@@ -2,15 +2,16 @@ import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import { FC, useEffect } from 'react'
 
 import type { ISerratedType } from '@/features/gaskets/modules/serrated/types/main'
+import type { IJacketedType } from '@/features/gaskets/modules/jacketed/types/main'
 import type { IWaveType } from '@/features/gaskets/modules/wave/types/main'
 import type { IPutgType } from '@/features/gaskets/modules/putg/types/materials'
 import { useAppSelector } from '@/hooks/redux'
 import { getActive } from '@/features/card/cardSlice'
 
-type Union = ISerratedType & IWaveType & IPutgType
+type Union = ISerratedType & IWaveType & IPutgType & IJacketedType
 
 type Props = {
-	data: (ISerratedType | IWaveType | IPutgType)[]
+	data: (ISerratedType | IWaveType | IPutgType | IJacketedType)[]
 	isFetching: boolean
 	configuration?: string
 	value?: string

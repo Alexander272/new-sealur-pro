@@ -15,5 +15,13 @@ export const Filler = () => {
 
 	const changeHandler = useCallback((value: IFiller) => dispatch(setFiller(value)), [dispatch])
 
-	return <BaseFiller data={data?.data || []} isFetching={isFetching} value={filler?.id} onChange={changeHandler} />
+	return (
+		<BaseFiller
+			data={data?.data || []}
+			isFetching={isFetching}
+			value={filler?.id}
+			onChange={changeHandler}
+			title='Материал наполнителя'
+		/>
+	)
 }

@@ -16,7 +16,7 @@ export const Drawing = () => {
 			{!construction || !type ? (
 				<Skeleton animation='wave' variant='rounded' width={'100%'} height={222} />
 			) : (
-				<ImageContainer>
+				<ImageContainer padding='0'>
 					<StandardImage type={type} construction={construction} />
 					<Dimensions />
 				</ImageContainer>

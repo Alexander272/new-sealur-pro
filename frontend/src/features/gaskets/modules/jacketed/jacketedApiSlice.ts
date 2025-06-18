@@ -38,9 +38,9 @@ export const jacketedApi = apiSlice.injectEndpoints({
 		}),
 		// получение типов прокладок
 		getJacketedTypes: builder.query<{ data: IJacketedType[] }, string>({
-			query: flange => ({
+			query: filler => ({
 				url: API.jacketed.types,
-				params: new URLSearchParams({ flange }),
+				params: new URLSearchParams({ filler }),
 			}),
 			providesTags: [{ type: 'Jacketed', id: 'types' }],
 			onQueryStarted: async (_arg, api) => {

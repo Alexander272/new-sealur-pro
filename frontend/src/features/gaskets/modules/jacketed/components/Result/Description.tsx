@@ -1,16 +1,20 @@
 import { Stack, Typography } from '@mui/material'
 
 import { useAppSelector } from '@/hooks/redux'
-import { getMain, getMaterials, getSize } from '../../jacketedSlice'
+import { getDesign, getMain, getMaterials, getSize } from '../../jacketedSlice'
 
 export const Description = () => {
 	const main = useAppSelector(getMain)
 	const material = useAppSelector(getMaterials)
 	const size = useAppSelector(getSize)
-	// const design = useAppSelector(getDesign)
+	const design = useAppSelector(getDesign)
 
 	const renderDescription = () => {
 		const materials = (main.construction?.description || '').replace('@shell', material.shell?.title || '')
+
+		const jumper = design.jumper.hasJumper
+			? `, с перемычкой типа ${design.jumper.code} шириной ${design.jumper.width || 0} мм`
+			: ''
 
 		const sizes = [size?.d4, size.d3, size.d2, size?.d1].filter(Boolean).join('x')
 		const fullSizes = `${sizes}-${size.h.replace('.', ',')} мм`
@@ -19,7 +23,7 @@ export const Description = () => {
 			standard = `, на условный проход ${size.dn} мм, номинальное давление ${size.pn} МПа по ${main.standard?.standard.title}`
 		}
 
-		return `Прокладка из ${material.filler?.designation}, ${main.type?.description}, ${materials}, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"${standard}, с размерами ${fullSizes}`
+		return `Прокладка из ${material.filler?.designation}, ${main.type?.description}, ${materials}${jumper}, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"${standard}, с размерами ${fullSizes}`
 	}
 
 	return (

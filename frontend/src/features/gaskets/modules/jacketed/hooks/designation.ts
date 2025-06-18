@@ -22,6 +22,10 @@ export const useDesignation = () => {
 		if (design.drawing) designationDesign.push('черт.')
 		const designStr = designationDesign.length ? `(${designationDesign.join(', ')}) ` : ''
 
+		const jumper = design.jumper.hasJumper
+			? `(${design.jumper.code}${design.jumper?.width ? `/${design.jumper.width}` : ''})`
+			: ''
+
 		const materials = ['0', material.shell?.code || '0', '0']
 		let materialsStr = ''
 		materialsStr = `-${materials.join('')}`
@@ -32,13 +36,13 @@ export const useDesignation = () => {
 
 		if (main.standard?.standard?.id == '226d1033-f04c-462c-9196-b426eb338f8b') {
 			setValue(
-				`Прокладка ${material.shell?.code}-${size.dn}-${size.pn}-${material.filler?.code} ${main.standard.standard.title}`
+				`Прокладка ${material.shell?.code}-${size.dn}-${size.pn}-${material.filler?.code} ${jumper} ${main.standard.standard.title}`
 			)
 			return
 		}
 
 		//* ТУ 5728-006-93978201-2008
-		setValue(`${res}-${sizes}-${h}${materialsStr} ${designStr} ${standard?.standard?.title}`)
+		setValue(`${res}-${sizes}-${h}${jumper}${materialsStr} ${designStr} ${standard?.standard?.title}`)
 	}, [design, main, material, size])
 
 	useEffect(() => {
