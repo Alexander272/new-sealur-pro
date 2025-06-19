@@ -28,7 +28,7 @@ export const Drawing = () => {
 			) : (
 				<>
 					{configuration?.code == 'round' && (
-						<ImageContainer>
+						<ImageContainer padding='0'>
 							<StandardImage type={type} construction={construction} />
 							<Dimensions />
 						</ImageContainer>
