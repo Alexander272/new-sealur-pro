@@ -9,7 +9,7 @@ export const Dimensions = () => {
 	return (
 		<Container>
 			{type?.hasD4 && (
-				<Size bottom={'14%'}>
+				<Size bottom={'15%'}>
 					{sizes.d4?.replace('.', ',')} <Description>(D4)</Description>
 				</Size>
 			)}
