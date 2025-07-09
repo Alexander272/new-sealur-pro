@@ -32,7 +32,7 @@ export const Description = () => {
 			? ', с дополнительным крепежом на вертикальном фланце (фиксатором) формы Ф1'
 			: ''
 
-		const sizes = [size?.d4, size.d3, size.d2, size?.d1].filter(Boolean).join('x')
+		const sizes = [size?.d4, size.d3, size?.d2, size?.d1].filter(Boolean).join('x')
 		const fullSizes = `${sizes}-${size.h.replace('.', ',')} мм`
 		let standard = ''
 		if (main.standard?.standard?.id == '793de235-19d6-43e8-9807-4382923235a2') {

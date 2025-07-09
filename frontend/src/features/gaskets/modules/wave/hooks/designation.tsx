@@ -12,7 +12,7 @@ export const useDesignation = () => {
 	const design = useAppSelector(getDesign)
 
 	const calculateDesignation = useCallback(() => {
-		const sizes = [size?.d4, size.d3, size.d2, size?.d1].filter(Boolean).join('x').replaceAll('.', ',')
+		const sizes = [size?.d4, size.d3, size?.d2, size?.d1].filter(Boolean).join('x').replaceAll('.', ',')
 		const h = (+size.h).toFixed(1).replace('.', ',')
 
 		const designationDesign = []

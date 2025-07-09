@@ -9,6 +9,7 @@ import { NotRoundDimensions } from './Dimensions/NotRoundDimensions'
 
 import ovalImage from '@/assets/putg/ov.webp'
 import rectangularImage from '@/assets/putg/pr.webp'
+import { NotStandardImage } from './Image/NotStandardImage'
 
 const images = {
 	oval: ovalImage,
@@ -36,9 +37,9 @@ export const Drawing = () => {
 
 					{configuration?.code != 'round' && (
 						<>
-							{/* <ImageContainer padding='0'>
-									<NotStandardImage type={type} construction={construction} />
-								</ImageContainer> */}
+							<ImageContainer padding='0'>
+								<NotStandardImage type={type} construction={construction} />
+							</ImageContainer>
 
 							<Typography fontWeight='bold'>Размеры прокладки</Typography>
 							<ImageContainer padding='0 20px'>

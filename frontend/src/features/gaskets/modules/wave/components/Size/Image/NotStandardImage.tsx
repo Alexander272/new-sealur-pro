@@ -1,95 +1,64 @@
 import { FC } from 'react'
 
-// import type { IConstruction, IPutgType } from '../../../types/putg'
-// import { CompositeImage, Image } from '@/features/gaskets/components/Skeletons/gasket.style'
+import type { IConstruction, IWaveType } from '../../../types/main'
+import { Image } from '@/features/gaskets/components/Skeletons/gasket.style'
 
-// import type200 from '@/assets/putg/200_part.webp'
-// import type210 from '@/assets/putg/210_part.webp'
-// import type220 from '@/assets/putg/220_part.webp'
-// import type230 from '@/assets/putg/230_part.webp'
-// import type240 from '@/assets/putg/240_part.webp'
-// import type250 from '@/assets/putg/250_part.webp'
-// import type260 from '@/assets/putg/260_part.webp'
+import type_09_01 from '@/assets/wave/09-01-part.webp'
+import type_09_02 from '@/assets/wave/09-02-part.webp'
+import type_09_03 from '@/assets/wave/09-03-part.webp'
+import type_09_04 from '@/assets/wave/09-04-part.webp'
+import type_092_01 from '@/assets/wave/092-01-part.webp'
+import type_092_02 from '@/assets/wave/092-02-part.webp'
+import type_092_03 from '@/assets/wave/092-03-part.webp'
+import type_092_04 from '@/assets/wave/092-04-part.webp'
+import type_093_01 from '@/assets/wave/093-01-part.webp'
+import type_093_02 from '@/assets/wave/093-02-part.webp'
+import type_093_03 from '@/assets/wave/093-03-part.webp'
+import type_093_04 from '@/assets/wave/093-04-part.webp'
+import type_095_01 from '@/assets/wave/095-01-part.webp'
+import type_095_02 from '@/assets/wave/095-02-part.webp'
+import type_095_03 from '@/assets/wave/095-03-part.webp'
+import type_095_04 from '@/assets/wave/095-04-part.webp'
+import type_098_01 from '@/assets/wave/098-01-part.webp'
+import type_098_03 from '@/assets/wave/098-03-part.webp'
+import type_099_01 from '@/assets/wave/099-01-part.webp'
+import type_099_03 from '@/assets/wave/099-03-part.webp'
 
-// import rotary02 from '@/assets/putg/obt_02_part.webp'
-// import rotary03 from '@/assets/putg/obt_03_part.webp'
-// import rotary04 from '@/assets/putg/obt_04_part.webp'
-// import rotary05 from '@/assets/putg/obt_05_part.webp'
+const images = new Map<string, string>([
+	['09_01', type_09_01],
+	['09_02', type_09_02],
+	['09_03', type_09_03],
+	['09_04', type_09_04],
+	['092_01', type_092_01],
+	['092_02', type_092_02],
+	['092_03', type_092_03],
+	['092_04', type_092_04],
+	['093_01', type_093_01],
+	['093_02', type_093_02],
+	['093_03', type_093_03],
+	['093_04', type_093_04],
+	['095_01', type_095_01],
+	['095_02', type_095_02],
+	['095_03', type_095_03],
+	['095_04', type_095_04],
+	['098_01', type_098_01],
+	['098_03', type_098_03],
+	['099_01', type_099_01],
+	['099_03', type_099_03],
+])
 
-// import ring042 from '@/assets/putg/ring_042_part.webp'
-// import ring043 from '@/assets/putg/ring_043_part.webp'
-// import ring044 from '@/assets/putg/ring_044_part.webp'
+type Props = {
+	type?: IWaveType
+	construction?: IConstruction
+}
 
-// const typeImages = {
-// 	200: type200,
-// 	210: type210,
-// 	220: type220,
-// 	230: type230,
-// 	240: type240,
-// 	250: type250,
-// 	260: type260,
-// }
-
-// const constructionImages = {
-// 	'01': {
-// 		ringUrl: ring044,
-// 		isHidden: true,
-// 	},
-// 	'02': {
-// 		rotaryUrl: rotary02,
-// 		ringUrl: ring044,
-// 		isHidden: true,
-// 	},
-// 	'03': {
-// 		rotaryUrl: rotary03,
-// 		ringUrl: ring044,
-// 		isHidden: true,
-// 	},
-// 	'04': {
-// 		rotaryUrl: rotary04,
-// 		ringUrl: ring044,
-// 		isHidden: true,
-// 	},
-// 	'042': {
-// 		rotaryUrl: rotary04,
-// 		ringUrl: ring042,
-// 		isHidden: false,
-// 	},
-// 	'043': {
-// 		rotaryUrl: rotary04,
-// 		ringUrl: ring043,
-// 		isHidden: false,
-// 	},
-// 	'044': {
-// 		rotaryUrl: rotary04,
-// 		ringUrl: ring044,
-// 		isHidden: false,
-// 	},
-// 	'05': {
-// 		rotaryUrl: rotary05,
-// 		ringUrl: ring044,
-// 		isHidden: true,
-// 	},
-// }
-
-// type Props = {
-// 	type?: IPutgType
-// 	construction?: IConstruction
-// }
-
-// export const NotStandardImage: FC<Props> = ({ type, construction }) => {
-// 	const image = constructionImages[(construction?.code as '044') || '044']
-
-// 	return (
-// 		<CompositeImage>
-// 			<Image src={typeImages[(type?.typeCode as '200') || '200']} position='absolute' padding='0 0 0 8%' />
-// 			<Image src={image.ringUrl} isHidden={image.isHidden} padding='6% 0 4% 0' />
-// 			{image.rotaryUrl && (
-// 				<Image src={image.rotaryUrl} position='absolute' left='0' maxHeight='76px' padding='6.7% 0% 0% 8%' />
-// 			)}
-// 		</CompositeImage>
-// 	)
-// }
-export const NotStandardImage: FC = () => {
-	return null
+export const NotStandardImage: FC<Props> = ({ type, construction }) => {
+	return (
+		<Image
+			width={400}
+			height={137}
+			src={images.get(`${type?.baseCode}_${construction?.code}`)}
+			alt='gasket drawing'
+		/>
+	)
 }
