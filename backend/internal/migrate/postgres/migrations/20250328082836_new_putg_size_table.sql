@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS public.putg_size
 (
     id uuid NOT NULL,
-    putg_flange_type_id uuid NOT NULL,
+    flange_type_id uuid NOT NULL,
     base_construction_id uuid NOT NULL,
     count integer,
     dn text COLLATE pg_catalog."default" NOT NULL,

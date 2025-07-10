@@ -26,6 +26,7 @@ export const Pn: FC<Props> = () => {
 		if (!data || data.data[0]?.dn != dn) return
 		let idx = data.data.findIndex(s => s.pn === pn)
 		if (idx == -1) idx = 0
+		if (!data.data[idx]) return
 		const newSize = {
 			id: data.data[idx].id,
 			dn: data.data[idx].dn,

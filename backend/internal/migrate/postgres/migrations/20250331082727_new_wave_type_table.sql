@@ -3,19 +3,19 @@
 CREATE TABLE IF NOT EXISTS public.wave_type
 (
     id uuid NOT NULL,
-    standard_id uuid NOT NULL,
+    flange_id uuid NOT NULL,
     base_id uuid NOT NULL,
     priority integer NOT NULL,
+    dn_range text[] COLLATE pg_catalog."default" DEFAULT '{}'::text[],
     code text COLLATE pg_catalog."default" DEFAULT ''::text,
-    dn_range text[] COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT wave_type_pkey PRIMARY KEY (id),
     CONSTRAINT wave_type_base_id_fkey FOREIGN KEY (base_id)
         REFERENCES public.wave_type_base (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE
         NOT VALID,
-    CONSTRAINT wave_type_standard_id_fkey FOREIGN KEY (standard_id)
-        REFERENCES public.wave_standard (id) MATCH SIMPLE
+    CONSTRAINT wave_type_flange_id_fkey FOREIGN KEY (flange_id)
+        REFERENCES public.wave_flange_type (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE
         NOT VALID

@@ -177,8 +177,16 @@ func (s *UserService) CreateInProvider(ctx context.Context, user *models.User, r
 		return models.ErrPassword
 	}
 
-	if err := s.createInProvider(ctx, dto); err != nil {
+	id, err := s.getIdFromProvider(ctx, dto)
+	if err != nil {
 		return err
+	}
+	dto.ProviderId = id
+
+	if dto.ProviderId == "" {
+		if err := s.createInProvider(ctx, dto); err != nil {
+			return err
+		}
 	}
 
 	if err := s.Update(ctx, dto); err != nil {
@@ -192,11 +200,33 @@ func (s *UserService) CreateInProvider(ctx context.Context, user *models.User, r
 	return nil
 }
 
+func (s *UserService) getIdFromProvider(ctx context.Context, dto *models.UserDTO) (string, error) {
+	token, err := s.keycloak.GetToken(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	data, err := s.keycloak.Client.GetUsers(ctx, token, s.keycloak.Realm, gocloak.GetUsersParams{Username: &dto.Nickname})
+	if err != nil {
+		return "", fmt.Errorf("failed to get user from provider. error: %w", err)
+	}
+
+	if len(data) == 0 {
+		return "", models.ErrUserNotFound
+	}
+
+	dto.Realm = s.keycloak.Realm
+	id := *data[0].ID
+
+	return id, nil
+}
+
 func (s *UserService) createInProvider(ctx context.Context, dto *models.UserDTO) error {
 	token, err := s.keycloak.GetToken(ctx)
 	if err != nil {
 		return err
 	}
+
 	data := gocloak.User{
 		ID:            &dto.Id,
 		Username:      &dto.Nickname,

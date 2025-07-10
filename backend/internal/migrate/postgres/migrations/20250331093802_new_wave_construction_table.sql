@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS public.wave_construction_base
     title text COLLATE pg_catalog."default" NOT NULL,
     code text COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" DEFAULT ''::text,
+    has_material boolean DEFAULT true,
     allowed_types text[] COLLATE pg_catalog."default" DEFAULT '{}'::text[],
     CONSTRAINT wave_construction_base_pkey PRIMARY KEY (id)
 )
