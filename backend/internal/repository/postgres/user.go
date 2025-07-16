@@ -170,8 +170,7 @@ func (r *UserRepo) Create(ctx context.Context, dto *models.UserDTO) error {
 
 func (r *UserRepo) Confirm(ctx context.Context, dto *models.ConfirmUserDTO) error {
 	query := fmt.Sprintf(`UPDATE "%s" SET confirmed=true, password='', date=:date WHERE id=:id`, UserTable)
-	//TODO возможно стоит перевести дату из миллисекунд в секунды и сменить тип со строки на число
-	dto.Date = fmt.Sprintf("%d", time.Now().UnixMilli())
+	dto.Date = time.Now().Unix()
 
 	_, err := r.db.NamedExecContext(ctx, query, dto)
 	if err != nil {

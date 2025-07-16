@@ -178,7 +178,7 @@ func (s *UserService) CreateInProvider(ctx context.Context, user *models.User, r
 	}
 
 	id, err := s.getIdFromProvider(ctx, dto)
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrUserNotFound) {
 		return err
 	}
 	dto.ProviderId = id
@@ -189,6 +189,7 @@ func (s *UserService) CreateInProvider(ctx context.Context, user *models.User, r
 		}
 	}
 
+	dto.Password = ""
 	if err := s.Update(ctx, dto); err != nil {
 		return err
 	}
@@ -386,18 +387,52 @@ func (s *UserService) UpgradePassword(ctx context.Context, dto *models.UpgradePa
 		return err
 	}
 
-	u := gocloak.User{
-		ID: &user.ProviderId,
-		Credentials: &[]gocloak.CredentialRepresentation{
-			{
-				Type:  gocloak.StringP("password"),
-				Value: &dto.Password,
+	if user.ProviderId == "" || user.ProviderId == uuid.Nil.String() {
+		userDto := &models.UserDTO{
+			Id:       user.Id,
+			Nickname: user.Nickname,
+			Role:     user.Role,
+			Company:  user.Company,
+			Inn:      user.Inn,
+			Kpp:      user.Kpp,
+			Region:   user.Region,
+			City:     user.City,
+			Position: user.Position,
+			Phone:    user.Phone,
+			Email:    user.Email,
+			Realm:    user.Realm,
+			Name:     user.Name,
+			Address:  user.Address,
+			Password: dto.Password,
+		}
+		if userDto.Nickname == "" {
+			userDto.Nickname = strings.Split(userDto.Email, "@")[0]
+		}
+
+		if err := s.createInProvider(ctx, userDto); err != nil {
+			return err
+		}
+
+		userDto.Password = ""
+		if err := s.Update(ctx, userDto); err != nil {
+			return err
+		}
+	} else {
+		u := gocloak.User{
+			ID: &user.ProviderId,
+			Credentials: &[]gocloak.CredentialRepresentation{
+				{
+					Type:  gocloak.StringP("password"),
+					Value: &dto.Password,
+				},
 			},
-		},
+		}
+
+		if err := s.keycloak.Client.UpdateUser(ctx, token, s.keycloak.Realm, u); err != nil {
+
+			return fmt.Errorf("failed to upgrade password: %w", err)
+		}
 	}
 
-	if err := s.keycloak.Client.UpdateUser(ctx, token, s.keycloak.Realm, u); err != nil {
-		return fmt.Errorf("failed to upgrade password: %w", err)
-	}
 	return nil
 }

@@ -84,7 +84,7 @@ func (h *Handler) signIn(c *gin.Context) {
 				"Учетная запись не активирована. Для активации учетной записи перейдите по ссылке, отправленной вам в письме.")
 			return
 		}
-		if strings.Contains(err.Error(), "invalid_grant") || errors.Is(err, models.ErrUserNotFound) {
+		if strings.Contains(err.Error(), "invalid_grant") || errors.Is(err, models.ErrUserNotFound) || errors.Is(err, models.ErrPassword) {
 			h.services.Limit.AddAttempt(c, c.ClientIP())
 			response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 			return

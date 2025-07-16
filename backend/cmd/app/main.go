@@ -30,14 +30,13 @@ import (
 	"github.com/Alexander272/new-sealur-pro/pkg/database/redis"
 	"github.com/Alexander272/new-sealur-pro/pkg/hasher"
 	"github.com/Alexander272/new-sealur-pro/pkg/logger"
-	"github.com/subosito/gotenv"
 )
 
 func main() {
 	//* Init config
-	if err := gotenv.Load("../.env"); err != nil {
-		log.Fatalf("error loading env variables: %s", err.Error())
-	}
+	// if err := gotenv.Load("../.env"); err != nil {
+	// 	log.Fatalf("error loading env variables: %s", err.Error())
+	// }
 
 	conf, err := config.Init("configs/config.yaml")
 	if err != nil {

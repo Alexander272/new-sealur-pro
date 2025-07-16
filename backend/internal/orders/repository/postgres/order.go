@@ -184,7 +184,7 @@ func (r *OrderRepo) GetByManager(ctx context.Context, req *models.GetOrdersByMan
 
 func (r *OrderRepo) Create(ctx context.Context, dto *models.OrderDTO) error {
 	query := fmt.Sprintf(`INSERT INTO "%s" (id, user_id, date, count_position, manager_id) 
-		VALUES (:id, :user_id, :date, :count_position, (SELECT manager_id FROM "%s" WHERE id=:manager_id))`,
+		VALUES (:id, :user_id, :date, :count_position, NULLIF((SELECT manager_id FROM "%s" WHERE id=:manager_id), '00000000-0000-0000-0000-000000000000'))`,
 		OrderTable, UserTable,
 	)
 	dto.Id = uuid.NewString()

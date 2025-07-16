@@ -168,6 +168,10 @@ func (h *Handler) recovery(c *gin.Context) {
 	}
 
 	if err := h.service.Recovery(c, dto); err != nil {
+		if errors.Is(err, models.ErrUserNotFound) {
+			response.NewErrorResponse(c, http.StatusNotFound, err.Error(), "Пользователь не найден")
+			return
+		}
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return

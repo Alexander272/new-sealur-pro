@@ -90,7 +90,7 @@ type UserDTO struct {
 
 type ConfirmUserDTO struct {
 	Id   string `json:"id" db:"id"`
-	Date string `json:"date" db:"date"`
+	Date int64  `json:"date" db:"date"`
 }
 
 type ChangeManagerDTO struct {
