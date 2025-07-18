@@ -63,6 +63,8 @@ func (s *SessionService) SignIn(ctx context.Context, dto *models.SignInDTO) (*mo
 	cnd.AccessToken = res.AccessToken
 	cnd.RefreshToken = res.RefreshToken
 
+	//TODO надо бы наверное фиксировать когда пользователь заходил в систему и еще можно попробовать вести таблицу с сессиями (запоминать ip, устройство и тд), можно кстати эти две таблицы объединить
+
 	return cnd, nil
 }
 

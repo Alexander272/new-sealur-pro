@@ -20,6 +20,7 @@ import (
 type Handler struct {
 	service services.User
 	session services.Session
+	limit   services.Limit
 	conf    config.AuthConfig
 }
 
@@ -29,16 +30,17 @@ type Deps struct {
 	Middleware *middleware.Middleware
 }
 
-func NewHandler(service services.User, session services.Session, conf config.AuthConfig) *Handler {
+func NewHandler(deps *Deps) *Handler {
 	return &Handler{
-		service: service,
-		session: session,
-		conf:    conf,
+		service: deps.Services.User,
+		session: deps.Services.Session,
+		limit:   deps.Services.Limit,
+		conf:    deps.Conf,
 	}
 }
 
 func Register(api *gin.RouterGroup, deps *Deps) {
-	handler := NewHandler(deps.Services.User, deps.Services.Session, deps.Conf)
+	handler := NewHandler(deps)
 
 	users := api.Group("/users")
 	{
@@ -197,5 +199,6 @@ func (h *Handler) upgradePass(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
+	h.limit.Remove(c, c.ClientIP())
 	c.JSON(http.StatusOK, response.IdResponse{Message: "Пароль успешно изменен"})
 }
