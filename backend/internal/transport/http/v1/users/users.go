@@ -45,12 +45,14 @@ func Register(api *gin.RouterGroup, deps *Deps) {
 	users := api.Group("/users")
 	{
 		users.POST("/confirm/:code", handler.confirm)
-		users.POST("/recovery", handler.recovery)
-		users.POST("/recovery/:code", handler.upgradePass)
+		users.POST("/recovery", handler.genRecoveryCode)
+		users.POST("/recovery/:code", handler.passwordRecovery)
 
 		auth := users.Group("", deps.Middleware.VerifyToken)
 		{
 			auth.GET("/:id", handler.getById)
+			auth.PUT("/:id", handler.update)
+			auth.PUT("/:id/password", handler.updatePassword)
 
 			manager := auth.Group("", deps.Middleware.CheckAccess(constants.AllowManager))
 			{
@@ -146,6 +148,33 @@ func (h *Handler) confirm(c *gin.Context) {
 	c.JSON(http.StatusOK, response.DataResponse{Data: user})
 }
 
+func (h *Handler) update(c *gin.Context) {
+	id := c.Param("id")
+	if err := uuid.Validate(id); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
+		return
+	}
+
+	dto := &models.UserDTO{}
+	if err := c.BindJSON(dto); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
+		return
+	}
+
+	if id != dto.Id {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не совпадает")
+		return
+	}
+
+	if err := h.service.Update(c, dto); err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
+		error_bot.Send(c, err.Error(), dto)
+		return
+	}
+	logger.Info("Пользователь обновил свои данные", logger.AnyAttr("dto", dto))
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Данные обновлены"})
+}
+
 func (h *Handler) changeManager(c *gin.Context) {
 	dto := &models.ChangeManagerDTO{}
 	if err := c.BindJSON(dto); err != nil {
@@ -158,11 +187,11 @@ func (h *Handler) changeManager(c *gin.Context) {
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
-	logger.Debug("Менеджер у клиента изменен", logger.AnyAttr("dto", dto))
+	logger.Info("Менеджер у клиента изменен", logger.AnyAttr("dto", dto))
 	c.JSON(http.StatusOK, response.IdResponse{Message: "Менеджер изменен"})
 }
 
-func (h *Handler) recovery(c *gin.Context) {
+func (h *Handler) genRecoveryCode(c *gin.Context) {
 	dto := &models.RecoveryDTO{}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
@@ -181,24 +210,49 @@ func (h *Handler) recovery(c *gin.Context) {
 	c.JSON(http.StatusOK, response.IdResponse{Message: "Письмо отправлено"})
 }
 
-func (h *Handler) upgradePass(c *gin.Context) {
+func (h *Handler) passwordRecovery(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
 		response.NewErrorResponse(c, http.StatusBadRequest, "empty code", "empty code param")
 		return
 	}
 
-	dto := &models.UpgradePasswordDTO{Code: code}
+	dto := &models.PasswordRecoveryDTO{Code: code}
 	if err := c.BindJSON(dto); err != nil {
 		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
 		return
 	}
 
-	if err := h.service.UpgradePassword(c, dto); err != nil {
+	if err := h.service.PasswordRecovery(c, dto); err != nil {
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return
 	}
 	h.limit.Remove(c, c.ClientIP())
+	c.JSON(http.StatusOK, response.IdResponse{Message: "Пароль успешно изменен"})
+}
+
+func (h *Handler) updatePassword(c *gin.Context) {
+	id := c.Param("id")
+	if err := uuid.Validate(id); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не задан")
+		return
+	}
+
+	dto := &models.UpdatePasswordDTO{}
+	if err := c.BindJSON(dto); err != nil {
+		response.NewErrorResponse(c, http.StatusBadRequest, err.Error(), "Отправлены некорректные данные")
+		return
+	}
+	if id != dto.UserId {
+		response.NewErrorResponse(c, http.StatusBadRequest, "empty param", "Идентификатор не совпадает")
+		return
+	}
+
+	if err := h.service.UpdatePassword(c, dto); err != nil {
+		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
+		error_bot.Send(c, err.Error(), dto)
+		return
+	}
 	c.JSON(http.StatusOK, response.IdResponse{Message: "Пароль успешно изменен"})
 }

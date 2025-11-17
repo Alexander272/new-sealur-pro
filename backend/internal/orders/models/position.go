@@ -36,7 +36,7 @@ type Position struct {
 	WaveData     *PositionWave     `json:"waveData"`
 	SerratedData *PositionSerrated `json:"serratedData"`
 	JacketedData *PositionJacketed `json:"jacketedData"`
-	Data         interface{}       `json:"data"`
+	Data         interface{}       `json:"data"` //TODO тут можно попробовать использовать дженерики
 	// RingData *PositionRing     `json:"ringData"`
 	// KitData  *PositionRingsKit `json:"kitData"`
 }

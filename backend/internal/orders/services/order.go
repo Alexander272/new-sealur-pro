@@ -62,6 +62,7 @@ func (s *OrderService) GetCurrent(ctx context.Context, req *models.GetCurrentOrd
 	if err != nil && !errors.Is(err, base_models.ErrNoRows) {
 		return nil, fmt.Errorf("failed to get current order. error: %w", err)
 	}
+
 	if data == nil {
 		dto := &models.OrderDTO{UserId: req.UserId}
 		err := s.Create(ctx, dto)

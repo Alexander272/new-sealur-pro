@@ -61,7 +61,8 @@ type User interface {
 	Update(ctx context.Context, dto *models.UserDTO) error
 	SetManager(ctx context.Context, dto *models.ChangeManagerDTO) error
 	Recovery(ctx context.Context, dto *models.RecoveryDTO) error
-	UpgradePassword(ctx context.Context, dto *models.UpgradePasswordDTO) error
+	PasswordRecovery(ctx context.Context, dto *models.PasswordRecoveryDTO) error
+	UpdatePassword(ctx context.Context, dto *models.UpdatePasswordDTO) error
 }
 
 // func (s *UserService) Get(ctx context.Context)
@@ -371,13 +372,21 @@ func (s *UserService) Recovery(ctx context.Context, dto *models.RecoveryDTO) err
 	return nil
 }
 
-func (s *UserService) UpgradePassword(ctx context.Context, dto *models.UpgradePasswordDTO) error {
+func (s *UserService) PasswordRecovery(ctx context.Context, dto *models.PasswordRecoveryDTO) error {
 	data, err := s.confirm.Get(ctx, dto.Code)
 	if err != nil {
 		return err
 	}
 
-	user, err := s.GetById(ctx, &models.GetUserByIdDTO{Id: data.UserId})
+	passDTO := &models.UpdatePasswordDTO{UserId: data.UserId, Password: dto.Password}
+	if err := s.UpdatePassword(ctx, passDTO); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *UserService) UpdatePassword(ctx context.Context, dto *models.UpdatePasswordDTO) error {
+	user, err := s.GetById(ctx, &models.GetUserByIdDTO{Id: dto.UserId})
 	if err != nil {
 		return err
 	}

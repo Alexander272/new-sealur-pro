@@ -117,7 +117,12 @@ type RecoveryDTO struct {
 	Email string `json:"email" binding:"required,email"`
 }
 
-type UpgradePasswordDTO struct {
+type PasswordRecoveryDTO struct {
 	Code     string `json:"code"`
+	Password string `json:"password" binding:"required,min=6,max=64"`
+}
+
+type UpdatePasswordDTO struct {
+	UserId   string `json:"userId"`
 	Password string `json:"password" binding:"required,min=6,max=64"`
 }
