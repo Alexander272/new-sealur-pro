@@ -10,6 +10,9 @@ export const Description = () => {
 	const design = useAppSelector(getDesign)
 
 	const renderDescription = () => {
+		let flange = `для уплотнения фланцевого соединения типа «${main.flangeType?.title}» `
+		if (main.flangeType?.title == '-') flange = ''
+
 		const type = (main.type?.description || '')
 			.replace('@material', material.base?.title || '')
 			.replace('@plating', material.plating?.title || '')
@@ -35,7 +38,7 @@ export const Description = () => {
 		}
 		const sizeStr = sizes ? `, с размерами ${fullSizes}` : ''
 
-		return `Прокладка для уплотнения фланцевого соединения типа «${main.flangeType?.title}» ${type}, ${materials}${coating}${hole}${retainer}${jumper}${standard}${sizeStr}`
+		return `Прокладка ${flange}${type}, ${materials}${coating}${hole}${retainer}${jumper}${standard}${sizeStr}`
 	}
 
 	return (

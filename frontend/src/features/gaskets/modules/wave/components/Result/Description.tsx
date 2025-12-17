@@ -15,6 +15,9 @@ export const Description = () => {
 			form = main.configuration?.code == 'oval' ? 'овальной формы ' : 'прямоугольной формы '
 		}
 
+		let flange = `для уплотнения фланцевого соединения типа «${main.flangeType?.title}»`
+		if (main.flangeType?.title == '-') flange = ''
+
 		const type = (main.type?.description || '')
 			.replace('@material', material.base?.title || '')
 			.replace('@plating', material.plating?.title || '')
@@ -40,7 +43,7 @@ export const Description = () => {
 		}
 		const sizeStr = sizes ? `, с размерами ${fullSizes}` : ''
 
-		return `Прокладка для уплотнения фланцевого соединения типа «${main.flangeType?.title}»${form} ${type}, ${materials}${coating}${hole}${retainer}${jumper}${standard}${sizeStr}`
+		return `Прокладка ${flange}${form} ${type}, ${materials}${coating}${hole}${retainer}${jumper}${standard}${sizeStr}`
 	}
 
 	return (

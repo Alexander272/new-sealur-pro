@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 
 type Props = {
 	value?: string
-	validation?: 'email' | 'uint' | 'inn' | 'empty' | 'phone' | 'password'
+	validation?: 'email' | 'uint' | 'inn' | 'empty' | 'phone' | 'password' | 'name'
 	replace?: 'phone'
 }
 
@@ -91,9 +91,16 @@ export const useInput = (props?: Props) => {
 			if (value.trim() === '') isValid = false
 			else isValid = true
 		}
+		if (props?.validation === 'name') {
+			if (value.trim() === '' || value.trim().split('').length < 2) isValid = false
+			else isValid = true
+		}
 		if (props?.validation === 'phone') {
-			const regex = /(^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}( \(доб\. \d{1,}\))?)?$/
-			isValid = regex.test(value)
+			if (!value) isValid = true
+			else {
+				const regex = /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}( \(доб\. \d{1,}\))?$/
+				isValid = regex.test(value)
+			}
 		}
 
 		setValid(isValid)

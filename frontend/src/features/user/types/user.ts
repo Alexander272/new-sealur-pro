@@ -12,6 +12,7 @@ export interface IUser {
 	email: string
 	phone: string
 	role: string
+	realm: string
 	useLink?: boolean
 
 	token: string
@@ -42,6 +43,7 @@ export interface IUserInfo {
 export interface IRefreshUser {
 	id: string
 	nickname: string
+	realm: string
 	email: string
 	role: string
 	token: string

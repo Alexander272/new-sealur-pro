@@ -22,7 +22,7 @@ export const Thickness = () => {
 	}, [dispatch, thicknesses, h])
 
 	// const thicknessHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-	// 	const regex = /(^\d+[.,]?(\d{1})?)$/
+	// 	const regex = /(^\d{1,2}([.,](\d{1,2})?)?)$/
 	// 	if (regex.test(event.target.value)) dispatch(setThickness(event.target.value))
 	// 	if (event.target.value === '') dispatch(setThickness(event.target.value))
 	// }

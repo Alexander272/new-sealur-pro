@@ -4,6 +4,7 @@ export const Field = styled.div`
 	border-radius: 12px;
 	padding: 7px 14px;
 	border: 1px solid rgba(0, 0, 0, 0.23);
+	height: 40px;
 	cursor: pointer;
 	transition: all 0.3s ease-in-out;
 

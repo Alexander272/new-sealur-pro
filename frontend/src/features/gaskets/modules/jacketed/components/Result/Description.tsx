@@ -16,6 +16,9 @@ export const Description = () => {
 			? `, с перемычкой типа ${design.jumper.code} шириной ${design.jumper.width || 0} мм`
 			: ''
 
+		let flange = `, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"`
+		if (main.flangeType?.title == '-') flange = ''
+
 		const sizes = [size?.d4, size.d3, size.d2, size?.d1].filter(Boolean).join('x')
 		const fullSizes = `${sizes}-${size.h.replace('.', ',')} мм`
 		let standard = ''
@@ -23,7 +26,7 @@ export const Description = () => {
 			standard = `, на условный проход ${size.dn} мм, номинальное давление ${size.pn} МПа по ${main.standard?.standard.title}`
 		}
 
-		return `Прокладка из ${material.filler?.designation}, ${main.type?.description}, ${materials}${jumper}, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"${standard}, с размерами ${fullSizes}`
+		return `Прокладка из ${material.filler?.designation}, ${main.type?.description}, ${materials}${jumper}${flange}${standard}, с размерами ${fullSizes}`
 	}
 
 	return (

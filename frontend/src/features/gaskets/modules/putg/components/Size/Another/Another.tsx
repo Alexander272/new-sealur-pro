@@ -57,6 +57,7 @@ export const Another = () => {
 					errorText={
 						(errors.emptyD2 && 'размер не задан') ||
 						(errors.d2Err && 'D2 должен быть больше, чем D1') ||
+						(errors.minSize && 'Прокладка слишком маленькая для выбранной конструкции') ||
 						(errors.minWidth && 'Поле прокладки слишком маленькое')
 					}
 				/>

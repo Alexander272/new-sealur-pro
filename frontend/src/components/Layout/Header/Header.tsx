@@ -56,6 +56,10 @@ const Header: FC<Props> = ({ disableCard }) => {
 		else if (role == 'root' || role == 'cco') navigate(PathRoutes.Manager.Orders.List)
 		else navigate(PathRoutes.Orders)
 	}
+	const profileHandler = () => {
+		handleClose()
+		navigate(PathRoutes.Profile)
+	}
 
 	const analyticsHandler = () => {
 		handleClose()
@@ -155,6 +159,12 @@ const Header: FC<Props> = ({ disableCard }) => {
 							<img height={24} width={18} src='/image/list.svg' />
 						</ListItemIcon>
 						Заказы
+					</MenuItem>
+					<MenuItem onClick={profileHandler} selected={false}>
+						<ListItemIcon>
+							<img height={24} width={18} src='/image/registration.svg' />
+						</ListItemIcon>
+						Профиль
 					</MenuItem>
 					{role != 'user' && role != 'manager' ? (
 						<MenuItem onClick={analyticsHandler} selected={false}>

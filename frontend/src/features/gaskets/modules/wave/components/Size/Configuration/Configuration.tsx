@@ -32,7 +32,7 @@ export const Configuration = () => {
 		const maxWidth = +sizes.d1
 
 		if (sizes.d3 != '' && sizes.d2 != '') {
-			err.d3 = +sizes.d3 <= +sizes.d2
+			err.d3 = +sizes.d3 < +sizes.d2
 		}
 		err.maxSize = +sizes.d3 > 4100
 

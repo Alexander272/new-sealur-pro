@@ -20,6 +20,9 @@ export const Description = () => {
 			.replace('@inner_ring', material.innerRing?.title || '')
 			.replace('@outer_ring', material.outerRing?.title || '')
 
+		let flange = `, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"`
+		if (main.flangeType?.title == '-') flange = ''
+
 		let coating = ''
 		if (design.hasCoating) coating = ' с элементом для крепления на поверхности'
 
@@ -37,7 +40,7 @@ export const Description = () => {
 		const sizes = [size?.d4, size.d3, size.d2, size?.d1].filter(Boolean).join('x')
 		const fullSizes = `${sizes}-${size.h.replace('.', ',')} мм`
 
-		return `Прокладка ${form}из ${material.filler?.designation}, ${material.putgType?.description}, ${materials}, для уплотнения фланцевой поверхности исполнения "${main.flangeType?.title}"${coating}${hole}${jumper}${removable}, с размерами ${fullSizes}`
+		return `Прокладка ${form}из ${material.filler?.designation}, ${material.putgType?.description}, ${materials}${flange}${coating}${hole}${jumper}${removable}, с размерами ${fullSizes}`
 	}
 
 	return (

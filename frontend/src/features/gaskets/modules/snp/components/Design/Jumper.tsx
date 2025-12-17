@@ -56,7 +56,7 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 						value={value}
 						onChange={jumperWidthHandler}
 						disabled={disabled || jumper.code == 'M'}
-						placeholder='Ширина перемычки'
+						placeholder='Ширина перемычки, мм'
 					/>
 				</>
 			)}

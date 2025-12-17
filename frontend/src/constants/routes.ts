@@ -7,6 +7,7 @@ export const PathRoutes = Object.freeze({
 		RecoveryCode: '/auth/recovery/:code' as const,
 	},
 	Connect: '/connect' as const,
+	Profile: '/profile' as const,
 	Gasket: {
 		Base: '/' as const,
 		Snp: '/snp' as const,

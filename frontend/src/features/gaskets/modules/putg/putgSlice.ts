@@ -36,6 +36,9 @@ export interface IPutgState {
 
 		minWidth: boolean
 		maxSize: boolean
+		minSize: boolean
+
+		jumper: boolean
 	}
 	designError: {
 		emptyDrawingHole: boolean
@@ -67,6 +70,9 @@ const initialState: IPutgState = {
 
 		minWidth: false,
 		maxSize: false,
+		minSize: false,
+
+		jumper: false,
 	},
 	designError: {
 		emptyDrawingHole: false,
@@ -148,6 +154,7 @@ export const putgSlice = createSlice({
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<IPutgStandard>) => {
 			state.main.standard = action.payload
+			state.design = initialState.design
 		},
 		// установка типа фланца
 		setMainFlangeType: (state, action: PayloadAction<IFlangeType>) => {
@@ -219,8 +226,10 @@ export const putgSlice = createSlice({
 			}
 
 			state.sizeError.minWidth = hasError
-			if (range.length && state.main.configuration?.code == 'round')
+			if (range.length && state.main.configuration?.code == 'round') {
 				state.sizeError.maxSize = range[range.length - 1].maxD3 <= +state.size.d3
+				state.sizeError.minSize = +state.size.d2 < (state.material.construction?.minSize || 0)
+			}
 			if (state.main.configuration?.code != 'round') state.sizeError.maxSize = 1500 <= +state.size.d3
 
 			if (
@@ -266,9 +275,12 @@ export const putgSlice = createSlice({
 				state.design.jumper.hasDrawing = action.payload.hasDrawing
 			}
 			state.designError.emptyDrawingJumper = !state.drawing && (state.design.jumper.hasDrawing || false)
+			state.sizeError.jumper = +(state.size.d2 || 0) / 2 < +(state.design.jumper.width || 0)
 
 			if (!state.design.jumper.hasJumper) state.designError.emptyDrawingJumper = false
 			state.hasDesignError = Object.values(state.designError).some(v => v)
+
+			if (!state.design.jumper.hasJumper) state.design.jumper = initialState.design.jumper
 		},
 		// установка крепления
 		// setDesignMounting: (state, action: PayloadAction<{ hasMounting?: boolean; code?: string }>) => {
@@ -391,7 +403,7 @@ export const putgSlice = createSlice({
 					state.sizeError.d4Err =
 						state.size.d4 != '' &&
 						(state.size.d3 != '' || state.size.d2 != '') &&
-						(+state.size.d4 <= +state.size.d3 || +state.size.d4 <= +state.size.d2)
+						(+state.size.d4 <= +state.size.d3 || +state.size.d4 < +state.size.d2)
 
 					state.sizeError.emptySize =
 						state.sizeError.emptyD4 ||
@@ -400,7 +412,7 @@ export const putgSlice = createSlice({
 						state.sizeError.emptyD1
 				} else {
 					state.sizeError.d3Err =
-						state.size.d3 != '' && state.size.d2 != '' && +state.size.d3 <= +state.size.d2
+						state.size.d3 != '' && state.size.d2 != '' && +state.size.d3 < +state.size.d2
 
 					state.sizeError.emptyD3 = !state.size.d3
 					state.sizeError.emptyD2 = !state.size.d2
@@ -448,8 +460,10 @@ export const putgSlice = createSlice({
 
 			state.sizeError.minWidth = hasError
 			// проверка на максимальный размер
-			if (range.length && state.main.configuration?.code == 'round')
+			if (range.length && state.main.configuration?.code == 'round') {
 				state.sizeError.maxSize = range[range.length - 1].maxD3 <= +state.size.d3
+				state.sizeError.minSize = +state.size.d2 < (state.material.construction?.minSize || 0)
+			}
 			if (state.main.configuration?.code != 'round') state.sizeError.maxSize = 1500 <= +state.size.d3
 
 			// при размере больше 2000 прокладка должна быть разъемной

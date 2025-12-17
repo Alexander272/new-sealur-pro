@@ -2,8 +2,8 @@ import { FC } from 'react'
 import { Typography } from '@mui/material'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { Input } from '@/components/Input/input.style'
 import { getH, getMinThick, getSizeErr, getType, setSizeThickness } from '../../../putgSlice'
+import { Input } from '@/components/Input/input.style'
 
 type Props = {
 	disabled?: boolean
@@ -16,12 +16,12 @@ export const Thickness: FC<Props> = ({ disabled }) => {
 	const minThick = useAppSelector(getMinThick)
 	const dispatch = useAppDispatch()
 
-	const message = `толщина должна быть ≥ ${
-		minThick.toFixed(1) || type?.minThickness.toFixed(1)
-	} и ≤ ${type?.maxThickness.toFixed(1)}`
+	const message = `толщина должна быть ≥ ${(minThick || type?.minThickness || 1).toFixed(
+		1
+	)} и ≤ ${type?.maxThickness.toFixed(1)}`
 
 	const thicknessHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const regex = /(^\d+[.,]?(\d{1})?)$/
+		const regex = /(^\d{1,2}([.,](\d{1,2})?)?)$/
 		if (regex.test(event.target.value))
 			dispatch(setSizeThickness({ h: event.target.value.replace(',', '.').replace(/^0+(?=\d)/, '') }))
 		if (event.target.value === '') dispatch(setSizeThickness({ h: event.target.value }))

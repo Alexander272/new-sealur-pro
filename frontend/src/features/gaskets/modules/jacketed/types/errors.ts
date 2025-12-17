@@ -11,4 +11,6 @@ export interface ISizeErrors {
 	maxWidth?: boolean
 	minWidth?: boolean
 	maxSize?: boolean
+
+	jumper?: boolean
 }

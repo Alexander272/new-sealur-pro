@@ -1,7 +1,7 @@
 import { RootState } from '@/app/store'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export type DialogVariants = 'Orders' | 'Clients'
+export type DialogVariants = 'Orders' | 'Clients' | 'Password'
 
 interface IDialogOptions {
 	isOpen: boolean

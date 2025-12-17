@@ -6,6 +6,7 @@ export const Message = styled.div`
 	visibility: hidden;
 	background-color: var(--white);
 	/* margin-top: 20px; */
+	border: 1px solid var(--border-white);
 	position: absolute;
 	right: 0;
 	top: 100%;

@@ -40,7 +40,28 @@ export const userApiSlice = apiSlice.injectEndpoints({
 				method: 'POST',
 			}),
 		}),
+
+		updateUser: builder.mutation<null, IUser>({
+			query: user => ({
+				url: `${API.users.base}/${user.id}`,
+				method: 'PUT',
+				body: user,
+			}),
+		}),
+		updateUsersPassword: builder.mutation<null, { userId: string; password: string }>({
+			query: data => ({
+				url: `${API.users.base}/${data.userId}/password`,
+				method: 'PUT',
+				body: data,
+			}),
+		}),
 	}),
 })
 
-export const { useGetUserQuery, useGetUserInfoQuery, useConfirmMutation } = userApiSlice
+export const {
+	useGetUserQuery,
+	useGetUserInfoQuery,
+	useConfirmMutation,
+	useUpdateUserMutation,
+	useUpdateUsersPasswordMutation,
+} = userApiSlice

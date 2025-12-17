@@ -69,6 +69,7 @@ export const serratedSlice = createSlice({
 		// установка стандарта
 		setMainStandard: (state, action: PayloadAction<ISerratedStandard>) => {
 			state.main.standard = action.payload
+			state.design = { ...initialState.design }
 		},
 		// установка типа фланца
 		setMainFlangeType: (state, action: PayloadAction<IFlangeType>) => {
@@ -133,6 +134,9 @@ export const serratedSlice = createSlice({
 
 			state.designErrors.jumper =
 				!state.drawing && (state.design.jumper.hasJumper || false) && (state.design.jumper.hasDrawing || false)
+
+			state.sizeErrors.jumper = +(state.size.d2 || 0) / 2 < +(state.design.jumper.width || 0)
+			if (!state.design.jumper.hasJumper) state.design.jumper = initialState.design.jumper
 		},
 		// установка чертежа
 		setDrawing: (state, action: PayloadAction<IDrawing | undefined>) => {

@@ -4,10 +4,10 @@ import { Stack } from '@mui/material'
 import type { IMainJumper } from '@/features/gaskets/types/jumper'
 import { useDebounce } from '@/hooks/debounce'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { getJumper, getSizeErrors, setJumper } from '../../waveSlice'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { JumperSelect } from '@/components/Jumper/Jumper'
 import { Input } from '@/components/Input/input.style'
-import { getJumper, setJumper } from '../../waveSlice'
 
 type Props = {
 	disabled?: boolean
@@ -16,6 +16,7 @@ type Props = {
 export const Jumper: FC<Props> = ({ disabled }) => {
 	// const construction = useAppSelector(getConstruction)
 	// const sizes = useAppSelector(getSize)
+	const sizeError = useAppSelector(getSizeErrors)
 	const jumper = useAppSelector(getJumper)
 	const [value, setValue] = useState(jumper.width)
 
@@ -26,6 +27,9 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 	useEffect(() => {
 		dispatch(setJumper({ width: value }))
 	}, [debounced, dispatch, value])
+	useEffect(() => {
+		if (!jumper.hasJumper) setValue('')
+	}, [jumper])
 
 	const jumperHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		dispatch(setJumper({ hasJumper: event.target.checked }))
@@ -35,7 +39,7 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 		if (jumper.code == 'M') setValue('')
 	}
 	const jumperWidthHandler = (event: ChangeEvent<HTMLInputElement>) => {
-		const regex = /(^\d{1,3})$/
+		const regex = /(^\d{1,4}([.,](\d{1,2})?)?)$/
 		if (regex.test(event.target.value)) setValue(event.target.value)
 		if (event.target.value === '') setValue(event.target.value)
 	}
@@ -51,7 +55,7 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 	// const jumperDisable = !jumperInRange()
 
 	return (
-		<Stack direction='row' spacing={2} marginBottom={3}>
+		<Stack direction='row' spacing={2} marginBottom={3} alignItems={'flex-start'}>
 			<Checkbox
 				id='jumper'
 				name='jumper'
@@ -68,7 +72,9 @@ export const Jumper: FC<Props> = ({ disabled }) => {
 						value={value}
 						onChange={jumperWidthHandler}
 						disabled={disabled || jumper.code == 'M'}
-						placeholder='Ширина перемычки'
+						placeholder='Ширина перемычки, мм'
+						error={sizeError.jumper}
+						helperText={sizeError.jumper && 'Неверная ширина перемычки'}
 					/>
 				</>
 			)}

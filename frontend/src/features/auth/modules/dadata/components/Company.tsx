@@ -1,5 +1,5 @@
 import { FC, SyntheticEvent, useState } from 'react'
-import { Autocomplete, Stack, TextField, Typography } from '@mui/material'
+import { Autocomplete, Stack, SxProps, TextField, Theme, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/SearchOutlined'
 
 import type { CompanyInfo } from '../types/company'
@@ -8,11 +8,13 @@ import { useFindCompanyQuery } from '../dadataApiSlice'
 
 type Props = {
 	value: CompanyInfo | null
+	label?: string
 	onChange: (value: CompanyInfo | null) => void
 	error?: boolean
+	sx?: SxProps<Theme>
 }
 
-export const Company: FC<Props> = ({ value, onChange, error }) => {
+export const Company: FC<Props> = ({ value, onChange, error, label, sx }) => {
 	const [company, setCompany] = useState('')
 	const debounced = useDebounce(company, 500)
 
@@ -41,12 +43,13 @@ export const Company: FC<Props> = ({ value, onChange, error }) => {
 			renderInput={params => (
 				<TextField
 					{...params}
+					label={label}
 					name='company'
 					placeholder='Название организации *'
 					size='small'
 					autoComplete='off'
 					error={error}
-					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' } }}
+					sx={{ '& .MuiOutlinedInput-root': { borderRadius: 10, background: '#fff' }, ...sx }}
 				/>
 			)}
 			renderOption={(props, option) => {

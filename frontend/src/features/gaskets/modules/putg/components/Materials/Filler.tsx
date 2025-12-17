@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 // import { MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 
 import type { IFiller } from '../../types/materials'
@@ -25,6 +25,10 @@ export const Filler = () => {
 	// 	if (idx == -1) idx = 0
 	// 	dispatch(setMaterialFiller(data.data[idx]))
 	// }, [data, filler, active, isFetching, dispatch])
+
+	useEffect(() => {
+		if (!filler && data) dispatch(setMaterialFiller(data.data[0]))
+	}, [data, filler, dispatch])
 
 	// const fillerHandler = (event: SelectChangeEvent<string>) => {
 	// 	const filler = data?.data.find(s => s.id === event.target.value)

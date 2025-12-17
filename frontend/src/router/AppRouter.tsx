@@ -24,6 +24,7 @@ import { UsersInfo } from '@/pages/users/usersInfo/UsersInfoLazy'
 import { UserInfo } from '@/pages/users/userInfo/UserInfoLazy'
 import { OrdersCount } from '@/pages/orders/count/OrdersCountLazy'
 import { OrdersByUser } from '@/pages/orders/byUser/OrdersLazy'
+import { Profile } from '@/pages/users/profile/ProfileLazy'
 import { Main } from '@/components/Layout/Main/MainLazy'
 import { Base } from '@/components/Layout/Base/Base'
 import { Fallback } from '@/components/Fallback/Fallback'
@@ -78,6 +79,7 @@ export const AppRouter = () => {
 						</Route> */}
 
 						<Route path={PathRoutes.Orders} element={<Orders />} />
+						<Route path={PathRoutes.Profile} element={<Profile />} />
 					</Route>
 
 					<Route

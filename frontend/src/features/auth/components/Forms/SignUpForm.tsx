@@ -215,7 +215,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 										onClick={toggleConfVisible}
 										sx={{ cursor: 'pointer' }}
 									>
-										{passIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
+										{confIsVisible ? <VisibleIcon /> : <InVisibleIcon />}
 									</InputAdornment>
 								),
 							},
