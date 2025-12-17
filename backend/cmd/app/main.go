@@ -68,7 +68,7 @@ func main() {
 		log.Fatalf("failed to initialize redis %s", err.Error())
 	}
 
-	tokenManager, err := auth.NewManager(conf.Auth.Key)
+	tokenManager, err := auth.NewManager(conf.Auth.PublicKey, conf.Auth.PrivateKey)
 	if err != nil {
 		log.Fatalf("failed to initialize token manager: %s", err.Error())
 	}
@@ -76,8 +76,8 @@ func main() {
 
 	keycloak := auth.NewKeycloakClient(&auth.Deps{
 		Url:       conf.Keycloak.Url,
-		ClientId:  conf.Keycloak.ClientId,
-		Realm:     conf.Keycloak.Realm,
+		ClientIds: map[string]string{conf.Keycloak.Public.Realm: conf.Keycloak.Public.ClientId, conf.Keycloak.Private.Realm: conf.Keycloak.Private.ClientId},
+		Realms:    []string{conf.Keycloak.Public.Realm, conf.Keycloak.Private.Realm},
 		AdminName: conf.Keycloak.Root,
 		AdminPass: conf.Keycloak.RootPass,
 	})

@@ -9,18 +9,18 @@ import (
 )
 
 type KeycloakClient struct {
-	Client       *gocloak.GoCloak // keycloak client
-	ClientId     string           // clientId specified in Keycloak
-	ClientSecret string           // client secret specified in Keycloak
-	Realm        string           // realm specified in Keycloak
+	Client       *gocloak.GoCloak  // keycloak client
+	ClientIds    map[string]string // clientId specified in Keycloak
+	ClientSecret map[string]string // client secret specified in Keycloak
+	Realms       []string          // realm specified in Keycloak
 	name         string
 	pass         string
 }
 
 type Deps struct {
 	Url       string
-	ClientId  string
-	Realm     string
+	ClientIds map[string]string
+	Realms    []string
 	AdminName string
 	AdminPass string
 }
@@ -29,38 +29,41 @@ func NewKeycloakClient(deps *Deps) *KeycloakClient {
 	client := gocloak.NewClient(deps.Url)
 
 	ctx := context.Background()
+	secrets := make(map[string]string, len(deps.Realms))
 
-	token, err := client.LoginAdmin(ctx, deps.AdminName, deps.AdminPass, deps.Realm)
-	if err != nil {
-		slog.Error("failed to login admin to keycloak.", slog.String("error", err.Error()))
-	}
+	for _, realm := range deps.Realms {
+		token, err := client.LoginAdmin(ctx, deps.AdminName, deps.AdminPass, realm)
+		if err != nil {
+			slog.Error("failed to login admin to keycloak.", slog.String("error", err.Error()))
+		}
 
-	// store, err := client.GetKeyStoreConfig()
-	// store.ActiveKeys.RS256
+		// store, err := client.GetKeyStoreConfig()
+		// store.ActiveKeys.RS256
 
-	clients, err := client.GetClients(ctx, token.AccessToken, deps.Realm, gocloak.GetClientsParams{ClientID: &deps.ClientId})
-	if err != nil {
-		slog.Error("failed to get clients to keycloak.", slog.String("error", err.Error()))
-	}
-	//logger.Debug(clients)
+		clientId := deps.ClientIds[realm]
+		clients, err := client.GetClients(ctx, token.AccessToken, realm, gocloak.GetClientsParams{ClientID: &clientId})
+		if err != nil {
+			slog.Error("failed to get clients to keycloak.", slog.String("error", err.Error()))
+		}
+		//logger.Debug(clients)
 
-	var secret string
-	if len(clients) > 0 && clients[0].Secret != nil {
-		secret = *clients[0].Secret
+		if len(clients) > 0 && clients[0].Secret != nil {
+			secrets[realm] = *clients[0].Secret
+		}
 	}
 
 	return &KeycloakClient{
 		Client:       client,
-		ClientId:     deps.ClientId,
-		ClientSecret: secret,
-		Realm:        deps.Realm,
+		ClientIds:    deps.ClientIds,
+		ClientSecret: secrets,
+		Realms:       deps.Realms,
 		name:         deps.AdminName,
 		pass:         deps.AdminPass,
 	}
 }
 
 func (k *KeycloakClient) GetToken(ctx context.Context) (string, error) {
-	token, err := k.Client.LoginAdmin(ctx, k.name, k.pass, k.Realm)
+	token, err := k.Client.LoginAdmin(ctx, k.name, k.pass, "master")
 	if err != nil {
 		return "", fmt.Errorf("failed to login admin to keycloak. error: %w", err)
 	}

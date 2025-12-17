@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -45,8 +46,14 @@ type Session interface {
 
 func (s *SessionService) SignIn(ctx context.Context, dto *models.SignInDTO) (*models.User, error) {
 	cnd, err := s.user.GetByNick(ctx, &models.GetUserByNickDTO{Nickname: dto.Username})
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrUserNotFound) {
 		return nil, err
+	}
+	if cnd == nil {
+		cnd, err = s.user.SearchForProvider(ctx, dto)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if cnd.Realm == "" {
@@ -55,7 +62,7 @@ func (s *SessionService) SignIn(ctx context.Context, dto *models.SignInDTO) (*mo
 		}
 	}
 
-	res, err := s.keycloak.Client.Login(ctx, s.keycloak.ClientId, s.keycloak.ClientSecret, cnd.Realm, dto.Username, dto.Password)
+	res, err := s.keycloak.Client.Login(ctx, s.keycloak.ClientIds[cnd.Realm], s.keycloak.ClientSecret[cnd.Realm], cnd.Realm, dto.Username, dto.Password)
 	if err != nil {
 		return nil, fmt.Errorf("failed to login to keycloak. error: %w", err)
 	}
@@ -63,13 +70,13 @@ func (s *SessionService) SignIn(ctx context.Context, dto *models.SignInDTO) (*mo
 	cnd.AccessToken = res.AccessToken
 	cnd.RefreshToken = res.RefreshToken
 
-	//TODO надо бы наверное фиксировать когда пользователь заходил в систему и еще можно попробовать вести таблицу с сессиями (запоминать ip, устройство и тд), можно кстати эти две таблицы объединить
+	//TODO надо бы наверное фиксировать когда пользователь заходил в систему и еще можно попробовать вести таблицу с сессиями (запоминать ip, устройство и тд)
 
 	return cnd, nil
 }
 
 func (s *SessionService) Create(ctx context.Context, dto *models.User) error {
-	res, err := s.keycloak.Client.Login(ctx, s.keycloak.ClientId, s.keycloak.ClientSecret, dto.Realm, dto.Nickname, dto.Password)
+	res, err := s.keycloak.Client.Login(ctx, s.keycloak.ClientIds[dto.Realm], s.keycloak.ClientSecret[dto.Realm], dto.Realm, dto.Nickname, dto.Password)
 	if err != nil {
 		return fmt.Errorf("failed to login to keycloak. error: %w", err)
 	}
@@ -80,7 +87,7 @@ func (s *SessionService) Create(ctx context.Context, dto *models.User) error {
 }
 
 func (s *SessionService) SignOut(ctx context.Context, dto *models.SignOutDTO) error {
-	err := s.keycloak.Client.Logout(ctx, s.keycloak.ClientId, s.keycloak.ClientSecret, dto.Realm, dto.RefreshToken)
+	err := s.keycloak.Client.Logout(ctx, s.keycloak.ClientIds[dto.Realm], s.keycloak.ClientSecret[dto.Realm], dto.Realm, dto.RefreshToken)
 	if err != nil {
 		return fmt.Errorf("failed to logout to keycloak. error: %w", err)
 	}
@@ -113,7 +120,7 @@ func (s *SessionService) SignUp(ctx context.Context, dto *models.SignUpDTO) erro
 }
 
 func (s *SessionService) Refresh(ctx context.Context, dto *models.RefreshDTO) (*models.User, error) {
-	res, err := s.keycloak.Client.RefreshToken(ctx, dto.RefreshToken, s.keycloak.ClientId, s.keycloak.ClientSecret, dto.Realm)
+	res, err := s.keycloak.Client.RefreshToken(ctx, dto.RefreshToken, s.keycloak.ClientIds[dto.Realm], s.keycloak.ClientSecret[dto.Realm], dto.Realm)
 	if err != nil {
 		return nil, fmt.Errorf("failed to refresh token in keycloak. error: %w", err)
 	}
@@ -168,9 +175,13 @@ func (s *SessionService) DecodeToken(ctx context.Context, claims *jwt.MapClaims)
 		user.Realm = parts[len(parts)-1]
 	}
 
-	// user, err := s.user.GetByNick(ctx, &models.GetUserByNickDTO{Nickname: nick})
-	// if err != nil {
-	// 	return nil, err
-	// }
+	if user.Id == "" {
+		var err error
+		user, err = s.user.GetByNick(ctx, &models.GetUserByNickDTO{Nickname: user.Nickname})
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return user, nil
 }

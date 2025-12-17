@@ -86,6 +86,7 @@ type UserDTO struct {
 	ManagerId  string `json:"managerId" db:"manager_id"`
 	UseLink    bool   `json:"useLink" db:"use_link"`
 	UseLanding bool   `json:"useLanding" db:"use_landing"`
+	Confirmed  bool   `json:"confirmed" db:"confirmed"`
 }
 
 type ConfirmUserDTO struct {
@@ -124,5 +125,6 @@ type PasswordRecoveryDTO struct {
 
 type UpdatePasswordDTO struct {
 	UserId   string `json:"userId"`
+	Realm    string `json:"realm"`
 	Password string `json:"password" binding:"required,min=6,max=64"`
 }

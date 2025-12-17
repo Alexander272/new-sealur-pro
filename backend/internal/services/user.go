@@ -55,6 +55,7 @@ type User interface {
 	GetInfoById(ctx context.Context, req *models.GetUserByIdDTO) (*models.UserInfo, error)
 	GetByNick(ctx context.Context, req *models.GetUserByNickDTO) (*models.User, error)
 	GetManagers(ctx context.Context, req *models.GetManagersDTO) ([]*models.User, error)
+	SearchForProvider(ctx context.Context, dto *models.SignInDTO) (*models.User, error)
 	CreateInProvider(ctx context.Context, user *models.User, req *models.SignInDTO) error
 	Create(ctx context.Context, dto *models.UserDTO) error
 	Confirm(ctx context.Context, code string) (*models.User, error)
@@ -146,6 +147,95 @@ func (s *UserService) GetManagers(ctx context.Context, req *models.GetManagersDT
 	return data, nil
 }
 
+// func (s *UserService)
+
+func (s *UserService) SearchForProvider(ctx context.Context, dto *models.SignInDTO) (*models.User, error) {
+	token, err := s.keycloak.GetToken(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to login to keycloak. error: %w", err)
+	}
+
+	enabled := true
+	name := ""
+	email := ""
+	if strings.Contains(dto.Username, "@") {
+		email = dto.Username
+		name = strings.SplitN(dto.Username, "@", 2)[0]
+	} else {
+		name = dto.Username
+	}
+
+	users, err := s.keycloak.Client.GetUsers(ctx, token, s.keycloak.Realms[1], gocloak.GetUsersParams{Username: &name, Email: &email, Enabled: &enabled})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get users from keycloak. error: %w", err)
+	}
+
+	if len(users) == 0 {
+		return nil, models.ErrUserNotFound
+	}
+
+	email = ""
+	if users[0].Email != nil {
+		email = *users[0].Email
+	}
+	name, lastName := "", ""
+	if users[0].FirstName != nil {
+		name = *users[0].FirstName
+	}
+	if users[0].LastName != nil {
+		lastName = *users[0].LastName
+	}
+
+	role, err := s.role.GetDefault(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userId := uuid.NewString()
+	res := &models.User{
+		Id:         userId,
+		Nickname:   *users[0].Username,
+		Email:      email,
+		Realm:      s.keycloak.Realms[1],
+		Name:       lastName + " " + name,
+		Company:    "ООО \"СИЛУР\"",
+		Inn:        "5906067331",
+		Kpp:        "590601001",
+		Region:     "Пермский край",
+		City:       "г Пермь",
+		Position:   "",
+		Phone:      "",
+		Address:    "614014, Пермский край, г Пермь, Мотовилихинский р-н, ул 1905 года, д 35 к 24",
+		Role:       role.Code,
+		Confirmed:  true,
+		ProviderId: *users[0].ID,
+	}
+	createDTO := &models.UserDTO{
+		Id:         userId,
+		Nickname:   res.Nickname,
+		Email:      res.Email,
+		Realm:      res.Realm,
+		Name:       res.Name,
+		Company:    res.Company,
+		Inn:        res.Inn,
+		Kpp:        res.Kpp,
+		Region:     res.Region,
+		City:       res.City,
+		Position:   res.Position,
+		Phone:      res.Phone,
+		Address:    res.Address,
+		Role:       role.Id,
+		Confirmed:  res.Confirmed,
+		ProviderId: res.ProviderId,
+		ManagerId:  "d8c69456-0887-4b1d-b408-26dcdbe2eea1",
+	}
+
+	if err = s.repo.Create(ctx, createDTO); err != nil {
+		return nil, fmt.Errorf("failed to create user. error: %w", err)
+	}
+	return res, nil
+}
+
 func (s *UserService) CreateInProvider(ctx context.Context, user *models.User, req *models.SignInDTO) error {
 	dto := &models.UserDTO{
 		Id:       user.Id,
@@ -208,17 +298,20 @@ func (s *UserService) getIdFromProvider(ctx context.Context, dto *models.UserDTO
 		return "", err
 	}
 
-	data, err := s.keycloak.Client.GetUsers(ctx, token, s.keycloak.Realm, gocloak.GetUsersParams{Username: &dto.Nickname})
-	if err != nil {
-		return "", fmt.Errorf("failed to get user from provider. error: %w", err)
-	}
+	id := ""
+	for _, realm := range s.keycloak.Realms {
+		data, err := s.keycloak.Client.GetUsers(ctx, token, realm, gocloak.GetUsersParams{Username: &dto.Nickname})
+		if err != nil {
+			return "", fmt.Errorf("failed to get user from provider. error: %w", err)
+		}
 
-	if len(data) == 0 {
-		return "", models.ErrUserNotFound
-	}
+		if len(data) == 0 {
+			return "", models.ErrUserNotFound
+		}
 
-	dto.Realm = s.keycloak.Realm
-	id := *data[0].ID
+		dto.Realm = realm
+		id = *data[0].ID
+	}
 
 	return id, nil
 }
@@ -229,15 +322,27 @@ func (s *UserService) createInProvider(ctx context.Context, dto *models.UserDTO)
 		return err
 	}
 
+	name := strings.SplitN(dto.Name, " ", 2)
+	lastName := ""
+	firstName := ""
+	if len(name) > 1 {
+		lastName = name[0]
+		firstName = name[1]
+	} else {
+		firstName = name[0]
+	}
+
 	data := gocloak.User{
 		ID:            &dto.Id,
 		Username:      &dto.Nickname,
-		FirstName:     &dto.Name,
+		FirstName:     &firstName,
+		LastName:      &lastName,
 		Email:         &dto.Email,
 		Enabled:       gocloak.BoolP(true),
 		EmailVerified: gocloak.BoolP(true),
 		Attributes: &map[string][]string{
 			"company":   {dto.Company},
+			"position":  {dto.Position},
 			"inn":       {dto.Inn},
 			"kpp":       {dto.Kpp},
 			"region":    {dto.Region},
@@ -255,11 +360,11 @@ func (s *UserService) createInProvider(ctx context.Context, dto *models.UserDTO)
 			},
 		},
 	}
-	id, err := s.keycloak.Client.CreateUser(ctx, token, s.keycloak.Realm, data)
+	id, err := s.keycloak.Client.CreateUser(ctx, token, s.keycloak.Realms[0], data)
 	if err != nil {
 		return fmt.Errorf("failed to create user in keycloak. error: %w", err)
 	}
-	dto.Realm = s.keycloak.Realm
+	dto.Realm = s.keycloak.Realms[0]
 	// dto.Password = ""
 	dto.ProviderId = id
 	return nil
@@ -298,6 +403,7 @@ func (s *UserService) Create(ctx context.Context, dto *models.UserDTO) error {
 		}
 		dto.ManagerId = manager.Id
 	}
+	dto.Password = ""
 
 	if err = s.repo.Create(ctx, dto); err != nil {
 		return fmt.Errorf("failed to create user. error: %w", err)
@@ -337,8 +443,49 @@ func (s *UserService) Confirm(ctx context.Context, code string) (*models.User, e
 }
 
 func (s *UserService) Update(ctx context.Context, dto *models.UserDTO) error {
-	err := s.repo.Update(ctx, dto)
+	token, err := s.keycloak.GetToken(ctx)
 	if err != nil {
+		return err
+	}
+
+	name := strings.SplitN(dto.Name, " ", 2)
+	lastName := ""
+	firstName := ""
+	if len(name) > 1 {
+		lastName = name[0]
+		firstName = name[1]
+	} else {
+		firstName = name[0]
+	}
+
+	data := gocloak.User{
+		ID:            &dto.Id,
+		Username:      &dto.Nickname,
+		FirstName:     &firstName,
+		LastName:      &lastName,
+		Email:         &dto.Email,
+		Enabled:       gocloak.BoolP(true),
+		EmailVerified: gocloak.BoolP(true),
+		Attributes: &map[string][]string{
+			"company":   {dto.Company},
+			"position":  {dto.Position},
+			"inn":       {dto.Inn},
+			"kpp":       {dto.Kpp},
+			"region":    {dto.Region},
+			"city":      {dto.City},
+			"address":   {dto.Address},
+			"phone":     {dto.Phone},
+			"role":      {dto.Role},
+			"origin_id": {dto.Id},
+		},
+	}
+
+	err = s.keycloak.Client.UpdateUser(ctx, token, dto.Realm, data)
+	if err != nil {
+		return fmt.Errorf("failed to update user in keycloak. error: %w", err)
+	}
+
+	if err := s.repo.Update(ctx, dto); err != nil {
 		return fmt.Errorf("failed to update user. error: %w", err)
 	}
 	return nil
@@ -437,8 +584,7 @@ func (s *UserService) UpdatePassword(ctx context.Context, dto *models.UpdatePass
 			},
 		}
 
-		if err := s.keycloak.Client.UpdateUser(ctx, token, s.keycloak.Realm, u); err != nil {
-
+		if err := s.keycloak.Client.UpdateUser(ctx, token, dto.Realm, u); err != nil {
 			return fmt.Errorf("failed to upgrade password: %w", err)
 		}
 	}

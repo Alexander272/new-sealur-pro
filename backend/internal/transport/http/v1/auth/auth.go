@@ -12,6 +12,7 @@ import (
 	"github.com/Alexander272/new-sealur-pro/internal/models/response"
 	"github.com/Alexander272/new-sealur-pro/internal/services"
 	"github.com/Alexander272/new-sealur-pro/internal/transport/http/middleware"
+	"github.com/Alexander272/new-sealur-pro/pkg/auth"
 	"github.com/Alexander272/new-sealur-pro/pkg/error_bot"
 	"github.com/Alexander272/new-sealur-pro/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -109,9 +110,7 @@ func (h *Handler) signIn(c *gin.Context) {
 	)
 
 	c.SetSameSite(http.SameSiteLaxMode)
-	if user.Realm == "public" {
-		c.SetCookie(constants.AuthPublicCookie, user.RefreshToken, int(h.conf.RefreshTokenTTL.Seconds()), "/", domain, h.conf.Secure, true)
-	}
+	c.SetCookie(constants.AuthPublicCookie, user.RefreshToken, int(h.conf.RefreshTokenTTL.Seconds()), "/", domain, h.conf.Secure, true)
 	c.JSON(http.StatusOK, response.DataResponse{Data: user})
 }
 
@@ -181,8 +180,12 @@ func (h *Handler) refresh(c *gin.Context) {
 	//TODO если у меня будет несколько реалмов, то надо как-то определять куда отправлять запрос на обновление
 	//* я могу получить реалм из токена обновления, главное чтобы он нормально декодировался
 	//* а еще я же в разные куки записываю токены из разных реалмов
+	realm, err := auth.GetRealmFromToken(refreshToken)
+	if err != nil {
+		response.NewErrorResponse(c, http.StatusUnauthorized, err.Error(), "Сессия не найдена")
+		return
+	}
 
-	realm := "public"
 	dto := &models.RefreshDTO{
 		RefreshToken: refreshToken,
 		Realm:        realm,

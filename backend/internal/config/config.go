@@ -57,16 +57,24 @@ type (
 		ConfirmTTL      time.Duration `yaml:"confirm_ttl" env-default:"1h"`
 		Secure          bool          `yaml:"secure" env-default:"false"`
 		Domain          string        `yaml:"domain" env-default:"sealur.ru"`
-		Key             string        `env:"KEY_PEM"`
+		// Key             string        `env:"KEY_PEM"`
+		PublicKey  string `env:"PUBLIC_KEY_PEM"`
+		PrivateKey string `env:"PRIVATE_KEY_PEM"`
 	}
 
 	KeycloakConfig struct {
-		Url          string `yaml:"keycloak_url" env:"KEYCLOAK_URL"`
-		ClientId     string `env:"KEYCLOAK_CLIENT_ID"`
-		ClientSecret string `env:"KEYCLOAK_CLIENT_SECRET"`
-		Realm        string `yaml:"keycloak_realm" env:"KEYCLOAK_REALM"`
-		Root         string `env:"KEYCLOAK_ROOT"`
-		RootPass     string `env:"KEYCLOAK_ROOT_PASS"`
+		Url string `yaml:"keycloak_url" env:"KEYCLOAK_URL"`
+		// ClientId string `env:"KEYCLOAK_CLIENT_ID"`
+		// ClientSecret string `env:"KEYCLOAK_CLIENT_SECRET"`
+		// Realm    string      `yaml:"keycloak_realm" env:"KEYCLOAK_REALM"`
+		Root     string      `env:"KEYCLOAK_ROOT"`
+		RootPass string      `env:"KEYCLOAK_ROOT_PASS"`
+		Public   RealmConfig `yaml:"public" env-prefix:"PUBLIC_"`
+		Private  RealmConfig `yaml:"private" env-prefix:"PRIVATE_"`
+	}
+	RealmConfig struct {
+		ClientId string `env:"CLIENT_ID"`
+		Realm    string `yaml:"realm" env:"REALM"`
 	}
 
 	MinIOConfig struct {

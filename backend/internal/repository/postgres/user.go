@@ -153,8 +153,9 @@ func (r *UserRepo) GetManagers(ctx context.Context, req *models.GetManagersDTO) 
 
 func (r *UserRepo) Create(ctx context.Context, dto *models.UserDTO) error {
 	query := fmt.Sprintf(`INSERT INTO "%s" (id, nickname, company, inn, kpp, region, city, "position", password, phone, email, realm,
-		role_id, name, address, manager_id, provider_id, use_link, use_landing) VALUES (:id, :nickname, :company, :inn, :kpp, :region, :city, 
-		:position, :password, :phone, :email, :realm, :role_id, :name, :address, :manager_id, :provider_id, :use_link, :use_landing)`,
+		role_id, name, address, manager_id, provider_id, use_link, use_landing, confirmed) 
+		VALUES (:id, :nickname, :company, :inn, :kpp, :region, :city, :position, :password, :phone, :email, :realm, :role_id, :name, 
+		:address, :manager_id, :provider_id, :use_link, :use_landing, :confirmed)`,
 		UserTable,
 	)
 	if dto.ManagerId == "" {

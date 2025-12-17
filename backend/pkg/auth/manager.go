@@ -11,14 +11,15 @@ import (
 )
 
 type Manager struct {
-	key string
+	publicKey  string
+	privateKey string
 }
 
-func NewManager(key string) (*Manager, error) {
-	if strings.TrimSpace(key) == "" {
+func NewManager(publicKey string, privateKey string) (*Manager, error) {
+	if strings.TrimSpace(publicKey) == "" || strings.TrimSpace(privateKey) == "" {
 		return nil, models.ErrNotFoundKeys
 	}
-	return &Manager{key: key}, nil
+	return &Manager{publicKey: publicKey, privateKey: privateKey}, nil
 }
 
 type TokenManager interface {
@@ -29,22 +30,34 @@ type TokenManager interface {
 }
 
 func (m *Manager) Retrospect(token string) (*models.Token, error) {
-	key, err := jwt.ParseRSAPublicKeyFromPEM([]byte(m.key))
+	result, err := m.parseWithKey(token, m.publicKey)
+	if err == nil {
+		return result, nil
+	}
+	result, err = m.parseWithKey(token, m.privateKey)
 	if err != nil {
 		return nil, err
 	}
+
+	return result, nil
+}
+
+func (m *Manager) parseWithKey(token, key string) (*models.Token, error) {
+	usedKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(key))
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-
-		return key, nil
+		return usedKey, nil
 	})
 	if err != nil {
 		if strings.Contains(err.Error(), jwt.ErrTokenExpired.Error()) {
 			return &models.Token{Active: false}, nil
 		}
-
 		return nil, err
 	}
 
@@ -58,7 +71,23 @@ func (m *Manager) Retrospect(token string) (*models.Token, error) {
 		Active: date.After(time.Now()),
 		Claims: &claims,
 	}
-	return result, err
+	return result, nil
+}
+
+func GetRealmFromToken(token string) (string, error) {
+	claims := &jwt.MapClaims{}
+	parsedToken, _ := jwt.ParseWithClaims(token, claims, nil)
+	// if err != nil {
+	// 	logger.Debug("failed to parse token.", logger.AnyAttr("parsed", parsedToken))
+	// 	return "", fmt.Errorf("failed to parse token. error: %w", err)
+	// }
+	iss, err := parsedToken.Claims.GetIssuer()
+	if err != nil {
+		return "", fmt.Errorf("failed to get issuer. error: %w", err)
+	}
+	realm := strings.Split(iss, "realms/")[1]
+
+	return realm, nil
 }
 
 // func (m *Manager) NewJWT(userId, email string, roleCode string, company, name string, ttl time.Duration) (iat time.Time, token string, err error) {
