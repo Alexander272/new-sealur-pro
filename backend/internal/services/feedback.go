@@ -26,6 +26,7 @@ func (s *FeedbackService) Send(ctx context.Context, dto *models.Feedback) error 
 	mail := &mail_models.FeedbackDTO{
 		Email:   dto.Email,
 		Name:    dto.Name,
+		Company: dto.Company,
 		Message: dto.Message,
 		Subject: dto.Subject,
 	}
