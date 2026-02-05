@@ -94,6 +94,12 @@ type ConfirmUserDTO struct {
 	Date int64  `json:"date" db:"date"`
 }
 
+type ConfirmDataDTO struct {
+	UserId string
+	Realm  string
+	Kind   string
+}
+
 type ChangeManagerDTO struct {
 	Id        string `json:"id" db:"id"`
 	ManagerId string `json:"managerId" db:"manager_id"`
@@ -116,6 +122,7 @@ type UserWithManager struct {
 
 type RecoveryDTO struct {
 	Email string `json:"email" binding:"required,email"`
+	Link  string `json:"link"`
 }
 
 type PasswordRecoveryDTO struct {

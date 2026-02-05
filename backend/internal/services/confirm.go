@@ -26,7 +26,7 @@ func NewConfirmService(repo repository.Confirm, tokenManager auth.TokenManager, 
 
 type Confirm interface {
 	Get(ctx context.Context, code string) (*models.ConfirmData, error)
-	Create(ctx context.Context, userId string) (string, error)
+	Create(ctx context.Context, dto *models.ConfirmDataDTO) (string, error)
 }
 
 func (s *ConfirmService) Get(ctx context.Context, code string) (*models.ConfirmData, error) {
@@ -37,15 +37,17 @@ func (s *ConfirmService) Get(ctx context.Context, code string) (*models.ConfirmD
 	return data, nil
 }
 
-func (s *ConfirmService) Create(ctx context.Context, userId string) (string, error) {
+func (s *ConfirmService) Create(ctx context.Context, dto *models.ConfirmDataDTO) (string, error) {
 	code, err := s.tokenManager.NewCode()
 	if err != nil {
 		return "", fmt.Errorf("failed to generate code. error: %w", err)
 	}
 
 	data := &models.ConfirmData{
-		UserId: userId,
+		UserId: dto.UserId,
 		Code:   code,
+		Realm:  dto.Realm,
+		Kind:   dto.Kind,
 		Exp:    s.confirmTTL,
 	}
 

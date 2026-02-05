@@ -28,9 +28,9 @@ type (
 	HttpConfig struct {
 		Host               string        `yaml:"host" env:"HOST" env-default:"localhost"`
 		Port               string        `yaml:"port" env:"PORT" env-default:"9001"`
-		ReadTimeout        time.Duration `yaml:"read_timeout" env:"READ_TIMEOUT" env-default:"10s"`
-		WriteTimeout       time.Duration `yaml:"write_timeout" env:"WRITE_TIMEOUT" env-default:"10s"`
-		MaxHeaderMegabytes int           `yaml:"max_header_bytes" env-default:"1"`
+		ReadTimeout        time.Duration `yaml:"readTimeout" env:"READ_TIMEOUT" env-default:"10s"`
+		WriteTimeout       time.Duration `yaml:"writeTimeout" env:"WRITE_TIMEOUT" env-default:"10s"`
+		MaxHeaderMegabytes int           `yaml:"maxHeaderBytes" env-default:"1"`
 	}
 
 	RedisConfig struct {
@@ -50,11 +50,11 @@ type (
 	}
 
 	AuthConfig struct {
-		AccessTokenTTL  time.Duration `yaml:"access_token_ttl" env-default:"10m"`
-		RefreshTokenTTL time.Duration `yaml:"refresh_token_ttl" env-default:"24h"`
-		LimitAuthTTL    time.Duration `yaml:"limit_auth_ttl" env-default:"30m"`
-		CountAttempt    int32         `yaml:"count_attempt" env-default:"5"`
-		ConfirmTTL      time.Duration `yaml:"confirm_ttl" env-default:"1h"`
+		AccessTokenTTL  time.Duration `yaml:"accessTokenTTL" env-default:"10m"`
+		RefreshTokenTTL time.Duration `yaml:"refreshTokenTTL" env-default:"24h"`
+		LimitAuthTTL    time.Duration `yaml:"limitAuthTTL" env-default:"30m"`
+		CountAttempt    int32         `yaml:"countAttempt" env-default:"5"`
+		ConfirmTTL      time.Duration `yaml:"confirmTTL" env-default:"1h"`
 		Secure          bool          `yaml:"secure" env-default:"false"`
 		Domain          string        `yaml:"domain" env-default:"sealur.ru"`
 		// Key             string        `env:"KEY_PEM"`

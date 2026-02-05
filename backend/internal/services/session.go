@@ -111,6 +111,7 @@ func (s *SessionService) SignUp(ctx context.Context, dto *models.SignUpDTO) erro
 		ManagerId:  dto.ManagerId,
 		UseLink:    dto.UseLink,
 		UseLanding: dto.UseLanding,
+		Confirmed:  dto.Confirmed,
 	}
 
 	if err := s.user.Create(ctx, createDTO); err != nil {

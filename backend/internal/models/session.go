@@ -38,6 +38,7 @@ type SignUpDTO struct {
 	ManagerId  string `json:"managerId"`
 	UseLink    bool   `json:"useLink"`
 	UseLanding bool   `json:"useLanding"`
+	Confirmed  bool   `json:"confirmed"`
 }
 
 type Token struct {
@@ -74,6 +75,8 @@ func (i *LimitData) MarshalBinary() ([]byte, error) {
 type ConfirmData struct {
 	UserId string
 	Code   string
+	Realm  string
+	Kind   string
 	Exp    time.Duration
 }
 

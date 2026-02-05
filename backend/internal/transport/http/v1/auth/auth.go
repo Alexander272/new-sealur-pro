@@ -163,6 +163,10 @@ func (h *Handler) signUp(c *gin.Context) {
 	}
 
 	if err := h.services.Session.SignUp(c, dto); err != nil {
+		if errors.Is(err, models.ErrUserExist) {
+			response.NewErrorResponse(c, http.StatusConflict, err.Error(), "Пользователь уже существует")
+			return
+		}
 		response.NewErrorResponse(c, http.StatusInternalServerError, err.Error(), "Произошла ошибка")
 		error_bot.Send(c, err.Error(), dto)
 		return

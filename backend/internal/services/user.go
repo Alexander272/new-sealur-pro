@@ -111,7 +111,7 @@ func (s *UserService) GetByNick(ctx context.Context, req *models.GetUserByNickDT
 	}
 
 	if !data.Confirmed {
-		code, err := s.confirm.Create(ctx, data.Id)
+		code, err := s.confirm.Create(ctx, &models.ConfirmDataDTO{UserId: data.Id, Realm: data.Realm, Kind: "confirm"})
 		if err != nil {
 			return nil, err
 		}
@@ -409,17 +409,19 @@ func (s *UserService) Create(ctx context.Context, dto *models.UserDTO) error {
 		return fmt.Errorf("failed to create user. error: %w", err)
 	}
 
-	code, err := s.confirm.Create(ctx, dto.Id)
-	if err != nil {
-		return err
-	}
-	confirm := &mail_models.ConfirmDTO{
-		Email: dto.Email,
-		Name:  dto.Name,
-		Link:  fmt.Sprintf("%s/auth/confirm?code=%s", s.links.App, code),
-	}
-	if err := s.mail.User.Confirm(confirm); err != nil {
-		return err
+	if !dto.Confirmed {
+		code, err := s.confirm.Create(ctx, &models.ConfirmDataDTO{UserId: dto.Id, Realm: dto.Realm, Kind: "confirm"})
+		if err != nil {
+			return err
+		}
+		confirm := &mail_models.ConfirmDTO{
+			Email: dto.Email,
+			Name:  dto.Name,
+			Link:  fmt.Sprintf("%s/auth/confirm?code=%s", s.links.App, code),
+		}
+		if err := s.mail.User.Confirm(confirm); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -504,14 +506,19 @@ func (s *UserService) Recovery(ctx context.Context, dto *models.RecoveryDTO) err
 		return err
 	}
 
-	code, err := s.confirm.Create(ctx, user.Id)
+	code, err := s.confirm.Create(ctx, &models.ConfirmDataDTO{UserId: user.Id, Realm: user.Realm, Kind: "recovery"})
 	if err != nil {
 		return err
 	}
 
+	appLink := s.links.App
+	if dto.Link != "" {
+		appLink = dto.Link
+	}
+
 	mail := &mail_models.RecoveryDTO{
 		Email: user.Email,
-		Link:  fmt.Sprintf("%s/auth/recovery/%s", s.links.App, code),
+		Link:  fmt.Sprintf("%s/auth/recovery/%s", appLink, code),
 	}
 	if err := s.mail.User.Recovery(mail); err != nil {
 		return err
@@ -525,7 +532,7 @@ func (s *UserService) PasswordRecovery(ctx context.Context, dto *models.Password
 		return err
 	}
 
-	passDTO := &models.UpdatePasswordDTO{UserId: data.UserId, Password: dto.Password}
+	passDTO := &models.UpdatePasswordDTO{UserId: data.UserId, Realm: data.Realm, Password: dto.Password}
 	if err := s.UpdatePassword(ctx, passDTO); err != nil {
 		return err
 	}

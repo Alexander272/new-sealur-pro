@@ -39,7 +39,7 @@ func (r *UserRepo) Get(Ctx context.Context) {}
 func (r *UserRepo) GetById(ctx context.Context, req *models.GetUserByIdDTO) (*models.User, error) {
 	query := fmt.Sprintf(`SELECT u.id, realm, nickname, company, inn, kpp, region, city, "position", phone, password, email, 
 		r.code AS role, name, address, manager_id, provider_id
-		FROM "%s" AS u INNER JOIN %s AS r on r.id=role_id WHERE u.id::text=$1 OR provider_id::text=$2`,
+		FROM "%s" AS u INNER JOIN %s AS r on r.id=role_id WHERE u.id::text=$1 OR provider_id::text=$1 OR provider_id::text=$2`,
 		UserTable, RoleTable,
 	)
 	user := &models.User{}
