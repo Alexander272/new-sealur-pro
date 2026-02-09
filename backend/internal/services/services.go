@@ -15,6 +15,7 @@ type Services struct {
 	Limit
 	Session
 	User
+	Company
 
 	Feedback
 	FlangeStandard
@@ -33,6 +34,7 @@ type Deps struct {
 	Links        config.LinksConfig
 	ConfirmTTL   time.Duration
 	LimitTTL     time.Duration
+	DataApi      config.DataApiConfig
 }
 
 func NewServices(deps Deps) *Services {
@@ -57,6 +59,7 @@ func NewServices(deps Deps) *Services {
 	})
 
 	feedback := NewFeedbackService(deps.Mail)
+	company := NewCompanyService(deps.DataApi)
 
 	standard := NewStandardService(deps.Repos.Standard)
 	flangeStandard := NewFlangeStandardService(deps.Repos.FlangeStandard)
@@ -69,6 +72,7 @@ func NewServices(deps Deps) *Services {
 		Limit:   limit,
 		User:    user,
 		Session: session,
+		Company: company,
 
 		Feedback:       feedback,
 		FlangeStandard: flangeStandard,

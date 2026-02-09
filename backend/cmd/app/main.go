@@ -106,6 +106,7 @@ func main() {
 		ConfirmTTL:   conf.Auth.ConfirmTTL,
 		LimitTTL:     conf.Limiter.TTL,
 		Links:        conf.Links,
+		DataApi:      conf.DataApi,
 	})
 	handlers := transport.NewHandler(services, keycloak, tokenManager)
 

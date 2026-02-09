@@ -1,5 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
+CREATE SEQUENCE order_number_seq;
+
 CREATE TABLE IF NOT EXISTS public."order"
 (
     id uuid NOT NULL,
@@ -29,6 +31,8 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."order"
     OWNER to postgres;
+
+ALTER SEQUENCE order_number_seq OWNED BY order."number";
 -- +goose StatementEnd
 
 -- +goose Down

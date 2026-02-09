@@ -50,6 +50,7 @@ require (
 
 require (
 	github.com/Nerzal/gocloak/v13 v13.9.0
+	github.com/ekomobile/dadata/v2 v2.17.0
 	github.com/gin-gonic/contrib v0.0.0-20250113154928-93b827325fec
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/goccy/go-json v0.10.5

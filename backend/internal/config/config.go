@@ -22,6 +22,7 @@ type (
 		Links       LinksConfig
 		Http        HttpConfig
 		Limiter     LimiterConfig
+		DataApi     DataApiConfig
 		// ErrorBot    ErrorBotConfig
 	}
 
@@ -112,6 +113,11 @@ type (
 
 	ErrorBotConfig struct {
 		Url string `yaml:"err_bot_url" env:"ERR_BOT_URL" env-default:"http://route.sealur.ru:11000/api/v1/mattermost/send"`
+	}
+
+	DataApiConfig struct {
+		Token  string `yaml:"token" env:"DATA_API_TOKEN"`
+		Secret string `yaml:"secret" env:"DATA_API_SECRET"`
 	}
 )
 
