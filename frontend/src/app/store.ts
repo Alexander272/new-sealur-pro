@@ -9,13 +9,11 @@ import { wavePath, waveReducer } from '@/features/gaskets/modules/wave/waveSlice
 import { serratedPath, serratedReducer } from '@/features/gaskets/modules/serrated/serratedSlice'
 import { jacketedPath, jacketedReducer } from '@/features/gaskets/modules/jacketed/jacketedSlice'
 import { dialogPath, dialogReducer } from '@/features/dialogs/dialogSlice'
-import { dadataApi } from '@/features/auth/modules/dadata/dadataApiSlice'
 import { resetStoreListener } from './middlewares/resetStore'
 import { apiSlice } from './apiSlice'
 
 const rootReducer = combineReducers({
 	[apiSlice.reducerPath]: apiSlice.reducer,
-	[dadataApi.reducerPath]: dadataApi.reducer,
 	[dialogPath]: dialogReducer,
 	[userPath]: userReducer,
 	[cardPath]: cardReducer,
@@ -30,9 +28,7 @@ export const store = configureStore({
 	reducer: rootReducer,
 	devTools: process.env.NODE_ENV === 'development',
 	middleware: getDefaultMiddleware =>
-		getDefaultMiddleware()
-			.prepend(resetStoreListener.middleware)
-			.concat([apiSlice.middleware, dadataApi.middleware]),
+		getDefaultMiddleware().prepend(resetStoreListener.middleware).concat(apiSlice.middleware),
 })
 
 setupListeners(store.dispatch)

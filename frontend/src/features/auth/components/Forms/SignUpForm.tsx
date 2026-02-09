@@ -5,9 +5,9 @@ import InVisibleIcon from '@mui/icons-material/VisibilityOffOutlined'
 import VisibleIcon from '@mui/icons-material/RemoveRedEye'
 
 import type { IFetchError } from '@/app/types/error'
-import type { CompanyInfo } from '@/features/auth/modules/dadata/types/company'
+import type { CompanyInfo } from '@/features/companies/types/companies'
 import type { ISignUp } from '@/features/auth/types/auth'
-import { Company } from '@/features/auth/modules/dadata/components/Company'
+import { Company } from '@/features/companies/components/Company'
 import { useSignUpMutation } from '@/features/auth/authApiSlice'
 import { useInput } from '@/features/auth/hooks/useInput'
 import { ValidMessage } from '../ValidMessage/ValidMessage'
@@ -91,7 +91,7 @@ export const SignUp: FC<Props> = ({ isOpen, onChangeTab }) => {
 			await signUp(user).unwrap()
 			toast.success(
 				'Для активации учетной записи в течение часа перейдите по ссылке, отправленной вам в письме',
-				{ autoClose: false }
+				{ autoClose: false },
 			)
 		} catch (error) {
 			const fetchError = error as IFetchError

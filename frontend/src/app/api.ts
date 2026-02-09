@@ -15,6 +15,7 @@ export const API = Object.freeze({
 	},
 	files: 'files' as const,
 	feedback: 'feedback' as const,
+	companies: 'companies' as const,
 	analytics: {
 		base: 'analytics' as const,
 		orders: 'analytics/orders' as const,

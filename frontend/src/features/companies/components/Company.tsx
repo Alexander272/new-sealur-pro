@@ -2,9 +2,9 @@ import { FC, SyntheticEvent, useState } from 'react'
 import { Autocomplete, Stack, SxProps, TextField, Theme, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/SearchOutlined'
 
-import type { CompanyInfo } from '../types/company'
+import type { CompanyInfo } from '../types/companies'
 import { useDebounce } from '@/hooks/debounce'
-import { useFindCompanyQuery } from '../dadataApiSlice'
+import { useFindCompanyQuery } from '../companiesApiSlice'
 
 type Props = {
 	value: CompanyInfo | null
@@ -18,7 +18,7 @@ export const Company: FC<Props> = ({ value, onChange, error, label, sx }) => {
 	const [company, setCompany] = useState('')
 	const debounced = useDebounce(company, 500)
 
-	const { data } = useFindCompanyQuery(debounced, { skip: !debounced })
+	const { data, isFetching } = useFindCompanyQuery(debounced, { skip: !debounced })
 
 	const companyHandler = (_event: SyntheticEvent, newInputValue: string) => {
 		setCompany(newInputValue)
@@ -35,11 +35,13 @@ export const Company: FC<Props> = ({ value, onChange, error, label, sx }) => {
 			autoComplete
 			includeInputInList
 			autoSelect
-			options={data?.suggestions || []}
+			options={data?.data || []}
 			popupIcon={<SearchIcon />}
 			onChange={selectCompanyHandler}
 			noOptionsText='Ничего не найдено'
 			onInputChange={companyHandler}
+			loading={isFetching}
+			loadingText='Поиск организации...'
 			renderInput={params => (
 				<TextField
 					{...params}
